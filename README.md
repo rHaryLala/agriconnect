@@ -47,6 +47,8 @@ journaux avec `docker compose logs db`.
 Branches, commits et relecture : voir [CONTRIBUTING.md](CONTRIBUTING.md).
 Ces règles ne sont pas décoratives — elles sont vérifiées à chaque demande de fusion.
 
+Pour les commandes du quotidien et le dépannage : [docs/fiche-depot.md](docs/fiche-depot.md).
+
 ## Liens
 
 - Tableau Trello : https://trello.com/b/1bkzEIsa/gestion-des-industries
