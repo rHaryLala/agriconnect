@@ -47,7 +47,9 @@ journaux avec `docker compose logs db`.
 Branches, commits et relecture : voir [CONTRIBUTING.md](CONTRIBUTING.md).
 Ces règles ne sont pas décoratives — elles sont vérifiées à chaque demande de fusion.
 
-Pour les commandes du quotidien et le dépannage : [docs/fiche-depot.md](docs/fiche-depot.md).
+**Vous débutez sur ce dépôt ?** Lisez [docs/fiche-depot.md](docs/fiche-depot.md) en
+entier avant votre première carte : vocabulaire Git, commandes utiles classées par
+besoin, résolution des conflits et rattrapage d'erreurs.
 
 ## Liens
 
