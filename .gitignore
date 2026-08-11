@@ -1,36 +1,53 @@
-# See https://help.github.com/articles/ignoring-files/ for more about ignoring files.
-
-# dependencies
-/node_modules
-/.pnp
+# --- Dépendances ---
+node_modules/
+.pnp/
 .pnp.js
 
-# testing
-/coverage
+# --- Build ---
+dist/
+build/
+out/
+*.tsbuildinfo
 
-# next.js
-/.next/
-/out/
+# --- Variables d'environnement ---
+# Aucun secret ne doit être versionné. Seul .env.example l'est.
+.env
+.env.local
+.env.*.local
+!.env.example
 
-# production
-/build
+# --- Prisma (bases locales) ---
+prisma/*.db
+prisma/*.db-journal
 
-# misc
-.DS_Store
-*.pem
+# --- Fichiers produits par l'application ---
+# Les rapports PDF et Excel générés se régénèrent : ils n'ont rien à faire ici.
+exports/
+uploads/
 
-# debug
+# --- Logs ---
+logs/
+*.log
 npm-debug.log*
 yarn-debug.log*
-yarn-error.log*
+pnpm-debug.log*
 
-# local env files
-.env*.local
-.env
+# --- Tests ---
+coverage/
+.nyc_output/
 
-# vercel
-.vercel
+# --- Caches d'outils ---
+.eslintcache
+.vite/
+.turbo/
 
-# typescript
-*.tsbuildinfo
-next-env.d.ts
+# --- Éditeurs ---
+.vscode/*
+!.vscode/extensions.json
+.idea/
+*.swp
+
+# --- Système ---
+.DS_Store
+Thumbs.db
+desktop.ini
