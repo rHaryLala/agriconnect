@@ -6,23 +6,51 @@
 @tailwind utilities;
 
 :root {
+    --background: 210 20% 98%;
+    --foreground: 215 25% 15%;
+    --surface: 0 0% 100%;
+    --card: 0 0% 100%;
+    --card-foreground: 215 25% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 215 25% 15%;
+
     --primary: 156 78% 29%;
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 20% 94%;
+    --secondary-foreground: 215 25% 15%;
+    --muted: 210 20% 94%;
+    --muted-foreground: 215 15% 45%;
     --accent: 142 71% 45%;
+    --accent-foreground: 0 0% 100%;
+
     --success: 142 76% 36%;
     --warning: 38 92% 50%;
     --destructive: 0 74% 42%;
+    --destructive-foreground: 0 0% 100%;
     --info: 221 83% 53%;
-    --background: 210 20% 98%;
-    --surface: 0 0% 100%;
+
     --border: 214 32% 91%;
-    --foreground: 222 47% 11%;
+    --input: 214 32% 91%;
+    --ring: 156 78% 29%;
+    --radius: 0.625rem;
 }
 
 .dark {
     --background: 215 28% 7%;
+    --foreground: 210 20% 92%;
     --surface: 215 19% 11%;
+    --card: 215 19% 11%;
+    --card-foreground: 210 20% 92%;
+    --popover: 215 19% 11%;
+    --popover-foreground: 210 20% 92%;
+
+    --secondary: 215 19% 16%;
+    --secondary-foreground: 210 20% 92%;
+    --muted: 215 19% 16%;
+    --muted-foreground: 217 10% 65%;
+
     --border: 215 13% 21%;
-    --foreground: 210 40% 98%;
+    --input: 215 13% 21%;
 }
 
 @layer base {
@@ -32,6 +60,7 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
+
     *,
     *::before,
     *::after {
