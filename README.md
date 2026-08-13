@@ -3,7 +3,7 @@
 Logiciel intégré de gestion de ferme : production agricole et animale, stocks, finances,
 clients et fournisseurs, rapports.
 
-Projet de stage — 5 semaines. Lesoa, Siméon et Voahary, sous la supervision de Hary Lala Rabenamana.
+Projet de stage — 5 semaines. Lesoa, Simeon et Voahary, sous la supervision de Hary Lala Rabenamana.
 
 ## Prérequis
 
@@ -61,3 +61,14 @@ un fichier `.env` local, exclu par `.gitignore`.
 Un secret poussé une fois reste dans l'historique Git **même après suppression du
 fichier**. En cas d'accident : prévenez immédiatement dans `#socle-technique`,
 révoquez le secret concerné, puis générez-en un nouveau.
+
+
+## Par Simeon le responsable database
+## Pour démarrer la base de données et appliquer le schéma du Sprint 1  :
+1. Copier le fichier d'environnement : `cp .env.example .env`
+2. Lancer la base PostgreSQL avec Docker : `docker compose up -d`
+3. Appliquer les migrations Prisma : `npx prisma migrate dev`
+4. Injecter les données de test (Seed) : `npx prisma db seed`
+
+> **Note :** La base de données tourne sur le port `5433`.
+
