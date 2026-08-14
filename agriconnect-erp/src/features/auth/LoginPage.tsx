@@ -1,31 +1,32 @@
-import { useState, type FormEvent } from "react"
+import { useState } from "react"
+import { useForm } from "react-hook-form"
+import { zodResolver } from "@hookform/resolvers/zod"
 import { useNavigate } from "react-router"
 import { Leaf, Eye, EyeOff, AlertCircle, Loader2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { useAuthStore } from "./authStore"
+import { loginSchema, type LoginFormValues } from "./loginSchema"
 
 export default function LoginPage() {
   const navigate = useNavigate()
-  const [email, setEmail] = useState("")
-  const [password, setPassword] = useState("")
+  const login = useAuthStore((s) => s.login)
   const [showPassword, setShowPassword] = useState(false)
-  const [loading, setLoading] = useState(false)
-  const [error, setError] = useState(false)
+  const [serverError, setServerError] = useState<string | null>(null)
 
-  function handleSubmit(e: FormEvent) {
-    e.preventDefault()
-    if (loading) return
-    setError(false)
+  const {
+    register,
+    handleSubmit,
+    formState: { errors, isSubmitting },
+  } = useForm<LoginFormValues>({ resolver: zodResolver(loginSchema) })
 
-    if (!email || !password) {
-      setError(true)
-      return
-    }
-
-    setLoading(true)
-    setTimeout(() => {
-      setLoading(false)
+  async function onSubmit(values: LoginFormValues) {
+    setServerError(null)
+    try {
+      await login(values.email, values.password)
       navigate("/dashboard")
-    }, 900)
+    } catch (err) {
+      setServerError(err instanceof Error ? err.message : "Erreur inconnue")
+    }
   }
 
   return (
@@ -48,20 +49,20 @@ export default function LoginPage() {
           <p className="mt-1 text-sm text-muted-foreground">Connectez-vous à votre espace</p>
         </div>
 
-        {error && (
+        {serverError && (
           <div
             role="alert"
             className="mb-5 flex items-start gap-2.5 rounded-lg border-l-2 border-destructive bg-destructive/10 px-3.5 py-2.5"
           >
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
             <div>
-              <p className="text-sm font-semibold text-destructive">Champs manquants</p>
-              <p className="text-xs text-destructive/85">Renseigne ton email et ton mot de passe.</p>
+              <p className="text-sm font-semibold text-destructive">Connexion refusée</p>
+              <p className="text-xs text-destructive/85">{serverError}</p>
             </div>
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
+        <form onSubmit={handleSubmit(onSubmit)} className="flex flex-col gap-4" noValidate>
           <div>
             <label htmlFor="email" className="mb-1.5 block text-xs font-medium text-foreground">
               Email
@@ -69,13 +70,17 @@ export default function LoginPage() {
             <input
               id="email"
               type="email"
-              value={email}
-              onChange={(e) => setEmail(e.target.value)}
-              aria-invalid={error && !email}
-              aria-describedby={error && !email ? "email-error" : undefined}
+              {...register("email")}
+              aria-invalid={!!errors.email}
+              aria-describedby={errors.email ? "email-error" : undefined}
               className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
               placeholder="lesoa.asa@zurcher.edu.mg"
             />
+            {errors.email && (
+              <p id="email-error" className="mt-1 text-xs text-destructive">
+                {errors.email.message}
+              </p>
+            )}
           </div>
 
           <div>
@@ -86,10 +91,9 @@ export default function LoginPage() {
               <input
                 id="password"
                 type={showPassword ? "text" : "password"}
-                value={password}
-                onChange={(e) => setPassword(e.target.value)}
-                aria-invalid={error && !password}
-                aria-describedby={error && !password ? "password-error" : undefined}
+                {...register("password")}
+                aria-invalid={!!errors.password}
+                aria-describedby={errors.password ? "password-error" : undefined}
                 className="w-full rounded-lg border border-border bg-background px-3 py-2 pr-10 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
                 placeholder="••••••••••••"
               />
@@ -102,13 +106,22 @@ export default function LoginPage() {
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
+            {errors.password && (
+              <p id="password-error" className="mt-1 text-xs text-destructive">
+                {errors.password.message}
+              </p>
+            )}
           </div>
 
-          <Button type="submit" disabled={loading} className="mt-2 gap-2">
-            {loading && <Loader2 className="h-4 w-4 animate-spin" />}
-            {loading ? "Connexion..." : "Se connecter"}
+          <Button type="submit" disabled={isSubmitting} className="mt-2 gap-2">
+            {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
+            {isSubmitting ? "Connexion..." : "Se connecter"}
           </Button>
         </form>
+
+        <p className="mt-6 text-center text-xs text-muted-foreground">
+          Démo : lesoa.asa@zurcher.edu.mg / rasamizafy.sit@zurcher.edu.mg / radoniaina.v@zurcher.edu.mg — mot de passe "1234qwerty"
+        </p>
       </div>
     </div>
   )
