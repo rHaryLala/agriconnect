@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { UsersManagement } from "./UsersManagement"
 import {
   User, ShieldCheck, Palette, Bell, Globe,
   Users, UserCog, SlidersHorizontal, DatabaseBackup, CircleCheck,
@@ -57,14 +58,20 @@ export default function SettingsPage() {
         ))}
       </aside>
 
-      <section key={active.id} className="flex-1 animate-content-in">
+       <section key={active.id} className="flex-1 animate-content-in">
         <h2 className="mb-1 text-2xl font-bold">{active.label}</h2>
-        <p className="mb-6 text-sm text-muted-foreground">
-          Section « {active.label} » — contenu réel à brancher au sprint concerné.
-        </p>
-        <div className="rounded-xl border border-border bg-surface p-8 text-sm text-muted-foreground">
-          Emplacement réservé pour le contenu de « {active.label} ».
-        </div>
+        {active.id === "utilisateurs" ? (
+          <UsersManagement />
+        ) : (
+          <>
+            <p className="mb-6 text-sm text-muted-foreground">
+              Section « {active.label} » — contenu réel à brancher au sprint concerné.
+            </p>
+            <div className="rounded-xl border border-border bg-surface p-8 text-sm text-muted-foreground">
+              Emplacement réservé pour le contenu de « {active.label} ».
+            </div>
+          </>
+        )}
       </section>
     </div>
   )
