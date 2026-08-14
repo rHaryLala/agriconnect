@@ -1,0 +1,12 @@
+services:
+  frontend:
+    build:
+      context: ./agriconnect-erp
+      dockerfile: Dockerfile.dev
+    volumes:
+      - ./agriconnect-erp:/app
+      - /app/node_modules
+    ports:
+      - "5173:5173"
+    environment:
+      - VITE_API_URL=http://backend:8000 # L'url factice du backend, a remplacer par l'url reelle plus tard
