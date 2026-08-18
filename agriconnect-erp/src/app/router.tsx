@@ -11,7 +11,7 @@ export const router = createBrowserRouter([
     },
   },
   {
-    element: <ProtectedRoute />,
+    element: <ProtectedRoute />, 
     children: [
       {
         path: "/",
@@ -26,32 +26,42 @@ export const router = createBrowserRouter([
             },
           },
           {
-            path: "production",
-            lazy: async () => {
-              const { default: Component } = await import("@/features/production/ProductionPage")
-              return { Component }
-            },
+            element: <ProtectedRoute allowedRoles={["admin", "operations"]} />,
+            children: [
+              {
+                path: "production",
+                lazy: async () => {
+                  const { default: Component } = await import("@/features/production/ProductionPage")
+                  return { Component }
+                },
+              },
+              {
+                path: "stocks",
+                lazy: async () => {
+                  const { default: Component } = await import("@/features/stocks/StocksPage")
+                  return { Component }
+                },
+              },
+            ],
           },
           {
-            path: "stocks",
-            lazy: async () => {
-              const { default: Component } = await import("@/features/stocks/StocksPage")
-              return { Component }
-            },
-          },
-          {
-            path: "finance",
-            lazy: async () => {
-              const { default: Component } = await import("@/features/finance/FinancePage")
-              return { Component }
-            },
-          },
-          {
-            path: "clients-fournisseurs",
-            lazy: async () => {
-              const { default: Component } = await import("@/features/clients-fournisseurs/ClientsFournisseursPage")
-              return { Component }
-            },
+            element: <ProtectedRoute allowedRoles={["admin", "finance_commercial"]} />,
+            children: [
+              {
+                path: "finance",
+                lazy: async () => {
+                  const { default: Component } = await import("@/features/finance/FinancePage")
+                  return { Component }
+                },
+              },
+              {
+                path: "clients-fournisseurs",
+                lazy: async () => {
+                  const { default: Component } = await import("@/features/clients-fournisseurs/ClientsFournisseursPage")
+                  return { Component }
+                },
+              },
+            ],
           },
           {
             path: "rapports",

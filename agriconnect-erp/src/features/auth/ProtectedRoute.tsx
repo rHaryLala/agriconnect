@@ -1,11 +1,20 @@
 import { Navigate, Outlet } from "react-router"
 import { useAuthStore } from "./authStore"
+import type { UserRole } from "@/types/user"
 
-export function ProtectedRoute() {
-  const isAuthenticated = useAuthStore((s) => s.isAuthenticated)
+interface ProtectedRouteProps {
+  allowedRoles?: UserRole[]
+}
 
-  if (!isAuthenticated) {
+export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
+  const { isAuthenticated, user } = useAuthStore()
+
+  if (!isAuthenticated || !user) {
     return <Navigate to="/login" replace />
+  }
+
+  if (allowedRoles && !allowedRoles.includes(user.role)) {
+    return <Navigate to="/dashboard" replace />
   }
 
   return <Outlet />
