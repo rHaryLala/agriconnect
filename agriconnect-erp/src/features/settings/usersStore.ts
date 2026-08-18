@@ -1,14 +1,10 @@
 import { create } from "zustand"
 import type { User } from "@/types/user"
+import { MOCK_USERS } from "@/features/auth/mockUsers"
 
 const FAKE_LATENCY_MS = 500
 
-const SEED_USERS: User[] = [
-  { id: "1", name: "LESOA Asandratriniaina", email: "lesoa.asa@zurcher.edu.mg", role: "admin", avatarInitials: "LA" },
-  { id: "2", name: "RASAMIZAFY Simeon", email: "rasamizafy.sit@zurcher.edu.mg", role: "finance_commercial", avatarInitials: "RS" },
-  { id: "3", name: "RADONIAINA Voahary", email: "radoniaina.v@zurcher.edu.mg", role: "operations", avatarInitials: "RV" },
-  { id: "4", name: "RABENAMANA Hary", email: "rabenamana.h@zurcher.edu.mg", role: "operations", avatarInitials: "RH" },
-]
+const SEED_USERS: User[] = MOCK_USERS.map(({ password: _password, ...user }) => user)
 
 interface UsersState {
   users: User[]

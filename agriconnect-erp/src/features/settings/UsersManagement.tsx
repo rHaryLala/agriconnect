@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { toast } from "sonner"
 import { Plus, Pencil, Trash2, Users as UsersIcon } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import {
@@ -45,11 +46,22 @@ export function UsersManagement() {
     } else {
       await addUser(values)
     }
+     if (editingUser) {
+    await updateUser(editingUser.id, values)
+    toast.success("Utilisateur modifié")
+  } else {
+    await addUser(values)
+    toast.success("Utilisateur ajouté")
+  }
   }
 
   async function confirmDelete() {
     if (!deletingUser) return
     await deleteUser(deletingUser.id)
+    setDeletingUser(null)
+    if (!deletingUser) return
+    await deleteUser(deletingUser.id)
+    toast.success("Utilisateur supprimé")
     setDeletingUser(null)
   }
 

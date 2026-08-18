@@ -1,4 +1,5 @@
 import type { LucideIcon } from "lucide-react"
+import { useCountUp } from "@/hooks/useCountUp"
 
 interface StatCardProps {
   icon: LucideIcon
@@ -6,6 +7,7 @@ interface StatCardProps {
   value: string
   hint?: string
   tone?: "primary" | "success" | "warning" | "destructive" | "info"
+  animate?: { target: number; format: (n: number) => string }
 }
 
 const toneClasses: Record<NonNullable<StatCardProps["tone"]>, string> = {
@@ -16,14 +18,17 @@ const toneClasses: Record<NonNullable<StatCardProps["tone"]>, string> = {
   info: "bg-info/10 text-info",
 }
 
-export function StatCard({ icon: Icon, label, value, hint, tone = "primary" }: StatCardProps) {
+export function StatCard({ icon: Icon, label, value, hint, tone = "primary", animate }: StatCardProps) {
+  const animatedValue = useCountUp(animate?.target ?? 0)
+  const displayValue = animate ? animate.format(animatedValue) : value
+
   return (
     <div className="rounded-xl border border-border bg-surface p-5 transition-shadow duration-200 hover:shadow-md">
       <div className={`mb-3 flex h-9 w-9 items-center justify-center rounded-lg ${toneClasses[tone]}`}>
         <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
       </div>
       <p className="text-sm text-muted-foreground">{label}</p>
-      <p className="mt-1 text-2xl font-bold tabular-nums text-foreground">{value}</p>
+      <p className="mt-1 text-2xl font-bold tabular-nums text-foreground">{displayValue}</p>
       {hint && <p className="mt-1 text-xs text-muted-foreground">{hint}</p>}
     </div>
   )

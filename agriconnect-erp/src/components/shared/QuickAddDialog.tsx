@@ -47,9 +47,13 @@ export function QuickAddDialog<T extends FieldValues>({
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
-  async function handleFormSubmit(values: T) {
-    await onSubmit(values)
-    onOpenChange(false)
+ async function handleFormSubmit(values: T) {
+    try {
+      await onSubmit(values)
+      onOpenChange(false)
+    } catch {
+      // Handle error if needed
+    }
   }
 
   return (

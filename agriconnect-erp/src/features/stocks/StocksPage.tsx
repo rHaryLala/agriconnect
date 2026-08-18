@@ -1,6 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { z } from "zod"
 import { Plus, Package, AlertTriangle, ArrowDownCircle, ArrowUpCircle, Trash2 } from "lucide-react"
+import { toast } from "sonner"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
@@ -18,6 +19,7 @@ const movementSchema = z.object({
   date: z.string().min(1, "Date requise"),
   origine: z.string().min(1, "Origine requise (ex: Achat, Vente, Production...)"),
 })
+
 type MovementFormValues = z.infer<typeof movementSchema>
 
 const articleSchema = z.object({
@@ -26,6 +28,7 @@ const articleSchema = z.object({
   quantiteInitiale: z.number({ invalid_type_error: "Nombre requis" }).min(0),
   seuilCritique: z.number({ invalid_type_error: "Nombre requis" }).min(0),
 })
+
 type ArticleFormValues = z.infer<typeof articleSchema>
 
 const articleFields: FieldConfig<ArticleFormValues>[] = [
@@ -36,7 +39,16 @@ const articleFields: FieldConfig<ArticleFormValues>[] = [
 ]
 
 export default function StocksPage() {
-  const { articles, movements, isLoading, fetchAll, addArticle, addMovement, deleteMovement } = useStockStore()
+  const {
+    articles,
+    movements,
+    isLoading,
+    fetchAll,
+    addArticle,
+    addMovement,
+    deleteMovement,
+  } = useStockStore()
+
   const [movementOpen, setMovementOpen] = useState(false)
   const [articleOpen, setArticleOpen] = useState(false)
 
@@ -48,15 +60,29 @@ export default function StocksPage() {
     () =>
       articles.map((a) => {
         const current = computeCurrentStock(a, movements)
-        return { article: a, current, status: getStockStatus(current, a.seuilCritique) }
+        return {
+          article: a,
+          current,
+          status: getStockStatus(current, a.seuilCritique),
+        }
       }),
     [articles, movements]
   )
 
-  const alertesActives = articlesWithStatus.filter((a) => a.status === "critique").length
+  const alertesActives = articlesWithStatus.filter(
+    (a) => a.status === "critique"
+  ).length
 
   const movementFields: FieldConfig<MovementFormValues>[] = [
-    { type: "select", name: "articleId", label: "Article", options: articles.map((a) => ({ value: a.id, label: `${a.nom} (${a.unite})` })) },
+    {
+      type: "select",
+      name: "articleId",
+      label: "Article",
+      options: articles.map((a) => ({
+        value: a.id,
+        label: `${a.nom} (${a.unite})`,
+      })),
+    },
     {
       type: "select",
       name: "type",
@@ -68,37 +94,123 @@ export default function StocksPage() {
     },
     { type: "number", name: "quantite", label: "Quantité" },
     { type: "date", name: "date", label: "Date" },
-    { type: "text", name: "origine", label: "Origine", placeholder: "Achat fournisseur, Vente client, Production..." },
+    {
+      type: "text",
+      name: "origine",
+      label: "Origine",
+      placeholder: "Achat fournisseur, Vente client, Production...",
+    },
   ]
 
+  async function handleAddMovement(values: MovementFormValues) {
+    if (values.type === "sortie") {
+      const article = articles.find((a) => a.id === values.articleId)
+
+      if (article) {
+        const current = computeCurrentStock(article, movements)
+
+        if (values.quantite > current) {
+          toast.error(
+            `Stock insuffisant : ${article.nom} n'a que ${current} ${article.unite} disponible(s).`
+          )
+
+          throw new Error("Stock insuffisant")
+        }
+      }
+    }
+
+    await addMovement(values)
+    toast.success("Mouvement enregistré")
+  }
+
+  async function handleAddArticle(values: ArticleFormValues) {
+    await addArticle(values)
+    toast.success("Article créé")
+  }
+
   const articleColumns: DataTableColumn<(typeof articlesWithStatus)[number]>[] = [
-    { key: "nom", label: "Article", render: (row) => row.article.nom },
-    { key: "quantite", label: "Quantité actuelle", render: (row) => `${formatNumber(row.current)} ${row.article.unite}` },
-    { key: "seuil", label: "Seuil critique", render: (row) => `${formatNumber(row.article.seuilCritique)} ${row.article.unite}` },
-    { key: "statut", label: "Statut", render: (row) => <StockStatusBadge status={row.status} /> },
+    {
+      key: "nom",
+      label: "Article",
+      render: (row) => row.article.nom,
+    },
+    {
+      key: "quantite",
+      label: "Quantité actuelle",
+      render: (row) =>
+        `${formatNumber(row.current)} ${row.article.unite}`,
+    },
+    {
+      key: "seuil",
+      label: "Seuil critique",
+      render: (row) =>
+        `${formatNumber(row.article.seuilCritique)} ${row.article.unite}`,
+    },
+    {
+      key: "statut",
+      label: "Statut",
+      render: (row) => <StockStatusBadge status={row.status} />,
+    },
   ]
 
   const movementColumns: DataTableColumn<StockMovement>[] = [
-    { key: "date", label: "Date", render: (m) => formatDate(m.date) },
-    { key: "article", label: "Article", render: (m) => articles.find((a) => a.id === m.articleId)?.nom ?? "—" },
+    {
+      key: "date",
+      label: "Date",
+      render: (m) => formatDate(m.date),
+    },
+    {
+      key: "article",
+      label: "Article",
+      render: (m) =>
+        articles.find((a) => a.id === m.articleId)?.nom ?? "—",
+    },
     {
       key: "type",
       label: "Type",
       render: (m) => (
-        <span className={`inline-flex items-center gap-1.5 text-sm ${m.type === "entree" ? "text-success" : "text-destructive"}`}>
-          {m.type === "entree" ? <ArrowDownCircle className="h-4 w-4" /> : <ArrowUpCircle className="h-4 w-4" />}
+        <span
+          className={`inline-flex items-center gap-1.5 text-sm ${
+            m.type === "entree"
+              ? "text-success"
+              : "text-destructive"
+          }`}
+        >
+          {m.type === "entree" ? (
+            <ArrowDownCircle className="h-4 w-4" />
+          ) : (
+            <ArrowUpCircle className="h-4 w-4" />
+          )}
           {m.type === "entree" ? "Entrée" : "Sortie"}
         </span>
       ),
     },
-    { key: "quantite", label: "Quantité", render: (m) => formatNumber(m.quantite) },
-    { key: "origine", label: "Origine", render: (m) => <span className="text-muted-foreground">{m.origine}</span> },
+    {
+      key: "quantite",
+      label: "Quantité",
+      render: (m) => formatNumber(m.quantite),
+    },
+    {
+      key: "origine",
+      label: "Origine",
+      render: (m) => (
+        <span className="text-muted-foreground">{m.origine}</span>
+      ),
+    },
     {
       key: "actions",
       label: "",
       className: "text-right",
       render: (m) => (
-        <Button variant="ghost" size="icon" onClick={() => deleteMovement(m.id)} aria-label="Supprimer">
+        <Button
+          variant="ghost"
+          size="icon"
+          onClick={() => {
+            deleteMovement(m.id)
+            toast.success("Mouvement supprimé")
+          }}
+          aria-label="Supprimer"
+        >
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
       ),
@@ -108,20 +220,39 @@ export default function StocksPage() {
   return (
     <div>
       <h2 className="mb-1 text-2xl font-bold">Stocks</h2>
-      <p className="mb-6 text-sm text-muted-foreground">Entrées, sorties et inventaire</p>
+      <p className="mb-6 text-sm text-muted-foreground">
+        Entrées, sorties et inventaire
+      </p>
 
       <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3">
-        <StatCard icon={Package} label="Articles suivis" value={formatNumber(articles.length)} tone="primary" />
-        <StatCard icon={AlertTriangle} label="Alertes critiques" value={formatNumber(alertesActives)} tone={alertesActives > 0 ? "destructive" : "success"} />
+        <StatCard
+          icon={Package}
+          label="Articles suivis"
+          value={formatNumber(articles.length)}
+          tone="primary"
+        />
+
+        <StatCard
+          icon={AlertTriangle}
+          label="Alertes critiques"
+          value={formatNumber(alertesActives)}
+          tone={alertesActives > 0 ? "destructive" : "success"}
+        />
       </div>
 
       <div className="mb-3 flex items-center justify-between">
         <h3 className="text-lg font-semibold">Inventaire</h3>
-        <Button variant="outline" onClick={() => setArticleOpen(true)} className="gap-2">
+
+        <Button
+          variant="outline"
+          onClick={() => setArticleOpen(true)}
+          className="gap-2"
+        >
           <Plus className="h-4 w-4" />
           Nouvel article
         </Button>
       </div>
+
       <DataTable
         columns={articleColumns}
         rows={articlesWithStatus}
@@ -133,11 +264,16 @@ export default function StocksPage() {
 
       <div className="mb-3 mt-8 flex items-center justify-between">
         <h3 className="text-lg font-semibold">Mouvements</h3>
-        <Button onClick={() => setMovementOpen(true)} className="gap-2">
+
+        <Button
+          onClick={() => setMovementOpen(true)}
+          className="gap-2"
+        >
           <Plus className="h-4 w-4" />
           Enregistrer un mouvement
         </Button>
       </div>
+
       <DataTable
         columns={movementColumns}
         rows={movements}
@@ -154,8 +290,14 @@ export default function StocksPage() {
         title="Nouveau mouvement de stock"
         schema={movementSchema}
         fields={movementFields}
-        defaultValues={{ articleId: articles[0]?.id ?? "", type: "entree" as MovementType, quantite: 0, date: new Date().toISOString().slice(0, 10), origine: "" }}
-        onSubmit={addMovement}
+        defaultValues={{
+          articleId: articles[0]?.id ?? "",
+          type: "entree" as MovementType,
+          quantite: 0,
+          date: new Date().toISOString().slice(0, 10),
+          origine: "",
+        }}
+        onSubmit={handleAddMovement}
       />
 
       <QuickAddDialog
@@ -164,8 +306,13 @@ export default function StocksPage() {
         title="Nouvel article de stock"
         schema={articleSchema}
         fields={articleFields}
-        defaultValues={{ nom: "", unite: "", quantiteInitiale: 0, seuilCritique: 0 }}
-        onSubmit={async (values) => addArticle(values)}
+        defaultValues={{
+          nom: "",
+          unite: "",
+          quantiteInitiale: 0,
+          seuilCritique: 0,
+        }}
+        onSubmit={handleAddArticle}
       />
     </div>
   )
