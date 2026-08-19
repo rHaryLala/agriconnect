@@ -20,6 +20,8 @@ const FAKE_LATENCY_MS = 400
 interface CustomTypesState {
   types: CustomProductionType[]
   addType: (label: string) => void
+  updateType: (id: string, label: string) => void
+  removeType: (id: string) => void
   addEntry: (typeId: string, data: Omit<CustomTypeEntry, "id">) => Promise<void>
   deleteEntry: (typeId: string, entryId: string) => void
 }
@@ -36,14 +38,17 @@ export const useCustomTypesStore = create<CustomTypesState>()(
         set({ types: [...get().types, { id, label: trimmed, entries: [] }] })
       },
 
+      updateType: (id, label) =>
+        set({ types: get().types.map((t) => (t.id === id ? { ...t, label } : t)) }),
+
+      removeType: (id) => set({ types: get().types.filter((t) => t.id !== id) }),
+
       addEntry: (typeId, data) =>
         new Promise((resolve) => {
           setTimeout(() => {
             set({
               types: get().types.map((t) =>
-                t.id === typeId
-                  ? { ...t, entries: [{ ...data, id: `entry-${Date.now()}` }, ...t.entries] }
-                  : t
+                t.id === typeId ? { ...t, entries: [{ ...data, id: `entry-${Date.now()}` }, ...t.entries] } : t
               ),
             })
             resolve()

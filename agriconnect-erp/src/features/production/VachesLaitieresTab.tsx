@@ -4,7 +4,7 @@ import { Plus, Milk, Trash2, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
-import { AddTypeDialog } from "@/components/shared/AddTypeDialog"
+import { TypesManagerDialog } from "@/components/shared/TypesManagerDialog"
 import { VacheEntryDialog } from "./VacheEntryDialog"
 import { useProductionStore } from "./productionStore"
 import { useVachesStore } from "./vachesStore"
@@ -12,13 +12,28 @@ import { formatDate, formatNumber } from "@/lib/format"
 import type { VacheEntry } from "@/types/production"
 
 function totalJour(entry: VacheEntry): number {
-  return entry.traites.reduce((sum, t) => sum + t.matin + t.soir, 0)
+  return entry.traites.reduce(
+    (sum, t) => sum + t.matin + t.soir,
+    0
+  )
 }
 
 export function VachesLaitieresTab() {
-  const { vaches: entries, isLoading, fetchAll, addVache, deleteVache } = useProductionStore()
-  const vachesProfiles = useVachesStore((s) => s.vaches)
-  const addVacheProfile = useVachesStore((s) => s.addVache)
+  const {
+    vaches: entries,
+    isLoading,
+    fetchAll,
+    addVache,
+    deleteVache,
+  } = useProductionStore()
+
+  const {
+    vaches: vachesProfiles,
+    addVache: addVacheProfile,
+    updateVache,
+    removeVache,
+  } = useVachesStore()
+
   const [entryOpen, setEntryOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
 
@@ -26,7 +41,11 @@ export function VachesLaitieresTab() {
     fetchAll()
   }, [fetchAll])
 
-  const litresCumules = entries.reduce((sum, e) => sum + totalJour(e), 0)
+  const litresCumules = entries.reduce(
+    (sum, e) => sum + totalJour(e),
+    0
+  )
+
   const latest = entries[0]
 
   async function handleAdd(values: Omit<VacheEntry, "id">) {
@@ -35,29 +54,71 @@ export function VachesLaitieresTab() {
   }
 
   const columns: DataTableColumn<VacheEntry>[] = [
-    { key: "date", label: "Date", render: (e) => formatDate(e.date) },
+    {
+      key: "date",
+      label: "Date",
+      render: (e) => formatDate(e.date),
+    },
+
     ...vachesProfiles.map(
       (v): DataTableColumn<VacheEntry> => ({
         key: v.id,
         label: v.nom,
         render: (e) => {
-          const t = e.traites.find((tr) => tr.vacheId === v.id)
-          return t ? `${formatNumber(t.matin)} / ${formatNumber(t.soir)}` : "— / —"
+          const t = e.traites.find(
+            (tr) => tr.vacheId === v.id
+          )
+
+          return t
+            ? `${formatNumber(t.matin)} / ${formatNumber(t.soir)}`
+            : "— / —"
         },
       })
     ),
-    { key: "total", label: "Total jour (L)", render: (e) => formatNumber(totalJour(e)) },
-    { key: "alimentation", label: "Alimentation", render: (e) => `${formatNumber(e.alimentationKg)} kg` },
-    { key: "sanitaire", label: "Observation", render: (e) => <span className="text-muted-foreground">{e.suiviSanitaire}</span> },
+
+    {
+      key: "total",
+      label: "Total jour (L)",
+      render: (e) => formatNumber(totalJour(e)),
+    },
+
+    {
+      key: "alimentation",
+      label: "Alimentation",
+      render: (e) =>
+        `${formatNumber(e.alimentationKg)} kg`,
+    },
+
+    {
+      key: "sanitaire",
+      label: "Observation",
+      render: (e) => (
+        <span className="text-muted-foreground">
+          {e.suiviSanitaire}
+        </span>
+      ),
+    },
+
     {
       key: "actions",
       label: "",
-      className: "text-right",
+      className: "sticky right-0 z-10 bg-background text-right",
+      sticky: true,
       render: (e) => (
         <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => toast.info("Modification disponible à la prochaine étape")} aria-label="Modifier">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              toast.info(
+                "Modification disponible à la prochaine étape"
+              )
+            }
+            aria-label="Modifier"
+          >
             <Pencil className="h-4 w-4" />
           </Button>
+
           <Button
             variant="ghost"
             size="icon"
@@ -77,17 +138,46 @@ export function VachesLaitieresTab() {
   return (
     <div>
       <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3">
-        <StatCard icon={Milk} label="Vaches suivies" value={formatNumber(vachesProfiles.length)} tone="primary" />
-        <StatCard icon={Milk} label="Dernier relevé (jour)" value={latest ? `${formatNumber(totalJour(latest))} L` : "—"} tone="success" />
-        <StatCard icon={Milk} label="Lait cumulé" value={`${formatNumber(litresCumules)} L`} tone="info" />
+        <StatCard
+          icon={Milk}
+          label="Vaches suivies"
+          value={formatNumber(vachesProfiles.length)}
+          tone="primary"
+        />
+
+        <StatCard
+          icon={Milk}
+          label="Dernier relevé (jour)"
+          value={
+            latest
+              ? `${formatNumber(totalJour(latest))} L`
+              : "—"
+          }
+          tone="success"
+        />
+
+        <StatCard
+          icon={Milk}
+          label="Lait cumulé"
+          value={`${formatNumber(litresCumules)} L`}
+          tone="info"
+        />
       </div>
 
       <div className="mb-3 flex justify-end gap-2">
-        <Button variant="outline" onClick={() => setProfileOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Ajouter une vache
+        <Button
+          variant="outline"
+          onClick={() => setProfileOpen(true)}
+          className="gap-2"
+        >
+          <Pencil className="h-4 w-4" />
+          Gérer les vaches
         </Button>
-        <Button onClick={() => setEntryOpen(true)} className="gap-2">
+
+        <Button
+          onClick={() => setEntryOpen(true)}
+          className="gap-2"
+        >
           <Plus className="h-4 w-4" />
           Saisir un relevé
         </Button>
@@ -103,15 +193,32 @@ export function VachesLaitieresTab() {
         emptyDescription="Saisis le premier relevé avec le bouton ci-dessus."
       />
 
-      <VacheEntryDialog open={entryOpen} onOpenChange={setEntryOpen} vaches={vachesProfiles} onSubmit={handleAdd} />
+      <VacheEntryDialog
+        open={entryOpen}
+        onOpenChange={setEntryOpen}
+        vaches={vachesProfiles}
+        onSubmit={handleAdd}
+      />
 
-      <AddTypeDialog
+      <TypesManagerDialog
         open={profileOpen}
         onOpenChange={setProfileOpen}
-        title="Ajouter une vache"
-        fieldLabel="Nom de la vache"
-        placeholder="Ex: Vero"
-        onSubmit={addVacheProfile}
+        title="Gérer les vaches"
+        fields={[
+          {
+            name: "nom",
+            label: "Nom de la vache",
+            type: "text",
+          },
+        ]}
+        items={vachesProfiles}
+        onAdd={(v) =>
+          addVacheProfile(v.nom as string)
+        }
+        onUpdate={(id, v) =>
+          updateVache(id, v.nom as string)
+        }
+        onDelete={removeVache}
       />
     </div>
   )

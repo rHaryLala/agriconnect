@@ -1,7 +1,8 @@
 import { useState } from "react"
-import { Plus } from "lucide-react"
+import { Plus, Settings2 } from "lucide-react"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { AddTypeDialog } from "@/components/shared/AddTypeDialog"
+import { TypesManagerDialog } from "@/components/shared/TypesManagerDialog"
 import { PoulesPondeusesTab } from "./PoulesPondeusesTab"
 import { VachesLaitieresTab } from "./VachesLaitieresTab"
 import { PoulesKuroilerTab } from "./PoulesKuroilerTab"
@@ -19,8 +20,11 @@ const FIXED_TABS = [
 export default function ProductionPage() {
   const customTypes = useCustomTypesStore((s) => s.types)
   const addCustomType = useCustomTypesStore((s) => s.addType)
+  const updateCustomType = useCustomTypesStore((s) => s.updateType)
+  const removeCustomType = useCustomTypesStore((s) => s.removeType)
   const [activeTab, setActiveTab] = useState("poules")
   const [addTypeOpen, setAddTypeOpen] = useState(false)
+  const [manageOpen, setManageOpen] = useState(false)
 
   const allTabs = [...FIXED_TABS, ...customTypes.map((t) => ({ id: t.id, label: t.label }))]
   const activeCustomType = customTypes.find((t) => t.id === activeTab)
@@ -35,14 +39,26 @@ export default function ProductionPage() {
         activeId={activeTab}
         onChange={setActiveTab}
         trailing={
-          <button
-            type="button"
-            onClick={() => setAddTypeOpen(true)}
-            className="ml-1 flex items-center gap-1 rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:text-primary"
-          >
-            <Plus className="h-4 w-4" />
-            Nouveau type
-          </button>
+          <div className="ml-1 flex items-center gap-1">
+            <button
+              type="button"
+              onClick={() => setAddTypeOpen(true)}
+              className="flex items-center gap-1 rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+            >
+              <Plus className="h-4 w-4" />
+              Nouveau type
+            </button>
+            {customTypes.length > 0 && (
+              <button
+                type="button"
+                onClick={() => setManageOpen(true)}
+                className="flex items-center gap-1 rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:text-primary"
+                aria-label="Gérer les types personnalisés"
+              >
+                <Settings2 className="h-4 w-4" />
+              </button>
+            )}
+          </div>
         }
       />
 
@@ -65,6 +81,20 @@ export default function ProductionPage() {
           const updated = useCustomTypesStore.getState().types
           const created = updated[updated.length - 1]
           if (created) setActiveTab(created.id)
+        }}
+      />
+
+      <TypesManagerDialog
+        open={manageOpen}
+        onOpenChange={setManageOpen}
+        title="Gérer les types personnalisés"
+        fields={[{ name: "label", label: "Nom du type", type: "text" }]}
+        items={customTypes}
+        onAdd={() => {}} 
+        onUpdate={(id, v) => updateCustomType(id, v.label as string)}
+        onDelete={(id) => {
+          removeCustomType(id)
+          if (activeTab === id) setActiveTab("poules")
         }}
       />
     </div>

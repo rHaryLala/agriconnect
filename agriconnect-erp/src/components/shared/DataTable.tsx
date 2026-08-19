@@ -8,6 +8,7 @@ export interface DataTableColumn<T> {
   label: string
   render: (row: T) => ReactNode
   className?: string
+  sticky?: boolean
 }
 
 interface DataTableProps<T> {
@@ -31,43 +32,54 @@ export function DataTable<T>({
 }: DataTableProps<T>) {
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-surface">
-      <table className="w-full text-sm">
-        <thead>
-          <tr className="border-b border-border bg-background">
-            {columns.map((col) => (
-              <th
-                key={col.key}
-                className="px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground"
-              >
-                {col.label}
-              </th>
-            ))}
-          </tr>
-        </thead>
-        <tbody>
-          {isLoading &&
-            Array.from({ length: 4 }).map((_, i) => (
-              <tr key={i} className="border-b border-border last:border-0">
-                {columns.map((col) => (
-                  <td key={col.key} className="px-4 py-3">
-                    <Skeleton className="h-4 w-24" />
-                  </td>
-                ))}
-              </tr>
-            ))}
+      <div className="overflow-x-auto">
+        <table className="w-full text-sm">
+          <thead>
+            <tr className="border-b border-border bg-background">
+              {columns.map((col) => (
+                <th
+                  key={col.key}
+                  className={`whitespace-nowrap px-4 py-3 text-left text-xs font-medium uppercase tracking-wide text-muted-foreground ${
+                    col.sticky ? "sticky right-0 z-10 bg-background shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.15)]" : ""
+                  }`}
+                >
+                  {col.label}
+                </th>
+              ))}
+            </tr>
+          </thead>
+          <tbody>
+            {isLoading &&
+              Array.from({ length: 4 }).map((_, i) => (
+                <tr key={i} className="border-b border-border last:border-0">
+                  {columns.map((col) => (
+                    <td key={col.key} className="px-4 py-3">
+                      <Skeleton className="h-4 w-24" />
+                    </td>
+                  ))}
+                </tr>
+              ))}
 
-          {!isLoading &&
-            rows.map((row) => (
-              <tr key={rowKey(row)} className="border-b border-border transition-colors last:border-0 hover:bg-background">
-                {columns.map((col) => (
-                  <td key={col.key} className={`px-4 py-3 ${col.className ?? ""}`}>
-                    {col.render(row)}
-                  </td>
-                ))}
-              </tr>
-            ))}
-        </tbody>
-      </table>
+            {!isLoading &&
+              rows.map((row) => (
+                <tr key={rowKey(row)} className="group border-b border-border transition-colors last:border-0 hover:bg-background">
+                  {columns.map((col) => (
+                    <td
+                      key={col.key}
+                      className={`whitespace-nowrap px-4 py-3 ${col.className ?? ""} ${
+                        col.sticky
+                          ? "sticky right-0 z-10 bg-surface shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.15)] group-hover:bg-background"
+                          : ""
+                      }`}
+                    >
+                      {col.render(row)}
+                    </td>
+                  ))}
+                </tr>
+              ))}
+          </tbody>
+        </table>
+      </div>
 
       {!isLoading && rows.length === 0 && (
         <EmptyState icon={emptyIcon} title={emptyTitle} description={emptyDescription} />

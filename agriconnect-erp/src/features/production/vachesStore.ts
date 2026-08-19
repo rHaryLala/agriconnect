@@ -9,6 +9,7 @@ export interface VacheProfile {
 interface VachesState {
   vaches: VacheProfile[]
   addVache: (nom: string) => void
+  updateVache: (id: string, nom: string) => void
   removeVache: (id: string) => void
 }
 
@@ -27,6 +28,7 @@ export const useVachesStore = create<VachesState>()(
         if (!trimmed) return
         set({ vaches: [...get().vaches, { id: `vache-${Date.now()}`, nom: trimmed }] })
       },
+      updateVache: (id, nom) => set({ vaches: get().vaches.map((v) => (v.id === id ? { ...v, nom } : v)) }),
       removeVache: (id) => set({ vaches: get().vaches.filter((v) => v.id !== id) }),
     }),
     { name: "agriconnect-vaches-profiles" }

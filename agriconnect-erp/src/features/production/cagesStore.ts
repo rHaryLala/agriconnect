@@ -10,6 +10,7 @@ export interface CageProfile {
 interface CagesState {
   cages: CageProfile[]
   addCage: (nom: string, capaciteMax: number) => void
+  updateCage: (id: string, data: { nom: string; capaciteMax: number }) => void
   removeCage: (id: string) => void
 }
 
@@ -27,6 +28,8 @@ export const useCagesStore = create<CagesState>()(
         if (!trimmed) return
         set({ cages: [...get().cages, { id: `cage-${Date.now()}`, nom: trimmed, capaciteMax }] })
       },
+      updateCage: (id, data) =>
+        set({ cages: get().cages.map((c) => (c.id === id ? { ...c, nom: data.nom, capaciteMax: data.capaciteMax } : c)) }),
       removeCage: (id) => set({ cages: get().cages.filter((c) => c.id !== id) }),
     }),
     { name: "agriconnect-cages-profiles" }

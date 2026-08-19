@@ -4,7 +4,7 @@ import { Plus, Egg, Trash2, Pencil } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
-import { AddCageDialog } from "@/components/shared/AddCageDialog"
+import { TypesManagerDialog } from "@/components/shared/TypesManagerDialog"
 import { PouleEntryDialog } from "./PouleEntryDialog"
 import { useProductionStore } from "./productionStore"
 import { useCagesStore } from "./cagesStore"
@@ -16,9 +16,21 @@ function totalPoules(entry: PouleEntry): number {
 }
 
 export function PoulesPondeusesTab() {
-  const { poules: entries, isLoading, fetchAll, addPoule, deletePoule } = useProductionStore()
-  const cagesProfiles = useCagesStore((s) => s.cages)
-  const addCageProfile = useCagesStore((s) => s.addCage)
+  const {
+    poules: entries,
+    isLoading,
+    fetchAll,
+    addPoule,
+    deletePoule,
+  } = useProductionStore()
+
+  const {
+    cages: cagesProfiles,
+    addCage,
+    updateCage,
+    removeCage,
+  } = useCagesStore()
+
   const [entryOpen, setEntryOpen] = useState(false)
   const [cageOpen, setCageOpen] = useState(false)
 
@@ -27,9 +39,20 @@ export function PoulesPondeusesTab() {
   }, [fetchAll])
 
   const latest = entries[0]
-  const totalPoulesActuel = latest ? totalPoules(latest) : 0
-  const tauxPonte = latest && totalPoulesActuel > 0 ? (latest.oeufsProduits / totalPoulesActuel) * 100 : 0
-  const mortaliteCumulee = entries.reduce((sum, e) => sum + e.mortalite, 0)
+
+  const totalPoulesActuel = latest
+    ? totalPoules(latest)
+    : 0
+
+  const tauxPonte =
+    latest && totalPoulesActuel > 0
+      ? (latest.oeufsProduits / totalPoulesActuel) * 100
+      : 0
+
+  const mortaliteCumulee = entries.reduce(
+    (sum, e) => sum + e.mortalite,
+    0
+  )
 
   async function handleAdd(values: Omit<PouleEntry, "id">) {
     await addPoule(values)
@@ -37,29 +60,83 @@ export function PoulesPondeusesTab() {
   }
 
   const columns: DataTableColumn<PouleEntry>[] = [
-    { key: "date", label: "Date", render: (e) => formatDate(e.date) },
+    {
+      key: "date",
+      label: "Date",
+      render: (e) => formatDate(e.date),
+    },
+
     ...cagesProfiles.map(
       (c): DataTableColumn<PouleEntry> => ({
         key: c.id,
         label: c.nom,
-        render: (e) => formatNumber(e.cages.find((cg) => cg.cageId === c.id)?.nbPoules ?? 0),
+        render: (e) =>
+          formatNumber(
+            e.cages.find((cg) => cg.cageId === c.id)?.nbPoules ?? 0
+          ),
       })
     ),
-    { key: "total", label: "Total poules", render: (e) => formatNumber(totalPoules(e)) },
-    { key: "oeufs", label: "Œufs", render: (e) => formatNumber(e.oeufsProduits) },
-    { key: "casses", label: "Œufs cassés", render: (e) => formatNumber(e.oeufsCasses) },
-    { key: "aliments", label: "Aliments", render: (e) => `${formatNumber(e.alimentsKg)} kg` },
-    { key: "mortalite", label: "Mortalité", render: (e) => formatNumber(e.mortalite) },
-    { key: "observation", label: "Observation", render: (e) => <span className="text-muted-foreground">{e.observation}</span> },
+
+    {
+      key: "total",
+      label: "Total poules",
+      render: (e) => formatNumber(totalPoules(e)),
+    },
+
+    {
+      key: "oeufs",
+      label: "Œufs",
+      render: (e) => formatNumber(e.oeufsProduits),
+    },
+
+    {
+      key: "casses",
+      label: "Œufs cassés",
+      render: (e) => formatNumber(e.oeufsCasses),
+    },
+
+    {
+      key: "aliments",
+      label: "Aliments",
+      render: (e) => `${formatNumber(e.alimentsKg)} kg`,
+    },
+
+    {
+      key: "mortalite",
+      label: "Mortalité",
+      render: (e) => formatNumber(e.mortalite),
+    },
+
+    {
+      key: "observation",
+      label: "Observation",
+      render: (e) => (
+        <span className="text-muted-foreground">
+          {e.observation}
+        </span>
+      ),
+    },
+
     {
       key: "actions",
       label: "",
-      className: "text-right",
+      className: "sticky right-0 z-10 bg-background text-right",
+      sticky: true,
       render: (e) => (
         <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => toast.info("Modification disponible à la prochaine étape")} aria-label="Modifier">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              toast.info(
+                "Modification disponible à la prochaine étape"
+              )
+            }
+            aria-label="Modifier"
+          >
             <Pencil className="h-4 w-4" />
           </Button>
+
           <Button
             variant="ghost"
             size="icon"
@@ -79,17 +156,42 @@ export function PoulesPondeusesTab() {
   return (
     <div>
       <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3">
-        <StatCard icon={Egg} label="Poules (dernier relevé)" value={formatNumber(totalPoulesActuel)} tone="primary" />
-        <StatCard icon={Egg} label="Taux de ponte" value={`${tauxPonte.toFixed(1)} %`} tone="success" />
-        <StatCard icon={Egg} label="Mortalité cumulée" value={formatNumber(mortaliteCumulee)} tone="warning" />
+        <StatCard
+          icon={Egg}
+          label="Poules (dernier relevé)"
+          value={formatNumber(totalPoulesActuel)}
+          tone="primary"
+        />
+
+        <StatCard
+          icon={Egg}
+          label="Taux de ponte"
+          value={`${tauxPonte.toFixed(1)} %`}
+          tone="success"
+        />
+
+        <StatCard
+          icon={Egg}
+          label="Mortalité cumulée"
+          value={formatNumber(mortaliteCumulee)}
+          tone="warning"
+        />
       </div>
 
       <div className="mb-3 flex justify-end gap-2">
-        <Button variant="outline" onClick={() => setCageOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          Ajouter une cage
+        <Button
+          variant="outline"
+          onClick={() => setCageOpen(true)}
+          className="gap-2"
+        >
+          <Pencil className="h-4 w-4" />
+          Gérer les cages
         </Button>
-        <Button onClick={() => setEntryOpen(true)} className="gap-2">
+
+        <Button
+          onClick={() => setEntryOpen(true)}
+          className="gap-2"
+        >
           <Plus className="h-4 w-4" />
           Saisir un relevé
         </Button>
@@ -105,9 +207,44 @@ export function PoulesPondeusesTab() {
         emptyDescription="Saisis le premier relevé avec le bouton ci-dessus."
       />
 
-      <PouleEntryDialog open={entryOpen} onOpenChange={setEntryOpen} cages={cagesProfiles} onSubmit={handleAdd} />
+      <PouleEntryDialog
+        open={entryOpen}
+        onOpenChange={setEntryOpen}
+        cages={cagesProfiles}
+        onSubmit={handleAdd}
+      />
 
-      <AddCageDialog open={cageOpen} onOpenChange={setCageOpen} onSubmit={addCageProfile} />
+      <TypesManagerDialog
+        open={cageOpen}
+        onOpenChange={setCageOpen}
+        title="Gérer les cages"
+        fields={[
+          {
+            name: "nom",
+            label: "Nom (ex: C5)",
+            type: "text",
+          },
+          {
+            name: "capaciteMax",
+            label: "Capacité max",
+            type: "number",
+          },
+        ]}
+        items={cagesProfiles}
+        onAdd={(v) =>
+          addCage(
+            v.nom as string,
+            v.capaciteMax as number
+          )
+        }
+        onUpdate={(id, v) =>
+          updateCage(id, {
+            nom: v.nom as string,
+            capaciteMax: v.capaciteMax as number,
+          })
+        }
+        onDelete={removeCage}
+      />
     </div>
   )
 }
