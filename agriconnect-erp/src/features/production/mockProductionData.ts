@@ -6,8 +6,19 @@ export const SEED_POULES: PouleEntry[] = [
 ]
 
 export const SEED_VACHES: VacheEntry[] = [
-  { id: "v-1", date: "2026-08-15", nbVaches: 18, litresJour: 210, suiviSanitaire: "RAS", alimentationKg: 90 },
-  { id: "v-2", date: "2026-08-16", nbVaches: 18, litresJour: 205, suiviSanitaire: "1 vache sous surveillance (boiterie légère)", alimentationKg: 90 },
+  {
+    id: "v-1",
+    date: "2026-08-15",
+    traites: [
+      { vacheId: "vache-1", matin: 12, soir: 10 },
+      { vacheId: "vache-2", matin: 14, soir: 11 },
+      { vacheId: "vache-3", matin: 9, soir: 8 },
+      { vacheId: "vache-4", matin: 11, soir: 9 },
+      { vacheId: "vache-5", matin: 13, soir: 10 },
+    ],
+    alimentationKg: 90,
+    suiviSanitaire: "RAS",
+  },
 ]
 
 export const SEED_KUROILER: KuroilerEntry[] = [

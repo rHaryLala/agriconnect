@@ -6,18 +6,19 @@ export interface PouleEntry {
   alimentsKg: number
   mortalite: number
 }
-
+export interface VacheTraite {
+  vacheId: string
+  matin: number
+  soir: number
+}
 export interface VacheEntry {
   id: string
   date: string
-  nbVaches: number
-  litresJour: number
-  suiviSanitaire: string
+  traites: VacheTraite[]
   alimentationKg: number
+  suiviSanitaire: string
 }
-
 export type CycleEtape = "demarrage" | "croissance" | "fin_cycle"
-
 export interface KuroilerEntry {
   id: string
   date: string
@@ -26,7 +27,6 @@ export interface KuroilerEntry {
   oeufsProduits: number
   etapeCycle: CycleEtape
 }
-
 export interface CultureEntry {
   id: string
   date: string
