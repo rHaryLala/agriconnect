@@ -7,6 +7,21 @@ export function computeCurrentStock(article: StockArticle, movements: StockMovem
   return article.quantiteInitiale + entrees - sorties
 }
 
+export function computeRunningBalances(article: StockArticle, movements: StockMovement[]): Record<string, number> {
+  const forArticle = movements
+    .filter((m) => m.articleId === article.id)
+    .slice()
+    .sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id))
+
+  let balance = article.quantiteInitiale
+  const result: Record<string, number> = {}
+  for (const m of forArticle) {
+    balance += m.type === "entree" ? m.quantite : -m.quantite
+    result[m.id] = balance
+  }
+  return result
+}
+
 export type StockStatus = "ok" | "bas" | "critique"
 
 export function getStockStatus(current: number, seuilCritique: number): StockStatus {

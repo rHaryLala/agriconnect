@@ -14,5 +14,8 @@ export interface StockMovement {
   type: MovementType
   quantite: number
   date: string
-  origine: string
+  destinataire?: string
+  numeroBon?: string
+  montant?: number
+  observation: string
 }

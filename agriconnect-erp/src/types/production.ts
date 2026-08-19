@@ -44,7 +44,7 @@ export interface CultureEntry {
   date: string
   culture: string
   surfaceHa: number
-  semisQty: number
   recolteQty: number
+  coutIntrants: number
   intrants: string
 }

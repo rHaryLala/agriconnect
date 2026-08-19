@@ -39,6 +39,6 @@ export const SEED_KUROILER: KuroilerEntry[] = [
 ]
 
 export const SEED_CULTURES: CultureEntry[] = [
-  { id: "c-1", date: "2026-06-01", culture: "Maïs", surfaceHa: 4, semisQty: 80, recolteQty: 0, intrants: "Engrais NPK 50kg" },
-  { id: "c-2", date: "2026-03-01", culture: "Riz", surfaceHa: 2.5, semisQty: 50, recolteQty: 6250, intrants: "Semences certifiées" },
+  { id: "c-1", date: "2026-06-01", culture: "Maïs", surfaceHa: 4, recolteQty: 0, coutIntrants: 180_000, intrants: "Engrais NPK 50kg" },
+  { id: "c-2", date: "2026-03-01", culture: "Riz", surfaceHa: 2.5, recolteQty: 6250, coutIntrants: 220_000, intrants: "Semences certifiées" },
 ]

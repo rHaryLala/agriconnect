@@ -1,42 +1,55 @@
 import { useEffect, useMemo, useState } from "react"
-import { z } from "zod"
-import { Plus, Package, AlertTriangle, ArrowDownCircle, ArrowUpCircle, Trash2 } from "lucide-react"
 import { toast } from "sonner"
+import {
+  Plus,
+  Package,
+  AlertTriangle,
+  ArrowDownCircle,
+  ArrowUpCircle,
+  Trash2,
+  Pencil,
+  X,
+} from "lucide-react"
+import { z } from "zod"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
-import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
-import { QuickAddDialog, type FieldConfig } from "@/components/shared/QuickAddDialog"
+import {
+  DataTable,
+  type DataTableColumn,
+} from "@/components/shared/DataTable"
+import {
+  QuickAddDialog,
+  type FieldConfig,
+} from "@/components/shared/QuickAddDialog"
+import { StockMovementDialog } from "./StockMovementDialog"
 import { StockStatusBadge } from "@/components/shared/StockStatusBadge"
 import { useStockStore } from "./stockStore"
-import { computeCurrentStock, getStockStatus } from "@/lib/stockCalc"
-import { formatDate, formatNumber } from "@/lib/format"
-import type { StockArticle, StockMovement, MovementType } from "@/types/stock"
-
-const movementSchema = z.object({
-  articleId: z.string().min(1, "Sélectionne un article"),
-  type: z.enum(["entree", "sortie"], { errorMap: () => ({ message: "Sélectionne un type" }) }),
-  quantite: z.number({ invalid_type_error: "Nombre requis" }).positive("Doit être positif"),
-  date: z.string().min(1, "Date requise"),
-  origine: z.string().min(1, "Origine requise (ex: Achat, Vente, Production...)"),
-})
-
-type MovementFormValues = z.infer<typeof movementSchema>
+import {
+  computeCurrentStock,
+  computeRunningBalances,
+  getStockStatus,
+} from "@/lib/stockCalc"
+import {
+  formatDate,
+  formatNumber,
+  formatCurrency,
+} from "@/lib/format"
+import type { StockMovement } from "@/types/stock"
 
 const articleSchema = z.object({
   nom: z.string().min(2, "Minimum 2 caractères"),
-  unite: z.string().min(1, "Unité requise (ex: kg, litres, unités)"),
-  quantiteInitiale: z.number({ invalid_type_error: "Nombre requis" }).min(0),
-  seuilCritique: z.number({ invalid_type_error: "Nombre requis" }).min(0),
+  unite: z
+    .string()
+    .min(1, "Unité requise (ex: kg, litres, unités)"),
+  quantiteInitiale: z
+    .number({ invalid_type_error: "Nombre requis" })
+    .min(0),
+  seuilCritique: z
+    .number({ invalid_type_error: "Nombre requis" })
+    .min(0),
 })
 
 type ArticleFormValues = z.infer<typeof articleSchema>
-
-const articleFields: FieldConfig<ArticleFormValues>[] = [
-  { type: "text", name: "nom", label: "Nom de l'article", placeholder: "Ex: Farine de maïs" },
-  { type: "text", name: "unite", label: "Unité", placeholder: "kg, litres, unités..." },
-  { type: "number", name: "quantiteInitiale", label: "Quantité de départ" },
-  { type: "number", name: "seuilCritique", label: "Seuil critique" },
-]
 
 export default function StocksPage() {
   const {
@@ -51,6 +64,9 @@ export default function StocksPage() {
 
   const [movementOpen, setMovementOpen] = useState(false)
   const [articleOpen, setArticleOpen] = useState(false)
+  const [dateDebut, setDateDebut] = useState("")
+  const [dateFin, setDateFin] = useState("")
+  const [criticalOnly, setCriticalOnly] = useState(false)
 
   useEffect(() => {
     fetchAll()
@@ -60,61 +76,88 @@ export default function StocksPage() {
     () =>
       articles.map((a) => {
         const current = computeCurrentStock(a, movements)
+
         return {
           article: a,
           current,
-          status: getStockStatus(current, a.seuilCritique),
+          status: getStockStatus(
+            current,
+            a.seuilCritique
+          ),
         }
       }),
     [articles, movements]
   )
 
+  const runningBalances = useMemo(() => {
+    const merged: Record<string, number> = {}
+
+    articles.forEach((a) =>
+      Object.assign(
+        merged,
+        computeRunningBalances(a, movements)
+      )
+    )
+
+    return merged
+  }, [articles, movements])
+
   const alertesActives = articlesWithStatus.filter(
     (a) => a.status === "critique"
   ).length
 
-  const movementFields: FieldConfig<MovementFormValues>[] = [
-    {
-      type: "select",
-      name: "articleId",
-      label: "Article",
-      options: articles.map((a) => ({
-        value: a.id,
-        label: `${a.nom} (${a.unite})`,
-      })),
-    },
-    {
-      type: "select",
-      name: "type",
-      label: "Type de mouvement",
-      options: [
-        { value: "entree", label: "Entrée" },
-        { value: "sortie", label: "Sortie" },
-      ],
-    },
-    { type: "number", name: "quantite", label: "Quantité" },
-    { type: "date", name: "date", label: "Date" },
-    {
-      type: "text",
-      name: "origine",
-      label: "Origine",
-      placeholder: "Achat fournisseur, Vente client, Production...",
-    },
-  ]
+  const filteredMovements = useMemo(
+    () =>
+      movements.filter((m) => {
+        if (dateDebut && m.date < dateDebut) {
+          return false
+        }
 
-  async function handleAddMovement(values: MovementFormValues) {
+        if (dateFin && m.date > dateFin) {
+          return false
+        }
+
+        if (criticalOnly) {
+          const art = articlesWithStatus.find(
+            (a) => a.article.id === m.articleId
+          )
+
+          if (!art || art.status !== "critique") {
+            return false
+          }
+        }
+
+        return true
+      }),
+    [
+      movements,
+      dateDebut,
+      dateFin,
+      criticalOnly,
+      articlesWithStatus,
+    ]
+  )
+
+  async function handleAddMovement(
+    values: Omit<StockMovement, "id">
+  ) {
     if (values.type === "sortie") {
-      const article = articles.find((a) => a.id === values.articleId)
+      const article = articles.find(
+        (a) => a.id === values.articleId
+      )
 
       if (article) {
-        const current = computeCurrentStock(article, movements)
+        const current = computeCurrentStock(
+          article,
+          movements
+        )
 
         if (values.quantite > current) {
           toast.error(
             `Stock insuffisant : ${article.nom} n'a que ${current} ${article.unite} disponible(s).`
           )
 
-          throw new Error("Stock insuffisant")
+          return
         }
       }
     }
@@ -123,12 +166,34 @@ export default function StocksPage() {
     toast.success("Mouvement enregistré")
   }
 
-  async function handleAddArticle(values: ArticleFormValues) {
-    await addArticle(values)
-    toast.success("Article créé")
-  }
+  const articleFields: FieldConfig<ArticleFormValues>[] = [
+    {
+      type: "text",
+      name: "nom",
+      label: "Nom de l'article",
+      placeholder: "Ex: Farine de maïs",
+    },
+    {
+      type: "text",
+      name: "unite",
+      label: "Unité",
+      placeholder: "kg, litres, unités...",
+    },
+    {
+      type: "number",
+      name: "quantiteInitiale",
+      label: "Quantité de départ",
+    },
+    {
+      type: "number",
+      name: "seuilCritique",
+      label: "Seuil critique",
+    },
+  ]
 
-  const articleColumns: DataTableColumn<(typeof articlesWithStatus)[number]>[] = [
+  const articleColumns: DataTableColumn<
+    (typeof articlesWithStatus)[number]
+  >[] = [
     {
       key: "nom",
       label: "Article",
@@ -149,7 +214,9 @@ export default function StocksPage() {
     {
       key: "statut",
       label: "Statut",
-      render: (row) => <StockStatusBadge status={row.status} />,
+      render: (row) => (
+        <StockStatusBadge status={row.status} />
+      ),
     },
   ]
 
@@ -163,7 +230,9 @@ export default function StocksPage() {
       key: "article",
       label: "Article",
       render: (m) =>
-        articles.find((a) => a.id === m.articleId)?.nom ?? "—",
+        articles.find(
+          (a) => a.id === m.articleId
+        )?.nom ?? "—",
     },
     {
       key: "type",
@@ -181,7 +250,10 @@ export default function StocksPage() {
           ) : (
             <ArrowUpCircle className="h-4 w-4" />
           )}
-          {m.type === "entree" ? "Entrée" : "Sortie"}
+
+          {m.type === "entree"
+            ? "Entrée"
+            : "Sortie"}
         </span>
       ),
     },
@@ -191,35 +263,99 @@ export default function StocksPage() {
       render: (m) => formatNumber(m.quantite),
     },
     {
-      key: "origine",
-      label: "Origine",
-      render: (m) => (
-        <span className="text-muted-foreground">{m.origine}</span>
-      ),
+      key: "destinataire",
+      label: "Destinataire",
+      render: (m) =>
+        m.destinataire ? (
+          m.destinataire
+        ) : (
+          <span className="text-muted-foreground">
+            —
+          </span>
+        ),
+    },
+    {
+      key: "bon",
+      label: "N° Bon",
+      render: (m) =>
+        m.numeroBon ? (
+          m.numeroBon
+        ) : (
+          <span className="text-muted-foreground">
+            —
+          </span>
+        ),
+    },
+    {
+      key: "montant",
+      label: "Montant",
+      render: (m) =>
+        m.montant !== undefined ? (
+          formatCurrency(m.montant)
+        ) : (
+          <span className="text-muted-foreground">
+            —
+          </span>
+        ),
+    },
+    {
+      key: "reste",
+      label: "Reste",
+      render: (m) => {
+        const article = articles.find(
+          (a) => a.id === m.articleId
+        )
+
+        const balance = runningBalances[m.id]
+
+        return balance !== undefined && article
+          ? `${formatNumber(balance)} ${article.unite}`
+          : "—"
+      },
     },
     {
       key: "actions",
       label: "",
-      className: "text-right",
+      className:
+        "sticky right-0 z-10 bg-background text-right",
+      sticky: true,
       render: (m) => (
-        <Button
-          variant="ghost"
-          size="icon"
-          onClick={() => {
-            deleteMovement(m.id)
-            toast.success("Mouvement supprimé")
-          }}
-          aria-label="Supprimer"
-        >
-          <Trash2 className="h-4 w-4 text-destructive" />
-        </Button>
+        <div className="flex justify-end gap-1">
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() =>
+              toast.info(
+                "Modification disponible à la prochaine étape"
+              )
+            }
+            aria-label="Modifier"
+          >
+            <Pencil className="h-4 w-4" />
+          </Button>
+
+          <Button
+            variant="ghost"
+            size="icon"
+            onClick={() => {
+              deleteMovement(m.id)
+              toast.success("Mouvement supprimé")
+            }}
+            aria-label="Supprimer"
+          >
+            <Trash2 className="h-4 w-4 text-destructive" />
+          </Button>
+        </div>
       ),
     },
   ]
 
   return (
     <div>
-      <h2 className="mb-1 text-2xl font-bold">Stocks</h2>
+      <h2 className="mb-1 text-2xl font-bold">
+        Stocks
+      </h2>
+
       <p className="mb-6 text-sm text-muted-foreground">
         Entrées, sorties et inventaire
       </p>
@@ -232,16 +368,34 @@ export default function StocksPage() {
           tone="primary"
         />
 
-        <StatCard
-          icon={AlertTriangle}
-          label="Alertes critiques"
-          value={formatNumber(alertesActives)}
-          tone={alertesActives > 0 ? "destructive" : "success"}
-        />
+        <button
+          type="button"
+          onClick={() =>
+            setCriticalOnly((v) => !v)
+          }
+          className="text-left"
+        >
+          <StatCard
+            icon={AlertTriangle}
+            label={
+              criticalOnly
+                ? "Alertes critiques (filtré)"
+                : "Alertes critiques"
+            }
+            value={formatNumber(alertesActives)}
+            tone={
+              alertesActives > 0
+                ? "destructive"
+                : "success"
+            }
+          />
+        </button>
       </div>
 
       <div className="mb-3 flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Inventaire</h3>
+        <h3 className="text-lg font-semibold">
+          Inventaire
+        </h3>
 
         <Button
           variant="outline"
@@ -262,41 +416,77 @@ export default function StocksPage() {
         emptyTitle="Aucun article"
       />
 
-      <div className="mb-3 mt-8 flex items-center justify-between">
-        <h3 className="text-lg font-semibold">Mouvements</h3>
+      <div className="mb-3 mt-8 flex flex-wrap items-center justify-between gap-3">
+        <h3 className="text-lg font-semibold">
+          Mouvements
+        </h3>
 
-        <Button
-          onClick={() => setMovementOpen(true)}
-          className="gap-2"
-        >
-          <Plus className="h-4 w-4" />
-          Enregistrer un mouvement
-        </Button>
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-1.5">
+            <input
+              type="date"
+              value={dateDebut}
+              onChange={(e) =>
+                setDateDebut(e.target.value)
+              }
+              className="bg-transparent text-sm text-foreground outline-none"
+            />
+
+            <span className="text-xs text-muted-foreground">
+              →
+            </span>
+
+            <input
+              type="date"
+              value={dateFin}
+              onChange={(e) =>
+                setDateFin(e.target.value)
+              }
+              className="bg-transparent text-sm text-foreground outline-none"
+            />
+
+            {(dateDebut ||
+              dateFin ||
+              criticalOnly) && (
+              <button
+                type="button"
+                onClick={() => {
+                  setDateDebut("")
+                  setDateFin("")
+                  setCriticalOnly(false)
+                }}
+                aria-label="Réinitialiser les filtres"
+                className="text-muted-foreground hover:text-foreground"
+              >
+                <X className="h-3.5 w-3.5" />
+              </button>
+            )}
+          </div>
+
+          <Button
+            onClick={() => setMovementOpen(true)}
+            className="gap-2"
+          >
+            <Plus className="h-4 w-4" />
+            Enregistrer un mouvement
+          </Button>
+        </div>
       </div>
 
       <DataTable
         columns={movementColumns}
-        rows={movements}
+        rows={filteredMovements}
         rowKey={(m) => m.id}
         isLoading={isLoading}
         emptyIcon={Package}
         emptyTitle="Aucun mouvement"
-        emptyDescription="Enregistre la première entrée ou sortie avec le bouton ci-dessus."
+        emptyDescription="Enregistre la première entrée ou sortie, ou ajuste les filtres ci-dessus."
       />
 
-      <QuickAddDialog
+      <StockMovementDialog
         open={movementOpen}
         onOpenChange={setMovementOpen}
-        title="Nouveau mouvement de stock"
-        schema={movementSchema}
-        fields={movementFields}
-        defaultValues={{
-          articleId: articles[0]?.id ?? "",
-          type: "entree" as MovementType,
-          quantite: 0,
-          date: new Date().toISOString().slice(0, 10),
-          origine: "",
-        }}
+        articles={articles}
         onSubmit={handleAddMovement}
       />
 
@@ -312,7 +502,10 @@ export default function StocksPage() {
           quantiteInitiale: 0,
           seuilCritique: 0,
         }}
-        onSubmit={handleAddArticle}
+        onSubmit={async (values) => {
+          await addArticle(values)
+          toast.success("Article créé")
+        }}
       />
     </div>
   )
