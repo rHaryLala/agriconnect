@@ -4,14 +4,15 @@ import { AppService } from './app.service';
 import { PrismaModule } from './prisma/prisma.module';
 import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
+import { ExempleController } from './exemple/exemple.controller'; // ligne ajoutée
 
 @Module({
   imports: [
-    ConfigModule.forRoot({isGlobal: true}), // charge .env
+    ConfigModule.forRoot({ isGlobal: true }), // charge .env
     PrismaModule,
-    AuthModule
+    AuthModule,
   ],
-  controllers: [AppController],
+  controllers: [AppController, ExempleController], // ExempleController ajouté ici
   providers: [AppService],
 })
 export class AppModule {}
