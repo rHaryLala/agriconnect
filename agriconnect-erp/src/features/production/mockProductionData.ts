@@ -1,8 +1,21 @@
 import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry } from "@/types/production"
 
 export const SEED_POULES: PouleEntry[] = [
-  { id: "p-1", date: "2026-08-15", nbPoules: 320, oeufsJour: 280, alimentsKg: 42, mortalite: 1 },
-  { id: "p-2", date: "2026-08-16", nbPoules: 319, oeufsJour: 275, alimentsKg: 41, mortalite: 0 },
+  {
+    id: "p-1",
+    date: "2026-08-15",
+    cages: [
+      { cageId: "cage-1", nbPoules: 5 },
+      { cageId: "cage-2", nbPoules: 4 },
+      { cageId: "cage-3", nbPoules: 5 },
+      { cageId: "cage-4", nbPoules: 5 },
+    ],
+    oeufsProduits: 16,
+    oeufsCasses: 1,
+    alimentsKg: 42,
+    mortalite: 0,
+    observation: "RAS",
+  },
 ]
 
 export const SEED_VACHES: VacheEntry[] = [

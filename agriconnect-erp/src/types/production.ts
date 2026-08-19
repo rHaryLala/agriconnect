@@ -1,16 +1,25 @@
+export interface PouleCageReleve {
+  cageId: string
+  nbPoules: number
+}
+
 export interface PouleEntry {
   id: string
   date: string
-  nbPoules: number
-  oeufsJour: number
+  cages: PouleCageReleve[]
+  oeufsProduits: number
+  oeufsCasses: number
   alimentsKg: number
   mortalite: number
+  observation: string
 }
+
 export interface VacheTraite {
   vacheId: string
   matin: number
   soir: number
 }
+
 export interface VacheEntry {
   id: string
   date: string
@@ -18,7 +27,9 @@ export interface VacheEntry {
   alimentationKg: number
   suiviSanitaire: string
 }
+
 export type CycleEtape = "demarrage" | "croissance" | "fin_cycle"
+
 export interface KuroilerEntry {
   id: string
   date: string
@@ -27,6 +38,7 @@ export interface KuroilerEntry {
   oeufsProduits: number
   etapeCycle: CycleEtape
 }
+
 export interface CultureEntry {
   id: string
   date: string
