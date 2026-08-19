@@ -9,7 +9,7 @@ Projet de stage — 5 semaines. Lesoa, Siméon et Voahary, sous la supervision d
 
 - Node.js 20 ou plus
 - Docker Desktop
-- Git
+- Git 
 
 ## Démarrer en trois commandes
 
