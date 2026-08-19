@@ -24,10 +24,11 @@ interface AgricultureEntryDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   cultures: CultureTypeProfile[]
+  editingEntry?: CultureEntry | null
   onSubmit: (values: Omit<CultureEntry, "id">) => Promise<void>
 }
 
-export function AgricultureEntryDialog({ open, onOpenChange, cultures, onSubmit }: AgricultureEntryDialogProps) {
+export function AgricultureEntryDialog({ open, onOpenChange, cultures, editingEntry, onSubmit }: AgricultureEntryDialogProps) {
   const {
     register,
     handleSubmit,
@@ -39,9 +40,16 @@ export function AgricultureEntryDialog({ open, onOpenChange, cultures, onSubmit 
 
   useEffect(() => {
     if (open) {
-      reset({ date: new Date().toISOString().slice(0, 10), culture: cultures[0]?.nom ?? "", surfaceHa: 0, recolteQty: 0, coutIntrants: 0, intrants: "" })
+      reset({
+        date: editingEntry?.date ?? new Date().toISOString().slice(0, 10),
+        culture: editingEntry?.culture ?? cultures[0]?.nom ?? "",
+        surfaceHa: editingEntry?.surfaceHa ?? 0,
+        recolteQty: editingEntry?.recolteQty ?? 0,
+        coutIntrants: editingEntry?.coutIntrants ?? 0,
+        intrants: editingEntry?.intrants ?? "",
+      })
     }
-  }, [open, cultures])
+  }, [open, cultures, editingEntry])
   
   const surfaceHa = watch("surfaceHa")
   const recolteQty = watch("recolteQty")
@@ -56,7 +64,7 @@ export function AgricultureEntryDialog({ open, onOpenChange, cultures, onSubmit 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Nouvelle entrée — Agriculture</DialogTitle>
+          <DialogTitle>{editingEntry ? "Modifier le relevé — Agriculture" : "Nouvelle entrée — Agriculture"}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-4">
@@ -120,7 +128,6 @@ export function AgricultureEntryDialog({ open, onOpenChange, cultures, onSubmit 
 
           <div>
             <Label>Rendement (aperçu)</Label>
-            {/* readonly : jamais modifiable à la main, purement informatif pendant la saisie */}
             <input
               readOnly
               value={`${rendementPreview} kg/ha`}
@@ -156,7 +163,7 @@ export function AgricultureEntryDialog({ open, onOpenChange, cultures, onSubmit 
             </Button>
             <Button type="submit" disabled={isSubmitting} className="gap-2">
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Enregistrer
+              {editingEntry ? "Enregistrer" : "Enregistrer"}
             </Button>
           </DialogFooter>
         </form>

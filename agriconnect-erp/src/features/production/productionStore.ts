@@ -12,9 +12,13 @@ interface ProductionState {
   isLoading: boolean
   fetchAll: () => Promise<void>
   addPoule: (data: Omit<PouleEntry, "id">) => Promise<void>
+  updatePoule: (id: string, data: Omit<PouleEntry, "id">) => Promise<void>
   addVache: (data: Omit<VacheEntry, "id">) => Promise<void>
+  updateVache: (id: string, data: Omit<VacheEntry, "id">) => Promise<void>
   addKuroiler: (data: Omit<KuroilerEntry, "id">) => Promise<void>
+  updateKuroiler: (id: string, data: Omit<KuroilerEntry, "id">) => Promise<void>
   addCulture: (data: Omit<CultureEntry, "id">) => Promise<void>
+  updateCulture: (id: string, data: Omit<CultureEntry, "id">) => Promise<void>
   deletePoule: (id: string) => void
   deleteVache: (id: string) => void
   deleteKuroiler: (id: string) => void
@@ -44,11 +48,25 @@ export const useProductionStore = create<ProductionState>((set, get) => ({
         resolve()
       }, FAKE_LATENCY_MS)
     }),
+  updatePoule: (id, data) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        set({ poules: get().poules.map((e) => (e.id === id ? { ...data, id } : e)) })
+        resolve()
+      }, FAKE_LATENCY_MS)
+    }),
 
   addVache: (data) =>
     new Promise((resolve) => {
       setTimeout(() => {
         set({ vaches: [{ ...data, id: `v-${Date.now()}` }, ...get().vaches] })
+        resolve()
+      }, FAKE_LATENCY_MS)
+    }),
+  updateVache: (id, data) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        set({ vaches: get().vaches.map((e) => (e.id === id ? { ...data, id } : e)) })
         resolve()
       }, FAKE_LATENCY_MS)
     }),
@@ -60,11 +78,25 @@ export const useProductionStore = create<ProductionState>((set, get) => ({
         resolve()
       }, FAKE_LATENCY_MS)
     }),
+  updateKuroiler: (id, data) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        set({ kuroiler: get().kuroiler.map((e) => (e.id === id ? { ...data, id } : e)) })
+        resolve()
+      }, FAKE_LATENCY_MS)
+    }),
 
   addCulture: (data) =>
     new Promise((resolve) => {
       setTimeout(() => {
         set({ cultures: [{ ...data, id: `c-${Date.now()}` }, ...get().cultures] })
+        resolve()
+      }, FAKE_LATENCY_MS)
+    }),
+  updateCulture: (id, data) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        set({ cultures: get().cultures.map((e) => (e.id === id ? { ...data, id } : e)) })
         resolve()
       }, FAKE_LATENCY_MS)
     }),

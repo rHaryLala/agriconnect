@@ -28,10 +28,11 @@ interface VacheEntryDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   vaches: VacheProfile[]
+  editingEntry?: VacheEntry | null 
   onSubmit: (values: Omit<VacheEntry, "id">) => Promise<void>
 }
 
-export function VacheEntryDialog({ open, onOpenChange, vaches, onSubmit }: VacheEntryDialogProps) {
+export function VacheEntryDialog({ open, onOpenChange, vaches, editingEntry, onSubmit }: VacheEntryDialogProps) {
   const {
     register,
     handleSubmit,
@@ -45,13 +46,16 @@ export function VacheEntryDialog({ open, onOpenChange, vaches, onSubmit }: Vache
   useEffect(() => {
     if (open) {
       reset({
-        date: new Date().toISOString().slice(0, 10),
-        traites: vaches.map((v) => ({ vacheId: v.id, nom: v.nom, matin: 0, soir: 0 })),
-        alimentationKg: 0,
-        suiviSanitaire: "",
+        date: editingEntry?.date ?? new Date().toISOString().slice(0, 10),
+        traites: vaches.map((v) => {
+          const existing = editingEntry?.traites.find((t) => t.vacheId === v.id)
+          return { vacheId: v.id, nom: v.nom, matin: existing?.matin ?? 0, soir: existing?.soir ?? 0 }
+        }),
+        alimentationKg: editingEntry?.alimentationKg ?? 0,
+        suiviSanitaire: editingEntry?.suiviSanitaire ?? "",
       })
     }
-  }, [open, vaches])
+  }, [open, vaches, editingEntry])
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit({
@@ -67,7 +71,7 @@ export function VacheEntryDialog({ open, onOpenChange, vaches, onSubmit }: Vache
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Nouveau relevé — Vaches laitières</DialogTitle>
+          <DialogTitle>{editingEntry ? "Modifier le relevé — Vaches laitières" : "Nouveau relevé — Vaches laitières"}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-4">
@@ -86,9 +90,7 @@ export function VacheEntryDialog({ open, onOpenChange, vaches, onSubmit }: Vache
             <Label>Traite par vache</Label>
             <div className="mt-1.5 flex flex-col gap-2 rounded-lg border border-border p-3">
               {fields.length === 0 && (
-                <p className="text-xs text-muted-foreground">
-                  Aucune vache enregistrée — ajoute-en une avec "Ajouter une vache" avant de saisir un relevé.
-                </p>
+                <p className="text-xs text-muted-foreground">Aucune vache enregistrée — ajoute-en une avant de saisir un relevé.</p>
               )}
               {fields.map((field, index) => (
                 <div key={field.id} className="grid grid-cols-[1fr_auto_auto] items-center gap-2">
@@ -142,7 +144,7 @@ export function VacheEntryDialog({ open, onOpenChange, vaches, onSubmit }: Vache
             </Button>
             <Button type="submit" disabled={isSubmitting || fields.length === 0} className="gap-2">
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Enregistrer
+              {editingEntry ? "Enregistrer" : "Enregistrer"}
             </Button>
           </DialogFooter>
         </form>

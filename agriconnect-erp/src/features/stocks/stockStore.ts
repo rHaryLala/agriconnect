@@ -11,6 +11,7 @@ interface StockState {
   fetchAll: () => Promise<void>
   addArticle: (data: Omit<StockArticle, "id">) => void
   addMovement: (data: Omit<StockMovement, "id">) => Promise<void>
+  updateMovement: (id: string, data: Omit<StockMovement, "id">) => Promise<void>
   deleteMovement: (id: string) => void
 }
 
@@ -29,14 +30,21 @@ export const useStockStore = create<StockState>((set, get) => ({
     }),
 
   addArticle: (data) => {
-    const newArticle: StockArticle = { ...data, id: `article-${Date.now()}` }
-    set({ articles: [...get().articles, newArticle] })
+    set({ articles: [...get().articles, { ...data, id: `article-${Date.now()}` }] })
   },
 
   addMovement: (data) =>
     new Promise((resolve) => {
       setTimeout(() => {
         set({ movements: [{ ...data, id: `mvt-${Date.now()}` }, ...get().movements] })
+        resolve()
+      }, FAKE_LATENCY_MS)
+    }),
+
+  updateMovement: (id, data) =>
+    new Promise((resolve) => {
+      setTimeout(() => {
+        set({ movements: get().movements.map((m) => (m.id === id ? { ...data, id } : m)) })
         resolve()
       }, FAKE_LATENCY_MS)
     }),

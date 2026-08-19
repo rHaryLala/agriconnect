@@ -23,6 +23,7 @@ interface CustomTypesState {
   updateType: (id: string, label: string) => void
   removeType: (id: string) => void
   addEntry: (typeId: string, data: Omit<CustomTypeEntry, "id">) => Promise<void>
+  updateEntry: (typeId: string, entryId: string, data: Omit<CustomTypeEntry, "id">) => Promise<void>
   deleteEntry: (typeId: string, entryId: string) => void
 }
 
@@ -30,19 +31,13 @@ export const useCustomTypesStore = create<CustomTypesState>()(
   persist(
     (set, get) => ({
       types: [],
-
       addType: (label) => {
         const trimmed = label.trim()
         if (!trimmed) return
-        const id = `custom-${Date.now()}`
-        set({ types: [...get().types, { id, label: trimmed, entries: [] }] })
+        set({ types: [...get().types, { id: `custom-${Date.now()}`, label: trimmed, entries: [] }] })
       },
-
-      updateType: (id, label) =>
-        set({ types: get().types.map((t) => (t.id === id ? { ...t, label } : t)) }),
-
+      updateType: (id, label) => set({ types: get().types.map((t) => (t.id === id ? { ...t, label } : t)) }),
       removeType: (id) => set({ types: get().types.filter((t) => t.id !== id) }),
-
       addEntry: (typeId, data) =>
         new Promise((resolve) => {
           setTimeout(() => {
@@ -54,12 +49,20 @@ export const useCustomTypesStore = create<CustomTypesState>()(
             resolve()
           }, FAKE_LATENCY_MS)
         }),
-
+      updateEntry: (typeId, entryId, data) =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            set({
+              types: get().types.map((t) =>
+                t.id === typeId ? { ...t, entries: t.entries.map((e) => (e.id === entryId ? { ...data, id: entryId } : e)) } : t
+              ),
+            })
+            resolve()
+          }, FAKE_LATENCY_MS)
+        }),
       deleteEntry: (typeId, entryId) =>
         set({
-          types: get().types.map((t) =>
-            t.id === typeId ? { ...t, entries: t.entries.filter((e) => e.id !== entryId) } : t
-          ),
+          types: get().types.map((t) => (t.id === typeId ? { ...t, entries: t.entries.filter((e) => e.id !== entryId) } : t)),
         }),
     }),
     { name: "agriconnect-custom-production-types" }

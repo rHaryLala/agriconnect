@@ -2,6 +2,7 @@ import type { ReactNode } from "react"
 import type { LucideIcon } from "lucide-react"
 import { Skeleton } from "./Skeleton"
 import { EmptyState } from "./EmptyState"
+import type { RowTone } from "@/lib/alerts"
 
 export interface DataTableColumn<T> {
   key: string
@@ -19,6 +20,12 @@ interface DataTableProps<T> {
   emptyIcon?: LucideIcon
   emptyTitle?: string
   emptyDescription?: string
+  rowTone?: (row: T) => RowTone
+}
+
+const TONE_BG: Record<NonNullable<RowTone>, string> = {
+  critical: "bg-destructive/5 hover:bg-destructive/10",
+  warning: "bg-warning/5 hover:bg-warning/10",
 }
 
 export function DataTable<T>({
@@ -29,6 +36,7 @@ export function DataTable<T>({
   emptyIcon,
   emptyTitle = "Aucune donnée",
   emptyDescription,
+  rowTone,
 }: DataTableProps<T>) {
   return (
     <div className="overflow-hidden rounded-xl border border-border bg-surface">
@@ -61,22 +69,25 @@ export function DataTable<T>({
               ))}
 
             {!isLoading &&
-              rows.map((row) => (
-                <tr key={rowKey(row)} className="group border-b border-border transition-colors last:border-0 hover:bg-background">
-                  {columns.map((col) => (
-                    <td
-                      key={col.key}
-                      className={`whitespace-nowrap px-4 py-3 ${col.className ?? ""} ${
-                        col.sticky
-                          ? "sticky right-0 z-10 bg-surface shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.15)] group-hover:bg-background"
-                          : ""
-                      }`}
-                    >
-                      {col.render(row)}
-                    </td>
-                  ))}
-                </tr>
-              ))}
+              rows.map((row) => {
+                const tone = rowTone?.(row) ?? null
+                const toneClass = tone ? TONE_BG[tone] : ""
+                const stickyBg = tone === "critical" ? "bg-destructive/5" : tone === "warning" ? "bg-warning/5" : "bg-surface"
+                return (
+                  <tr key={rowKey(row)} className={`group border-b border-border transition-colors last:border-0 hover:bg-background ${toneClass}`}>
+                    {columns.map((col) => (
+                      <td
+                        key={col.key}
+                        className={`whitespace-nowrap px-4 py-3 ${col.className ?? ""} ${
+                          col.sticky ? `sticky right-0 z-10 ${stickyBg} shadow-[-8px_0_8px_-8px_rgba(0,0,0,0.15)] group-hover:bg-background` : ""
+                        }`}
+                      >
+                        {col.render(row)}
+                      </td>
+                    ))}
+                  </tr>
+                )
+              })}
           </tbody>
         </table>
       </div>

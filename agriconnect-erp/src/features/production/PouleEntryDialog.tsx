@@ -40,10 +40,11 @@ interface PouleEntryDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   cages: CageProfile[]
+  editingEntry?: PouleEntry | null
   onSubmit: (values: Omit<PouleEntry, "id">) => Promise<void>
 }
 
-export function PouleEntryDialog({ open, onOpenChange, cages, onSubmit }: PouleEntryDialogProps) {
+export function PouleEntryDialog({ open, onOpenChange, cages, editingEntry, onSubmit }: PouleEntryDialogProps) {
   const {
     register,
     handleSubmit,
@@ -57,16 +58,19 @@ export function PouleEntryDialog({ open, onOpenChange, cages, onSubmit }: PouleE
   useEffect(() => {
     if (open) {
       reset({
-        date: new Date().toISOString().slice(0, 10),
-        cages: cages.map((c) => ({ cageId: c.id, nom: c.nom, nbPoules: 0 })),
-        oeufsProduits: 0,
-        oeufsCasses: 0,
-        alimentsKg: 0,
-        mortalite: 0,
-        observation: "",
+        date: editingEntry?.date ?? new Date().toISOString().slice(0, 10),
+        cages: cages.map((c) => {
+          const existing = editingEntry?.cages.find((cg) => cg.cageId === c.id)
+          return { cageId: c.id, nom: c.nom, nbPoules: existing?.nbPoules ?? 0 }
+        }),
+        oeufsProduits: editingEntry?.oeufsProduits ?? 0,
+        oeufsCasses: editingEntry?.oeufsCasses ?? 0,
+        alimentsKg: editingEntry?.alimentsKg ?? 0,
+        mortalite: editingEntry?.mortalite ?? 0,
+        observation: editingEntry?.observation ?? "",
       })
     }
-  }, [open, cages])
+  }, [open, cages, editingEntry])
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit({
@@ -85,7 +89,7 @@ export function PouleEntryDialog({ open, onOpenChange, cages, onSubmit }: PouleE
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
         <DialogHeader>
-          <DialogTitle>Nouveau relevé — Poules pondeuses</DialogTitle>
+          <DialogTitle>{editingEntry ? "Modifier le relevé — Poules pondeuses" : "Nouveau relevé — Poules pondeuses"}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-4">
@@ -185,7 +189,7 @@ export function PouleEntryDialog({ open, onOpenChange, cages, onSubmit }: PouleE
             </Button>
             <Button type="submit" disabled={isSubmitting || fields.length === 0} className="gap-2">
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Enregistrer
+              {editingEntry ? "Enregistrer" : "Enregistrer"}
             </Button>
           </DialogFooter>
         </form>

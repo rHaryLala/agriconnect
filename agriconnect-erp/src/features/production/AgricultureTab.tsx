@@ -10,16 +10,18 @@ import { AgricultureEntryDialog } from "./AgricultureEntryDialog"
 import { useProductionStore } from "./productionStore"
 import { useCultureTypesStore } from "./cultureTypesStore"
 import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
+import type { RowTone } from "@/lib/alerts"
 import type { CultureEntry } from "@/types/production"
 
 export function AgricultureTab() {
-  const { cultures, isLoading, fetchAll, addCulture, deleteCulture } = useProductionStore()
+  const { cultures, isLoading, fetchAll, addCulture, updateCulture, deleteCulture } = useProductionStore()
   const cultureTypes = useCultureTypesStore((s) => s.types)
   const addCultureType = useCultureTypesStore((s) => s.addType)
   const updateCultureType = useCultureTypesStore((s) => s.updateType)
   const removeCultureType = useCultureTypesStore((s) => s.removeType)
   const [entryOpen, setEntryOpen] = useState(false)
   const [manageOpen, setManageOpen] = useState(false)
+  const [editingEntry, setEditingEntry] = useState<CultureEntry | null>(null)
 
   useEffect(() => {
     fetchAll()
@@ -29,9 +31,28 @@ export function AgricultureTab() {
   const recolteTotale = cultures.reduce((sum, e) => sum + e.recolteQty, 0)
   const coutTotal = cultures.reduce((sum, e) => sum + e.coutIntrants, 0)
 
-  async function handleAdd(values: Omit<CultureEntry, "id">) {
-    await addCulture(values)
-    toast.success("Entrée enregistrée")
+  function openCreate() {
+    setEditingEntry(null)
+    setEntryOpen(true)
+  }
+  function openEdit(entry: CultureEntry) {
+    setEditingEntry(entry)
+    setEntryOpen(true)
+  }
+
+  async function handleSubmit(values: Omit<CultureEntry, "id">) {
+    if (editingEntry) {
+      await updateCulture(editingEntry.id, values)
+      toast.success("Entrée modifiée")
+    } else {
+      await addCulture(values)
+      toast.success("Entrée enregistrée")
+    }
+  }
+
+  function rowTone(e: CultureEntry): RowTone {
+    if (e.surfaceHa > 0 && e.recolteQty === 0) return "warning"
+    return null
   }
 
   const columns: DataTableColumn<CultureEntry>[] = [
@@ -49,18 +70,10 @@ export function AgricultureTab() {
       sticky: true,
       render: (e) => (
         <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => toast.info("Modification disponible à la prochaine étape")} aria-label="Modifier">
+          <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label="Modifier">
             <Pencil className="h-4 w-4" />
           </Button>
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              deleteCulture(e.id)
-              toast.success("Entrée supprimée")
-            }}
-            aria-label="Supprimer"
-          >
+          <Button variant="ghost" size="icon" onClick={() => { deleteCulture(e.id); toast.success("Entrée supprimée") }} aria-label="Supprimer">
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
         </div>
@@ -81,7 +94,7 @@ export function AgricultureTab() {
           <Settings2 className="h-4 w-4" />
           Gérer les cultures
         </Button>
-        <Button onClick={() => setEntryOpen(true)} className="gap-2">
+        <Button onClick={openCreate} className="gap-2">
           <Wheat className="h-4 w-4" />
           Saisir une entrée
         </Button>
@@ -95,9 +108,10 @@ export function AgricultureTab() {
         emptyIcon={Wheat}
         emptyTitle="Aucune entrée"
         emptyDescription="Saisis la première entrée avec le bouton ci-dessus."
+        rowTone={rowTone}
       />
 
-      <AgricultureEntryDialog open={entryOpen} onOpenChange={setEntryOpen} cultures={cultureTypes} onSubmit={handleAdd} />
+      <AgricultureEntryDialog open={entryOpen} onOpenChange={setEntryOpen} cultures={cultureTypes} editingEntry={editingEntry} onSubmit={handleSubmit} />
 
       <TypesManagerDialog
         open={manageOpen}

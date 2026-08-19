@@ -35,6 +35,7 @@ import {
   formatCurrency,
 } from "@/lib/format"
 import type { StockMovement } from "@/types/stock"
+import type { RowTone } from "@/lib/alerts"
 
 const articleSchema = z.object({
   nom: z.string().min(2, "Minimum 2 caractères"),
@@ -59,6 +60,7 @@ export default function StocksPage() {
     fetchAll,
     addArticle,
     addMovement,
+    updateMovement,
     deleteMovement,
   } = useStockStore()
 
@@ -67,6 +69,7 @@ export default function StocksPage() {
   const [dateDebut, setDateDebut] = useState("")
   const [dateFin, setDateFin] = useState("")
   const [criticalOnly, setCriticalOnly] = useState(false)
+  const [editingMovement, setEditingMovement] = useState<StockMovement | null>(null)
 
   useEffect(() => {
     fetchAll()
@@ -138,32 +141,48 @@ export default function StocksPage() {
     ]
   )
 
-  async function handleAddMovement(
-    values: Omit<StockMovement, "id">
-  ) {
+  function openCreateMovement() {
+    setEditingMovement(null)
+    setMovementOpen(true)
+  }
+
+  function openEditMovement(m: StockMovement) {
+    setEditingMovement(m)
+    setMovementOpen(true)
+  }
+
+  async function handleAddMovement(values: Omit<StockMovement, "id">) {
     if (values.type === "sortie") {
-      const article = articles.find(
-        (a) => a.id === values.articleId
-      )
-
+      const article = articles.find((a) => a.id === values.articleId)
       if (article) {
-        const current = computeCurrentStock(
-          article,
-          movements
+        const movementsExcludingCurrent = movements.filter(
+          (m) => m.id !== editingMovement?.id
         )
-
+        const current = computeCurrentStock(article, movementsExcludingCurrent)
         if (values.quantite > current) {
           toast.error(
             `Stock insuffisant : ${article.nom} n'a que ${current} ${article.unite} disponible(s).`
           )
-
           return
         }
       }
     }
 
-    await addMovement(values)
-    toast.success("Mouvement enregistré")
+    if (editingMovement) {
+      await updateMovement(editingMovement.id, values)
+      toast.success("Mouvement modifié")
+    } else {
+      await addMovement(values)
+      toast.success("Mouvement enregistré")
+    }
+
+    setMovementOpen(false)
+    setEditingMovement(null)
+  }
+
+  function movementRowTone(m: StockMovement): RowTone {
+    const balance = runningBalances[m.id]
+    return balance !== undefined && balance < 0 ? "critical" : null
   }
 
   const articleFields: FieldConfig<ArticleFormValues>[] = [
@@ -324,11 +343,7 @@ export default function StocksPage() {
           <Button
             variant="ghost"
             size="icon"
-            onClick={() =>
-              toast.info(
-                "Modification disponible à la prochaine étape"
-              )
-            }
+            onClick={() => openEditMovement(m)}
             aria-label="Modifier"
           >
             <Pencil className="h-4 w-4" />
@@ -464,7 +479,7 @@ export default function StocksPage() {
           </div>
 
           <Button
-            onClick={() => setMovementOpen(true)}
+            onClick={openCreateMovement}
             className="gap-2"
           >
             <Plus className="h-4 w-4" />
@@ -481,12 +496,14 @@ export default function StocksPage() {
         emptyIcon={Package}
         emptyTitle="Aucun mouvement"
         emptyDescription="Enregistre la première entrée ou sortie, ou ajuste les filtres ci-dessus."
+        rowTone={movementRowTone}
       />
 
       <StockMovementDialog
         open={movementOpen}
         onOpenChange={setMovementOpen}
         articles={articles}
+        editingEntry={editingMovement}
         onSubmit={handleAddMovement}
       />
 

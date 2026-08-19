@@ -33,10 +33,11 @@ interface StockMovementDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   articles: StockArticle[]
+  editingEntry?: StockMovement | null
   onSubmit: (values: Omit<StockMovement, "id">) => Promise<void>
 }
 
-export function StockMovementDialog({ open, onOpenChange, articles, onSubmit }: StockMovementDialogProps) {
+export function StockMovementDialog({ open, onOpenChange, articles, editingEntry, onSubmit }: StockMovementDialogProps) {
   const {
     register,
     handleSubmit,
@@ -49,17 +50,17 @@ export function StockMovementDialog({ open, onOpenChange, articles, onSubmit }: 
   useEffect(() => {
     if (open) {
       reset({
-        articleId: articles[0]?.id ?? "",
-        type: "entree" as MovementType,
-        date: new Date().toISOString().slice(0, 10),
-        quantite: 0,
-        destinataire: "",
-        numeroBon: "",
-        montant: 0,
-        observation: "",
+        articleId: editingEntry?.articleId ?? articles[0]?.id ?? "",
+        type: editingEntry?.type ?? "entree",
+        date: editingEntry?.date ?? new Date().toISOString().slice(0, 10),
+        quantite: editingEntry?.quantite ?? 0,
+        destinataire: editingEntry?.destinataire ?? "",
+        numeroBon: editingEntry?.numeroBon ?? "",
+        montant: editingEntry?.montant ?? 0,
+        observation: editingEntry?.observation ?? "",
       })
     }
-  }, [open, articles])
+  }, [open, articles, editingEntry])
 
   const type = watch("type")
 
@@ -81,7 +82,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, onSubmit }: 
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>Nouveau mouvement de stock</DialogTitle>
+          <DialogTitle>{editingEntry ? "Modifier le mouvement de stock" : "Nouveau mouvement de stock"}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-4">
@@ -207,7 +208,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, onSubmit }: 
             </Button>
             <Button type="submit" disabled={isSubmitting} className="gap-2">
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Enregistrer
+              {editingEntry ? "Enregistrer" : "Enregistrer"}
             </Button>
           </DialogFooter>
         </form>

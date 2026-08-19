@@ -1,6 +1,6 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
-import { Plus, Milk, Trash2, Pencil } from "lucide-react"
+import { Plus, Milk, Trash2, Pencil, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
@@ -9,125 +9,75 @@ import { VacheEntryDialog } from "./VacheEntryDialog"
 import { useProductionStore } from "./productionStore"
 import { useVachesStore } from "./vachesStore"
 import { formatDate, formatNumber } from "@/lib/format"
+import { hasAlertKeyword, type RowTone } from "@/lib/alerts"
 import type { VacheEntry } from "@/types/production"
 
 function totalJour(entry: VacheEntry): number {
-  return entry.traites.reduce(
-    (sum, t) => sum + t.matin + t.soir,
-    0
-  )
+  return entry.traites.reduce((sum, t) => sum + t.matin + t.soir, 0)
 }
 
 export function VachesLaitieresTab() {
-  const {
-    vaches: entries,
-    isLoading,
-    fetchAll,
-    addVache,
-    deleteVache,
-  } = useProductionStore()
-
-  const {
-    vaches: vachesProfiles,
-    addVache: addVacheProfile,
-    updateVache,
-    removeVache,
-  } = useVachesStore()
-
+  const { vaches: entries, isLoading, fetchAll, addVache, updateVache, deleteVache } = useProductionStore()
+  const { vaches: vachesProfiles, addVache: addVacheProfile, updateVache: updateVacheProfile, removeVache: removeVacheProfile } = useVachesStore()
   const [entryOpen, setEntryOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
+  const [editingEntry, setEditingEntry] = useState<VacheEntry | null>(null)
 
   useEffect(() => {
     fetchAll()
   }, [fetchAll])
 
-  const litresCumules = entries.reduce(
-    (sum, e) => sum + totalJour(e),
-    0
-  )
-
+  const litresCumules = entries.reduce((sum, e) => sum + totalJour(e), 0)
   const latest = entries[0]
 
-  async function handleAdd(values: Omit<VacheEntry, "id">) {
-    await addVache(values)
-    toast.success("Relevé enregistré")
+  function openCreate() {
+    setEditingEntry(null)
+    setEntryOpen(true)
+  }
+
+  function openEdit(entry: VacheEntry) {
+    setEditingEntry(entry)
+    setEntryOpen(true)
+  }
+
+  async function handleSubmit(values: Omit<VacheEntry, "id">) {
+    if (editingEntry) {
+      await updateVache(editingEntry.id, values)
+      toast.success("Relevé modifié")
+    } else {
+      await addVache(values)
+      toast.success("Relevé enregistré")
+    }
+  }
+
+  function rowTone(e: VacheEntry): RowTone {
+    return hasAlertKeyword(e.suiviSanitaire) ? "critical" : null
   }
 
   const columns: DataTableColumn<VacheEntry>[] = [
-    {
-      key: "date",
-      label: "Date",
-      render: (e) => formatDate(e.date),
-    },
-
-    ...vachesProfiles.map(
-      (v): DataTableColumn<VacheEntry> => ({
-        key: v.id,
-        label: v.nom,
-        render: (e) => {
-          const t = e.traites.find(
-            (tr) => tr.vacheId === v.id
-          )
-
-          return t
-            ? `${formatNumber(t.matin)} / ${formatNumber(t.soir)}`
-            : "— / —"
-        },
-      })
-    ),
-
-    {
-      key: "total",
-      label: "Total jour (L)",
-      render: (e) => formatNumber(totalJour(e)),
-    },
-
-    {
-      key: "alimentation",
-      label: "Alimentation",
-      render: (e) =>
-        `${formatNumber(e.alimentationKg)} kg`,
-    },
-
-    {
-      key: "sanitaire",
-      label: "Observation",
-      render: (e) => (
-        <span className="text-muted-foreground">
-          {e.suiviSanitaire}
-        </span>
-      ),
-    },
-
+    { key: "date", label: "Date", render: (e) => formatDate(e.date) },
+    ...vachesProfiles.map((v): DataTableColumn<VacheEntry> => ({
+      key: v.id,
+      label: v.nom,
+      render: (e) => {
+        const t = e.traites.find((tr) => tr.vacheId === v.id)
+        return t ? `${formatNumber(t.matin)} / ${formatNumber(t.soir)}` : "— / —"
+      },
+    })),
+    { key: "total", label: "Total jour (L)", render: (e) => formatNumber(totalJour(e)) },
+    { key: "alimentation", label: "Alimentation", render: (e) => `${formatNumber(e.alimentationKg)} kg` },
+    { key: "sanitaire", label: "Observation", render: (e) => <span className="text-muted-foreground">{e.suiviSanitaire}</span> },
     {
       key: "actions",
       label: "",
-      className: "sticky right-0 z-10 bg-background text-right",
+      className: "text-right",
       sticky: true,
       render: (e) => (
         <div className="flex justify-end gap-1">
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() =>
-              toast.info(
-                "Modification disponible à la prochaine étape"
-              )
-            }
-            aria-label="Modifier"
-          >
+          <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label="Modifier">
             <Pencil className="h-4 w-4" />
           </Button>
-
-          <Button
-            variant="ghost"
-            size="icon"
-            onClick={() => {
-              deleteVache(e.id)
-              toast.success("Relevé supprimé")
-            }}
-            aria-label="Supprimer"
-          >
+          <Button variant="ghost" size="icon" onClick={() => { deleteVache(e.id); toast.success("Relevé supprimé") }} aria-label="Supprimer">
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
         </div>
@@ -138,46 +88,17 @@ export function VachesLaitieresTab() {
   return (
     <div>
       <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3">
-        <StatCard
-          icon={Milk}
-          label="Vaches suivies"
-          value={formatNumber(vachesProfiles.length)}
-          tone="primary"
-        />
-
-        <StatCard
-          icon={Milk}
-          label="Dernier relevé (jour)"
-          value={
-            latest
-              ? `${formatNumber(totalJour(latest))} L`
-              : "—"
-          }
-          tone="success"
-        />
-
-        <StatCard
-          icon={Milk}
-          label="Lait cumulé"
-          value={`${formatNumber(litresCumules)} L`}
-          tone="info"
-        />
+        <StatCard icon={Milk} label="Vaches suivies" value={formatNumber(vachesProfiles.length)} tone="primary" />
+        <StatCard icon={Milk} label="Dernier relevé (jour)" value={latest ? `${formatNumber(totalJour(latest))} L` : "—"} tone="success" />
+        <StatCard icon={Milk} label="Lait cumulé" value={`${formatNumber(litresCumules)} L`} tone="info" />
       </div>
 
       <div className="mb-3 flex justify-end gap-2">
-        <Button
-          variant="outline"
-          onClick={() => setProfileOpen(true)}
-          className="gap-2"
-        >
-          <Pencil className="h-4 w-4" />
+        <Button variant="outline" onClick={() => setProfileOpen(true)} className="gap-2">
+          <Settings2 className="h-4 w-4" />
           Gérer les vaches
         </Button>
-
-        <Button
-          onClick={() => setEntryOpen(true)}
-          className="gap-2"
-        >
+        <Button onClick={openCreate} className="gap-2">
           <Plus className="h-4 w-4" />
           Saisir un relevé
         </Button>
@@ -191,34 +112,20 @@ export function VachesLaitieresTab() {
         emptyIcon={Milk}
         emptyTitle="Aucun relevé"
         emptyDescription="Saisis le premier relevé avec le bouton ci-dessus."
+        rowTone={rowTone}
       />
 
-      <VacheEntryDialog
-        open={entryOpen}
-        onOpenChange={setEntryOpen}
-        vaches={vachesProfiles}
-        onSubmit={handleAdd}
-      />
+      <VacheEntryDialog open={entryOpen} onOpenChange={setEntryOpen} vaches={vachesProfiles} editingEntry={editingEntry} onSubmit={handleSubmit} />
 
       <TypesManagerDialog
         open={profileOpen}
         onOpenChange={setProfileOpen}
         title="Gérer les vaches"
-        fields={[
-          {
-            name: "nom",
-            label: "Nom de la vache",
-            type: "text",
-          },
-        ]}
+        fields={[{ name: "nom", label: "Nom de la vache", type: "text" }]}
         items={vachesProfiles}
-        onAdd={(v) =>
-          addVacheProfile(v.nom as string)
-        }
-        onUpdate={(id, v) =>
-          updateVache(id, v.nom as string)
-        }
-        onDelete={removeVache}
+        onAdd={(v) => addVacheProfile(v.nom as string)}
+        onUpdate={(id, v) => updateVacheProfile(id, v.nom as string)}
+        onDelete={removeVacheProfile}
       />
     </div>
   )
