@@ -11,7 +11,7 @@ export class PrismaService extends PrismaClient implements OnModuleInit{
     
     constructor()
     {
-        super({adapter}); //Prisma 7 exige ceci
+        super({adapter}); //Prisma 7 exige cet adapter
     }
     
     async onModuleInit()

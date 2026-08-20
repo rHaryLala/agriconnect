@@ -23,7 +23,7 @@ async function bootstrap() {
 });
 
 
-  // Applique cette validation à TOUTES les routes automatiquement.
+  // Applique cette validation à toutes les routes automatiquement.
   // Doit être déclaré avant app.listen() pour être actif dès la première requête.
   app.useGlobalPipes(
     new ValidationPipe({
