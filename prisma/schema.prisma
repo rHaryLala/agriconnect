@@ -17,6 +17,7 @@ model Farm {
   name String 
   location String?
   users User[]
+  productions Production[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -34,4 +35,53 @@ model User {
   updatedAt DateTime @updatedAt
 
   @@index([farmId])
+}
+
+enum ProductionType {
+  OEUFS
+  LAIT
+  VIANDE
+  RECOLTES
+}
+
+model Production {
+  id String @id @default(uuid())
+  type ProductionType
+  quantity Float
+  unit String
+  date DateTime @default(now())
+  notes String?
+
+  farmId String 
+  farm Farm @relation(fields: [farmId], references: [id])
+  createdAt DateTime @default(now())
+}
+
+enum MouvementType {
+  IN 
+  OUT
+  AJUSTEMENT
+}
+
+model StockItem {
+  id String @id @default(uuid())
+  name String
+  category String
+  quantity Float @default(0)
+  unit String
+  miniAlert Float @default(10)
+
+  movements   StockMovement[]
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+model StockMovement {
+  id String @id @default(uuid())
+  type MouvementType
+  quantity Float
+  reason String?
+  date DateTime @default(now())
+  itemId String
+  item StockItem @relation(fields: [itemId], references: [id])
 }
