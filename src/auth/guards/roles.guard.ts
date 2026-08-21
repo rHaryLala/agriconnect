@@ -19,8 +19,11 @@ export class RolesGuard implements CanActivate
         return true;
       }
 
+      //Qui a fait la requête ? 
       const { user } = context.switchToHttp().getRequest();
       
+      //Vérification si le rôle est autorisé
       return requiredRoles.includes(user.role);
+
     }
 }
