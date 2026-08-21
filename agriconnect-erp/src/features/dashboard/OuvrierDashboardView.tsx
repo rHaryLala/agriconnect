@@ -3,7 +3,7 @@ import { StatCard } from "@/components/shared/StatCard"
 import { formatNumber } from "@/lib/format"
 import { MOCK_DASHBOARD_DATA as data } from "./mockDashboardData"
 
-export function OperationsDashboardView() {
+export function OuvrierDashboardView() {
   return (
     <div>
       <h2 className="mb-1 text-2xl font-bold">Tableau de bord — Production</h2>

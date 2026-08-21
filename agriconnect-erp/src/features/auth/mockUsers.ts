@@ -22,7 +22,7 @@ export const MOCK_USERS: (User & { password: string })[] = [
     name: "RADONIAINA Voahary",
     email: "radoniaina.v@zurcher.edu.mg",
     password: "1234qwerty",
-    role: "operations",
+    role: "ouvrier",
     avatarInitials: "RV",
   },
 ]

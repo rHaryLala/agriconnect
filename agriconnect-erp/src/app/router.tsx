@@ -26,7 +26,7 @@ export const router = createBrowserRouter([
             },
           },
           {
-            element: <ProtectedRoute allowedRoles={["admin", "operations"]} />,
+            element: <ProtectedRoute allowedRoles={["admin", "ouvrier"]} />,
             children: [
               {
                 path: "production",

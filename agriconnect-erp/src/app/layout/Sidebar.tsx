@@ -16,8 +16,8 @@ type NavItem = { to: string; label: string; icon: LucideIcon; roles?: UserRole[]
 
 const navItems: NavItem[] = [
   { to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
-  { to: "/production", label: "Production", icon: Sprout, roles: ["admin", "operations"] },
-  { to: "/stocks", label: "Stocks", icon: Package, roles: ["admin", "operations"] },
+  { to: "/production", label: "Production", icon: Sprout, roles: ["admin", "ouvrier"] },
+  { to: "/stocks", label: "Stocks", icon: Package, roles: ["admin", "ouvrier"] },
   { to: "/finance", label: "Finance", icon: Wallet, roles: ["admin", "finance_commercial"] },
   { to: "/clients-fournisseurs", label: "Clients & Fournisseurs", icon: Handshake, roles: ["admin", "finance_commercial"] },
   { to: "/rapports", label: "Rapports", icon: BarChart3 },
