@@ -11,10 +11,10 @@ export class CreateUserDto {
     password: string;
 
     @IsString()
-    firstname: string;
+    firstName: string;
 
     @IsString()
-    lastname: string;
+    lastName: string;
 
     @IsOptional()
     @IsEnum(Role)// vérifie que la valeur est bien ADMIN, COMPTABLE ou OUVRIER 

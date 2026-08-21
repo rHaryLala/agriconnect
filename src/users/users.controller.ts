@@ -9,10 +9,10 @@ import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 
 @ApiTags('users')
-@ApiBearerAuth() // affiche le cadenas 🔒 dans Swagger pour tout ce contrôleur
+@ApiBearerAuth() // affiche le cadenas dans Swagger pour tout ce contrôleur
 @Controller('users')
 @UseGuards(JwtAuthGuard, RolesGuard) // appliqué à TOUTES les routes ci-dessous
-@Roles('ADMIN') // idem — tout le module Utilisateurs est réservé au Gérant
+@Roles('ADMIN') // tout le module Utilisateurs est réservé au Gérant
 export class UsersController {
   constructor(private usersService: UsersService) {}
 
