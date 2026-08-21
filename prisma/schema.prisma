@@ -1,5 +1,6 @@
 generator client {
   provider = "prisma-client-js"
+  output   = "../generated/prisma"
 }
 
 datasource db {
@@ -13,29 +14,34 @@ enum Role {
 }
 
 model Farm {
-  id  String @id @default(uuid())
-  name String 
-  location String?
-  users User[]
+  id          String       @id @default(uuid())
+  name        String
+  location    String?
+  users       User[]
   productions Production[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  stockItems  StockItem[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
 }
 
 model User {
-  id String @id @default(uuid())
-  email String @unique
-  password String 
-  firstName String
-  lastName String
-  role Role @default(OUVRIER)
-  farmId String
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  createdAt DateTime @default  (now())
-  updatedAt DateTime @updatedAt
+  id             String          @id @default(uuid())
+  email          String          @unique
+  password       String
+  firstName      String
+  lastName       String
+  role           Role            @default(OUVRIER)
+  farmId         String
+  farm           Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  productions    Production[]
+  stockMovements StockMovement[]
+  createdAt      DateTime        @default(now())
+  updatedAt      DateTime        @updatedAt
 
   @@index([farmId])
 }
+
+// --- Module Production ---
 
 enum ProductionType {
   OEUFS
@@ -45,43 +51,57 @@ enum ProductionType {
 }
 
 model Production {
-  id String @id @default(uuid())
-  type ProductionType
-  quantity Float
-  unit String
-  date DateTime @default(now())
-  notes String?
+  id        String         @id @default(uuid())
+  type      ProductionType
+  quantity  Float
+  unit      String
+  date      DateTime       @default(now())
+  notes     String?
 
-  farmId String 
-  farm Farm @relation(fields: [farmId], references: [id])
-  createdAt DateTime @default(now())
+  farmId    String
+  farm      Farm           @relation(fields: [farmId], references: [id])
+
+  userId    String
+  user      User           @relation(fields: [userId], references: [id])
+
+  createdAt DateTime       @default(now())
 }
 
+// --- Module Stock ---
+
 enum MouvementType {
-  IN 
+  IN
   OUT
   AJUSTEMENT
 }
 
 model StockItem {
-  id String @id @default(uuid())
-  name String
-  category String
-  quantity Float @default(0)
-  unit String
-  miniAlert Float @default(10)
+  id        String          @id @default(uuid())
+  name      String
+  category  String
+  quantity  Float           @default(0)
+  unit      String
+  miniAlert Float           @default(10)
 
-  movements   StockMovement[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  farmId    String
+  farm      Farm            @relation(fields: [farmId], references: [id])
+
+  movements StockMovement[]
+
+  createdAt DateTime        @default(now())
+  updatedAt DateTime        @updatedAt
 }
 
 model StockMovement {
-  id String @id @default(uuid())
-  type MouvementType
+  id       String        @id @default(uuid())
+  type     MouvementType
   quantity Float
-  reason String?
-  date DateTime @default(now())
-  itemId String
-  item StockItem @relation(fields: [itemId], references: [id])
+  reason   String?
+  date     DateTime      @default(now())
+
+  itemId   String
+  item     StockItem     @relation(fields: [itemId], references: [id])
+
+  userId   String
+  user     User          @relation(fields: [userId], references: [id])
 }
