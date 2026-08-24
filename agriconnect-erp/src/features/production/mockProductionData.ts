@@ -35,7 +35,7 @@ export const SEED_VACHES: VacheEntry[] = [
 ]
 
 export const SEED_KUROILER: KuroilerEntry[] = [
-  { id: "k-1", date: "2026-08-15", kgViande: 12, poussinsVendus: 30, oeufsProduits: 45, etapeCycle: "croissance" },
+  { id: "k-1", date: "2026-08-15", kgViande: 12, poussinsVendus: 30, oeufsProduits: 45, etapeCycle: "Croissance", observation: "RAS" },
 ]
 
 export const SEED_CULTURES: CultureEntry[] = [

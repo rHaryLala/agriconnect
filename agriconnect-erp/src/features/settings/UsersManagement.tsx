@@ -17,6 +17,7 @@ import { StatusBadge } from "@/components/shared/StatusBadge"
 import { useUsersStore } from "./usersStore"
 import { UserFormDialog } from "./UserFormDialog"
 import { ROLE_LABELS, ROLE_TONES } from "./roleLabels"
+import type { RowTone } from "@/lib/alerts"
 import type { User } from "@/types/user"
 import type { UserFormValues } from "./userFormSchema"
 
@@ -43,26 +44,22 @@ export function UsersManagement() {
   async function handleSubmit(values: UserFormValues) {
     if (editingUser) {
       await updateUser(editingUser.id, values)
+      toast.success("Utilisateur modifié")
     } else {
       await addUser(values)
+      toast.success("Utilisateur ajouté")
     }
-     if (editingUser) {
-    await updateUser(editingUser.id, values)
-    toast.success("Utilisateur modifié")
-  } else {
-    await addUser(values)
-    toast.success("Utilisateur ajouté")
-  }
   }
 
   async function confirmDelete() {
     if (!deletingUser) return
     await deleteUser(deletingUser.id)
-    setDeletingUser(null)
-    if (!deletingUser) return
-    await deleteUser(deletingUser.id)
     toast.success("Utilisateur supprimé")
     setDeletingUser(null)
+  }
+
+  function rowTone(u: User): RowTone {
+    return u.role === "admin" ? "warning" : null
   }
 
   const columns: DataTableColumn<User>[] = [
@@ -84,6 +81,7 @@ export function UsersManagement() {
       key: "actions",
       label: "",
       className: "text-right",
+      sticky: true,
       render: (u) => (
         <div className="flex justify-end gap-1">
           <Button variant="ghost" size="icon" onClick={() => openEdit(u)} aria-label={`Modifier ${u.name}`}>
@@ -114,6 +112,7 @@ export function UsersManagement() {
         emptyIcon={UsersIcon}
         emptyTitle="Aucun utilisateur"
         emptyDescription="Ajoute le premier compte avec le bouton ci-dessus."
+        rowTone={rowTone}
       />
 
       <UserFormDialog open={formOpen} onOpenChange={setFormOpen} editingUser={editingUser} onSubmit={handleSubmit} />

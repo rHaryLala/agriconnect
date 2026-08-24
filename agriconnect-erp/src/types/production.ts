@@ -36,7 +36,8 @@ export interface KuroilerEntry {
   kgViande: number
   poussinsVendus: number
   oeufsProduits: number
-  etapeCycle: CycleEtape
+  etapeCycle: string
+  observation: string
 }
 
 export interface CultureEntry {
