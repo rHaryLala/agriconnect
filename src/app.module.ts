@@ -6,6 +6,7 @@ import { AuthModule } from './auth/auth.module';
 import { ConfigModule } from '@nestjs/config';
 import { ExempleController } from './exemple.controller'; // ligne ajoutée
 import { UsersModule } from './users/users.module';
+import { StockModule } from './stock/stock.module';
 
 @Module({
   imports: [
@@ -13,6 +14,7 @@ import { UsersModule } from './users/users.module';
     PrismaModule,
     AuthModule,
     UsersModule,
+    StockModule,
   ],
   controllers: [AppController, ExempleController], // ExempleController ajouté ici
   providers: [AppService],
