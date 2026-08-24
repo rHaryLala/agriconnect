@@ -1,81 +1,90 @@
-import { createBrowserRouter, Navigate } from "react-router"
+// src/app/router.tsx
+import { createBrowserRouter, Navigate, Outlet } from "react-router"
 import { AppLayout } from "./layout/AppLayout"
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute"
+import { RouteError } from "./RouteError"
 
 export const router = createBrowserRouter([
   {
-    path: "/login",
-    lazy: async () => {
-      const { default: Component } = await import("@/features/auth/LoginPage")
-      return { Component }
-    },
-  },
-  {
-    element: <ProtectedRoute />, 
+    id: "root",
+    element: <Outlet />,
+    errorElement: <RouteError />,
     children: [
       {
-        path: "/",
-        element: <AppLayout />,
+        path: "/login",
+        lazy: async () => {
+          const { default: Component } = await import("@/features/auth/LoginPage")
+          return { Component }
+        },
+      },
+      {
+        element: <ProtectedRoute />,
         children: [
-          { index: true, element: <Navigate to="/dashboard" replace /> },
           {
-            path: "dashboard",
-            lazy: async () => {
-              const { default: Component } = await import("@/features/dashboard/DashboardPage")
-              return { Component }
-            },
-          },
-          {
-            element: <ProtectedRoute allowedRoles={["admin", "ouvrier"]} />,
+            path: "/",
+            element: <AppLayout />,
             children: [
+              { index: true, element: <Navigate to="/dashboard" replace /> },
               {
-                path: "production",
+                path: "dashboard",
                 lazy: async () => {
-                  const { default: Component } = await import("@/features/production/ProductionPage")
+                  const { default: Component } = await import("@/features/dashboard/DashboardPage")
                   return { Component }
                 },
               },
               {
-                path: "stocks",
+                element: <ProtectedRoute allowedRoles={["admin", "ouvrier"]} />,
+                children: [
+                  {
+                    path: "production",
+                    lazy: async () => {
+                      const { default: Component } = await import("@/features/production/ProductionPage")
+                      return { Component }
+                    },
+                  },
+                  {
+                    path: "stocks",
+                    lazy: async () => {
+                      const { default: Component } = await import("@/features/stocks/StocksPage")
+                      return { Component }
+                    },
+                  },
+                ],
+              },
+              {
+                element: <ProtectedRoute allowedRoles={["admin", "finance_commercial"]} />,
+                children: [
+                  {
+                    path: "finance",
+                    lazy: async () => {
+                      const { default: Component } = await import("@/features/finance/FinancePage")
+                      return { Component }
+                    },
+                  },
+                  {
+                    path: "clients-fournisseurs",
+                    lazy: async () => {
+                      const { default: Component } = await import("@/features/clients-fournisseurs/ClientsFournisseursPage")
+                      return { Component }
+                    },
+                  },
+                ],
+              },
+              {
+                path: "rapports",
                 lazy: async () => {
-                  const { default: Component } = await import("@/features/stocks/StocksPage")
+                  const { default: Component } = await import("@/features/rapports/RapportsPage")
+                  return { Component }
+                },
+              },
+              {
+                path: "settings",
+                lazy: async () => {
+                  const { default: Component } = await import("@/features/settings/SettingsPage")
                   return { Component }
                 },
               },
             ],
-          },
-          {
-            element: <ProtectedRoute allowedRoles={["admin", "finance_commercial"]} />,
-            children: [
-              {
-                path: "finance",
-                lazy: async () => {
-                  const { default: Component } = await import("@/features/finance/FinancePage")
-                  return { Component }
-                },
-              },
-              {
-                path: "clients-fournisseurs",
-                lazy: async () => {
-                  const { default: Component } = await import("@/features/clients-fournisseurs/ClientsFournisseursPage")
-                  return { Component }
-                },
-              },
-            ],
-          },
-          {
-            path: "rapports",
-            lazy: async () => {
-              const { default: Component } = await import("@/features/rapports/RapportsPage")
-              return { Component }
-            },
-          },
-          {
-            path: "settings",
-            lazy: async () => {
-              const { default: Component } = await import("@/features/settings/SettingsPage")
-              return { Component }
-            },
           },
         ],
       },
