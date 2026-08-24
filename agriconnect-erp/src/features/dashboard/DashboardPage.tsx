@@ -1,7 +1,7 @@
 import { useAuthStore } from "@/features/auth/authStore"
 import { AdminDashboardView } from "./AdminDashboardView"
 import { FinanceDashboardView } from "./FinanceDashboardView"
-import { OperationsDashboardView } from "./OperationsDashboardView"
+import { OuvrierDashboardView } from "./OuvrierDashboardView"
 
 export default function DashboardPage() {
   const user = useAuthStore((s) => s.user)
@@ -13,7 +13,7 @@ export default function DashboardPage() {
       return <AdminDashboardView />
     case "finance_commercial":
       return <FinanceDashboardView />
-    case "operations":
-      return <OperationsDashboardView />
+    case "ouvrier":
+      return <OuvrierDashboardView />
   }
 }

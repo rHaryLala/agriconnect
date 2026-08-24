@@ -20,6 +20,12 @@ const dateFormatter = new Intl.DateTimeFormat("fr-MG", {
   year: "numeric",
 })
 
+const monthFormatter = new Intl.DateTimeFormat("fr-MG", { month: "short", year: "numeric" })
+
+export function formatMonthLabel(isoMonth: string): string {
+  return monthFormatter.format(new Date(`${isoMonth}-01`))
+}
+
 export function formatDate(date: Date | string): string {
   return dateFormatter.format(typeof date === "string" ? new Date(date) : date)
 }
