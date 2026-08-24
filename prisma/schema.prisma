@@ -17,7 +17,8 @@ model Farm {
   name String 
   location String?
   users User[]
-  production Production[]
+  productions Production[]
+  stockItem StockItem[]
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -31,6 +32,9 @@ model User {
   role Role @default(OUVRIER)
   farmId String
   farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  production Production[]
+  stockMovment StockMovement[]
+
   createdAt DateTime @default  (now())
   updatedAt DateTime @updatedAt
 
@@ -52,8 +56,14 @@ model Production {
   date DateTime @default(now())
   notes String?
 
+  userId String
+  user User @relation(fields: [userId], references: [id])
   farmId String 
   farm Farm @relation(fields: [farmId], references: [id])
+
+  stockItemId String?
+  stockItem StockItem? @relation(fields: [stockItemId], references: [id])
+
   createdAt DateTime @default(now())
 }
 
@@ -71,9 +81,14 @@ model StockItem {
   unit String
   miniAlert Float @default(10)
 
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id])
   movements   StockMovement[]
+  production Production[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
 }
 
 model StockMovement {
@@ -82,6 +97,8 @@ model StockMovement {
   quantity Float
   reason String?
   date DateTime @default(now())
+  userId String
+  user User @relation(fields: [userId], references: [id])
   itemId String
   item StockItem @relation(fields: [itemId], references: [id])
 }
