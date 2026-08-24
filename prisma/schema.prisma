@@ -99,6 +99,13 @@ model StockMovement {
   date DateTime @default(now())
   userId String
   user User @relation(fields: [userId], references: [id])
+
   itemId String
   item StockItem @relation(fields: [itemId], references: [id])
+
+  originalMovmentId String?
+  originalMovment StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
+  corrections StockMovement[] @relation("MovmentCorrection")
+
+  createAt DateTime @default(now())
 }
