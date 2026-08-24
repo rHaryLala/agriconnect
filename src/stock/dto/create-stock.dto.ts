@@ -1,5 +1,5 @@
 import { IsNumber, IsOptional, IsString, Min } from "class-validator";
-export class CreateStockItemDto {
+export class CreateStockDto {
     @IsString()
     name: String;
 
@@ -18,5 +18,4 @@ export class CreateStockItemDto {
     @IsNumber()
     @Min(0)
     miniAlert?: number;
-
 }

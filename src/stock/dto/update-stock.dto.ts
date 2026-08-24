@@ -4,7 +4,7 @@ import { IsNumber, IsOptional, IsString, Min } from "class-validator";
 
 //Volontairement pas de quantity puisque la quantité se doit d'être modifié par un
 //mouvement de stock
-export class UpdateStockItemDto {
+export class UpdateStockDto {
     @IsOptional()
     @IsString()
     name?: string;
