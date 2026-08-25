@@ -31,18 +31,25 @@ export default function LoginPage() {
 
   return (
     <div className="relative flex min-h-screen items-center justify-center overflow-hidden bg-background px-4">
-      <div
+      <img
+        src="/hero/hero-03.jpg"
+        alt=""
         aria-hidden
-        className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 animate-drift rounded-full bg-primary/10 blur-3xl"
+        loading="lazy"
+        className="absolute inset-0 h-full w-full object-cover opacity-25 blur-[2px] transition-opacity duration-1000"
       />
       <div
         aria-hidden
-        className="pointer-events-none absolute -bottom-32 -right-32 h-80 w-80 animate-drift-slow rounded-full bg-accent/10 blur-3xl"
+        className="pointer-events-none absolute -left-40 -top-40 h-96 w-96 animate-drift rounded-full bg-primary/15 blur-3xl"
+      />
+      <div
+        aria-hidden
+        className="pointer-events-none absolute -bottom-32 -right-32 h-80 w-80 animate-drift-slow rounded-full bg-accent/15 blur-3xl"
       />
 
-      <div className="relative z-10 w-full max-w-sm animate-card-in rounded-2xl border border-border bg-surface/90 p-9 shadow-xl backdrop-blur-xl">
+      <div className="relative z-10 w-full max-w-sm animate-card-in rounded-2xl border border-border bg-surface/95 p-9 shadow-2xl backdrop-blur-xl transition-all duration-500 hover:shadow-primary/10">
         <div className="mb-8 flex flex-col items-center">
-          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/30">
+          <div className="mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary shadow-lg shadow-primary/40 transition-transform duration-300 hover:scale-110">
             <Leaf className="h-6 w-6 text-white" strokeWidth={2} />
           </div>
           <p className="font-serif text-xl text-foreground">AgriConnect</p>
@@ -52,7 +59,7 @@ export default function LoginPage() {
         {serverError && (
           <div
             role="alert"
-            className="mb-5 flex items-start gap-2.5 rounded-lg border-l-2 border-destructive bg-destructive/10 px-3.5 py-2.5"
+            className="mb-5 flex items-start gap-2.5 rounded-lg border-l-2 border-destructive bg-destructive/15 px-3.5 py-2.5 animate-in slide-in-from-top-2 duration-300"
           >
             <AlertCircle className="mt-0.5 h-4 w-4 shrink-0 text-destructive" />
             <div>
@@ -73,11 +80,11 @@ export default function LoginPage() {
               {...register("email")}
               aria-invalid={!!errors.email}
               aria-describedby={errors.email ? "email-error" : undefined}
-              className="w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+              className="w-full rounded-lg border border-border bg-background/80 px-3 py-2 text-sm text-foreground outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20 hover:border-primary/50"
               placeholder="lesoa.asa@zurcher.edu.mg"
             />
             {errors.email && (
-              <p id="email-error" className="mt-1 text-xs text-destructive">
+              <p id="email-error" className="mt-1 text-xs text-destructive animate-in slide-in-from-top-1 duration-200">
                 {errors.email.message}
               </p>
             )}
@@ -94,26 +101,30 @@ export default function LoginPage() {
                 {...register("password")}
                 aria-invalid={!!errors.password}
                 aria-describedby={errors.password ? "password-error" : undefined}
-                className="w-full rounded-lg border border-border bg-background px-3 py-2 pr-10 text-sm text-foreground outline-none transition-colors focus:border-primary focus:ring-2 focus:ring-primary/20"
+                className="w-full rounded-lg border border-border bg-background/80 px-3 py-2 pr-10 text-sm text-foreground outline-none transition-all duration-200 focus:border-primary focus:ring-2 focus:ring-primary/20 hover:border-primary/50"
                 placeholder="••••••••••••"
               />
               <button
                 type="button"
                 onClick={() => setShowPassword((v) => !v)}
                 aria-label={showPassword ? "Masquer le mot de passe" : "Afficher le mot de passe"}
-                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-colors hover:text-foreground"
+                className="absolute right-2.5 top-1/2 -translate-y-1/2 text-muted-foreground transition-all duration-200 hover:text-foreground hover:scale-110"
               >
                 {showPassword ? <EyeOff className="h-4 w-4" /> : <Eye className="h-4 w-4" />}
               </button>
             </div>
             {errors.password && (
-              <p id="password-error" className="mt-1 text-xs text-destructive">
+              <p id="password-error" className="mt-1 text-xs text-destructive animate-in slide-in-from-top-1 duration-200">
                 {errors.password.message}
               </p>
             )}
           </div>
 
-          <Button type="submit" disabled={isSubmitting} className="mt-2 gap-2">
+          <Button 
+            type="submit" 
+            disabled={isSubmitting} 
+            className="mt-2 gap-2 transition-all duration-300 hover:scale-[1.02] active:scale-95"
+          >
             {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
             {isSubmitting ? "Connexion..." : "Se connecter"}
           </Button>
