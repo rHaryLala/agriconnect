@@ -23,7 +23,7 @@ export default function LoginPage() {
     setServerError(null)
     try {
       await login(values.email, values.password)
-      navigate("/dashboard")
+      navigate("/app/dashboard")
     } catch (err) {
       setServerError(err instanceof Error ? err.message : "Erreur inconnue")
     }

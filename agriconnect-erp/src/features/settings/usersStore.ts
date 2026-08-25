@@ -1,10 +1,7 @@
 import { create } from "zustand"
 import type { User } from "@/types/user"
-import { MOCK_USERS } from "@/features/auth/mockUsers"
-
-const FAKE_LATENCY_MS = 500
-
-const SEED_USERS: User[] = MOCK_USERS.map(({ password: _password, ...user }) => user)
+import { useAuthStore } from "@/features/auth/authStore"
+import { fetchUsers, createUser, updateUserApi, deleteUserApi } from "./usersApi"
 
 interface UsersState {
   users: User[]
@@ -15,52 +12,39 @@ interface UsersState {
   deleteUser: (id: string) => Promise<void>
 }
 
-function initials(name: string): string {
-  return name
-    .trim()
-    .split(/\s+/)
-    .map((part) => part[0]?.toUpperCase() ?? "")
-    .slice(0, 2)
-    .join("")
+function getToken(): string {
+  const token = useAuthStore.getState().token
+  if (!token) throw new Error("Non authentifié")
+  return token
 }
 
 export const useUsersStore = create<UsersState>((set, get) => ({
   users: [],
   isLoading: false,
 
-  fetchUsers: () =>
-    new Promise((resolve) => {
-      set({ isLoading: true })
-      setTimeout(() => {
-        set({ users: SEED_USERS, isLoading: false })
-        resolve()
-      }, FAKE_LATENCY_MS)
-    }),
+  fetchUsers: async () => {
+    set({ isLoading: true })
+    try {
+      const users = await fetchUsers(getToken())
+      set({ users, isLoading: false })
+    } catch (err) {
+      set({ isLoading: false })
+      throw err
+    }
+  },
 
-  addUser: (data) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        const newUser: User = { ...data, id: `u-${Date.now()}`, avatarInitials: initials(data.name) }
-        set({ users: [...get().users, newUser] })
-        resolve()
-      }, FAKE_LATENCY_MS)
-    }),
+  addUser: async (data) => {
+    const user = await createUser(getToken(), data)
+    set({ users: [...get().users, user] })
+  },
 
-  updateUser: (id, data) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        set({
-          users: get().users.map((u) => (u.id === id ? { ...u, ...data, avatarInitials: initials(data.name) } : u)),
-        })
-        resolve()
-      }, FAKE_LATENCY_MS)
-    }),
+  updateUser: async (id, data) => {
+    const user = await updateUserApi(getToken(), id, data)
+    set({ users: get().users.map((u) => (u.id === id ? user : u)) })
+  },
 
-  deleteUser: (id) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        set({ users: get().users.filter((u) => u.id !== id) })
-        resolve()
-      }, FAKE_LATENCY_MS)
-    }),
+  deleteUser: async (id) => {
+    await deleteUserApi(getToken(), id)
+    set({ users: get().users.filter((u) => u.id !== id) })
+  },
 }))

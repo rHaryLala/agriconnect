@@ -1,4 +1,3 @@
-// src/app/router.tsx
 import { createBrowserRouter, Navigate, Outlet } from "react-router"
 import { AppLayout } from "./layout/AppLayout"
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute"
@@ -11,6 +10,14 @@ export const router = createBrowserRouter([
     errorElement: <RouteError />,
     children: [
       {
+        // Vitrine publique — page d'accueil, accessible à tout le monde
+        path: "/",
+        lazy: async () => {
+          const { default: Component } = await import("@/features/marketing/LandingPage")
+          return { Component }
+        },
+      },
+      {
         path: "/login",
         lazy: async () => {
           const { default: Component } = await import("@/features/auth/LoginPage")
@@ -18,13 +25,20 @@ export const router = createBrowserRouter([
         },
       },
       {
+        path: "/register",
+        lazy: async () => {
+          const { default: Component } = await import("@/features/auth/RegisterPage")
+          return { Component }
+        },
+      },
+      {
         element: <ProtectedRoute />,
         children: [
           {
-            path: "/",
+            path: "/app",
             element: <AppLayout />,
             children: [
-              { index: true, element: <Navigate to="/dashboard" replace /> },
+              { index: true, element: <Navigate to="/app/dashboard" replace /> },
               {
                 path: "dashboard",
                 lazy: async () => {

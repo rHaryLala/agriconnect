@@ -9,12 +9,12 @@ import type { UserRole } from "@/types/user"
 type NavItem = { to: string; label: string; icon: LucideIcon; roles?: UserRole[] }
 
 const navItems: NavItem[] = [
-  { to: "/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
-  { to: "/production", label: "Production", icon: Sprout, roles: ["admin", "ouvrier"] },
-  { to: "/stocks", label: "Stocks", icon: Package, roles: ["admin", "ouvrier"] },
-  { to: "/finance", label: "Finance", icon: Wallet, roles: ["admin", "finance_commercial"] },
-  { to: "/clients-fournisseurs", label: "Clients & Fournisseurs", icon: Handshake, roles: ["admin", "finance_commercial"] },
-  { to: "/rapports", label: "Rapports", icon: BarChart3 },
+  { to: "/app/dashboard", label: "Tableau de bord", icon: LayoutDashboard },
+  { to: "/app/production", label: "Production", icon: Sprout, roles: ["admin", "ouvrier"] },
+  { to: "/app/stocks", label: "Stocks", icon: Package, roles: ["admin", "ouvrier"] },
+  { to: "/app/finance", label: "Finance", icon: Wallet, roles: ["admin", "finance_commercial"] },
+  { to: "/app/clients-fournisseurs", label: "Clients & Fournisseurs", icon: Handshake, roles: ["admin", "finance_commercial"] },
+  { to: "/app/rapports", label: "Rapports", icon: BarChart3 },
 ]
 
 interface SidebarProps {
@@ -47,7 +47,7 @@ export function Sidebar({ onNavigate }: SidebarProps) {
       </ul>
 
       <NavLink
-        to="/settings"
+        to="/app/settings"
         onClick={onNavigate}
         className={({ isActive }) =>
           `flex items-center gap-2.5 rounded-md px-3 py-2 text-sm transition-colors duration-200 ${
