@@ -7,6 +7,7 @@ import { ConfigModule } from '@nestjs/config';
 import { ExempleController } from './exemple.controller'; // ligne ajoutée
 import { UsersModule } from './users/users.module';
 import { StockModule } from './stock/stock.module';
+import { ProductionModule } from './production/production.module';
 
 @Module({
   imports: [
@@ -15,6 +16,7 @@ import { StockModule } from './stock/stock.module';
     AuthModule,
     UsersModule,
     StockModule,
+    ProductionModule,
   ],
   controllers: [AppController, ExempleController], // ExempleController ajouté ici
   providers: [AppService],
