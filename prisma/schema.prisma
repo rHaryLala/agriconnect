@@ -108,6 +108,6 @@ model StockMovement {
   originalMovment StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
   corrections StockMovement[] @relation("MovmentCorrection")
 
-  createAt DateTime @default(now())
+  createdAt DateTime @default(now())
 }
 
