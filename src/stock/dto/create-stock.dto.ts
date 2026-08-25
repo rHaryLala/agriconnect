@@ -1,7 +1,7 @@
 import { IsNumber, IsOptional, IsString, Min } from "class-validator";
 export class CreateStockDto {
     @IsString()
-    name: String;
+    name: string;
 
     @IsString()
     category: string;
