@@ -1,5 +1,5 @@
 import { IsEnum, IsNumber, IsOptional, IsString, Min } from "class-validator";
-import { MouvementType } from "../../../generated/prisma";
+import { MouvementType } from "@prisma/client";
 
 //DTO pour l'enregistrement des entrées, sorties ou ajustement de stock
 
