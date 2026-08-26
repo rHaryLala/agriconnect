@@ -7,8 +7,8 @@ import { config } from "dotenv";
 config;
 
 const connectionString =
-  process.env.DATABASE_URL || "postgresql://agriconnect:a-changer-en-local@localhost:5433/agriconnect?schema=public";
-
+  process.env.DATABASE_URL || "postgresql://postgres:jerosalema666@localhost:5432/agriconnect?schema=public";
+  
 const pool = new Pool({ connectionString });
 const adapter = new PrismaPg(pool);
 const prisma = new PrismaClient({ adapter });

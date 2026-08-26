@@ -2,11 +2,11 @@
   "devDependencies": {
     "@types/node": "^26.2.0",
     "@types/pg": "^8.23.1",
-    "prisma": "^7.9.1",
+    "prisma": "^8.0.0-rc.11",
     "tsx": "^4.23.12"
   },
   "dependencies": {
     "@prisma/adapter-pg": "^7.9.1",
-    "@prisma/client": "^7.9.1"
+    "@prisma/client": "^7.10.0"
   }
 }

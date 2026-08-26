@@ -109,3 +109,23 @@ model StockMovement {
 
   createAt DateTime @default(now())
 }
+
+model Client{
+  id String @id @default(uuid())
+  name String
+  phone String?
+  allowCredit Boolean @default(false) @map("autorise-credit")
+  //creditLimit Float @default(0) @map("plafond-credit")
+  //invoices Invoice[]
+  createAt DateTime @default(now())
+  updateAt DateTime @updatedAt
+}
+
+enum InvoiceStatus{
+  UNPAID
+  PAID
+}
+
+/*model Invoice{
+
+}*/

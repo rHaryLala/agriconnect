@@ -7,6 +7,7 @@ export default defineConfig({
     seed: "npx tsx prisma/seed.ts",
   },
   datasource: {
-    url: process.env.DATABASE_URL || "postgresql://agriconnect:a-changer-en-local@localhost:5433/agriconnect?schema=public",
+    url: "postgresql://postgres:jerosalema666@localhost:5432/agriconnect?schema=public",
+    
   },
 });
