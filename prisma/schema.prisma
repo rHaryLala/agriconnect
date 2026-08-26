@@ -19,6 +19,9 @@ model Farm {
   users User[]
   productions Production[]
   stockItem StockItem[]
+
+  clients Client[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
@@ -107,25 +110,53 @@ model StockMovement {
   originalMovment StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
   corrections StockMovement[] @relation("MovmentCorrection")
 
-  createAt DateTime @default(now())
+  createdAt DateTime @default(now())
+}
+
+enum ClientType{
+  EXTERNE
+  PERSONNEL_UAZ
+  CAF
+  STORE
 }
 
 model Client{
   id String @id @default(uuid())
   name String
   phone String?
-  allowCredit Boolean @default(false) @map("autorise-credit")
-  //creditLimit Float @default(0) @map("plafond-credit")
-  //invoices Invoice[]
-  createAt DateTime @default(now())
-  updateAt DateTime @updatedAt
+  type ClientType @default(EXTERNE) //externe sy personnelle iany ny 
+  matriculeuaz String? @map("matricule_uaz")// Pour identifier l'employé sur le rapport comptable
+
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id])
+
+  in
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum InvoiceStatus{
   UNPAID
   PAID
 }
+ model Invoice {
+  id String @id @default(uuid())
+  invoiceNumber String @unique @map("numero_du_recu")
+  totalAmount Float @map("total_ttc")
+  paidAmount Float @default(0) @map("montant_reglé")
+  dueAmount Float @map("reste_a_payer")
+  status InvoiceStatus @default(UNPAID) @map("statut_du_paiment")
 
-/*model Invoice{
+  clientId String
+  client Client @relation(fields: [clientId], references: [id])
 
-}*/
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id])
+
+  //relation de paimen eto....rehefa vita ny table paiment
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+ }
+
