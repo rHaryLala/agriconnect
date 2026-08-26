@@ -1,7 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import type { User } from "@/types/user"
-import { realLogin } from "./api"
+import { login as loginRequest } from "./api"
 
 interface AuthState {
   user: User | null
@@ -25,7 +25,7 @@ export const useAuthStore = create<AuthState>()(
       login: async (email, password) => {
         set({ isLoading: true, error: null })
         try {
-          const { user, token } = await realLogin(email, password)
+          const { user, token } = await loginRequest(email, password)
           set({ user, token, isAuthenticated: true, isLoading: false })
         } catch (err) {
           set({ error: err instanceof Error ? err.message : "Erreur inconnue", isLoading: false })

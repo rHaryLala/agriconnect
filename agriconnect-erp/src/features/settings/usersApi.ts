@@ -1,6 +1,9 @@
 import { apiFetch } from "@/lib/apiClient"
 import { toFrontendRole, toBackendRole } from "@/lib/roleMapping"
 import type { User, UserRole } from "@/types/user"
+import { mockFetchUsers, mockCreateUser, mockUpdateUser, mockDeleteUser } from "@/features/auth/mockUsersApi"
+
+const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === "true"
 
 interface BackendUser {
   id: string
@@ -26,6 +29,7 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
 }
 
 export async function fetchUsers(token: string): Promise<User[]> {
+  if (USE_MOCK_API) return mockFetchUsers()
   const data = await apiFetch<BackendUser[]>("/users", { token })
   return data.map(toFrontendUser)
 }
@@ -33,6 +37,7 @@ export async function fetchUsers(token: string): Promise<User[]> {
 const TEMP_INITIAL_PASSWORD = "1234qwerty" // TODO: Générer un mot de passe temporaire aléatoire et l'envoyer par email à l'utilisateur
 
 export async function createUser(token: string, values: { name: string; email: string; role: UserRole }): Promise<User> {
+  if (USE_MOCK_API) return mockCreateUser(values)
   const { firstName, lastName } = splitName(values.name)
   const data = await apiFetch<BackendUser>("/users", {
     method: "POST",
@@ -43,6 +48,7 @@ export async function createUser(token: string, values: { name: string; email: s
 }
 
 export async function updateUserApi(token: string, id: string, values: { name: string; email: string; role: UserRole }): Promise<User> {
+  if (USE_MOCK_API) return mockUpdateUser(id, values)
   const { firstName, lastName } = splitName(values.name)
   const data = await apiFetch<BackendUser>(`/users/${id}`, {
     method: "PATCH",
@@ -53,5 +59,6 @@ export async function updateUserApi(token: string, id: string, values: { name: s
 }
 
 export async function deleteUserApi(token: string, id: string): Promise<void> {
+  if (USE_MOCK_API) return mockDeleteUser(id)
   await apiFetch(`/users/${id}`, { method: "DELETE", token })
 }
