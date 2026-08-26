@@ -1,1 +1,6 @@
-export default function ClientsFournisseursPage() { return <h2 className="text-2xl font-bold">Clients & Fournisseurs</h2> }
+import { Handshake } from "lucide-react"
+import { ComingSoonPage } from "@/components/shared/ComingSoonPage"
+
+export default function ClientsFournisseursPage() {
+  return <ComingSoonPage icon={Handshake} title="Clients & Fournisseurs" description="Historique des achats, soldes et dettes à jour à chaque paiement." />
+}

@@ -69,7 +69,7 @@ export function VacheEntryDialog({ open, onOpenChange, vaches, editingEntry, onS
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{editingEntry ? "Modifier le relevé — Vaches laitières" : "Nouveau relevé — Vaches laitières"}</DialogTitle>
         </DialogHeader>

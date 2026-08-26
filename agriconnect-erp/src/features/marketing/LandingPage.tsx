@@ -52,20 +52,21 @@ const FEATURES = [
 ]
 
 const STATS = [
-  { target: 6, suffix: "", label: "Modules connectés" },
-  { target: 100, suffix: "%", label: "Fonctionne hors ligne" },
-  { target: 3, suffix: "", label: "Langues (FR / MG / EN)" },
+  { target: 6, suffix: "", label: "Modules connectés", shortLabel: "Modules" },
+  { target: 100, suffix: "%", label: "Fonctionne hors ligne", shortLabel: "Hors ligne" },
+  { target: 3, suffix: "", label: "Langues (FR / MG / EN)", shortLabel: "Langues" },
 ]
 
-function StatPill({ target, suffix, label }: { target: number; suffix: string; label: string }) {
+function StatPill({ target, suffix, label, shortLabel }: { target: number; suffix: string; label: string; shortLabel: string }) {
   const value = useCountUp(target, 1100)
   return (
-    <div className="flex flex-col items-center gap-0.5 rounded-xl border border-white/15 bg-white/10 px-4 py-3 backdrop-blur-md sm:px-6">
-      <span className="font-serif text-2xl text-white sm:text-3xl">
+    <div className="flex flex-col items-center gap-0.5 rounded-xl border border-white/15 bg-white/10 px-2 py-2.5 backdrop-blur-md sm:px-6 sm:py-3">
+      <span className="font-serif text-xl text-white sm:text-3xl">
         {Math.round(value)}
         {suffix}
       </span>
-      <span className="text-[11px] uppercase tracking-wide text-white/70 sm:text-xs">{label}</span>
+      <span className="text-center text-[10px] uppercase leading-tight tracking-wide text-white/70 sm:hidden">{shortLabel}</span>
+      <span className="hidden text-center text-xs uppercase tracking-wide text-white/70 sm:block">{label}</span>
     </div>
   )
 }

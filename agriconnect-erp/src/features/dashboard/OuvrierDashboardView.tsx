@@ -2,6 +2,8 @@ import { Sprout, Package, Warehouse, AlertTriangle } from "lucide-react"
 import { StatCard } from "@/components/shared/StatCard"
 import { formatNumber } from "@/lib/format"
 import { MOCK_DASHBOARD_DATA as data } from "./mockDashboardData"
+import { MiniAreaChart } from "@/components/shared/MiniAreaChart"
+import { MOCK_TRENDS as trends } from "./mockDashboardData"
 
 export function OuvrierDashboardView() {
   return (
@@ -14,6 +16,10 @@ export function OuvrierDashboardView() {
         <StatCard icon={Package} label="Articles en stock" value={formatNumber(data.stock.totalItems)} tone="primary" />
         <StatCard icon={Warehouse} label="Entrepôts" value={formatNumber(data.stock.warehouses)} tone="info" />
         <StatCard icon={AlertTriangle} label="Alertes stock bas" value={formatNumber(data.stock.lowStockAlerts)} tone="warning" />
+      </div>
+       <div className="mt-6 rounded-xl border border-border bg-surface p-4">
+        <p className="mb-2 text-sm font-medium text-foreground">Récolte — 6 derniers mois</p>
+        <MiniAreaChart data={trends.production} color="#16A34A" formatValue={(n) => `${formatNumber(n)} kg`} />
       </div>
     </div>
   )

@@ -1,1 +1,6 @@
-export default function RapportsPage() { return <h2 className="text-2xl font-bold">Rapports</h2> }
+import { BarChart3 } from "lucide-react"
+import { ComingSoonPage } from "@/components/shared/ComingSoonPage"
+
+export default function RapportsPage() {
+  return <ComingSoonPage icon={BarChart3} title="Rapports" description="Financier, production, stock — export PDF et Excel en un clic." />
+}

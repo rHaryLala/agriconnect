@@ -14,6 +14,7 @@ import { computeTotals, computeMonthlySeries } from "@/lib/financeCalc"
 import { formatDate, formatCurrency } from "@/lib/format"
 import { hasAlertKeyword, type RowTone } from "@/lib/alerts"
 import type { FinanceTransaction } from "@/types/finance"
+import { CategoryBreakdownChart } from "./CategoryBreakdownChart"
 
 export default function FinancePage() {
   const { transactions, isLoading, fetchAll, addTransaction, updateTransaction, deleteTransaction } = useFinanceStore()
@@ -117,6 +118,17 @@ export default function FinancePage() {
 
       <div className="mb-6">
         <FinanceChart data={monthlySeries} />
+      </div>
+      
+      <div className="mb-6 grid grid-cols-1 gap-4 sm:grid-cols-2">
+        <div>
+          <p className="mb-2 text-sm font-medium text-foreground">Répartition des dépenses</p>
+          <CategoryBreakdownChart transactions={transactions} type="depense" />
+        </div>
+        <div>
+          <p className="mb-2 text-sm font-medium text-foreground">Répartition des recettes</p>
+          <CategoryBreakdownChart transactions={transactions} type="recette" />
+        </div>
       </div>
 
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
