@@ -2,11 +2,17 @@ import { createBrowserRouter, Navigate, Outlet } from "react-router"
 import { AppLayout } from "./layout/AppLayout"
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute"
 import { RouteError } from "./RouteError"
+import { AuthRedirectWatcher } from "@/features/auth/AuthRedirectWatcher"
 
 export const router = createBrowserRouter([
   {
     id: "root",
-    element: <Outlet />,
+    element: (
+      <>
+        <AuthRedirectWatcher />
+        <Outlet />
+      </>
+    ),
     errorElement: <RouteError />,
     children: [
       {

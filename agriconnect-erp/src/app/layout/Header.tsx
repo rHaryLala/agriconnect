@@ -1,4 +1,3 @@
-import { useNavigate } from "react-router"
 import { Sun, Moon, LogOut, Menu } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/hooks/useTheme"
@@ -11,12 +10,9 @@ interface HeaderProps {
 export function Header({ onMenuClick }: HeaderProps) {
   const { theme, toggleTheme } = useTheme()
   const user = useAuthStore((s) => s.user)
-  const logout = useAuthStore((s) => s.logout)
-  const navigate = useNavigate()
 
   function handleLogout() {
-    logout()
-    navigate("/login")
+    useAuthStore.getState().logout("manual")
   }
 
   return (
