@@ -45,8 +45,8 @@ export default function RegisterPage() {
         <source srcSet="/hero/hero-11.webp" type="image/webp" />
         <img src="/hero/hero-11.jpg" alt="" aria-hidden fetchPriority="high" decoding="async" className="h-full w-full object-cover" />
       </picture>
-      <div className="absolute inset-0 bg-gradient-to-bl from-[#0B3B27]/92 via-[#0B3B27]/78 to-[#0B3B27]/88" />
-      <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 animate-drift rounded-full bg-white/10 blur-3xl" />
+     <div className="absolute inset-0 bg-gradient-to-l from-[#0B3B27]/95 via-[#0B3B27]/60 to-[#0B3B27]/80" />
+      <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_25%_50%,rgba(11,59,39,0.55),transparent_70%)]" />
       <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 animate-drift-slow rounded-full bg-[#8FE3B3]/20 blur-3xl" />
 
       <div className="relative z-10 flex min-h-screen flex-col lg:flex-row-reverse lg:items-center lg:justify-between lg:gap-12 lg:px-16 xl:px-24">
