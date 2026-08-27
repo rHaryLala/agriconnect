@@ -26,7 +26,7 @@ export function AppLayout() {
               aria-hidden
             />
             <div className="absolute inset-y-0 left-0 w-64 animate-content-in bg-surface shadow-xl">
-              <Sidebar onNavigate={() => setMobileMenuOpen(false)} />
+              <Sidebar onNavigate={() => setMobileMenuOpen(false)} forceExpanded />
             </div>
           </div>
         )}

@@ -2,13 +2,13 @@ import type { UserRole } from "@/types/user"
 
 const BACKEND_TO_FRONTEND: Record<string, UserRole> = {
   ADMIN: "admin",
-  COMPTABLE: "finance_commercial",
+  COMPTABLE: "comptable",
   OUVRIER: "ouvrier",
 }
 
 const FRONTEND_TO_BACKEND: Record<UserRole, string> = {
   admin: "ADMIN",
-  finance_commercial: "COMPTABLE",
+  comptable: "COMPTABLE",
   ouvrier: "OUVRIER",
 }
 

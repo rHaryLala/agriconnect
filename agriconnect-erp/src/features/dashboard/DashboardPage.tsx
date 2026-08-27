@@ -11,7 +11,7 @@ export default function DashboardPage() {
   switch (user.role) {
     case "admin":
       return <AdminDashboardView />
-    case "finance_commercial":
+    case "comptable":
       return <FinanceDashboardView />
     case "ouvrier":
       return <OuvrierDashboardView />

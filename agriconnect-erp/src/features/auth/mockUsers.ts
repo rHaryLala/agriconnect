@@ -14,7 +14,7 @@ export const MOCK_USERS: (User & { password: string })[] = [
     name: "RASAMIZAFY Simeon",
     email: "rasamizafy.sit@zurcher.edu.mg",
     password: "1234qwerty",
-    role: "finance_commercial",
+    role: "comptable",
     avatarInitials: "RS",
   },
   {
