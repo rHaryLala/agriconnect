@@ -3,14 +3,14 @@ import { ProductionType } from "@prisma/client";
 
 export class CreateProductionDto {
     @IsEnum(ProductionType) //OEUF, LAIT, VIANDE, RECOLTES
-    type: ProductionType;
+    type!: ProductionType;
 
     @IsNumber()
     @Min(0.01)
-    quantity: number;
+    quantity!: number;
 
     @IsString()
-    unit: string;
+    unit!: string;
 
     @IsOptional()
     @IsString()
