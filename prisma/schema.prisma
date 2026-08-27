@@ -14,30 +14,33 @@ enum Role {
 }
 
 model Farm {
-  id  String @id @default(uuid())
-  name String 
-  location String?
-  users User[]
+  id          String        @id @default(uuid())
+  name        String
+  location    String?
+  users       User[]
   productions Production[]
-  stockItem StockItem[]
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+  stockItem   StockItem[]
+  clients     Client[]
+  invoices    Invoice[]
+
+  createdAt   DateTime      @default(now())
+  updatedAt   DateTime      @updatedAt
 }
 
 model User {
-  id String @id @default(uuid())
-  email String @unique
-  password String 
-  firstName String
-  lastName String
-  role Role @default(OUVRIER)
-  farmId String
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  production Production[]
-  stockMovment StockMovement[]
+  id            String          @id @default(uuid())
+  email         String          @unique
+  password      String
+  firstName     String
+  lastName      String
+  role          Role            @default(OUVRIER)
+  farmId        String
+  farm          Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  production    Production[]
+  stockMovment  StockMovement[]
 
-  createdAt DateTime @default  (now())
-  updatedAt DateTime @updatedAt
+  createdAt     DateTime        @default(now())
+  updatedAt     DateTime        @updatedAt
 
   @@index([farmId])
 }
@@ -50,64 +53,109 @@ enum ProductionType {
 }
 
 model Production {
-  id String @id @default(uuid())
-  type ProductionType
-  quantity Float
-  unit String
-  date DateTime @default(now())
-  notes String?
+  id          String         @id @default(uuid())
+  type        ProductionType
+  quantity    Float
+  unit        String
+  date        DateTime       @default(now())
+  notes       String?
 
-  userId String
-  user User @relation(fields: [userId], references: [id])
-  farmId String 
-  farm Farm @relation(fields: [farmId], references: [id])
+  userId      String
+  user        User           @relation(fields: [userId], references: [id])
+  farmId      String
+  farm        Farm           @relation(fields: [farmId], references: [id])
 
   stockItemId String?
-  stockItem StockItem? @relation(fields: [stockItemId], references: [id])
+  stockItem   StockItem?     @relation(fields: [stockItemId], references: [id])
 
-  createdAt DateTime @default(now())
+  createdAt   DateTime       @default(now())
 }
 
 enum MouvementType {
-  IN 
+  IN
   OUT
   AJUSTEMENT
 }
 
 model StockItem {
-  id String @id @default(uuid())
-  name String
-  category String
-  quantity Float @default(0)
-  unit String
-  miniAlert Float @default(10)
+  id          String          @id @default(uuid())
+  name        String
+  category    String
+  quantity    Float           @default(0)
+  unit        String
+  miniAlert   Float           @default(10)
 
-  farmId String
-  farm Farm @relation(fields: [farmId], references: [id])
+  farmId      String
+  farm        Farm            @relation(fields: [farmId], references: [id])
   movements   StockMovement[]
-  production Production[]
+  production  Production[]
 
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
+  createdAt   DateTime        @default(now())
+  updatedAt   DateTime        @updatedAt
 }
 
 model StockMovement {
-  id String @id @default(uuid())
-  type MouvementType
-  quantity Float
-  reason String?
-  date DateTime @default(now())
-  userId String
-  user User @relation(fields: [userId], references: [id])
+  id                 String         @id @default(uuid())
+  type               MouvementType
+  quantity           Float
+  reason             String?
+  date               DateTime       @default(now())
+  userId             String
+  user               User           @relation(fields: [userId], references: [id])
 
-  itemId String
-  item StockItem @relation(fields: [itemId], references: [id])
+  itemId             String
+  item               StockItem      @relation(fields: [itemId], references: [id])
 
-  originalMovmentId String?
-  originalMovment StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
-  corrections StockMovement[] @relation("MovmentCorrection")
+  originalMovmentId  String?
+  originalMovment    StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
+  corrections        StockMovement[] @relation("MovmentCorrection")
 
-  createdAt DateTime @default(now())
+  createdAt          DateTime       @default(now())
 }
 
+enum ClientType {
+  EXTERNE
+  PERSONNEL_UAZ
+  CAF
+  STORE
+}
+
+model Client {
+  id           String     @id @default(uuid())
+  name         String
+  phone        String?
+  type         ClientType @default(EXTERNE) // externe sy personnelle iany ny
+  matriculeuaz String?    @map("matricule_uaz") // Pour identifier l'employé sur le rapport comptable
+
+  farmId       String
+  farm         Farm       @relation(fields: [farmId], references: [id])
+  invoices     Invoice[]
+
+  createdAt    DateTime   @default(now())
+  updatedAt    DateTime   @updatedAt
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PAID
+}
+
+model Invoice {
+  id            String        @id @default(uuid())
+  invoiceNumber String        @unique @map("numero_du_recu")
+  totalAmount   Float         @map("total_ttc")
+  paidAmount    Float         @default(0) @map("montant_reglé")
+  dueAmount     Float         @map("reste_a_payer")
+  status        InvoiceStatus @default(UNPAID) @map("statut_du_paiment")
+
+  clientId      String
+  client        Client        @relation(fields: [clientId], references: [id])
+
+  farmId        String
+  farm          Farm          @relation(fields: [farmId], references: [id])
+
+  // relation de paiment eto.... rehefa vita ny table paiment
+
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+}
