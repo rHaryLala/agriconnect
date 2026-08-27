@@ -50,7 +50,7 @@ async function main() {
         email: "ouvrier@agriconnect.com",
         password: "password123",
         firstName: "Voahary",
-        lastName: "Rado",
+        lastName: "Radoniaina",
         role: "OUVRIER",
         farmId: farm.id,
       },
