@@ -16,7 +16,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   }
 
   return (
-    <header className="flex h-16 items-center justify-between border-b border-border bg-surface px-4 sm:px-6">
+   <header className="glass-surface sticky top-0 z-20 mx-2 mt-2 flex h-14 items-center justify-between rounded-2xl px-4 shadow-sm sm:mx-3 sm:mt-3 sm:h-16 sm:px-6">
       <div className="flex items-center gap-2">
         <Button variant="ghost" size="icon" onClick={onMenuClick} aria-label="Ouvrir le menu" className="lg:hidden">
           <Menu className="h-5 w-5" />
