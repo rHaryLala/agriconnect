@@ -29,9 +29,12 @@ export function AppLayout() {
           </div>
         )}
 
-        {/* pb-24 sur mobile : laisse la place pour que la bottom nav flottante ne
-            recouvre jamais le bas du contenu (ex: bouton "Enregistrer" d'une liste) */}
-        <main className="flex-1 overflow-y-auto bg-background p-4 pb-24 sm:p-6 lg:pb-6">
+        <main className="relative flex-1 overflow-y-auto bg-background p-4 pb-24 sm:p-6 lg:pb-6">
+          <div
+            aria-hidden
+            className="pointer-events-none fixed inset-0 -z-10 bg-cover bg-center bg-fixed opacity-[0.025] dark:opacity-[0.04]"
+            style={{ backgroundImage: "url(/hero/hero-06.jpg)" }}
+          />
           <div key={location.pathname} className="animate-content-in">
             <Outlet />
           </div>
