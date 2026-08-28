@@ -101,3 +101,27 @@ export function computeMonthOverMonth(
     changePercent,
   }
 }
+export interface CashBookRow {
+  id: string
+  date: string
+  libelle: string
+  entree: number | null
+  sortie: number | null
+  solde: number
+}
+
+export function computeCashBook(transactions: FinanceTransaction[], soldeOuverture: number): CashBookRow[] {
+  const sorted = transactions.slice().sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id))
+  let solde = soldeOuverture
+  return sorted.map((t) => {
+    solde += t.type === "recette" ? t.montant : -t.montant
+    return {
+      id: t.id,
+      date: t.date,
+      libelle: t.description,
+      entree: t.type === "recette" ? t.montant : null,
+      sortie: t.type === "depense" ? t.montant : null,
+      solde,
+    }
+  })
+}
