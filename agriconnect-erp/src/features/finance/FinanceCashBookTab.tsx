@@ -3,6 +3,7 @@ import { toast } from "sonner"
 import { Wallet, ArrowDownCircle, ArrowUpCircle, PiggyBank, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
+import { useFinanceStore } from "./financeStore"
 import { computeCashBook } from "@/lib/financeCalc"
 import { formatDate, formatCurrency } from "@/lib/format"
 import type { FinanceTransaction } from "@/types/finance"
@@ -12,7 +13,9 @@ interface FinanceCashBookTabProps {
 }
 
 export function FinanceCashBookTab({ transactions }: FinanceCashBookTabProps) {
-  const [soldeOuverture, setSoldeOuverture] = useState(0)
+  const soldeOuverture = useFinanceStore((s) => s.soldeOuverture)
+  const setSoldeOuverture = useFinanceStore((s) => s.setSoldeOuverture)
+
   const [dateDebut, setDateDebut] = useState("")
   const [dateFin, setDateFin] = useState("")
 
@@ -35,6 +38,11 @@ export function FinanceCashBookTab({ transactions }: FinanceCashBookTabProps) {
     toast.info("Export PDF pas encore disponible — prévu avec le module Rapports.")
   }
 
+  function handleSoldeOuvertureChange(raw: string) {
+    const value = Number(raw)
+    setSoldeOuverture(Number.isFinite(value) ? value : 0)
+  }
+
   return (
     <div>
       <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-4">
@@ -43,7 +51,7 @@ export function FinanceCashBookTab({ transactions }: FinanceCashBookTabProps) {
           <input
             type="number"
             value={soldeOuverture}
-            onChange={(e) => setSoldeOuverture(Number(e.target.value))}
+            onChange={(e) => handleSoldeOuvertureChange(e.target.value)}
             className="w-full rounded-md border border-border bg-background px-2 py-1 text-lg font-bold tabular-nums text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
           />
         </div>
