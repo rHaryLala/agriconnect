@@ -1,55 +1,39 @@
 generator client {
   provider = "prisma-client-js"
-  output = "../generated/prisma"
 }
 
 datasource db {
   provider = "postgresql"
 }
 
-enum Role {
-  ADMIN
-  COMPTABLE
-  OUVRIER
-}
-
 model Farm {
-  id          String        @id @default(uuid())
+  id          String       @id @default(uuid())
   name        String
   location    String?
-  users       User[]
-  productions Production[]
-  stockItem   StockItem[]
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
   clients     Client[]
   invoices    Invoice[]
-
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  productions Production[]
+  stockItem   StockItem[]
+  users       User[]
 }
 
 model User {
-  id            String          @id @default(uuid())
-  email         String          @unique
-  password      String
-  firstName     String
-  lastName      String
-  role          Role            @default(OUVRIER)
-  farmId        String
-  farm          Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  production    Production[]
-  stockMovment  StockMovement[]
-
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  id           String          @id @default(uuid())
+  email        String          @unique
+  password     String
+  firstName    String
+  lastName     String
+  role         Role            @default(OUVRIER)
+  farmId       String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  production   Production[]
+  stockMovment StockMovement[]
+  farm         Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
 
   @@index([farmId])
-}
-
-enum ProductionType {
-  OEUFS
-  LAIT
-  VIANDE
-  RECOLTES
 }
 
 model Production {
@@ -59,85 +43,57 @@ model Production {
   unit        String
   date        DateTime       @default(now())
   notes       String?
-
   userId      String
-  user        User           @relation(fields: [userId], references: [id])
   farmId      String
-  farm        Farm           @relation(fields: [farmId], references: [id])
-
   stockItemId String?
-  stockItem   StockItem?     @relation(fields: [stockItemId], references: [id])
-
   createdAt   DateTime       @default(now())
-}
-
-enum MouvementType {
-  IN
-  OUT
-  AJUSTEMENT
+  farm        Farm           @relation(fields: [farmId], references: [id])
+  stockItem   StockItem?     @relation(fields: [stockItemId], references: [id])
+  user        User           @relation(fields: [userId], references: [id])
 }
 
 model StockItem {
-  id          String          @id @default(uuid())
-  name        String
-  category    String
-  quantity    Float           @default(0)
-  unit        String
-  miniAlert   Float           @default(10)
-
-  farmId      String
-  farm        Farm            @relation(fields: [farmId], references: [id])
-  movements   StockMovement[]
-  production  Production[]
-
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  id         String          @id @default(uuid())
+  name       String
+  category   String
+  quantity   Float           @default(0)
+  unit       String
+  miniAlert  Float           @default(10)
+  farmId     String
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  production Production[]
+  farm       Farm            @relation(fields: [farmId], references: [id])
+  movements  StockMovement[]
 }
 
 model StockMovement {
-  id                 String         @id @default(uuid())
-  type               MouvementType
-  quantity           Float
-  reason             String?
-  date               DateTime       @default(now())
-  userId             String
-  user               User           @relation(fields: [userId], references: [id])
-
-  itemId             String
-  item               StockItem      @relation(fields: [itemId], references: [id])
-
-  originalMovmentId  String?
-  originalMovment    StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
-  corrections        StockMovement[] @relation("MovmentCorrection")
-
-  createdAt          DateTime       @default(now())
-}
-
-enum ClientType {
-  EXTERNE
-  PERSONNEL_UAZ
-  CAF
-  STORE
+  id                String          @id @default(uuid())
+  type              MouvementType
+  quantity          Float
+  reason            String?
+  date              DateTime        @default(now())
+  userId            String
+  itemId            String
+  originalMovmentId String?
+  createdAt         DateTime        @default(now())
+  item              StockItem       @relation(fields: [itemId], references: [id])
+  originalMovment   StockMovement?  @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
+  corrections       StockMovement[] @relation("MovmentCorrection")
+  user              User            @relation(fields: [userId], references: [id])
 }
 
 model Client {
   id           String     @id @default(uuid())
   name         String
   phone        String?
-  type         ClientType @default(EXTERNE) // externe sy personnelle iany ny
-  matriculeuaz String?    @map("matricule_uaz") // Pour identifier l'employé sur le rapport comptable
-
+  createdAt    DateTime   @default(now())
   farmId       String
+  matriculeuaz String?    @map("matricule_uaz")
+  type         ClientType @default(EXTERNE)
+  updatedAt    DateTime   @updatedAt
   farm         Farm       @relation(fields: [farmId], references: [id])
   invoices     Invoice[]
-
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
-}
-
-enum InvoiceStatus {
-  UNPAID
-  PAID
 }
 
 model Invoice {
@@ -147,15 +103,41 @@ model Invoice {
   paidAmount    Float         @default(0) @map("montant_reglé")
   dueAmount     Float         @map("reste_a_payer")
   status        InvoiceStatus @default(UNPAID) @map("statut_du_paiment")
-
   clientId      String
-  client        Client        @relation(fields: [clientId], references: [id])
-
   farmId        String
-  farm          Farm          @relation(fields: [farmId], references: [id])
-
-  // relation de paiment eto.... rehefa vita ny table paiment
-
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+  client        Client        @relation(fields: [clientId], references: [id])
+  farm          Farm          @relation(fields: [farmId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  COMPTABLE
+  OUVRIER
+}
+
+enum ProductionType {
+  OEUFS
+  LAIT
+  VIANDE
+  RECOLTES
+}
+
+enum MouvementType {
+  IN
+  OUT
+  AJUSTEMENT
+}
+
+enum ClientType {
+  EXTERNE
+  PERSONNEL_UAZ
+  CAF
+  STORE
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PAID
 }
