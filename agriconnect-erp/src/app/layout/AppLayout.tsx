@@ -14,7 +14,7 @@ export function AppLayout() {
     setMobileMenuOpen(false)
   }, [location.pathname])
 
-  const bgImage = theme === "dark" ? "/backgrounds/app-bg-dark.jpg" : "/backgrounds/app-bg-light.jpg"
+  const bgImage = theme === "dark" ? "/backgrounds/app-bg-dark.webp" : "/backgrounds/app-bg-light.webp"
 
   return (
     <div className="relative flex h-screen flex-col overflow-hidden">
