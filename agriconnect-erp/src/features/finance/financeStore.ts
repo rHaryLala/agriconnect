@@ -7,6 +7,7 @@ const FAKE_LATENCY_MS = 500
 interface FinanceState {
   transactions: FinanceTransaction[]
   isLoading: boolean
+  hasFetched: boolean
   fetchAll: () => Promise<void>
   addTransaction: (data: Omit<FinanceTransaction, "id">) => Promise<void>
   updateTransaction: (id: string, data: Omit<FinanceTransaction, "id">) => Promise<void>
@@ -16,15 +17,17 @@ interface FinanceState {
 export const useFinanceStore = create<FinanceState>((set, get) => ({
   transactions: [],
   isLoading: false,
-
-  fetchAll: () =>
-    new Promise((resolve) => {
+  hasFetched: false,
+  fetchAll: () => {
+    if (get().hasFetched) return Promise.resolve()
+    return new Promise((resolve) => {
       set({ isLoading: true })
       setTimeout(() => {
-        set({ transactions: SEED_TRANSACTIONS, isLoading: false })
+        set({ transactions: SEED_TRANSACTIONS, isLoading: false, hasFetched: true })
         resolve()
       }, FAKE_LATENCY_MS)
-    }),
+    })
+  },
 
   addTransaction: (data) =>
     new Promise((resolve) => {

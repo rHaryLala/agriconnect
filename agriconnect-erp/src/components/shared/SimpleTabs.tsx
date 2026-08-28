@@ -3,6 +3,7 @@ import type { ReactNode } from "react"
 interface Tab {
   id: string
   label: string
+  badge?: number
 }
 
 interface SimpleTabsProps {
@@ -22,11 +23,16 @@ export function SimpleTabs({ tabs, activeId, onChange, trailing }: SimpleTabsPro
           role="tab"
           aria-selected={activeId === tab.id}
           onClick={() => onChange(tab.id)}
-          className={`relative px-4 py-2.5 text-sm font-medium transition-colors duration-200 ${
+          className={`relative flex items-center gap-1.5 px-4 py-2.5 text-sm font-medium transition-colors duration-200 ${
             activeId === tab.id ? "text-primary" : "text-muted-foreground hover:text-foreground"
           }`}
         >
           {tab.label}
+          {!!tab.badge && (
+            <span className="flex h-4 min-w-4 items-center justify-center rounded-full bg-destructive px-1 text-[10px] font-semibold text-destructive-foreground">
+              {tab.badge}
+            </span>
+          )}
           {activeId === tab.id && (
             <span className="absolute inset-x-3 -bottom-px h-0.5 animate-fade-in rounded-full bg-primary" />
           )}

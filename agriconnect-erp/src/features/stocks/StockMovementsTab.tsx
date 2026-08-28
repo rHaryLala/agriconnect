@@ -2,6 +2,16 @@ import { useMemo, useState } from "react"
 import { toast } from "sonner"
 import { Plus, ArrowDownCircle, ArrowUpCircle, Pencil, Trash2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { StockMovementDialog } from "./StockMovementDialog"
 import { useStockStore } from "./stockStore"
@@ -19,6 +29,7 @@ export function StockMovementsTab() {
   const { articles, movements, isLoading, addMovement, updateMovement, deleteMovement } = useStockStore()
   const [movementOpen, setMovementOpen] = useState(false)
   const [editingMovement, setEditingMovement] = useState<StockMovement | null>(null)
+  const [deletingMovement, setDeletingMovement] = useState<StockMovement | null>(null)
   const [dateDebut, setDateDebut] = useState("")
   const [dateFin, setDateFin] = useState("")
 
@@ -70,6 +81,13 @@ export function StockMovementsTab() {
     }
   }
 
+  function confirmDelete() {
+    if (!deletingMovement) return
+    deleteMovement(deletingMovement.id)
+    toast.success("Mouvement supprimé")
+    setDeletingMovement(null)
+  }
+
   function rowTone(m: StockMovement): RowTone {
     const balance = runningBalances[m.id]
     return balance !== undefined && balance < 0 ? "critical" : null
@@ -109,7 +127,7 @@ export function StockMovementsTab() {
           <Button variant="ghost" size="icon" onClick={() => openEdit(m)} aria-label="Modifier">
             <Pencil className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => { deleteMovement(m.id); toast.success("Mouvement supprimé") }} aria-label="Supprimer">
+          <Button variant="ghost" size="icon" onClick={() => setDeletingMovement(m)} aria-label="Supprimer">
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
         </div>
@@ -145,6 +163,24 @@ export function StockMovementsTab() {
       <DataTable columns={columns} rows={filtered} rowKey={(m) => m.id} isLoading={isLoading} emptyIcon={ArrowDownCircle} emptyTitle="Aucun mouvement" rowTone={rowTone} />
 
       <StockMovementDialog open={movementOpen} onOpenChange={setMovementOpen} articles={articles} editingEntry={editingMovement} onSubmit={handleSubmit} />
+
+      <AlertDialog open={!!deletingMovement} onOpenChange={(open) => !open && setDeletingMovement(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer ce mouvement ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deletingMovement && `${deletingMovement.type === "entree" ? "Entrée" : "Sortie"} de ${formatNumber(deletingMovement.quantite)} — `}
+              Cette action est irréversible et modifiera le stock calculé.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }

@@ -1,23 +1,33 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { useStockStore } from "./stockStore"
 import { StockInventoryTab } from "./StockInventoryTab"
 import { StockMovementsTab } from "./StockMovementsTab"
 import { StockAlertsTab } from "./StockAlertsTab"
-
-const TABS = [
-  { id: "inventaire", label: "Inventaire" },
-  { id: "mouvements", label: "Mouvements" },
-  { id: "alertes", label: "Alertes" },
-]
+import { computeCurrentStock, getStockStatus } from "@/lib/stockCalc"
 
 export default function StocksPage() {
-  const fetchAll = useStockStore((s) => s.fetchAll)
+  const { articles, movements, fetchAll } = useStockStore()
   const [activeTab, setActiveTab] = useState("inventaire")
 
   useEffect(() => {
     fetchAll()
   }, [fetchAll])
+
+  const alertesCount = useMemo(
+    () =>
+      articles.filter((a) => {
+        const status = getStockStatus(computeCurrentStock(a, movements), a.seuilCritique)
+        return status === "critique" || status === "bas"
+      }).length,
+    [articles, movements]
+  )
+
+  const TABS = [
+    { id: "inventaire", label: "Inventaire" },
+    { id: "mouvements", label: "Mouvements" },
+    { id: "alertes", label: "Alertes", badge: alertesCount },
+  ]
 
   return (
     <div>

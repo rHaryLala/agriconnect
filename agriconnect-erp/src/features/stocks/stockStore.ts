@@ -8,6 +8,7 @@ interface StockState {
   articles: StockArticle[]
   movements: StockMovement[]
   isLoading: boolean
+  hasFetched: boolean
   fetchAll: () => Promise<void>
   addArticle: (data: Omit<StockArticle, "id">) => void
   addMovement: (data: Omit<StockMovement, "id">) => Promise<void>
@@ -19,15 +20,18 @@ export const useStockStore = create<StockState>((set, get) => ({
   articles: [],
   movements: [],
   isLoading: false,
+  hasFetched: false,
 
-  fetchAll: () =>
-    new Promise((resolve) => {
+  fetchAll: () => {
+    if (get().hasFetched) return Promise.resolve()
+    return new Promise((resolve) => {
       set({ isLoading: true })
       setTimeout(() => {
-        set({ articles: SEED_ARTICLES, movements: SEED_MOVEMENTS, isLoading: false })
+        set({ articles: SEED_ARTICLES, movements: SEED_MOVEMENTS, isLoading: false, hasFetched: true })
         resolve()
       }, FAKE_LATENCY_MS)
-    }),
+    })
+  },
 
   addArticle: (data) => {
     set({ articles: [...get().articles, { ...data, id: `article-${Date.now()}` }] })

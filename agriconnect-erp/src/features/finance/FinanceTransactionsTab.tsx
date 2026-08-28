@@ -2,6 +2,16 @@ import { useMemo, useState } from "react"
 import { toast } from "sonner"
 import { Plus, Wallet, Trash2, Pencil, Settings2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import {
+  AlertDialog,
+  AlertDialogContent,
+  AlertDialogHeader,
+  AlertDialogTitle,
+  AlertDialogDescription,
+  AlertDialogFooter,
+  AlertDialogCancel,
+  AlertDialogAction,
+} from "@/components/ui/alert-dialog"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { TypesManagerDialog } from "@/components/shared/TypesManagerDialog"
@@ -24,6 +34,7 @@ export function FinanceTransactionsTab({ transactions, isLoading, onAdd, onUpdat
 
   const [entryOpen, setEntryOpen] = useState(false)
   const [editingEntry, setEditingEntry] = useState<FinanceTransaction | null>(null)
+  const [deletingEntry, setDeletingEntry] = useState<FinanceTransaction | null>(null)
   const [manageDepensesOpen, setManageDepensesOpen] = useState(false)
   const [manageRecettesOpen, setManageRecettesOpen] = useState(false)
   const [typeFilter, setTypeFilter] = useState<"tous" | "depense" | "recette">("tous")
@@ -60,6 +71,13 @@ export function FinanceTransactionsTab({ transactions, isLoading, onAdd, onUpdat
     }
   }
 
+  function confirmDelete() {
+    if (!deletingEntry) return
+    onDelete(deletingEntry.id)
+    toast.success("Transaction supprimée")
+    setDeletingEntry(null)
+  }
+
   function rowTone(t: FinanceTransaction): RowTone {
     return hasAlertKeyword(t.description) ? "warning" : null
   }
@@ -88,7 +106,7 @@ export function FinanceTransactionsTab({ transactions, isLoading, onAdd, onUpdat
           <Button variant="ghost" size="icon" onClick={() => openEdit(t)} aria-label="Modifier">
             <Pencil className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => { onDelete(t.id); toast.success("Transaction supprimée") }} aria-label="Supprimer">
+          <Button variant="ghost" size="icon" onClick={() => setDeletingEntry(t)} aria-label="Supprimer">
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
         </div>
@@ -164,6 +182,23 @@ export function FinanceTransactionsTab({ transactions, isLoading, onAdd, onUpdat
         onUpdate={(id, v) => updateCategory("recette", id, v.nom as string)}
         onDelete={(id) => removeCategory("recette", id)}
       />
+
+      <AlertDialog open={!!deletingEntry} onOpenChange={(open) => !open && setDeletingEntry(null)}>
+        <AlertDialogContent>
+          <AlertDialogHeader>
+            <AlertDialogTitle>Supprimer cette transaction ?</AlertDialogTitle>
+            <AlertDialogDescription>
+              {deletingEntry?.description} — {deletingEntry ? formatCurrency(deletingEntry.montant) : ""}. Cette action est irréversible.
+            </AlertDialogDescription>
+          </AlertDialogHeader>
+          <AlertDialogFooter>
+            <AlertDialogCancel>Annuler</AlertDialogCancel>
+            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+              Supprimer
+            </AlertDialogAction>
+          </AlertDialogFooter>
+        </AlertDialogContent>
+      </AlertDialog>
     </div>
   )
 }
