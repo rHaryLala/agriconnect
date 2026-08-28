@@ -15,3 +15,10 @@ export const MOCK_TRENDS = {
     { label: "Juin", value: 220 }, { label: "Juil", value: 228 }, { label: "Août", value: 236 },
   ],
 }
+
+export const MOCK_STAT_TRENDS = {
+  harvest: { value: 8.2, isPositive: true },
+  stockItems: { value: 4.7, isPositive: true },
+  lowStockAlerts: { value: -1.0, isPositive: true },
+  activeParcels: { value: 0, isPositive: true },
+} 
