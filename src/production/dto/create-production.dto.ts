@@ -2,7 +2,7 @@ import { IsEnum, IsNumber, Min, IsString, IsOptional, IsUUID, IsDateString } fro
 import { ProductionType } from "@prisma/client";
 
 export class CreateProductionDto {
-    @IsEnum(ProductionType) //OEUF, LAIT, VIANDE, RECOLTES
+    @IsEnum(ProductionType) //OEUFS, LAIT, VIANDE, RECOLTES
     type!: ProductionType;
 
     @IsNumber()

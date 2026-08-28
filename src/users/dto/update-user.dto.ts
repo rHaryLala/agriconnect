@@ -8,11 +8,11 @@ import { Role } from "@prisma/client";
 export class UpdateUserDto {
     @IsOptional()
     @IsString()
-    firstname?: string;
+    firstName?: string;
 
     @IsOptional()
     @IsString()
-    lastname?: string;
+    lastName?: string;
 
     @IsOptional()
     @IsEnum(Role)
