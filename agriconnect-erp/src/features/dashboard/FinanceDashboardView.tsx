@@ -1,12 +1,11 @@
 import { useEffect, useMemo } from "react"
 import { useNavigate } from "react-router"
-import { Wallet, TrendingDown, TrendingUp, FileWarning, Handshake, Plus, Minus, FileText, Download } from "lucide-react"
+import { Wallet, TrendingDown, TrendingUp, Receipt, ListChecks, Plus, Minus, FileText, Download } from "lucide-react"
 import { StatCard } from "@/components/shared/StatCard"
 import { QuickActionsCard, type QuickAction } from "@/components/shared/QuickActionsCard"
-import { formatCurrency, formatNumber, formatMonthLabel } from "@/lib/format"
-import { MOCK_DASHBOARD_DATA as data } from "./mockDashboardData"
+import { formatCurrency, formatMonthLabel } from "@/lib/format"
 import { useFinanceStore } from "@/features/finance/financeStore"
-import { computeMonthlySeries, computeMonthOverMonth } from "@/lib/financeCalc"
+import { computeTotals, computeMonthlySeries, computeMonthOverMonth } from "@/lib/financeCalc"
 import { MiniAreaChart } from "@/components/shared/MiniAreaChart"
 
 export function FinanceDashboardView() {
@@ -17,6 +16,8 @@ export function FinanceDashboardView() {
     fetchAll()
   }, [fetchAll])
 
+  const { totalRecettes, totalDepenses, marge } = useMemo(() => computeTotals(transactions), [transactions])
+
   const chartData = useMemo(
     () => computeMonthlySeries(transactions).map((p) => ({ label: formatMonthLabel(p.mois), value: p.recettes - p.depenses })),
     [transactions]
@@ -24,6 +25,9 @@ export function FinanceDashboardView() {
 
   const revenueTrend = useMemo(() => computeMonthOverMonth(transactions, "recette"), [transactions])
   const expenseTrend = useMemo(() => computeMonthOverMonth(transactions, "depense"), [transactions])
+
+  const currentMonth = new Date().toISOString().slice(0, 7)
+  const transactionsCeMois = useMemo(() => transactions.filter((t) => t.date.startsWith(currentMonth)).length, [transactions, currentMonth])
 
   const actions: QuickAction[] = [
     { icon: Plus, label: "Enregistrer revenu", onClick: () => navigate("/app/finance"), tone: "success" },
@@ -35,28 +39,26 @@ export function FinanceDashboardView() {
   return (
     <div>
       <h2 className="mb-1 text-2xl font-bold">Tableau de bord — Finance</h2>
-      <p className="mb-6 text-sm text-muted-foreground">Recettes, dépenses, marge, clients</p>
+      <p className="mb-6 text-sm text-muted-foreground">Recettes, dépenses, marge</p>
 
       <div className="grid grid-cols-2 gap-4 md:grid-cols-3">
         <StatCard
           icon={Wallet}
           label="Chiffre d'affaires"
-          value=""
+          value={formatCurrency(totalRecettes)}
           tone="info"
           trend={revenueTrend.previousTotal > 0 ? { value: revenueTrend.changePercent, isPositive: revenueTrend.changePercent >= 0 } : undefined}
-          animate={{ target: data.finance.revenue, format: (n) => formatCurrency(Math.round(n)) }}
         />
         <StatCard
           icon={TrendingDown}
           label="Dépenses"
-          value=""
+          value={formatCurrency(totalDepenses)}
           tone="destructive"
           trend={expenseTrend.previousTotal > 0 ? { value: expenseTrend.changePercent, isPositive: expenseTrend.changePercent <= 0 } : undefined}
-          animate={{ target: data.finance.expenses, format: (n) => formatCurrency(Math.round(n)) }}
         />
-        <StatCard icon={TrendingUp} label="Marge nette" value="" tone="success" animate={{ target: data.finance.margin, format: (n) => formatCurrency(Math.round(n)) }} />
-        <StatCard icon={FileWarning} label="Factures impayées" value="" tone="warning" animate={{ target: data.finance.unpaidInvoices, format: (n) => formatNumber(Math.round(n)) }} />
-        <StatCard icon={Handshake} label="Clients actifs" value="" tone="primary" animate={{ target: data.clients.totalClients, format: (n) => formatNumber(Math.round(n)) }} />
+        <StatCard icon={TrendingUp} label="Marge nette" value={formatCurrency(marge)} tone={marge >= 0 ? "success" : "destructive"} />
+        <StatCard icon={Receipt} label="Transactions ce mois" value={String(transactionsCeMois)} tone="warning" />
+        <StatCard icon={ListChecks} label="Total transactions" value={String(transactions.length)} tone="primary" hint="Depuis le début" />
       </div>
 
       <div className="mt-6 grid grid-cols-1 gap-4 lg:grid-cols-3">

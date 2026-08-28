@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { persist, createJSONStorage } from "zustand/middleware"
 import type { StockArticle, StockMovement } from "@/types/stock"
 import { SEED_ARTICLES, SEED_MOVEMENTS } from "./mockStockData"
 
@@ -16,42 +17,55 @@ interface StockState {
   deleteMovement: (id: string) => void
 }
 
-export const useStockStore = create<StockState>((set, get) => ({
-  articles: [],
-  movements: [],
-  isLoading: false,
-  hasFetched: false,
+export const useStockStore = create<StockState>()(
+  persist(
+    (set, get) => ({
+      articles: [],
+      movements: [],
+      isLoading: false,
+      hasFetched: false,
 
-  fetchAll: () => {
-    if (get().hasFetched) return Promise.resolve()
-    return new Promise((resolve) => {
-      set({ isLoading: true })
-      setTimeout(() => {
-        set({ articles: SEED_ARTICLES, movements: SEED_MOVEMENTS, isLoading: false, hasFetched: true })
-        resolve()
-      }, FAKE_LATENCY_MS)
-    })
-  },
+      fetchAll: () => {
+        if (get().hasFetched) return Promise.resolve()
+        return new Promise((resolve) => {
+          set({ isLoading: true })
+          setTimeout(() => {
+            set({ articles: SEED_ARTICLES, movements: SEED_MOVEMENTS, isLoading: false, hasFetched: true })
+            resolve()
+          }, FAKE_LATENCY_MS)
+        })
+      },
 
-  addArticle: (data) => {
-    set({ articles: [...get().articles, { ...data, id: `article-${Date.now()}` }] })
-  },
+      addArticle: (data) => {
+        set({ articles: [...get().articles, { ...data, id: `article-${Date.now()}` }] })
+      },
 
-  addMovement: (data) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        set({ movements: [{ ...data, id: `mvt-${Date.now()}` }, ...get().movements] })
-        resolve()
-      }, FAKE_LATENCY_MS)
+      addMovement: (data) =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            set({ movements: [{ ...data, id: `mvt-${Date.now()}` }, ...get().movements] })
+            resolve()
+          }, FAKE_LATENCY_MS)
+        }),
+
+      updateMovement: (id, data) =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            set({ movements: get().movements.map((m) => (m.id === id ? { ...data, id } : m)) })
+            resolve()
+          }, FAKE_LATENCY_MS)
+        }),
+
+      deleteMovement: (id) => set({ movements: get().movements.filter((m) => m.id !== id) }),
     }),
-
-  updateMovement: (id, data) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        set({ movements: get().movements.map((m) => (m.id === id ? { ...data, id } : m)) })
-        resolve()
-      }, FAKE_LATENCY_MS)
-    }),
-
-  deleteMovement: (id) => set({ movements: get().movements.filter((m) => m.id !== id) }),
-}))
+    {
+      name: "agriconnect-stock",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({
+        articles: state.articles,
+        movements: state.movements,
+        hasFetched: state.hasFetched,
+      }),
+    }
+  )
+)

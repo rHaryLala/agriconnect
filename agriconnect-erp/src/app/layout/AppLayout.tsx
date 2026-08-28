@@ -18,9 +18,9 @@ export function AppLayout() {
 
   return (
     <div className="relative flex h-screen flex-col overflow-hidden">
-      <div aria-hidden className="absolute inset-0 -z-10">
-        <img key={bgImage} src={bgImage} alt="" className="h-full w-full scale-110 object-cover blur-2xl" />
-        <div className="absolute inset-0 bg-background/90" />
+      <div aria-hidden className="absolute inset-0 -z-10 overflow-hidden">
+        <img key={bgImage} src={bgImage} alt="" className="h-full w-full scale-105 object-cover blur-md" />
+        <div className="absolute inset-0 bg-background/50 dark:bg-background/60" />
       </div>
 
       <Header onMenuClick={() => setMobileMenuOpen(true)} />
