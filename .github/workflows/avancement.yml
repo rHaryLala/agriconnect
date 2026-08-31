@@ -1,0 +1,80 @@
+name: Rapport d'avancement
+
+on:
+  # Chaque jour à 18h00 à Antananarivo. Les crons GitHub sont en UTC et
+  # Madagascar est à UTC+3 sans heure d'été : 15h00 UTC toute l'année.
+  schedule:
+    - cron: '0 15 * * *'
+  # À chaque poussée, pour un retour immédiat en pièce jointe du workflow.
+  push:
+    branches-ignore: ['rapport']
+  workflow_dispatch:
+
+jobs:
+  rapport:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: write        # nécessaire pour committer sur la branche rapport
+      pull-requests: read    # pour compter les demandes de fusion
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # tout l'historique : le rapport lit toutes les branches
+
+      - name: Récupérer toutes les branches distantes
+        run: git fetch --all --prune
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Générer le rapport
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: node scripts/rapport-avancement.mjs
+
+      - name: Déposer le rapport en pièce jointe
+        uses: actions/upload-artifact@v4
+        with:
+          name: avancement
+          path: |
+            docs/avancement.html
+            docs/avancement.json
+          retention-days: 30
+
+      # Le commit quotidien vise une branche dédiée, jamais `dev` ni `main` :
+      # celles-ci exigent une demande de fusion approuvée, y compris pour les
+      # administrateurs, et le jeton d'Actions n'a aucun passe-droit.
+      - name: Committer sur la branche rapport
+        if: github.event_name == 'schedule' || github.event_name == 'workflow_dispatch'
+        run: |
+          set -euo pipefail
+          git config user.name  "github-actions[bot]"
+          git config user.email "41898282+github-actions[bot]@users.noreply.github.com"
+
+          if git ls-remote --exit-code --heads origin rapport >/dev/null 2>&1; then
+            git fetch origin rapport:rapport
+          else
+            echo "Première exécution : création de la branche rapport."
+            git branch rapport
+          fi
+
+          git worktree add ../publication rapport
+          mkdir -p ../publication/docs
+
+          # On ne committe que si le fond a change. Le HTML porte un horodatage
+          # et differe a chaque execution ; la sortie de donnees, elle, ne bouge
+          # que lorsque l activite du depot bouge.
+          if cmp -s ../publication/docs/avancement.json docs/avancement.json; then
+            echo "Aucun changement de fond depuis le dernier rapport : rien à committer."
+            exit 0
+          fi
+
+          cp docs/avancement.html docs/avancement.json ../publication/docs/
+          cd ../publication
+          git add docs/avancement.html docs/avancement.json
+          git commit \
+            -m "docs(socle): rapport d avancement du $(TZ=Indian/Antananarivo date '+%d/%m/%Y')" \
+            -m "Genere automatiquement par scripts/rapport-avancement.mjs. Commit emis uniquement parce que les donnees ont change depuis le rapport precedent."
+          git push origin rapport
+          echo "Rapport committé sur la branche rapport."

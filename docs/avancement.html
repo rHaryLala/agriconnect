@@ -1,0 +1,247 @@
+<title>Avancement AgriConnect</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+<link rel="stylesheet" href="https://fonts.googleapis.com/css2?family=Familjen+Grotesk:wght@400;500;600;700&family=Source+Serif+4:opsz,wght@8..60,400;8..60,600&family=IBM+Plex+Mono:wght@400;500&display=swap">
+
+<style>
+  :root {
+    --paper:#F7F8F4; --surface:#FFFFFF; --surface-2:#EEF0E8;
+    --ink:#1A1E17; --ink-2:#4A5044; --ink-3:#767C6E; --rule:#D8DCD0;
+    --accent:#3E6B4F; --accent-ink:#2C4E39;
+    --ok:#3E7D5A; --warn:#9A6420; --crit:#A33B3E;
+    --ok-bg:#E4EFE7; --warn-bg:#F6EBD9; --crit-bg:#F7E3E3;
+  }
+  :root:not([data-theme="light"]) { color-scheme: light; }
+  @media (prefers-color-scheme: dark) {
+    :root:not([data-theme="light"]) {
+      --paper:#13160F; --surface:#1B1F17; --surface-2:#232819;
+      --ink:#E9EBE1; --ink-2:#B2B8A6; --ink-3:#838A77; --rule:#2F3527;
+      --accent:#8FBF9E; --accent-ink:#A9D2B6;
+      --ok:#7FBE99; --warn:#D6A45E; --crit:#DE868A;
+      --ok-bg:#1E2E23; --warn-bg:#322815; --crit-bg:#331E1F;
+      color-scheme: dark;
+    }
+  }
+  :root[data-theme="dark"] {
+    --paper:#13160F; --surface:#1B1F17; --surface-2:#232819;
+    --ink:#E9EBE1; --ink-2:#B2B8A6; --ink-3:#838A77; --rule:#2F3527;
+    --accent:#8FBF9E; --accent-ink:#A9D2B6;
+    --ok:#7FBE99; --warn:#D6A45E; --crit:#DE868A;
+    --ok-bg:#1E2E23; --warn-bg:#322815; --crit-bg:#331E1F;
+    color-scheme: dark;
+  }
+
+  body { background: var(--paper); color: var(--ink);
+    font-family: "Source Serif 4", Georgia, serif; font-size: 17px; line-height: 1.62;
+    -webkit-font-smoothing: antialiased; }
+  .wrap { max-width: 1000px; margin: 0 auto; padding: 56px 28px 96px;
+    display: flex; flex-direction: column; gap: 52px; }
+  h1, h2, h3 { font-family: "Familjen Grotesk", "Helvetica Neue", Arial, sans-serif; }
+  .eyebrow { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: 12px;
+    letter-spacing: .13em; text-transform: uppercase; color: var(--ink-3); }
+  h1 { font-size: clamp(34px, 5.2vw, 52px); line-height: 1.06; font-weight: 700;
+    letter-spacing: -.022em; text-wrap: balance; margin: 14px 0 0; }
+  .standfirst { max-width: 64ch; font-size: 20px; line-height: 1.55; color: var(--ink-2); margin: 20px 0 0; }
+  h2 { font-size: 25px; font-weight: 600; letter-spacing: -.014em; text-wrap: balance;
+    margin: 0; padding-bottom: 12px; border-bottom: 2px solid var(--ink); }
+  h3 { font-size: 18px; font-weight: 600; margin: 0; letter-spacing: -.008em; }
+  section { display: flex; flex-direction: column; gap: 22px; }
+  p { margin: 0; max-width: 68ch; }
+  .lead-note { border-left: 3px solid var(--accent); padding: 4px 0 4px 18px; color: var(--ink-2); }
+
+  .scroll { overflow-x: auto; }
+  table { width: 100%; border-collapse: collapse; font-family: "Familjen Grotesk", Arial, sans-serif;
+    font-size: 15px; min-width: 540px; }
+  caption { text-align: left; font-family: "IBM Plex Mono", monospace; font-size: 12px;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--ink-3); padding-bottom: 10px; }
+  th { text-align: left; font-weight: 600; font-size: 12.5px; letter-spacing: .07em;
+    text-transform: uppercase; color: var(--ink-3); border-bottom: 1px solid var(--rule);
+    padding: 0 14px 9px 0; }
+  td { padding: 11px 14px 11px 0; border-bottom: 1px solid var(--rule);
+    vertical-align: top; color: var(--ink-2); }
+  td:first-child { color: var(--ink); font-weight: 500; }
+  .num { font-family: "IBM Plex Mono", monospace; font-variant-numeric: tabular-nums; white-space: nowrap; }
+  tr:last-child td { border-bottom: none; }
+
+  .figures { display: grid; grid-template-columns: repeat(auto-fit, minmax(190px, 1fr));
+    gap: 1px; background: var(--rule); border: 1px solid var(--rule); }
+  .fig { background: var(--surface); padding: 20px 20px 18px; display: flex; flex-direction: column; gap: 5px; }
+  .fig b { font-family: "Familjen Grotesk", Arial, sans-serif; font-size: 34px; font-weight: 700;
+    line-height: 1; letter-spacing: -.03em; font-variant-numeric: tabular-nums; color: var(--ink); }
+  .fig b.alarm { color: var(--crit); }
+  .fig span { font-family: "Familjen Grotesk", Arial, sans-serif; font-size: 13.5px;
+    color: var(--ink-3); line-height: 1.35; }
+
+  .people { display: grid; grid-template-columns: repeat(auto-fit, minmax(280px, 1fr)); gap: 18px; }
+  .person { background: var(--surface); border: 1px solid var(--rule); padding: 22px;
+    display: flex; flex-direction: column; gap: 14px; }
+  .person header { display: flex; flex-direction: column; gap: 3px; }
+  .person .role { font-family: "IBM Plex Mono", monospace; font-size: 11.5px;
+    letter-spacing: .1em; text-transform: uppercase; color: var(--accent-ink); }
+  .person dl { margin: 0; display: grid; grid-template-columns: auto 1fr; gap: 7px 14px;
+    font-family: "Familjen Grotesk", Arial, sans-serif; font-size: 14px; }
+  .person dt { color: var(--ink-3); }
+  .person dd { margin: 0; color: var(--ink); font-variant-numeric: tabular-nums; text-align: right; }
+  .person p { font-size: 15px; color: var(--ink-2); line-height: 1.5; }
+
+  code, .mono { font-family: "IBM Plex Mono", ui-monospace, monospace; font-size: .88em;
+    background: var(--surface-2); padding: 1px 5px; border-radius: 2px; color: var(--ink); }
+  .pill { display: inline-block; font-family: "Familjen Grotesk", Arial, sans-serif;
+    font-size: 11.5px; font-weight: 600; letter-spacing: .06em; text-transform: uppercase;
+    padding: 3px 9px; border-radius: 2px; white-space: nowrap; }
+  .p-crit { background: var(--crit-bg); color: var(--crit); }
+  .p-warn { background: var(--warn-bg); color: var(--warn); }
+  .p-ok { background: var(--ok-bg); color: var(--ok); }
+
+  ol.actions { margin: 0; padding: 0; list-style: none; display: flex; flex-direction: column;
+    gap: 16px; counter-reset: a; }
+  ol.actions li { display: grid; grid-template-columns: 34px 1fr; gap: 14px; align-items: start;
+    padding-bottom: 16px; border-bottom: 1px solid var(--rule); }
+  ol.actions li:last-child { border-bottom: none; padding-bottom: 0; }
+  ol.actions li::before { counter-increment: a; content: counter(a);
+    font-family: "IBM Plex Mono", monospace; font-size: 13px; color: var(--accent-ink);
+    border: 1px solid var(--rule); height: 30px; display: grid; place-items: center; }
+  ol.actions strong { font-family: "Familjen Grotesk", Arial, sans-serif; font-size: 16.5px;
+    display: block; margin-bottom: 3px; }
+  ol.actions span { font-size: 15.5px; color: var(--ink-2); }
+
+  footer { border-top: 1px solid var(--rule); padding-top: 20px;
+    font-family: "Familjen Grotesk", Arial, sans-serif; font-size: 13.5px;
+    color: var(--ink-3); max-width: 72ch; }
+</style>
+
+<div class="wrap">
+
+  <header>
+    <div class="eyebrow">Rapport de supervision · 31 août 2026 · semaine 3 sur 5</div>
+    <h1>3 semaines de code, zéro ligne intégrée</h1>
+    <p class="standfirst">Les 3 stagiaires produisent à un rythme soutenu et le périmètre fonctionnel avance. Mais rien de ce travail n’a atteint <span class="mono">dev</span> : il vit sur 3 branches isolées.</p>
+  </header>
+
+  <section>
+    <div class="figures">
+      <div class="fig"><b>105</b><span>commits des stagiaires depuis le 11 août 2026</span></div>
+      <div class="fig"><b class="alarm">0</b><span>demandes de fusion ouvertes par les stagiaires</span></div>
+      <div class="fig"><b>3</b><span>branches de travail actives</span></div>
+      <div class="fig"><b class="alarm">0</b><span>fichiers applicatifs sur <span class="mono">dev</span></span></div>
+    </div>
+    <p class="lead-note">L’intégration n’a jamais été tentée. 3 semaines de travail parallèle n’ont pas encore été confrontées entre elles, à mi-parcours d’un stage de 5 semaines.</p>
+  </section>
+
+  <section>
+    <h2>Où en est chacun</h2>
+    <div class="people">
+      <article class="person">
+        <header>
+          <div class="role">Backend · NestJS</div>
+          <h3>Voahary Radoniaina</h3>
+        </header>
+        <dl>
+          <dt>Commits</dt><dd>54</dd>
+          <dt>Branche</dt><dd class="mono">feature/backend</dd>
+          <dt>Fichiers de code</dt><dd>44</dd>
+          <dt>Dernier commit</dt><dd>31 août à 11:40</dd>
+        </dl>
+        <p>Modules principaux : <code>.agents</code> (71), <code>.claude</code> (71), <code>.windsurf</code> (71), <code>auth</code> (12). 44 fichier de codes sur la branche. Actif aujourd’hui. Branche <strong>sans ancêtre commun</strong> avec l’intégration.</p>
+      </article>
+      <article class="person">
+        <header>
+          <div class="role">Frontend · React</div>
+          <h3>Lesoa</h3>
+        </header>
+        <dl>
+          <dt>Commits</dt><dd>40</dd>
+          <dt>Branche</dt><dd class="mono">feature/frontend</dd>
+          <dt>Fichiers de code</dt><dd>114</dd>
+          <dt>Dernier commit</dt><dd>28 août à 15:57</dd>
+        </dl>
+        <p>Modules principaux : <code>agriconnect-erp</code> (169). 114 fichier de codes sur la branche. Dernier commit il y a 2 jours.</p>
+      </article>
+      <article class="person">
+        <header>
+          <div class="role">Base de données · Prisma</div>
+          <h3>Simeon</h3>
+        </header>
+        <dl>
+          <dt>Commits</dt><dd>11</dd>
+          <dt>Branche</dt><dd class="mono">feature/database</dd>
+          <dt>Fichiers de code</dt><dd>4</dd>
+          <dt>Dernier commit</dt><dd>31 août à 11:05</dd>
+        </dl>
+        <p>4 fichier de codes sur la branche. Actif aujourd’hui.</p>
+      </article>
+    </div>
+  </section>
+
+  <section>
+    <h2>Rythme de travail</h2>
+    <div class="scroll">
+      <table>
+        <caption>Commits par semaine calendaire</caption>
+        <thead>
+          <tr><th>Stagiaire</th><th class="num">S33</th><th class="num">S34</th><th class="num">S35</th><th class="num">S36</th><th class="num">Total</th></tr>
+        </thead>
+        <tbody>
+          <tr><td>Voahary</td><td class="num">7</td><td class="num">22</td><td class="num">21</td><td class="num">4</td><td class="num">54</td></tr>
+          <tr><td>Lesoa</td><td class="num">8</td><td class="num">9</td><td class="num">23</td><td class="num">0</td><td class="num">40</td></tr>
+          <tr><td>Simeon</td><td class="num">2</td><td class="num">1</td><td class="num">7</td><td class="num">1</td><td class="num">11</td></tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>Risques identifiés</h2>
+    <div class="scroll">
+      <table>
+        <thead><tr><th>Gravité</th><th>Constat</th><th>Conséquence</th></tr></thead>
+        <tbody>
+          <tr>
+            <td><span class="pill p-crit">Critique</span></td>
+            <td>Aucune intégration à ce jour</td>
+            <td>Front, back et base n’ont jamais été assemblés. Le coût de la première intégration croît chaque jour, à 2 semaines de la fin.</td>
+          </tr>
+          <tr>
+            <td><span class="pill p-crit">Critique</span></td>
+            <td><span class="mono">feature/backend</span> sans ancêtre commun</td>
+            <td>GitHub refusera la demande de fusion (<span class="mono">no history in common</span>). Une fusion manuelle en <span class="mono">--allow-unrelated-histories</span> est nécessaire.</td>
+          </tr>
+          <tr>
+            <td><span class="pill p-warn">Élevé</span></td>
+            <td>3 branches dépassent la semaine</td>
+            <td><span class="mono">CONTRIBUTING.md</span> fixe une semaine maximum : <span class="mono">feature/backend</span>, <span class="mono">feature/frontend</span>, <span class="mono">feature/database</span>.</td>
+          </tr>
+          <tr>
+            <td><span class="pill p-warn">Élevé</span></td>
+            <td>Aucune relecture croisée</td>
+            <td>Aucun stagiaire n’a ouvert de demande de fusion. Personne n’a jamais lu le code d’un autre : les écarts de style et les doublons ne seront découverts qu’à l’intégration.</td>
+          </tr>
+          <tr>
+            <td><span class="pill p-warn">Moyen</span></td>
+            <td>Conventions de commit peu suivies</td>
+            <td>10 messages sur 105 respectent le format <span class="mono">type(domaine)&#58;</span>, soit 10 %.</td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+  </section>
+
+  <section>
+    <h2>À faire cette semaine</h2>
+    <ol class="actions">
+      <li><div><strong>Rattacher <span class="mono">feature/backend</span> à l’histoire commune</strong><span>Branche intermédiaire issue de <span class="mono">dev</span>, fusion en histoires non liées, puis demande de fusion normale.</span></div></li>
+      <li><div><strong>Geler les nouvelles fonctionnalités le temps d’intégrer</strong><span>Chaque jour de développement supplémentaire sur branche isolée alourdit la fusion à venir.</span></div></li>
+      <li><div><strong>Faire ouvrir 3 demande de fusions vers <span class="mono">dev</span></strong><span>Une par stagiaire, relue par un autre. Prévoir du temps pour accompagner cette première relecture.</span></div></li>
+      <li><div><strong>Reprendre les conventions de commit en séance</strong><span>Le format <span class="mono">type(domaine)&#58; action</span> est dans <span class="mono">CONTRIBUTING.md</span> ; un rappel de dix minutes suffit généralement.</span></div></li>
+    </ol>
+  </section>
+
+  <footer>
+    Généré automatiquement par <span class="mono">scripts/rapport-avancement.mjs</span>
+    le 31 août à 11:46, à partir de l’historique de toutes les branches du dépôt.
+    Le dépôt distant a été récupéré juste avant le calcul : les chiffres reflètent l’état de GitHub.
+    
+    Le décompte par personne repose sur les adresses de courriel des auteurs, déclarées en tête du script.
+  </footer>
+
+</div>
