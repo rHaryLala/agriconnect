@@ -1,17 +1,13 @@
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { useFinanceStore } from "./financeStore"
 import { FinanceOverviewTab } from "./FinanceOverviewTab"
 import { FinanceTransactionsTab } from "./FinanceTransactionsTab"
 import { FinanceCashBookTab } from "./FinanceCashBookTab"
 
-const TABS = [
-  { id: "apercu", label: "Vue d'ensemble" },
-  { id: "transactions", label: "Transactions" },
-  { id: "caisse", label: "Livre de caisse" },
-]
-
 export default function FinancePage() {
+  const { t } = useTranslation()
   const { transactions, isLoading, fetchAll, addTransaction, updateTransaction, deleteTransaction } = useFinanceStore()
   const [activeTab, setActiveTab] = useState("apercu")
 
@@ -19,10 +15,16 @@ export default function FinancePage() {
     fetchAll()
   }, [fetchAll])
 
+  const TABS = [
+    { id: "apercu", label: t("finance.tabs.overview") },
+    { id: "transactions", label: t("finance.tabs.transactions") },
+    { id: "caisse", label: t("finance.tabs.cashbook") },
+  ]
+
   return (
     <div>
-      <h2 className="mb-1 text-2xl font-bold">Finance</h2>
-      <p className="mb-6 text-sm text-muted-foreground">Dépenses, recettes et marge</p>
+      <h2 className="mb-1 text-2xl font-bold">{t("finance.pageTitle")}</h2>
+      <p className="mb-6 text-sm text-muted-foreground">{t("finance.pageSubtitle")}</p>
 
       <SimpleTabs tabs={TABS} activeId={activeTab} onChange={setActiveTab} />
 

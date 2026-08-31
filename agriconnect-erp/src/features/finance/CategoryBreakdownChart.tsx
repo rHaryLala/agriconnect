@@ -1,3 +1,4 @@
+import { useTranslation } from "react-i18next"
 import { PieChart, Pie, Cell, ResponsiveContainer, Tooltip, Legend } from "recharts"
 import { formatCurrency } from "@/lib/format"
 import type { FinanceTransaction, TransactionType } from "@/types/finance"
@@ -10,17 +11,15 @@ interface CategoryBreakdownChartProps {
 const COLORS = ["#0F8A5F", "#22C55E", "#F59E0B", "#2563EB", "#DC2626", "#8B5CF6", "#EC4899"]
 
 export function CategoryBreakdownChart({ transactions, type }: CategoryBreakdownChartProps) {
+  const { t } = useTranslation()
   const byCategory = new Map<string, number>()
-  transactions
-    .filter((t) => t.type === type)
-    .forEach((t) => byCategory.set(t.categorie, (byCategory.get(t.categorie) ?? 0) + t.montant))
-
+  transactions.filter((t) => t.type === type).forEach((tx) => byCategory.set(tx.categorie, (byCategory.get(tx.categorie) ?? 0) + tx.montant))
   const data = Array.from(byCategory.entries()).map(([name, value]) => ({ name, value }))
 
   if (data.length === 0) {
     return (
       <div className="flex h-56 items-center justify-center rounded-xl border border-border bg-surface text-sm text-muted-foreground">
-        Pas encore de {type === "recette" ? "recette" : "dépense"} à répartir.
+        {type === "recette" ? t("finance.overview.noRevenueYet") : t("finance.overview.noExpensesYet")}
       </div>
     )
   }

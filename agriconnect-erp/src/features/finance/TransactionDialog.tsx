@@ -1,6 +1,7 @@
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 import { Loader2 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
@@ -10,14 +11,16 @@ import { Button } from "@/components/ui/button"
 import type { CategoryProfile } from "./categoriesStore"
 import type { FinanceTransaction, TransactionType } from "@/types/finance"
 
-const schema = z.object({
-  type: z.enum(["depense", "recette"], { errorMap: () => ({ message: "Sélectionne un type" }) }),
-  categorie: z.string().min(1, "Sélectionne une catégorie"),
-  montant: z.number({ invalid_type_error: "Nombre requis" }).positive("Doit être positif"),
-  date: z.string().min(1, "Date requise"),
-  description: z.string().min(1, "Renseigne une description"),
-})
-type FormValues = z.infer<typeof schema>
+function buildSchema(t: (key: string) => string) {
+  return z.object({
+    type: z.enum(["depense", "recette"], { errorMap: () => ({ message: t("finance.transactions.validationType") }) }),
+    categorie: z.string().min(1, t("finance.transactions.validationCategory")),
+    montant: z.number({ invalid_type_error: t("finance.transactions.validationNumber") }).positive(t("finance.transactions.validationAmount")),
+    date: z.string().min(1, t("finance.transactions.validationDate")),
+    description: z.string().min(1, t("finance.transactions.validationDescription")),
+  })
+}
+type FormValues = z.infer<ReturnType<typeof buildSchema>>
 
 interface TransactionDialogProps {
   open: boolean
@@ -28,21 +31,12 @@ interface TransactionDialogProps {
   onSubmit: (values: Omit<FinanceTransaction, "id">) => Promise<void>
 }
 
-export function TransactionDialog({
-  open,
-  onOpenChange,
-  depenseCategories,
-  recetteCategories,
-  editingEntry,
-  onSubmit,
-}: TransactionDialogProps) {
+export function TransactionDialog({ open, onOpenChange, depenseCategories, recetteCategories, editingEntry, onSubmit }: TransactionDialogProps) {
+  const { t } = useTranslation()
+  const schema = useMemo(() => buildSchema(t), [t])
+
   const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    setValue,
-    reset,
+    register, handleSubmit, control, watch, setValue, reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
@@ -56,7 +50,6 @@ export function TransactionDialog({
         description: editingEntry?.description ?? "",
       })
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, editingEntry])
 
   const type: TransactionType = watch("type")
@@ -66,7 +59,6 @@ export function TransactionDialog({
     const currentCategorie = watch("categorie")
     const stillValid = categoryOptions.some((c) => c.nom === currentCategorie)
     if (!stillValid) setValue("categorie", categoryOptions[0]?.nom ?? "")
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [type])
 
   async function handleFormSubmit(values: FormValues) {
@@ -78,23 +70,22 @@ export function TransactionDialog({
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{editingEntry ? "Modifier la transaction" : "Nouvelle transaction"}</DialogTitle>
+          <DialogTitle>{editingEntry ? t("finance.transactions.dialogTitleEdit") : t("finance.transactions.dialogTitleNew")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-4">
           <div>
-            <Label htmlFor="type">Type</Label>
+            <Label htmlFor="type">{t("finance.transactions.fieldType")}</Label>
             <Controller
-              name="type"
-              control={control}
+              name="type" control={control}
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger id="type" className="mt-1.5">
-                    <SelectValue placeholder="Sélectionner..." />
+                    <SelectValue placeholder="..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="depense">Dépense</SelectItem>
-                    <SelectItem value="recette">Recette</SelectItem>
+                    <SelectItem value="depense">{t("finance.transactions.typeExpense")}</SelectItem>
+                    <SelectItem value="recette">{t("finance.transactions.typeRevenue")}</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -102,20 +93,17 @@ export function TransactionDialog({
           </div>
 
           <div>
-            <Label htmlFor="categorie">Catégorie</Label>
+            <Label htmlFor="categorie">{t("finance.transactions.fieldCategory")}</Label>
             <Controller
-              name="categorie"
-              control={control}
+              name="categorie" control={control}
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger id="categorie" className="mt-1.5">
-                    <SelectValue placeholder="Sélectionner..." />
+                    <SelectValue placeholder="..." />
                   </SelectTrigger>
                   <SelectContent>
                     {categoryOptions.map((c) => (
-                      <SelectItem key={c.id} value={c.nom}>
-                        {c.nom}
-                      </SelectItem>
+                      <SelectItem key={c.id} value={c.nom}>{c.nom}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -126,46 +114,28 @@ export function TransactionDialog({
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="montant">Montant (Ar)</Label>
-              <input
-                id="montant"
-                type="number"
-                {...register("montant", { valueAsNumber: true })}
-                className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
+              <Label htmlFor="montant">{t("finance.transactions.fieldAmount")}</Label>
+              <input id="montant" type="number" {...register("montant", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
               {errors.montant && <p className="mt-1 text-xs text-destructive">{errors.montant.message}</p>}
             </div>
             <div>
-              <Label htmlFor="date">Date</Label>
-              <input
-                id="date"
-                type="date"
-                {...register("date")}
-                className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
+              <Label htmlFor="date">{t("finance.transactions.fieldDate")}</Label>
+              <input id="date" type="date" {...register("date")} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
               {errors.date && <p className="mt-1 text-xs text-destructive">{errors.date.message}</p>}
             </div>
           </div>
 
           <div>
-            <Label htmlFor="description">Description</Label>
-            <textarea
-              id="description"
-              rows={2}
-              {...register("description")}
-              placeholder="Ex: Achat aliments, vente hebdomadaire..."
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-            />
+            <Label htmlFor="description">{t("finance.transactions.fieldDescription")}</Label>
+            <textarea id="description" rows={2} {...register("description")} placeholder={t("finance.transactions.fieldDescriptionPlaceholder")} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
             {errors.description && <p className="mt-1 text-xs text-destructive">{errors.description.message}</p>}
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
-            </Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
             <Button type="submit" disabled={isSubmitting} className="gap-2">
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Enregistrer
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </form>
