@@ -1,0 +1,10 @@
+[33m561d79b[m[33m ([m[1;36mHEAD[m[33m -> [m[1;32mfeature/backend[m[33m, [m[1;31morigin/feature/backend[m[33m)[m Debugging
+[33mab0cc30[m fixing import in filter-historique.dto.ts
+[33m96a5f2b[m Added date filter in filter-historique.dto
+[33m7ed70ab[m Module Stock, Production, Users & auth all done
+[33m4f2be31[m Backend synchronized with the database server
+[33m0dd3033[m fix: mise a jour du schema prisma complet avec Client et Invoice
+[33m7ebcfb6[m Synchronising databases
+[33m1771f80[m Correcting errors from stock DTOs
+[33meb49696[m production-controller finished
+[33m93db0cb[m production-service finished (Highly commented code
