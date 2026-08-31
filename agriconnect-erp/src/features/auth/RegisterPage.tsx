@@ -52,7 +52,7 @@ export default function RegisterPage() {
       <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 animate-drift rounded-full bg-white/10 blur-3xl" />
       <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 animate-drift-slow rounded-full bg-[#8FE3B3]/20 blur-3xl" />
 
-      <div className="absolute left-4 top-4 z-20 sm:left-6 sm:top-6">
+      <div className="absolute right-4 top-4 z-20 sm:right-6 sm:top-6">
         <LanguageSwitcher compact />
       </div>
 

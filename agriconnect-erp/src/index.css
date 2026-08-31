@@ -73,7 +73,7 @@
         }
     
         .glass-dark {
-            @apply border border-white/10 bg-black/20 backdrop-blur-xl;
+            @apply border border-white/10 bg-neutral-950/75 backdrop-blur-xl;
         }
     
         .glass-surface {

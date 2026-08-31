@@ -1,10 +1,10 @@
-// src/features/marketing/LandingPage.tsx
 import { useState, useEffect } from "react"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router"
 import {
   Leaf, Sprout, Package, Wallet, Handshake, Receipt, BarChart3,
   WifiOff, Globe, Mail, Phone, MapPin, ArrowRight,
+  LogIn, UserPlus,
 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
@@ -56,12 +56,27 @@ export default function LandingPage() {
           </div>
           <span className="font-semibold text-neutral-900">AgriConnect</span>
         </div>
-        <div className="flex items-center gap-3">
+        <div className="flex items-center gap-2 sm:gap-3">
           <LanguageSwitcher compact />
-          <Link to="/login" className="text-sm text-neutral-600 transition-colors hover:text-neutral-900">
+
+          <Link
+            to="/login"
+            aria-label={t("landing.header.login")}
+            title={t("landing.header.login")}
+            className="flex h-9 w-9 items-center justify-center rounded-md text-neutral-600 transition-colors hover:bg-neutral-100 hover:text-neutral-900 sm:hidden"
+          >
+            <LogIn className="h-4 w-4" strokeWidth={1.75} />
+          </Link>
+          <Button asChild size="icon" className="sm:hidden" aria-label={t("landing.header.register")}>
+            <Link to="/register" title={t("landing.header.register")}>
+              <UserPlus className="h-4 w-4" />
+            </Link>
+          </Button>
+
+          <Link to="/login" className="hidden text-sm text-neutral-600 transition-colors hover:text-neutral-900 sm:inline">
             {t("landing.header.login")}
           </Link>
-          <Button asChild size="sm">
+          <Button asChild size="sm" className="hidden sm:inline-flex">
             <Link to="/register">{t("landing.header.register")}</Link>
           </Button>
         </div>
