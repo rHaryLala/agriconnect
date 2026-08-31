@@ -121,17 +121,21 @@ export class StockService {
     });
   }
 
-  async historique(farmId: string, filters: { itemId?: string; type?: string }) {
-    return this.prisma.stockMovement.findMany({
-      where: {
-        item: { farmId },
-        itemId: filters.itemId,
-        type: filters.type as never,
+ async historique(farmId: string, filters: { itemId?: string; type?: string; dateDebut?: string; dateFin?: string }) {
+  return this.prisma.stockMovement.findMany({
+    where: {
+      item: { farmId },
+      itemId: filters.itemId,
+      type: filters.type as never,
+      date: {
+        gte: filters.dateDebut ? new Date(filters.dateDebut) : undefined,
+        lte: filters.dateFin ? new Date(filters.dateFin) : undefined,
       },
-      include: { item: true, user: true },
-      orderBy: { date: 'desc' },
-    });
-  }
+    },
+    include: { item: true, user: true },
+    orderBy: { date: 'desc' },
+  });
+}
 
   async alertes(farmId: string) {
     const items = await this.prisma.stockItem.findMany({ where: { farmId } });

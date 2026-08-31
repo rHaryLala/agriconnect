@@ -1,5 +1,5 @@
 import { IsOptional, IsUUID, IsEnum, IsDateString } from 'class-validator';
-import { MouvementType } from '../../../generated/prisma';
+import { MouvementType } from '@prisma/client';
 
 export class FilterHistoriqueDto {
   @IsOptional()
