@@ -8,6 +8,7 @@ import { ExempleController } from './exemple.controller'; // ligne ajoutée
 import { UsersModule } from './users/users.module';
 import { StockModule } from './stock/stock.module';
 import { ProductionModule } from './production/production.module';
+import { FinanceModule } from './finance/finance.module';
 
 @Module({
   imports: [
@@ -17,6 +18,7 @@ import { ProductionModule } from './production/production.module';
     UsersModule,
     StockModule,
     ProductionModule,
+    FinanceModule,
   ],
   controllers: [AppController, ExempleController], // ExempleController ajouté ici
   providers: [AppService],
