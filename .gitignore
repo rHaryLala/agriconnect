@@ -51,3 +51,18 @@ coverage/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# --- Backend NestJS / Prisma ---
+# Client Prisma genere : se regenere avec `npx prisma generate`.
+generated/prisma/
+.temp
+.tmp
+
+# --- Donnees d'execution Node ---
+pids
+*.pid
+*.pid.lock
+*.seed
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+lerna-debug.log*
+yarn-error.log*
