@@ -21,6 +21,7 @@ model Farm {
   stockItem   StockItem[]
   clients     Client[]
   invoices    Invoice[]
+  transactions Transaction[]
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -37,6 +38,7 @@ model User {
   farm          Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
   production    Production[]
   stockMovment  StockMovement[]
+  transactions Transaction[]
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -88,6 +90,7 @@ model StockItem {
   farm        Farm            @relation(fields: [farmId], references: [id])
   movements   StockMovement[]
   production  Production[]
+  invoiceItem InvoiceItem[]
 
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -153,8 +156,52 @@ model Invoice {
   farmId        String
   farm          Farm          @relation(fields: [farmId], references: [id])
 
-  // relation de paiment eto.... rehefa vita ny table paiment
+  // relation de paiment ici, quand le table paiment sera fini
+  invoiceItem InvoiceItem[]
+  transactions Transaction[]
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+}
+
+//details des articles vendus dans la facture
+model InvoiceItem {
+  id String @id @default(uuid())
+  quantity Float
+  unitPrice Float
+  total Float
+
+  invoiceId String
+  invoice Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  itemId String
+  item StockItem @relation(fields: [itemId], references: [id])
+}
+
+//transaction et finances
+enum TransactionType{
+  RECETTE //argent qui entre
+  DEPENSE //argent qui sort
+}
+
+model Transaction{
+  id String @id @default(uuid())
+  amount Float
+  type TransactionType @default(RECETTE)
+  reference String? //numereau physique du recuu ou bordereau
+  notes String? //remarque ou detail
+  date DateTime @default(now())
+
+  //liens avec la facture 
+  invoiceId String?
+  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
