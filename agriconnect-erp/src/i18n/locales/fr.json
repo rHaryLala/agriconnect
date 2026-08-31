@@ -91,5 +91,81 @@
       "hasAccount": "Déjà un compte ?",
       "login": "Se connecter"
     }
+  },
+  "dashboard": {
+    "admin": {
+      "title": "Tableau de bord",
+      "subtitle": "Vue transversale — tous les modules",
+      "stats": {
+        "harvest": "Récolte ce mois",
+        "stockItems": "Articles en stock",
+        "lowStockAlerts": "Alertes stock bas",
+        "revenue": "Chiffre d'affaires",
+        "margin": "Marge nette",
+        "clients": "Clients actifs"
+      },
+      "alertTitle": "2 alertes actives",
+      "alertDescription": "Engrais NPK 20-20-0 et Blé semence sous leur seuil critique.",
+      "alertAction": "Voir le stock",
+      "chartHarvest": "Récolte — 6 derniers mois",
+      "chartStock": "Stock — 6 derniers mois"
+    },
+    "finance": {
+      "title": "Tableau de bord — Finance",
+      "subtitle": "Recettes, dépenses, marge, clients",
+      "stats": {
+        "revenue": "Chiffre d'affaires",
+        "expenses": "Dépenses",
+        "margin": "Marge nette",
+        "unpaidInvoices": "Factures impayées",
+        "clients": "Clients actifs"
+      },
+      "chartTitle": "Marge nette — historique réel des transactions"
+    },
+    "ouvrier": {
+      "title": "Tableau de bord — Production",
+      "subtitle": "Production, stock, mouvements",
+      "stats": {
+        "harvest": "Récolte ce mois",
+        "activeParcels": "Parcelles actives",
+        "stockItems": "Articles en stock",
+        "warehouses": "Entrepôts",
+        "lowStockAlerts": "Alertes stock bas"
+      },
+      "alertTitle": "Taux de ponte en baisse — Bande B",
+      "alertDescription": "74% aujourd'hui vs 78% la semaine dernière. Vérifier l'alimentation.",
+      "chartTitle": "Récolte — 6 derniers mois"
+    },
+    "quickActions": {
+      "title": "Actions rapides",
+      "addProduction": "Ajouter production",
+      "addExpense": "Ajouter dépense",
+      "addRevenue": "Ajouter revenu",
+      "stockEntry": "Entrée de stock",
+      "createInvoice": "Créer une facture",
+      "recordRevenue": "Enregistrer revenu",
+      "recordExpense": "Enregistrer dépense",
+      "exportReport": "Exporter rapport PDF",
+      "layerEntry": "Saisir production pondeuses",
+      "milkEntry": "Enregistrer collecte lait",
+      "updateParcel": "Mettre à jour parcelle",
+      "vetCare": "Saisir soin vétérinaire"
+    },
+    "activity": {
+      "title": "Activité récente",
+      "viewAll": "Voir tout",
+      "item1Title": "Production enregistrée",
+      "item1Subtitle": "12 450 œufs — Poulailler A + B",
+      "item2Title": "Livraison reçue",
+      "item2Subtitle": "2 t aliments bétail — Fournisseur Agro",
+      "item3Title": "Vente confirmée",
+      "item3Subtitle": "60 kuroiler — Restaurant Belle Vue",
+      "item4Title": "Alerte stock",
+      "item4Subtitle": "Engrais NPK critique — 48 kg restants",
+      "time1h": "il y a 1h",
+      "time3h": "il y a 3h",
+      "time5h": "il y a 5h",
+      "timeYesterday": "hier"
+    }
   }
 }

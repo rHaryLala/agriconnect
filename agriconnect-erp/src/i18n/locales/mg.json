@@ -91,5 +91,81 @@
       "hasAccount": "Manana kaonty efa?",
       "login": "Hiditra"
     }
+  },
+  "dashboard": {
+    "admin": {
+      "title": "Tabilao mpitantana",
+      "subtitle": "Fijery ankapobeny — sampana rehetra",
+      "stats": {
+        "harvest": "Vokatra amin'ity volana ity",
+        "stockItems": "Entana ao amin'ny tahiry",
+        "lowStockAlerts": "Fampitandremana tahiry ambany",
+        "revenue": "Vola miditra",
+        "margin": "Tombom-barotra madio",
+        "clients": "Mpanjifa mavitrika"
+      },
+      "alertTitle": "Fampitandremana 2 mavitrika",
+      "alertDescription": "Zezika NPK 20-20-0 sy voan-bary tafidina ambanin'ny fetrany.",
+      "alertAction": "Jereo ny tahiry",
+      "chartHarvest": "Vokatra — 6 volana farany",
+      "chartStock": "Tahiry — 6 volana farany"
+    },
+    "finance": {
+      "title": "Tabilao mpitantana — Vola",
+      "subtitle": "Vola miditra, fandaniana, tombom-barotra, mpanjifa",
+      "stats": {
+        "revenue": "Vola miditra",
+        "expenses": "Fandaniana",
+        "margin": "Tombom-barotra madio",
+        "unpaidInvoices": "Fatorana mbola tsy voaloa",
+        "clients": "Mpanjifa mavitrika"
+      },
+      "chartTitle": "Tombom-barotra madio — tantara marina"
+    },
+    "ouvrier": {
+      "title": "Tabilao mpitantana — Vokatra",
+      "subtitle": "Vokatra, tahiry entana, fihetsiketsehana",
+      "stats": {
+        "harvest": "Vokatra amin'ity volana ity",
+        "activeParcels": "Tanimbary mavitrika",
+        "stockItems": "Entana ao amin'ny tahiry",
+        "warehouses": "Trano fitehirizana",
+        "lowStockAlerts": "Fampitandremana tahiry ambany"
+      },
+      "alertTitle": "Midina ny taham-panatodizana — Andiany B",
+      "alertDescription": "74% androany vs 78% herinandro lasa. Jereo ny sakafo.",
+      "chartTitle": "Vokatra — 6 volana farany"
+    },
+    "quickActions": {
+      "title": "Hetsika haingana",
+      "addProduction": "Ampio vokatra",
+      "addExpense": "Ampio fandaniana",
+      "addRevenue": "Ampio vola miditra",
+      "stockEntry": "Fidiran'entana",
+      "createInvoice": "Hamorona fatorana",
+      "recordRevenue": "Soraty vola miditra",
+      "recordExpense": "Soraty fandaniana",
+      "exportReport": "Hanondrana tatitra PDF",
+      "layerEntry": "Soraty ny vokatry ny akoho mpanatody",
+      "milkEntry": "Soraty ny fanangonana ronono",
+      "updateParcel": "Havaozy ny tanimbary",
+      "vetCare": "Soraty ny fikarakarana biby"
+    },
+    "activity": {
+      "title": "Hetsika farany",
+      "viewAll": "Jereo daholo",
+      "item1Title": "Vokatra voasoratra",
+      "item1Subtitle": "Atody 12 450 — Trano akoho A + B",
+      "item2Title": "Fandefasana entana tonga",
+      "item2Subtitle": "Sakafo biby 2t — Mpamatsy Agro",
+      "item3Title": "Varotra voamarina",
+      "item3Subtitle": "Kuroiler 60 — Trano fisakafoanana Belle Vue",
+      "item4Title": "Fampitandremana tahiry",
+      "item4Subtitle": "Zezika NPK ambany — sisa 48 kg",
+      "time1h": "1 ora lasa",
+      "time3h": "3 ora lasa",
+      "time5h": "5 ora lasa",
+      "timeYesterday": "omaly"
+    }
   }
 }

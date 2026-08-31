@@ -91,5 +91,81 @@
       "hasAccount": "Already have an account?",
       "login": "Log in"
     }
+  },
+  "dashboard": {
+    "admin": {
+      "title": "Dashboard",
+      "subtitle": "Cross-module overview",
+      "stats": {
+        "harvest": "Harvest this month",
+        "stockItems": "Items in stock",
+        "lowStockAlerts": "Low stock alerts",
+        "revenue": "Revenue",
+        "margin": "Net margin",
+        "clients": "Active clients"
+      },
+      "alertTitle": "2 active alerts",
+      "alertDescription": "NPK 20-20-0 fertilizer and wheat seed below their critical threshold.",
+      "alertAction": "View stock",
+      "chartHarvest": "Harvest — last 6 months",
+      "chartStock": "Stock — last 6 months"
+    },
+    "finance": {
+      "title": "Dashboard — Finance",
+      "subtitle": "Revenue, expenses, margin, clients",
+      "stats": {
+        "revenue": "Revenue",
+        "expenses": "Expenses",
+        "margin": "Net margin",
+        "unpaidInvoices": "Unpaid invoices",
+        "clients": "Active clients"
+      },
+      "chartTitle": "Net margin — real transaction history"
+    },
+    "ouvrier": {
+      "title": "Dashboard — Production",
+      "subtitle": "Production, stock, movements",
+      "stats": {
+        "harvest": "Harvest this month",
+        "activeParcels": "Active plots",
+        "stockItems": "Items in stock",
+        "warehouses": "Warehouses",
+        "lowStockAlerts": "Low stock alerts"
+      },
+      "alertTitle": "Laying rate dropping — Batch B",
+      "alertDescription": "74% today vs 78% last week. Check feed.",
+      "chartTitle": "Harvest — last 6 months"
+    },
+    "quickActions": {
+      "title": "Quick actions",
+      "addProduction": "Add production",
+      "addExpense": "Add expense",
+      "addRevenue": "Add revenue",
+      "stockEntry": "Stock entry",
+      "createInvoice": "Create invoice",
+      "recordRevenue": "Record revenue",
+      "recordExpense": "Record expense",
+      "exportReport": "Export PDF report",
+      "layerEntry": "Log layer hen production",
+      "milkEntry": "Log milk collection",
+      "updateParcel": "Update plot",
+      "vetCare": "Log veterinary care"
+    },
+    "activity": {
+      "title": "Recent activity",
+      "viewAll": "View all",
+      "item1Title": "Production logged",
+      "item1Subtitle": "12,450 eggs — Henhouse A + B",
+      "item2Title": "Delivery received",
+      "item2Subtitle": "2t feed — Agro Supplier",
+      "item3Title": "Sale confirmed",
+      "item3Subtitle": "60 kuroiler — Belle Vue Restaurant",
+      "item4Title": "Stock alert",
+      "item4Subtitle": "NPK fertilizer critical — 48 kg left",
+      "time1h": "1h ago",
+      "time3h": "3h ago",
+      "time5h": "5h ago",
+      "timeYesterday": "yesterday"
+    }
   }
 }
