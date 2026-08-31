@@ -1,32 +1,95 @@
 {
-  "common": {
-    "loading": "Chargement...",
-    "save": "Enregistrer",
-    "cancel": "Annuler",
-    "search": "Rechercher...",
-    "add": "Ajouter",
-    "edit": "Modifier",
-    "delete": "Supprimer",
-    "close": "Fermer"
+  "common": { "loading": "Chargement...", "save": "Enregistrer", "cancel": "Annuler", "search": "Rechercher...", "add": "Ajouter", "edit": "Modifier", "delete": "Supprimer", "close": "Fermer" },
+  "nav": { "dashboard": "Tableau de bord", "production": "Production", "stocks": "Stocks", "finance": "Finance", "clients": "Clients & Fournisseurs", "reports": "Rapports", "settings": "Paramètres", "collapse": "Réduire", "expand": "Déplier le menu", "menu": "Menu", "openMenu": "Ouvrir le menu", "logout": "Se déconnecter" },
+  "language": { "label": "Langue", "fr": "Français", "en": "Anglais", "mg": "Malagasy" },
+  "landing": {
+    "header": { "login": "Se connecter", "register": "S'inscrire" },
+    "hero": {
+      "badge": "Logiciel de Gestion de Ferme",
+      "titleLine1": "Toute votre ferme,",
+      "titleLine2": "une seule ligne à la fois",
+      "subtitle": "Élevage, cultures, stock, finances, clients et fournisseurs — centralisés dans un seul outil, du poulailler au bureau du comptable.",
+      "ctaLogin": "Se connecter au tableau de bord",
+      "ctaRegister": "Créer un compte"
+    },
+    "stats": { "modules": "Modules connectés", "modulesShort": "Modules", "offline": "Fonctionne hors ligne", "offlineShort": "Hors ligne", "languages": "Langues (FR / MG / EN)", "languagesShort": "Langues" },
+    "features": {
+      "badge": "Features",
+      "title": "Ce que le logiciel gère pour vous",
+      "subtitle": "Chaque module alimente les autres automatiquement : une vente enregistrée met à jour le stock, la finance, et le solde du client — sans ressaisie.",
+      "production": { "title": "Production", "description": "Pondeuses, Kuroiler, vaches laitières, maïs, riz, soja — une saisie par jour, un historique complet." },
+      "stock": { "title": "Stock", "description": "Entrées et sorties tracées automatiquement. Alerte dès qu'un article passe sous le seuil critique." },
+      "finance": { "title": "Finance", "description": "Dépenses et recettes catégorisées par activité. Le bénéfice se calcule tout seul." },
+      "clients": { "title": "Clients & fournisseurs", "description": "Historique des achats, soldes et dettes à jour à chaque paiement enregistré." },
+      "transactions": { "title": "Transactions", "description": "Facturation, paiements partiels, crédits — un journal de caisse qui ne ment pas." },
+      "reports": { "title": "Rapports", "description": "Financier, production, stock. Export PDF et Excel en un clic." }
+    },
+    "offline": {
+      "badge": "Pensé pour le terrain",
+      "title": "Le réseau coupe. Le travail continue.",
+      "subtitle": "Un employé au poulailler ou au champ saisit sa production même sans connexion. Dès que le réseau revient, tout se synchronise seul — rien à refaire, rien à perdre.",
+      "modeLabel": "Mode",
+      "modeTitle": "Hors Ligne",
+      "modeDescription": "Saisie stockée localement, envoyée automatiquement à la reconnexion.",
+      "langLabel": "Multilingue",
+      "langTitle": "EN - FR - MG",
+      "langDescription": "Français, Malagasy et Anglais pour toute l'équipe, du champ au bureau."
+    },
+    "footer": {
+      "tagline": "Toute votre ferme, une seule ligne à la fois. Élevage, cultures, stock, finances, clients et fournisseurs — centralisés dans un seul outil.",
+      "quickLinks": "Quick Links",
+      "documentation": "Documentation",
+      "support": "Support",
+      "contactInfo": "Contact Info",
+      "copyright": "© 2026 AgriConnect. All rights reserved. Empowering sustainable agriculture."
+    }
   },
-  "nav": {
-    "dashboard": "Tableau de bord",
-    "production": "Production",
-    "stocks": "Stocks",
-    "finance": "Finance",
-    "clients": "Clients & Fournisseurs",
-    "reports": "Rapports",
-    "settings": "Paramètres",
-    "collapse": "Réduire",
-    "expand": "Déplier le menu",
-    "menu": "Menu",
-    "openMenu": "Ouvrir le menu",
-    "logout": "Se déconnecter"
-  },
-  "language": {
-    "label": "Langue",
-    "fr": "Français",
-    "en": "Anglais",
-    "mg": "Malagasy"
+  "auth": {
+    "login": {
+      "highlight1": "Données sécurisées, sauvegardes automatiques",
+      "highlight2": "Fonctionne même sans connexion internet",
+      "highlight3": "Disponible en Français, Malagasy et Anglais",
+      "title": "Votre ferme, pilotée depuis un seul écran.",
+      "subtitle": "Production, stock, finances et clients — synchronisés, même sur le terrain.",
+      "cardTitle": "Bon retour",
+      "cardSubtitle": "Connectez-vous à votre espace",
+      "email": "Email",
+      "password": "Mot de passe",
+      "forgotPassword": "Mot de passe oublié ?",
+      "rememberMe": "Se souvenir de moi",
+      "submit": "Se connecter",
+      "submitting": "Connexion...",
+      "noAccount": "Pas encore de compte ?",
+      "createAccount": "Créer un compte",
+      "errorTitle": "Connexion refusée",
+      "demoLabel": "Démo",
+      "demoPassword": "mot de passe"
+    },
+    "register": {
+      "highlight1": "Suivez chaque culture et chaque cheptel au quotidien",
+      "highlight2": "Un espace partagé pour toute votre équipe",
+      "highlight3": "Des rapports financiers générés en un clic",
+      "title": "Rejoignez les fermes qui gagnent du temps.",
+      "subtitle": "Un compte, toute votre exploitation : production, stock, finances et clients.",
+      "cardTitle": "Créer un compte",
+      "cardSubtitle": "Quelques infos pour démarrer",
+      "firstName": "Prénom",
+      "lastName": "Nom",
+      "email": "Email",
+      "password": "Mot de passe",
+      "confirmPassword": "Confirmer le mot de passe",
+      "passwordMismatch": "Les mots de passe ne correspondent pas.",
+      "strengthLabel": "Robustesse",
+      "strength0": "Très faible",
+      "strength1": "Faible",
+      "strength2": "Moyen",
+      "strength3": "Fort",
+      "strength4": "Excellent",
+      "terms": "J'accepte les conditions d'utilisation et la politique de confidentialité",
+      "submit": "Créer mon compte",
+      "submitting": "Création...",
+      "hasAccount": "Déjà un compte ?",
+      "login": "Se connecter"
+    }
   }
 }

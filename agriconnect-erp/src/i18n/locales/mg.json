@@ -1,32 +1,95 @@
 {
-  "common": {
-    "loading": "Eo am-panamboarana...",
-    "save": "Tehirizo",
-    "cancel": "Aoka",
-    "search": "Karohy...",
-    "add": "Ampio",
-    "edit": "Ovay",
-    "delete": "Fafao",
-    "close": "Akatony"
+  "common": { "loading": "Eo am-panamboarana...", "save": "Tehirizo", "cancel": "Aoka", "search": "Karohy...", "add": "Ampio", "edit": "Ovay", "delete": "Fafao", "close": "Akatony" },
+  "nav": { "dashboard": "Tabilao mpitantana", "production": "Vokatra", "stocks": "Tahiry entana", "finance": "Vola", "clients": "Mpanjifa sy Mpamatsy", "reports": "Tatitra", "settings": "Kirakira", "collapse": "Ahakelezo", "expand": "Ahalalaho ny lisitra", "menu": "Lisitra", "openMenu": "Sokafy ny lisitra", "logout": "Hivoaka" },
+  "language": { "label": "Fiteny", "fr": "Frantsay", "en": "Anglisy", "mg": "Malagasy" },
+  "landing": {
+    "header": { "login": "Hiditra", "register": "Hisoratra anarana" },
+    "hero": {
+      "badge": "Rindrambaiko Fitantanana Toeram-pambolena",
+      "titleLine1": "Ny fambolenao manontolo,",
+      "titleLine2": "amin'ny tsipika iray ihany",
+      "subtitle": "Fiompiana, fambolena, tahiry entana, vola, mpanjifa ary mpamatsy — voaangona ao anaty fitaovana iray, hatramin'ny trano akoho ka hatramin'ny biraon'ny mpitam-bola.",
+      "ctaLogin": "Hiditra amin'ny tabilao mpitantana",
+      "ctaRegister": "Hamorona kaonty"
+    },
+    "stats": { "modules": "Sampana mifandray", "modulesShort": "Sampana", "offline": "Miasa na dia tsy misy aterineto aza", "offlineShort": "Tsy misy aterineto", "languages": "Fiteny (FR / MG / EN)", "languagesShort": "Fiteny" },
+    "features": {
+      "badge": "Endri-javatra",
+      "title": "Izay karakarain'ny rindrambaiko ho anao",
+      "subtitle": "Ny sampana rehetra mifamatsy ho azy: ny varotra voasoratra dia manova avy hatrany ny tahiry entana, ny vola, ary ny volan'ny mpanjifa — tsy ilaina soratana indroa.",
+      "production": { "title": "Vokatra", "description": "Akoho mpanatody, Kuroiler, omby mpampinono, katsaka, vary, soja — fandraisan-tsoratra isan'andro, tantara feno." },
+      "stock": { "title": "Tahiry entana", "description": "Ny fidirana sy fivoahan'entana voasoratra ho azy. Fampitandremana raha tafidina ambanin'ny fetra ny entana." },
+      "finance": { "title": "Vola", "description": "Ny fandaniana sy ny fidiram-bola voasokajy araka ny asa. Ny tombom-barotra kajiana ho azy." },
+      "clients": { "title": "Mpanjifa sy mpamatsy", "description": "Tantaran'ny fividianana, volany ary trosa voavaozina isaky ny misy fandoavam-bola voasoratra." },
+      "transactions": { "title": "Fifanakalozana", "description": "Fanaovana fatorana, fandoavana ampahany, trosa — bokim-bola tsy mandainga." },
+      "reports": { "title": "Tatitra", "description": "Vola, vokatra, tahiry entana. Fanondranana amin'ny PDF sy Excel amin'ny kitendry tokana." }
+    },
+    "offline": {
+      "badge": "Natao ho an'ny any an-tsaha",
+      "title": "Mijanona ny aterineto. Mitohy ny asa.",
+      "subtitle": "Ny mpiasa ao an-trano akoho na any an-tsaha dia afaka misoratra ny vokatra na dia tsy misy aterineto aza. Rehefa miverina ny aterineto dia mifamatsy ho azy avokoa ny data — tsy misy averina, tsy misy very.",
+      "modeLabel": "Fomba",
+      "modeTitle": "Tsy misy aterineto",
+      "modeDescription": "Ny fandraisan-tsoratra tehirizina eo an-toerana, alefa ho azy rehefa miverina ny aterineto.",
+      "langLabel": "Miteny maro",
+      "langTitle": "EN - FR - MG",
+      "langDescription": "Frantsay, Malagasy ary Anglisy ho an'ny ekipa manontolo, hatrany an-tsaha ka hatrany am-piasana."
+    },
+    "footer": {
+      "tagline": "Ny fambolenao manontolo, amin'ny tsipika iray ihany. Fiompiana, fambolena, tahiry entana, vola, mpanjifa ary mpamatsy — voaangona ao anaty fitaovana iray.",
+      "quickLinks": "Rohy haingana",
+      "documentation": "Antontan-taratasy",
+      "support": "Fanampiana",
+      "contactInfo": "Fifandraisana",
+      "copyright": "© 2026 AgriConnect. Voatokana ny zo rehetra. Manohana ny fambolena maharitra."
+    }
   },
-  "nav": {
-    "dashboard": "Tabilao mpitantana",
-    "production": "Vokatra",
-    "stocks": "Tahiry entana",
-    "finance": "Vola",
-    "clients": "Mpanjifa sy Mpamatsy",
-    "reports": "Tatitra",
-    "settings": "Kirakira",
-    "collapse": "Ahakelezo",
-    "expand": "Ahalalaho ny lisitra",
-    "menu": "Lisitra",
-    "openMenu": "Sokafy ny lisitra",
-    "logout": "Hivoaka"
-  },
-  "language": {
-    "label": "Fiteny",
-    "fr": "Frantsay",
-    "en": "Anglisy",
-    "mg": "Malagasy"
+  "auth": {
+    "login": {
+      "highlight1": "Data voaaro, tahiry mandeha ho azy",
+      "highlight2": "Miasa na dia tsy misy aterineto aza",
+      "highlight3": "Misy amin'ny Frantsay, Malagasy ary Anglisy",
+      "title": "Ny fambolenao, tantanina avy amin'ny efijery tokana.",
+      "subtitle": "Vokatra, tahiry entana, vola ary mpanjifa — mifandray, na dia any an-tsaha aza.",
+      "cardTitle": "Tongasoa indray",
+      "cardSubtitle": "Midira amin'ny kaontinao",
+      "email": "Mailaka",
+      "password": "Tenimiafina",
+      "forgotPassword": "Very ny tenimiafina?",
+      "rememberMe": "Tsarovy aho",
+      "submit": "Hiditra",
+      "submitting": "Miditra...",
+      "noAccount": "Mbola tsy manana kaonty?",
+      "createAccount": "Hamorona kaonty",
+      "errorTitle": "Tsy nety ny fidirana",
+      "demoLabel": "Fanandramana",
+      "demoPassword": "tenimiafina"
+    },
+    "register": {
+      "highlight1": "Araho isan'andro ny vokatra sy ny biby fiompy",
+      "highlight2": "Toerana iombonan'ny ekipanao manontolo",
+      "highlight3": "Tatitra ara-bola vokarina amin'ny kitendry tokana",
+      "title": "Miditra ao amin'ny toeram-pambolena mitsitsy fotoana.",
+      "subtitle": "Kaonty iray, ny fambolenao manontolo: vokatra, tahiry entana, vola ary mpanjifa.",
+      "cardTitle": "Hamorona kaonty",
+      "cardSubtitle": "Antsipirihany vitsivitsy hanombohana",
+      "firstName": "Anarana",
+      "lastName": "Fanampin'anarana",
+      "email": "Mailaka",
+      "password": "Tenimiafina",
+      "confirmPassword": "Hamafiso ny tenimiafina",
+      "passwordMismatch": "Tsy mitovy ny tenimiafina roa.",
+      "strengthLabel": "Hery",
+      "strength0": "Malemy be",
+      "strength1": "Malemy",
+      "strength2": "Antonony",
+      "strength3": "Matanjaka",
+      "strength4": "Tsara indrindra",
+      "terms": "Ekeko ny fepetra fampiasana sy ny politikam-piarovana",
+      "submit": "Hamorona ny kaontiko",
+      "submitting": "Eo am-pamoronana...",
+      "hasAccount": "Manana kaonty efa?",
+      "login": "Hiditra"
+    }
   }
 }

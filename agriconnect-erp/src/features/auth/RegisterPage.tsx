@@ -1,17 +1,10 @@
 import { useMemo, useState, type FormEvent } from "react"
+import { useTranslation } from "react-i18next"
 import { Link } from "react-router"
 import { Leaf, Eye, EyeOff, Loader2, Sprout, Users, LineChart, ArrowRight, Check } from "lucide-react"
 import { Button } from "@/components/ui/button"
+import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
 import { useTilt3D } from "@/hooks/useTilt3D"
-
-const HIGHLIGHTS = [
-  { icon: Sprout, text: "Suivez chaque culture et chaque cheptel au quotidien" },
-  { icon: Users, text: "Un espace partagé pour toute votre équipe" },
-  { icon: LineChart, text: "Des rapports financiers générés en un clic" },
-]
-
-const STRENGTH_LABELS = ["Très faible", "Faible", "Moyen", "Fort", "Excellent"]
-const STRENGTH_COLORS = ["bg-destructive", "bg-orange-400", "bg-amber-300", "bg-lime-400", "bg-[#8FE3B3]"]
 
 function getStrength(pw: string) {
   if (!pw) return 0
@@ -23,12 +16,21 @@ function getStrength(pw: string) {
   return score
 }
 
+const STRENGTH_COLORS = ["bg-destructive", "bg-orange-400", "bg-amber-300", "bg-lime-400", "bg-[#8FE3B3]"]
+
 export default function RegisterPage() {
+  const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const [password, setPassword] = useState("")
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
   const cardTilt = useTilt3D<HTMLDivElement>(3)
+
+  const HIGHLIGHTS = [
+    { icon: Sprout, text: t("auth.register.highlight1") },
+    { icon: Users, text: t("auth.register.highlight2") },
+    { icon: LineChart, text: t("auth.register.highlight3") },
+  ]
 
   const strength = useMemo(() => getStrength(password), [password])
   const mismatch = confirmPassword.length > 0 && confirmPassword !== password
@@ -45,9 +47,14 @@ export default function RegisterPage() {
         <source srcSet="/hero/hero-11.webp" type="image/webp" />
         <img src="/hero/hero-11.jpg" alt="" aria-hidden fetchPriority="high" decoding="async" className="h-full w-full object-cover" />
       </picture>
-     <div className="absolute inset-0 bg-gradient-to-l from-[#0B3B27]/95 via-[#0B3B27]/60 to-[#0B3B27]/80" />
+      <div className="absolute inset-0 bg-gradient-to-l from-[#0B3B27]/95 via-[#0B3B27]/60 to-[#0B3B27]/80" />
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_25%_50%,rgba(11,59,39,0.55),transparent_70%)]" />
+      <div aria-hidden className="pointer-events-none absolute -right-24 -top-24 h-72 w-72 animate-drift rounded-full bg-white/10 blur-3xl" />
       <div aria-hidden className="pointer-events-none absolute -bottom-24 -left-16 h-64 w-64 animate-drift-slow rounded-full bg-[#8FE3B3]/20 blur-3xl" />
+
+      <div className="absolute left-4 top-4 z-20 sm:left-6 sm:top-6">
+        <LanguageSwitcher compact />
+      </div>
 
       <div className="relative z-10 flex min-h-screen flex-col lg:flex-row-reverse lg:items-center lg:justify-between lg:gap-12 lg:px-16 xl:px-24">
         <div className="flex flex-col gap-6 p-6 pt-8 text-white sm:p-8 lg:max-w-md lg:p-0">
@@ -59,8 +66,8 @@ export default function RegisterPage() {
           </Link>
 
           <div className="hidden lg:block">
-            <h2 className="text-shadow-sm font-serif text-3xl leading-tight xl:text-4xl">Rejoignez les fermes qui gagnent du temps.</h2>
-            <p className="mt-3 text-sm text-white/80">Un compte, toute votre exploitation : production, stock, finances et clients.</p>
+            <h2 className="text-shadow-sm font-serif text-3xl leading-tight xl:text-4xl">{t("auth.register.title")}</h2>
+            <p className="mt-3 text-sm text-white/80">{t("auth.register.subtitle")}</p>
 
             <ul className="mt-8 flex flex-col gap-3">
               {HIGHLIGHTS.map(({ icon: Icon, text }, i) => (
@@ -83,29 +90,29 @@ export default function RegisterPage() {
             className="glass-strong relative z-10 w-full max-w-sm animate-card-in rounded-2xl p-7 text-white shadow-2xl transition-shadow duration-500 will-change-transform hover:shadow-black/20 sm:p-9"
           >
             <div className="mb-7 text-center lg:text-left">
-              <p className="font-serif text-2xl">Créer un compte</p>
-              <p className="mt-1 text-sm text-white/70">Quelques infos pour démarrer</p>
+              <p className="font-serif text-2xl">{t("auth.register.cardTitle")}</p>
+              <p className="mt-1 text-sm text-white/70">{t("auth.register.cardSubtitle")}</p>
             </div>
 
             <form onSubmit={handleSubmit} className="flex flex-col gap-4" noValidate>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <label htmlFor="firstName" className="mb-1.5 block text-xs font-medium text-white/90">Prénom</label>
+                  <label htmlFor="firstName" className="mb-1.5 block text-xs font-medium text-white/90">{t("auth.register.firstName")}</label>
                   <input id="firstName" required className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white outline-none transition-all duration-200 placeholder:text-white/40 hover:border-white/35 focus:border-white/60 focus:ring-2 focus:ring-white/20" placeholder="Asandratriniaina" />
                 </div>
                 <div>
-                  <label htmlFor="lastName" className="mb-1.5 block text-xs font-medium text-white/90">Nom</label>
+                  <label htmlFor="lastName" className="mb-1.5 block text-xs font-medium text-white/90">{t("auth.register.lastName")}</label>
                   <input id="lastName" required className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white outline-none transition-all duration-200 placeholder:text-white/40 hover:border-white/35 focus:border-white/60 focus:ring-2 focus:ring-white/20" placeholder="Lesoa" />
                 </div>
               </div>
 
               <div>
-                <label htmlFor="email" className="mb-1.5 block text-xs font-medium text-white/90">Email</label>
+                <label htmlFor="email" className="mb-1.5 block text-xs font-medium text-white/90">{t("auth.register.email")}</label>
                 <input id="email" type="email" required className="w-full rounded-lg border border-white/20 bg-white/10 px-3 py-2 text-sm text-white outline-none transition-all duration-200 placeholder:text-white/40 hover:border-white/35 focus:border-white/60 focus:ring-2 focus:ring-white/20" placeholder="lesoa.asa@zurcher.edu.mg" />
               </div>
 
               <div>
-                <label htmlFor="password" className="mb-1.5 block text-xs font-medium text-white/90">Mot de passe</label>
+                <label htmlFor="password" className="mb-1.5 block text-xs font-medium text-white/90">{t("auth.register.password")}</label>
                 <div className="relative">
                   <input
                     id="password"
@@ -129,14 +136,14 @@ export default function RegisterPage() {
                       ))}
                     </div>
                     <p className="mt-1 text-[11px] text-white/60">
-                      Robustesse : <span className="font-medium text-white/90">{STRENGTH_LABELS[strength]}</span>
+                      {t("auth.register.strengthLabel")} : <span className="font-medium text-white/90">{t(`auth.register.strength${strength}`)}</span>
                     </p>
                   </div>
                 )}
               </div>
 
               <div>
-                <label htmlFor="confirmPassword" className="mb-1.5 block text-xs font-medium text-white/90">Confirmer le mot de passe</label>
+                <label htmlFor="confirmPassword" className="mb-1.5 block text-xs font-medium text-white/90">{t("auth.register.confirmPassword")}</label>
                 <div className="relative">
                   <input
                     id="confirmPassword"
@@ -152,23 +159,23 @@ export default function RegisterPage() {
                   />
                   {!mismatch && confirmPassword.length > 0 && <Check className="absolute right-3 top-1/2 h-4 w-4 -translate-y-1/2 animate-in zoom-in text-[#8FE3B3] duration-300" />}
                 </div>
-                {mismatch && <p className="mt-1 animate-in slide-in-from-top-1 text-xs text-red-300 duration-200">Les mots de passe ne correspondent pas.</p>}
+                {mismatch && <p className="mt-1 animate-in slide-in-from-top-1 text-xs text-red-300 duration-200">{t("auth.register.passwordMismatch")}</p>}
               </div>
 
               <label className="flex min-h-[44px] select-none items-start gap-2 text-xs text-white/70">
                 <input type="checkbox" required className="mt-0.5 h-3.5 w-3.5 rounded border-white/30 bg-white/10 text-[#0F8A5F] accent-[#0F8A5F] transition-transform duration-150 focus:ring-1 focus:ring-white/40" />
-                J'accepte les conditions d'utilisation et la politique de confidentialité
+                {t("auth.register.terms")}
               </label>
 
               <Button type="submit" disabled={loading} className="group mt-1 gap-2 bg-white text-[#0B3B27] transition-all duration-300 hover:scale-[1.02] hover:bg-white/90 active:scale-95">
                 {loading ? <Loader2 className="h-4 w-4 animate-spin" /> : <ArrowRight className="h-4 w-4 transition-transform duration-300 group-hover:translate-x-0.5" />}
-                {loading ? "Création..." : "Créer mon compte"}
+                {loading ? t("auth.register.submitting") : t("auth.register.submit")}
               </Button>
             </form>
 
             <p className="mt-6 text-center text-xs text-white/60">
-              Déjà un compte ?{" "}
-              <Link to="/login" className="text-[#8FE3B3] transition-colors duration-200 hover:text-[#8FE3B3]/80 hover:underline">Se connecter</Link>
+              {t("auth.register.hasAccount")}{" "}
+              <Link to="/login" className="text-[#8FE3B3] transition-colors duration-200 hover:text-[#8FE3B3]/80 hover:underline">{t("auth.register.login")}</Link>
             </p>
           </div>
         </div>

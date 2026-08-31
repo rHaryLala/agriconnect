@@ -1,32 +1,95 @@
 {
-  "common": {
-    "loading": "Loading...",
-    "save": "Save",
-    "cancel": "Cancel",
-    "search": "Search...",
-    "add": "Add",
-    "edit": "Edit",
-    "delete": "Delete",
-    "close": "Close"
+  "common": { "loading": "Loading...", "save": "Save", "cancel": "Cancel", "search": "Search...", "add": "Add", "edit": "Edit", "delete": "Delete", "close": "Close" },
+  "nav": { "dashboard": "Dashboard", "production": "Production", "stocks": "Stock", "finance": "Finance", "clients": "Clients & Suppliers", "reports": "Reports", "settings": "Settings", "collapse": "Collapse", "expand": "Expand menu", "menu": "Menu", "openMenu": "Open menu", "logout": "Log out" },
+  "language": { "label": "Language", "fr": "French", "en": "English", "mg": "Malagasy" },
+  "landing": {
+    "header": { "login": "Log in", "register": "Sign up" },
+    "hero": {
+      "badge": "Farm Management Software",
+      "titleLine1": "Your whole farm,",
+      "titleLine2": "one single line at a time",
+      "subtitle": "Livestock, crops, stock, finances, clients and suppliers — all centralized in one tool, from the henhouse to the accountant's desk.",
+      "ctaLogin": "Log in to dashboard",
+      "ctaRegister": "Create an account"
+    },
+    "stats": { "modules": "Connected modules", "modulesShort": "Modules", "offline": "Works offline", "offlineShort": "Offline", "languages": "Languages (FR / MG / EN)", "languagesShort": "Languages" },
+    "features": {
+      "badge": "Features",
+      "title": "What the software handles for you",
+      "subtitle": "Every module feeds the others automatically: a recorded sale updates stock, finances, and the client's balance — no re-entry needed.",
+      "production": { "title": "Production", "description": "Layer hens, Kuroiler, dairy cows, maize, rice, soy — one entry per day, a complete history." },
+      "stock": { "title": "Stock", "description": "Entries and exits tracked automatically. Alerted as soon as an item drops below the critical threshold." },
+      "finance": { "title": "Finance", "description": "Expenses and income categorized by activity. Profit calculates itself." },
+      "clients": { "title": "Clients & suppliers", "description": "Purchase history, balances and debts kept up to date with every recorded payment." },
+      "transactions": { "title": "Transactions", "description": "Invoicing, partial payments, credit — a cash journal that never lies." },
+      "reports": { "title": "Reports", "description": "Financial, production, stock. Export to PDF and Excel in one click." }
+    },
+    "offline": {
+      "badge": "Built for the field",
+      "title": "The network drops. The work goes on.",
+      "subtitle": "A worker in the henhouse or the field can log production even without a connection. Once the network is back, everything syncs by itself — nothing to redo, nothing lost.",
+      "modeLabel": "Mode",
+      "modeTitle": "Offline",
+      "modeDescription": "Entries stored locally, sent automatically once reconnected.",
+      "langLabel": "Multilingual",
+      "langTitle": "EN - FR - MG",
+      "langDescription": "French, Malagasy and English for the whole team, from the field to the office."
+    },
+    "footer": {
+      "tagline": "Your whole farm, one single line at a time. Livestock, crops, stock, finances, clients and suppliers — all centralized in one tool.",
+      "quickLinks": "Quick Links",
+      "documentation": "Documentation",
+      "support": "Support",
+      "contactInfo": "Contact Info",
+      "copyright": "© 2026 AgriConnect. All rights reserved. Empowering sustainable agriculture."
+    }
   },
-  "nav": {
-    "dashboard": "Dashboard",
-    "production": "Production",
-    "stocks": "Stock",
-    "finance": "Finance",
-    "clients": "Clients & Suppliers",
-    "reports": "Reports",
-    "settings": "Settings",
-    "collapse": "Collapse",
-    "expand": "Expand menu",
-    "menu": "Menu",
-    "openMenu": "Open menu",
-    "logout": "Log out"
-  },
-  "language": {
-    "label": "Language",
-    "fr": "French",
-    "en": "English",
-    "mg": "Malagasy"
+  "auth": {
+    "login": {
+      "highlight1": "Secure data, automatic backups",
+      "highlight2": "Works even without internet access",
+      "highlight3": "Available in French, Malagasy and English",
+      "title": "Your farm, run from a single screen.",
+      "subtitle": "Production, stock, finances and clients — synchronized, even out in the field.",
+      "cardTitle": "Welcome back",
+      "cardSubtitle": "Log in to your workspace",
+      "email": "Email",
+      "password": "Password",
+      "forgotPassword": "Forgot password?",
+      "rememberMe": "Remember me",
+      "submit": "Log in",
+      "submitting": "Logging in...",
+      "noAccount": "No account yet?",
+      "createAccount": "Create an account",
+      "errorTitle": "Login failed",
+      "demoLabel": "Demo",
+      "demoPassword": "password"
+    },
+    "register": {
+      "highlight1": "Track every crop and every herd, day by day",
+      "highlight2": "A shared space for your whole team",
+      "highlight3": "Financial reports generated in one click",
+      "title": "Join the farms saving time.",
+      "subtitle": "One account, your whole operation: production, stock, finances and clients.",
+      "cardTitle": "Create an account",
+      "cardSubtitle": "A few details to get started",
+      "firstName": "First name",
+      "lastName": "Last name",
+      "email": "Email",
+      "password": "Password",
+      "confirmPassword": "Confirm password",
+      "passwordMismatch": "Passwords don't match.",
+      "strengthLabel": "Strength",
+      "strength0": "Very weak",
+      "strength1": "Weak",
+      "strength2": "Medium",
+      "strength3": "Strong",
+      "strength4": "Excellent",
+      "terms": "I accept the terms of use and privacy policy",
+      "submit": "Create my account",
+      "submitting": "Creating...",
+      "hasAccount": "Already have an account?",
+      "login": "Log in"
+    }
   }
 }
