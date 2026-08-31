@@ -69,6 +69,30 @@ const echappe = (s) =>
 
 const pluriel = (n, sing, plur = sing + 's') => `${n} ${n > 1 ? plur : sing}`;
 
+// ------------------------------------------------------------------- amont
+
+/**
+ * Récupère l'état du dépôt distant avant de compter quoi que ce soit.
+ *
+ * Sans cela le rapport décrit ce que la machine avait en cache, pas ce qui est
+ * réellement sur GitHub : un commit poussé il y a deux minutes n'apparaîtrait
+ * pas, et rien ne le signalerait. `--sans-fetch` permet de s'en passer quand on
+ * travaille hors ligne.
+ */
+function synchroniser() {
+  if (process.argv.includes('--sans-fetch')) {
+    return { fait: false, raison: 'option <span class="mono">--sans-fetch</span>' };
+  }
+  try {
+    git('fetch', '--all', '--prune');
+    return { fait: true };
+  } catch {
+    return { fait: false, raison: 'dépôt distant injoignable' };
+  }
+}
+
+const amont = synchroniser();
+
 // --------------------------------------------------------------- collecte
 
 /** Tous les commits du dépôt, toutes branches confondues. */
@@ -555,6 +579,10 @@ ${actions().map(([t, d]) => `      <li><div><strong>${t}</strong><span>${d}</spa
   <footer>
     Généré automatiquement par <span class="mono">scripts/rapport-avancement.mjs</span>
     le ${dateFr(maintenant, true)}, à partir de l’historique de toutes les branches du dépôt.
+    ${amont.fait
+      ? 'Le dépôt distant a été récupéré juste avant le calcul : les chiffres reflètent l’état de GitHub.'
+      : `<strong>Attention : le dépôt distant n’a pas été récupéré (${amont.raison}).</strong> `
+        + 'Les chiffres reflètent l’état local, qui peut être en retard.'}
     ${prs === null ? 'Les demandes de fusion n’ont pas pu être lues : <span class="mono">gh</span> est absent ou non authentifié.' : ''}
     Le décompte par personne repose sur les adresses de courriel des auteurs, déclarées en tête du script.
   </footer>
@@ -568,3 +596,8 @@ writeFileSync(SORTIE, html, 'utf8');
 console.log(`${SORTIE} régénéré — ${totalCommits} commits, `
   + `${membres.filter((m) => m.branche.existe).length} branches, `
   + `${risques().length} risque(s) signalé(s).`);
+
+if (!amont.fait) {
+  console.warn(`Attention : dépôt distant non récupéré (${amont.raison.replace(/<[^>]+>/g, '')}). `
+    + 'Les chiffres peuvent être en retard sur GitHub.');
+}

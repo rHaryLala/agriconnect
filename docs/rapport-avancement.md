@@ -10,12 +10,22 @@ node scripts/rapport-avancement.mjs
 ```
 
 Le script ne dépend de rien d'autre que Node et Git. Il lit l'historique de toutes
-les branches, y compris celles qui ne sont pas fusionnées. Pour que les chiffres
-soient justes, mettez le dépôt à jour d'abord :
+les branches, y compris celles qui ne sont pas fusionnées.
+
+**Il récupère le dépôt distant lui-même** (`git fetch --all --prune`) avant de
+compter quoi que ce soit. Sans cela le rapport décrirait le cache de votre machine
+et non l'état réel de GitHub : un commit poussé il y a deux minutes n'y figurerait
+pas, sans que rien ne le signale.
+
+Hors ligne, ou pour éviter l'appel réseau :
 
 ```bash
-git fetch --all --prune
+node scripts/rapport-avancement.mjs --sans-fetch
 ```
+
+Le rapport porte alors un avertissement en pied de page, et le script le rappelle
+sur la sortie standard. Même chose si le dépôt distant est injoignable : la
+génération aboutit, mais elle le dit.
 
 Si la commande `gh` est installée et authentifiée, le script compte aussi les
 demandes de fusion. Sinon il s'exécute quand même, et le signale en pied de page.
