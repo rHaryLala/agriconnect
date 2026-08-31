@@ -1,0 +1,32 @@
+{
+  "common": {
+    "loading": "Eo am-panamboarana...",
+    "save": "Tehirizo",
+    "cancel": "Aoka",
+    "search": "Karohy...",
+    "add": "Ampio",
+    "edit": "Ovay",
+    "delete": "Fafao",
+    "close": "Akatony"
+  },
+  "nav": {
+    "dashboard": "Tabilao mpitantana",
+    "production": "Vokatra",
+    "stocks": "Tahiry entana",
+    "finance": "Vola",
+    "clients": "Mpanjifa sy Mpamatsy",
+    "reports": "Tatitra",
+    "settings": "Kirakira",
+    "collapse": "Ahakelezo",
+    "expand": "Ahalalaho ny lisitra",
+    "menu": "Lisitra",
+    "openMenu": "Sokafy ny lisitra",
+    "logout": "Hivoaka"
+  },
+  "language": {
+    "label": "Fiteny",
+    "fr": "Frantsay",
+    "en": "Anglisy",
+    "mg": "Malagasy"
+  }
+}
