@@ -1,0 +1,41 @@
+name: Rapport d'avancement
+
+# Régénère docs/avancement.html à chaque poussée, et une fois par jour en
+# semaine — pour que le silence d'un stagiaire finisse par apparaître même
+# si personne ne pousse.
+on:
+  push:
+    branches: ['**']
+  schedule:
+    - cron: '0 6 * * 1-5'
+  workflow_dispatch:
+
+jobs:
+  rapport:
+    runs-on: ubuntu-latest
+    permissions:
+      contents: read
+      pull-requests: read
+    steps:
+      - uses: actions/checkout@v4
+        with:
+          fetch-depth: 0   # tout l'historique : le rapport lit toutes les branches
+
+      - name: Récupérer toutes les branches distantes
+        run: git fetch --all --prune
+
+      - uses: actions/setup-node@v4
+        with:
+          node-version: '20'
+
+      - name: Générer le rapport
+        env:
+          GH_TOKEN: ${{ github.token }}   # permet de lire les demandes de fusion
+        run: node scripts/rapport-avancement.mjs
+
+      - name: Publier le rapport
+        uses: actions/upload-artifact@v4
+        with:
+          name: avancement
+          path: docs/avancement.html
+          retention-days: 30
