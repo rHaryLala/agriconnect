@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useTranslation } from "react-i18next"
 import { Plus, Pencil, Trash2, Check, X } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle } from "@/components/ui/dialog"
 import { Button } from "@/components/ui/button"
@@ -22,22 +23,14 @@ interface TypesManagerDialogProps<T extends Record<string, unknown> & { id: stri
 
 function emptyDraft(fields: TypeField[]): Record<string, string | number> {
   const draft: Record<string, string | number> = {}
-  fields.forEach((f) => {
-    draft[f.name] = f.type === "number" ? 0 : ""
-  })
+  fields.forEach((f) => { draft[f.name] = f.type === "number" ? 0 : "" })
   return draft
 }
 
 export function TypesManagerDialog<T extends Record<string, unknown> & { id: string }>({
-  open,
-  onOpenChange,
-  title,
-  fields,
-  items,
-  onAdd,
-  onUpdate,
-  onDelete,
+  open, onOpenChange, title, fields, items, onAdd, onUpdate, onDelete,
 }: TypesManagerDialogProps<T>) {
+  const { t } = useTranslation()
   const [editingId, setEditingId] = useState<string | null>(null)
   const [draft, setDraft] = useState<Record<string, string | number>>(emptyDraft(fields))
   const [creating, setCreating] = useState(false)
@@ -45,9 +38,7 @@ export function TypesManagerDialog<T extends Record<string, unknown> & { id: str
 
   function startEdit(item: T) {
     const d: Record<string, string | number> = {}
-    fields.forEach((f) => {
-      d[f.name] = item[f.name] as string | number
-    })
+    fields.forEach((f) => { d[f.name] = item[f.name] as string | number })
     setDraft(d)
     setEditingId(item.id)
   }
@@ -73,9 +64,7 @@ export function TypesManagerDialog<T extends Record<string, unknown> & { id: str
         </DialogHeader>
 
         <div className="flex max-h-80 flex-col gap-1.5 overflow-y-auto pr-1">
-          {items.length === 0 && !creating && (
-            <p className="px-1 py-4 text-center text-sm text-muted-foreground">Aucun élément pour l'instant.</p>
-          )}
+          {items.length === 0 && !creating && <p className="px-1 py-4 text-center text-sm text-muted-foreground">{t("stock.inventory.emptyTitle")}</p>}
 
           {items.map((item) => (
             <div key={item.id} className="flex items-center gap-2 rounded-lg border border-border px-3 py-2">
@@ -86,28 +75,24 @@ export function TypesManagerDialog<T extends Record<string, unknown> & { id: str
                       key={f.name}
                       type={f.type}
                       value={draft[f.name]}
-                      onChange={(e) =>
-                        setDraft({ ...draft, [f.name]: f.type === "number" ? Number(e.target.value) : e.target.value })
-                      }
+                      onChange={(e) => setDraft({ ...draft, [f.name]: f.type === "number" ? Number(e.target.value) : e.target.value })}
                       className="w-full rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                     />
                   ))}
-                  <Button variant="ghost" size="icon" onClick={saveEdit} aria-label="Enregistrer">
+                  <Button variant="ghost" size="icon" onClick={saveEdit} aria-label={t("common.save")}>
                     <Check className="h-4 w-4 text-success" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => setEditingId(null)} aria-label="Annuler">
+                  <Button variant="ghost" size="icon" onClick={() => setEditingId(null)} aria-label={t("common.cancel")}>
                     <X className="h-4 w-4" />
                   </Button>
                 </>
               ) : (
                 <>
-                  <span className="flex-1 truncate text-sm text-foreground">
-                    {fields.map((f) => item[f.name]).join(" — ")}
-                  </span>
-                  <Button variant="ghost" size="icon" onClick={() => startEdit(item)} aria-label="Modifier">
+                  <span className="flex-1 truncate text-sm text-foreground">{fields.map((f) => item[f.name]).join(" — ")}</span>
+                  <Button variant="ghost" size="icon" onClick={() => startEdit(item)} aria-label={t("common.edit")}>
                     <Pencil className="h-4 w-4" />
                   </Button>
-                  <Button variant="ghost" size="icon" onClick={() => onDelete(item.id)} aria-label="Supprimer">
+                  <Button variant="ghost" size="icon" onClick={() => onDelete(item.id)} aria-label={t("common.delete")}>
                     <Trash2 className="h-4 w-4 text-destructive" />
                   </Button>
                 </>
@@ -123,17 +108,15 @@ export function TypesManagerDialog<T extends Record<string, unknown> & { id: str
                   type={f.type}
                   placeholder={f.label}
                   value={newDraft[f.name]}
-                  onChange={(e) =>
-                    setNewDraft({ ...newDraft, [f.name]: f.type === "number" ? Number(e.target.value) : e.target.value })
-                  }
+                  onChange={(e) => setNewDraft({ ...newDraft, [f.name]: f.type === "number" ? Number(e.target.value) : e.target.value })}
                   autoFocus={i === 0}
                   className="w-full rounded-md border border-border bg-background px-2 py-1 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
                 />
               ))}
-              <Button variant="ghost" size="icon" onClick={saveCreate} aria-label="Enregistrer">
+              <Button variant="ghost" size="icon" onClick={saveCreate} aria-label={t("common.save")}>
                 <Check className="h-4 w-4 text-success" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => setCreating(false)} aria-label="Annuler">
+              <Button variant="ghost" size="icon" onClick={() => setCreating(false)} aria-label={t("common.cancel")}>
                 <X className="h-4 w-4" />
               </Button>
             </div>
@@ -143,7 +126,7 @@ export function TypesManagerDialog<T extends Record<string, unknown> & { id: str
         {!creating && (
           <Button variant="outline" onClick={() => setCreating(true)} className="mt-2 gap-2">
             <Plus className="h-4 w-4" />
-            Ajouter
+            {t("common.add")}
           </Button>
         )}
       </DialogContent>

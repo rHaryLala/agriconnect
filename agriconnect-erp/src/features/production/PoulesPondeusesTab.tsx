@@ -1,5 +1,6 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
+import { useTranslation } from "react-i18next"
 import { Plus, Egg, Trash2, Pencil, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
@@ -17,6 +18,7 @@ function totalPoules(entry: PouleEntry): number {
 }
 
 export function PoulesPondeusesTab() {
+  const { t } = useTranslation()
   const { poules: entries, isLoading, fetchAll, addPoule, updatePoule, deletePoule } = useProductionStore()
   const { cages: cagesProfiles, addCage, updateCage, removeCage } = useCagesStore()
   const [entryOpen, setEntryOpen] = useState(false)
@@ -44,10 +46,10 @@ export function PoulesPondeusesTab() {
   async function handleSubmit(values: Omit<PouleEntry, "id">) {
     if (editingEntry) {
       await updatePoule(editingEntry.id, values)
-      toast.success("Relevé modifié")
+      toast.success(t("production.poules.toastModified"))
     } else {
       await addPoule(values)
-      toast.success("Relevé enregistré")
+      toast.success(t("production.poules.toastCreated"))
     }
   }
 
@@ -58,29 +60,22 @@ export function PoulesPondeusesTab() {
   }
 
   const columns: DataTableColumn<PouleEntry>[] = [
-    { key: "date", label: "Date", render: (e) => formatDate(e.date) },
-    ...cagesProfiles.map((c): DataTableColumn<PouleEntry> => ({
-      key: c.id,
-      label: c.nom,
-      render: (e) => formatNumber(e.cages.find((cg) => cg.cageId === c.id)?.nbPoules ?? 0),
-    })),
-    { key: "total", label: "Total poules", render: (e) => formatNumber(totalPoules(e)) },
-    { key: "oeufs", label: "Œufs", render: (e) => formatNumber(e.oeufsProduits) },
-    { key: "casses", label: "Œufs cassés", render: (e) => formatNumber(e.oeufsCasses) },
-    { key: "aliments", label: "Aliments", render: (e) => `${formatNumber(e.alimentsKg)} kg` },
-    { key: "mortalite", label: "Mortalité", render: (e) => formatNumber(e.mortalite) },
-    { key: "observation", label: "Observation", render: (e) => <span className="text-muted-foreground">{e.observation}</span> },
+    { key: "date", label: t("production.poules.colDate"), render: (e) => formatDate(e.date) },
+    ...cagesProfiles.map((c): DataTableColumn<PouleEntry> => ({ key: c.id, label: c.nom, render: (e) => formatNumber(e.cages.find((cg) => cg.cageId === c.id)?.nbPoules ?? 0) })),
+    { key: "total", label: t("production.poules.colTotal"), render: (e) => formatNumber(totalPoules(e)) },
+    { key: "oeufs", label: t("production.poules.colEggs"), render: (e) => formatNumber(e.oeufsProduits) },
+    { key: "casses", label: t("production.poules.colBroken"), render: (e) => formatNumber(e.oeufsCasses) },
+    { key: "aliments", label: t("production.poules.colFeed"), render: (e) => `${formatNumber(e.alimentsKg)} kg` },
+    { key: "mortalite", label: t("production.poules.colMortality"), render: (e) => formatNumber(e.mortalite) },
+    { key: "observation", label: t("production.poules.colObservation"), render: (e) => <span className="text-muted-foreground">{e.observation}</span> },
     {
-      key: "actions",
-      label: "",
-      className: "text-right",
-      sticky: true,
+      key: "actions", label: "", className: "text-right", sticky: true,
       render: (e) => (
         <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label="Modifier">
+          <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
             <Pencil className="h-4 w-4" />
           </Button>
-          <Button variant="ghost" size="icon" onClick={() => { deletePoule(e.id); toast.success("Relevé supprimé") }} aria-label="Supprimer">
+          <Button variant="ghost" size="icon" onClick={() => { deletePoule(e.id); toast.success(t("production.poules.toastDeleted")) }} aria-label={t("common.delete")}>
             <Trash2 className="h-4 w-4 text-destructive" />
           </Button>
         </div>
@@ -91,43 +86,31 @@ export function PoulesPondeusesTab() {
   return (
     <div>
       <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3">
-        <StatCard icon={Egg} label="Poules (dernier relevé)" value={formatNumber(totalPoulesActuel)} tone="primary" />
-        <StatCard icon={Egg} label="Taux de ponte" value={`${tauxPonte.toFixed(1)} %`} tone="success" />
-        <StatCard icon={Egg} label="Mortalité cumulée" value={formatNumber(mortaliteCumulee)} tone="warning" />
+        <StatCard icon={Egg} label={t("production.poules.statHensCount")} value={formatNumber(totalPoulesActuel)} tone="primary" />
+        <StatCard icon={Egg} label={t("production.poules.statLayingRate")} value={`${tauxPonte.toFixed(1)} %`} tone="success" />
+        <StatCard icon={Egg} label={t("production.poules.statMortality")} value={formatNumber(mortaliteCumulee)} tone="warning" />
       </div>
 
-      <div className="mb-3 flex justify-end gap-2">
+      <div className="mb-3 flex flex-wrap justify-end gap-2">
         <Button variant="outline" onClick={() => setCageOpen(true)} className="gap-2">
           <Settings2 className="h-4 w-4" />
-          Gérer les cages
+          {t("production.poules.manageCagesButton")}
         </Button>
         <Button onClick={openCreate} className="gap-2">
           <Plus className="h-4 w-4" />
-          Saisir un relevé
+          {t("production.common.newEntry")}
         </Button>
       </div>
 
-      <DataTable
-        columns={columns}
-        rows={entries}
-        rowKey={(e) => e.id}
-        isLoading={isLoading}
-        emptyIcon={Egg}
-        emptyTitle="Aucun relevé"
-        emptyDescription="Saisis le premier relevé avec le bouton ci-dessus."
-        rowTone={rowTone}
-      />
+      <DataTable columns={columns} rows={entries} rowKey={(e) => e.id} isLoading={isLoading} emptyIcon={Egg} emptyTitle={t("production.poules.emptyTitle")} emptyDescription={t("production.poules.emptyDescription")} rowTone={rowTone} />
 
       <PouleEntryDialog open={entryOpen} onOpenChange={setEntryOpen} cages={cagesProfiles} editingEntry={editingEntry} onSubmit={handleSubmit} />
 
       <TypesManagerDialog
         open={cageOpen}
         onOpenChange={setCageOpen}
-        title="Gérer les cages"
-        fields={[
-          { name: "nom", label: "Nom (ex: C5)", type: "text" },
-          { name: "capaciteMax", label: "Capacité max", type: "number" },
-        ]}
+        title={t("production.poules.manageCagesTitle")}
+        fields={[{ name: "nom", label: t("production.poules.cageNameLabel"), type: "text" }, { name: "capaciteMax", label: t("production.poules.cageCapacityLabel"), type: "number" }]}
         items={cagesProfiles}
         onAdd={(v) => addCage(v.nom as string, v.capaciteMax as number)}
         onUpdate={(id, v) => updateCage(id, { nom: v.nom as string, capaciteMax: v.capaciteMax as number })}

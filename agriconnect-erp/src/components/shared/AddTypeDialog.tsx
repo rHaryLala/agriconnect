@@ -1,13 +1,11 @@
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 import { Loader2 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-
-const schema = z.object({ label: z.string().min(2, "Minimum 2 caractères") })
-type FormValues = z.infer<typeof schema>
 
 interface AddTypeDialogProps {
   open: boolean
@@ -19,6 +17,10 @@ interface AddTypeDialogProps {
 }
 
 export function AddTypeDialog({ open, onOpenChange, title, fieldLabel, placeholder, onSubmit }: AddTypeDialogProps) {
+  const { t } = useTranslation()
+  const schema = z.object({ label: z.string().min(2, t("stock.inventory.validationName")) })
+  type FormValues = z.infer<typeof schema>
+
   const {
     register,
     handleSubmit,
@@ -53,11 +55,11 @@ export function AddTypeDialog({ open, onOpenChange, title, fieldLabel, placehold
           </div>
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting} className="gap-2">
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              Ajouter
+              {t("common.add")}
             </Button>
           </DialogFooter>
         </form>

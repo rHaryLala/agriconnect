@@ -1,6 +1,7 @@
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 import { Loader2 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
@@ -10,15 +11,17 @@ import { Button } from "@/components/ui/button"
 import type { CultureTypeProfile } from "./cultureTypesStore"
 import type { CultureEntry } from "@/types/production"
 
-const schema = z.object({
-  date: z.string().min(1, "Date requise"),
-  culture: z.string().min(1, "Sélectionne une culture"),
-  surfaceHa: z.number({ invalid_type_error: "Nombre requis" }).positive("Doit être positif"),
-  recolteQty: z.number({ invalid_type_error: "Nombre requis" }).min(0),
-  coutIntrants: z.number({ invalid_type_error: "Nombre requis" }).min(0),
-  intrants: z.string().min(1, "Renseigne les intrants utilisés, même 'aucun'"),
-})
-type FormValues = z.infer<typeof schema>
+function buildSchema(t: (key: string) => string) {
+  return z.object({
+    date: z.string().min(1, t("stock.movements.validationDate")),
+    culture: z.string().min(1, t("stock.movements.validationArticle")),
+    surfaceHa: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).positive(t("stock.movements.validationQuantity")),
+    recolteQty: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
+    coutIntrants: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
+    intrants: z.string().min(1, t("production.agriculture.validationInputs")),
+  })
+}
+type FormValues = z.infer<ReturnType<typeof buildSchema>>
 
 interface AgricultureEntryDialogProps {
   open: boolean
@@ -29,12 +32,11 @@ interface AgricultureEntryDialogProps {
 }
 
 export function AgricultureEntryDialog({ open, onOpenChange, cultures, editingEntry, onSubmit }: AgricultureEntryDialogProps) {
+  const { t } = useTranslation()
+  const schema = useMemo(() => buildSchema(t), [t])
+
   const {
-    register,
-    handleSubmit,
-    control,
-    watch,
-    reset,
+    register, handleSubmit, control, watch, reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
@@ -50,7 +52,7 @@ export function AgricultureEntryDialog({ open, onOpenChange, cultures, editingEn
       })
     }
   }, [open, cultures, editingEntry])
-  
+
   const surfaceHa = watch("surfaceHa")
   const recolteQty = watch("recolteQty")
   const rendementPreview = surfaceHa > 0 ? Math.round((recolteQty || 0) / surfaceHa) : 0
@@ -64,36 +66,28 @@ export function AgricultureEntryDialog({ open, onOpenChange, cultures, editingEn
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{editingEntry ? "Modifier le relevé — Agriculture" : "Nouvelle entrée — Agriculture"}</DialogTitle>
+          <DialogTitle>{editingEntry ? t("production.agriculture.dialogTitleEdit") : t("production.agriculture.dialogTitleNew")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-4">
           <div>
-            <Label htmlFor="date">Date</Label>
-            <input
-              id="date"
-              type="date"
-              {...register("date")}
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-            />
+            <Label htmlFor="date">{t("production.common.date")}</Label>
+            <input id="date" type="date" {...register("date")} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
             {errors.date && <p className="mt-1 text-xs text-destructive">{errors.date.message}</p>}
           </div>
 
           <div>
-            <Label htmlFor="culture">Culture</Label>
+            <Label htmlFor="culture">{t("production.agriculture.fieldCulture")}</Label>
             <Controller
-              name="culture"
-              control={control}
+              name="culture" control={control}
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger id="culture" className="mt-1.5">
-                    <SelectValue placeholder="Sélectionner..." />
+                    <SelectValue placeholder="..." />
                   </SelectTrigger>
                   <SelectContent>
                     {cultures.map((c) => (
-                      <SelectItem key={c.id} value={c.nom}>
-                        {c.nom}
-                      </SelectItem>
+                      <SelectItem key={c.id} value={c.nom}>{c.nom}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>
@@ -104,66 +98,39 @@ export function AgricultureEntryDialog({ open, onOpenChange, cultures, editingEn
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="surfaceHa">Surface (ha)</Label>
-              <input
-                id="surfaceHa"
-                type="number"
-                step="0.1"
-                {...register("surfaceHa", { valueAsNumber: true })}
-                className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
+              <Label htmlFor="surfaceHa">{t("production.agriculture.fieldSurface")}</Label>
+              <input id="surfaceHa" type="number" step="0.1" {...register("surfaceHa", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
               {errors.surfaceHa && <p className="mt-1 text-xs text-destructive">{errors.surfaceHa.message}</p>}
             </div>
             <div>
-              <Label htmlFor="recolteQty">Récolte (kg)</Label>
-              <input
-                id="recolteQty"
-                type="number"
-                {...register("recolteQty", { valueAsNumber: true })}
-                className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
+              <Label htmlFor="recolteQty">{t("production.agriculture.fieldHarvest")}</Label>
+              <input id="recolteQty" type="number" {...register("recolteQty", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
               {errors.recolteQty && <p className="mt-1 text-xs text-destructive">{errors.recolteQty.message}</p>}
             </div>
           </div>
 
           <div>
-            <Label>Rendement (aperçu)</Label>
-            <input
-              readOnly
-              value={`${rendementPreview} kg/ha`}
-              className="mt-1.5 w-full cursor-not-allowed rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground outline-none"
-            />
+            <Label>{t("production.agriculture.yieldPreviewLabel")}</Label>
+            <input readOnly value={`${rendementPreview} kg/ha`} className="mt-1.5 w-full cursor-not-allowed rounded-lg border border-border bg-muted px-3 py-2 text-sm text-muted-foreground outline-none" />
           </div>
 
           <div>
-            <Label htmlFor="coutIntrants">Coût des intrants (Ar)</Label>
-            <input
-              id="coutIntrants"
-              type="number"
-              {...register("coutIntrants", { valueAsNumber: true })}
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-            />
+            <Label htmlFor="coutIntrants">{t("production.agriculture.fieldCost")}</Label>
+            <input id="coutIntrants" type="number" {...register("coutIntrants", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
             {errors.coutIntrants && <p className="mt-1 text-xs text-destructive">{errors.coutIntrants.message}</p>}
           </div>
 
           <div>
-            <Label htmlFor="intrants">Intrants utilisés</Label>
-            <input
-              id="intrants"
-              {...register("intrants")}
-              placeholder="Engrais NPK, semences..."
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-            />
+            <Label htmlFor="intrants">{t("production.agriculture.fieldInputs")}</Label>
+            <input id="intrants" {...register("intrants")} placeholder={t("production.agriculture.fieldInputsPlaceholder")} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
             {errors.intrants && <p className="mt-1 text-xs text-destructive">{errors.intrants.message}</p>}
           </div>
 
           <DialogFooter>
-            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
-            </Button>
+            <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>{t("common.cancel")}</Button>
             <Button type="submit" disabled={isSubmitting} className="gap-2">
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {editingEntry ? "Enregistrer" : "Enregistrer"}
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </form>
