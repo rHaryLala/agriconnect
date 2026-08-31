@@ -1,0 +1,143 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "postgresql"
+}
+
+model Farm {
+  id          String       @id @default(uuid())
+  name        String
+  location    String?
+  createdAt   DateTime     @default(now())
+  updatedAt   DateTime     @updatedAt
+  clients     Client[]
+  invoices    Invoice[]
+  productions Production[]
+  stockItem   StockItem[]
+  users       User[]
+}
+
+model User {
+  id           String          @id @default(uuid())
+  email        String          @unique
+  password     String
+  firstName    String
+  lastName     String
+  role         Role            @default(OUVRIER)
+  farmId       String
+  createdAt    DateTime        @default(now())
+  updatedAt    DateTime        @updatedAt
+  production   Production[]
+  stockMovment StockMovement[]
+  farm         Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  @@index([farmId])
+}
+
+model Production {
+  id          String         @id @default(uuid())
+  type        ProductionType
+  quantity    Float
+  unit        String
+  date        DateTime       @default(now())
+  notes       String?
+  userId      String
+  farmId      String
+  stockItemId String?
+  createdAt   DateTime       @default(now())
+  farm        Farm           @relation(fields: [farmId], references: [id])
+  stockItem   StockItem?     @relation(fields: [stockItemId], references: [id])
+  user        User           @relation(fields: [userId], references: [id])
+}
+
+model StockItem {
+  id         String          @id @default(uuid())
+  name       String
+  category   String
+  quantity   Float           @default(0)
+  unit       String
+  miniAlert  Float           @default(10)
+  farmId     String
+  createdAt  DateTime        @default(now())
+  updatedAt  DateTime        @updatedAt
+  production Production[]
+  farm       Farm            @relation(fields: [farmId], references: [id])
+  movements  StockMovement[]
+}
+
+model StockMovement {
+  id                String          @id @default(uuid())
+  type              MouvementType
+  quantity          Float
+  reason            String?
+  date              DateTime        @default(now())
+  userId            String
+  itemId            String
+  originalMovmentId String?
+  createdAt         DateTime        @default(now())
+  item              StockItem       @relation(fields: [itemId], references: [id])
+  originalMovment   StockMovement?  @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
+  corrections       StockMovement[] @relation("MovmentCorrection")
+  user              User            @relation(fields: [userId], references: [id])
+}
+
+model Client {
+  id           String     @id @default(uuid())
+  name         String
+  phone        String?
+  createdAt    DateTime   @default(now())
+  farmId       String
+  matriculeuaz String?    @map("matricule_uaz")
+  type         ClientType @default(EXTERNE)
+  updatedAt    DateTime   @updatedAt
+  farm         Farm       @relation(fields: [farmId], references: [id])
+  invoices     Invoice[]
+}
+
+model Invoice {
+  id            String        @id @default(uuid())
+  invoiceNumber String        @unique @map("numero_du_recu")
+  totalAmount   Float         @map("total_ttc")
+  paidAmount    Float         @default(0) @map("montant_reglé")
+  dueAmount     Float         @map("reste_a_payer")
+  status        InvoiceStatus @default(UNPAID) @map("statut_du_paiment")
+  clientId      String
+  farmId        String
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+  client        Client        @relation(fields: [clientId], references: [id])
+  farm          Farm          @relation(fields: [farmId], references: [id])
+}
+
+enum Role {
+  ADMIN
+  COMPTABLE
+  OUVRIER
+}
+
+enum ProductionType {
+  OEUFS
+  LAIT
+  VIANDE
+  RECOLTES
+}
+
+enum MouvementType {
+  IN
+  OUT
+  AJUSTEMENT
+}
+
+enum ClientType {
+  EXTERNE
+  PERSONNEL_UAZ
+  CAF
+  STORE
+}
+
+enum InvoiceStatus {
+  UNPAID
+  PAID
+}
