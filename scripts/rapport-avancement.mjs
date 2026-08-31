@@ -593,6 +593,42 @@ ${actions().map(([t, d]) => `      <li><div><strong>${t}</strong><span>${d}</spa
 mkdirSync('docs', { recursive: true });
 writeFileSync(SORTIE, html, 'utf8');
 
+/*
+ * Sortie de données, en regard du HTML.
+ *
+ * Elle sert à décider s'il vaut la peine de committer : le HTML change à chaque
+ * exécution, ne serait-ce que par son horodatage, et un rapport quotidien qui se
+ * committe même les jours sans activité ne raconte plus rien. Les grandeurs qui
+ * dépendent du jour de calcul — horodatage, jours de silence, semaine de stage —
+ * en sont donc volontairement absentes.
+ */
+const donnees = {
+  totalCommits,
+  totalConformes,
+  fichiersIntegres,
+  prsStagiaires,
+  schemasDivergents: schemas.divergent,
+  schemas: schemas.trouves.map((s) => ({ branche: s.branche, sha: s.sha, modeles: s.modeles.length })),
+  membres: membres.map((m) => ({
+    nom: m.nom,
+    commits: m.commits,
+    conformes: m.conformes,
+    dernier: m.dernier,
+    branche: {
+      nom: m.branche.nom,
+      existe: m.branche.existe,
+      orpheline: m.branche.orpheline ?? null,
+      avance: m.branche.avance ?? 0,
+      fichiersCode: m.branche.fichiersCode ?? 0,
+    },
+  })),
+  risques: risques().map(([gravite, constat]) => ({
+    gravite,
+    constat: constat.replace(/<[^>]+>/g, ''),
+  })),
+};
+writeFileSync(SORTIE.replace(/\.html$/, '.json'), JSON.stringify(donnees, null, 2) + '\n', 'utf8');
+
 console.log(`${SORTIE} régénéré — ${totalCommits} commits, `
   + `${membres.filter((m) => m.branche.existe).length} branches, `
   + `${risques().length} risque(s) signalé(s).`);

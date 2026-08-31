@@ -1,0 +1,82 @@
+{
+  "totalCommits": 105,
+  "totalConformes": 10,
+  "fichiersIntegres": 0,
+  "prsStagiaires": 0,
+  "schemasDivergents": false,
+  "schemas": [
+    {
+      "branche": "feature/backend",
+      "sha": "580bac36cd8abe2d51524a73f8b784f4763a160e",
+      "modeles": 9
+    },
+    {
+      "branche": "feature/database",
+      "sha": "580bac36cd8abe2d51524a73f8b784f4763a160e",
+      "modeles": 9
+    }
+  ],
+  "membres": [
+    {
+      "nom": "Voahary Radoniaina",
+      "commits": 54,
+      "conformes": 0,
+      "dernier": "2026-08-31T11:40:16+03:00",
+      "branche": {
+        "nom": "feature/backend",
+        "existe": true,
+        "orpheline": true,
+        "avance": 55,
+        "fichiersCode": 44
+      }
+    },
+    {
+      "nom": "Lesoa",
+      "commits": 40,
+      "conformes": 9,
+      "dernier": "2026-08-28T15:57:36+03:00",
+      "branche": {
+        "nom": "feature/frontend",
+        "existe": true,
+        "orpheline": false,
+        "avance": 40,
+        "fichiersCode": 114
+      }
+    },
+    {
+      "nom": "Simeon",
+      "commits": 11,
+      "conformes": 1,
+      "dernier": "2026-08-31T11:05:48+03:00",
+      "branche": {
+        "nom": "feature/database",
+        "existe": true,
+        "orpheline": false,
+        "avance": 10,
+        "fichiersCode": 4
+      }
+    }
+  ],
+  "risques": [
+    {
+      "gravite": "critique",
+      "constat": "Aucune intégration à ce jour"
+    },
+    {
+      "gravite": "critique",
+      "constat": "feature/backend sans ancêtre commun"
+    },
+    {
+      "gravite": "eleve",
+      "constat": "3 branches dépassent la semaine"
+    },
+    {
+      "gravite": "eleve",
+      "constat": "Aucune relecture croisée"
+    },
+    {
+      "gravite": "moyen",
+      "constat": "Conventions de commit peu suivies"
+    }
+  ]
+}

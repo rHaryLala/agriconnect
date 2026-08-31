@@ -63,14 +63,41 @@ En tête de `scripts/rapport-avancement.mjs` :
 
 ## Régénération automatique
 
-`.github/workflows/avancement.yml` régénère le rapport à chaque poussée sur
-n'importe quelle branche, plus une fois par jour en semaine — de sorte qu'un
-stagiaire silencieux finisse par apparaître même sans nouvelle poussée. Le
-fichier est déposé en pièce jointe du workflow, onglet **Actions**, conservé
-30 jours.
+`.github/workflows/avancement.yml` s'exécute dans trois cas :
 
-Le workflow ne committe rien : les branches sont protégées, et un rapport qui
-se committe lui-même polluerait l'historique à chaque poussée.
+| Déclencheur | Effet |
+|---|---|
+| **Tous les jours à 18h00** (heure de Madagascar) | Régénère et **committe sur la branche `rapport`** |
+| À chaque poussée | Régénère et dépose le fichier en pièce jointe du workflow |
+| Manuellement (bouton *Run workflow*) | Comme la version quotidienne |
+
+Le cron est écrit `0 15 * * *` : GitHub planifie en UTC, et Madagascar est à
+UTC+3 sans heure d'été — 18h00 locale vaut donc 15h00 UTC toute l'année.
+
+### Pourquoi une branche `rapport` et pas `dev`
+
+`dev` et `main` exigent une demande de fusion approuvée, `enforce_admins`
+compris. Le jeton d'Actions n'a aucun passe-droit, et sur un dépôt personnel il
+n'existe pas de liste d'exception qui prime sur ce réglage. Committer le rapport
+sur `dev` supposerait d'affaiblir la protection.
+
+La branche `rapport` n'est pas protégée et ne sert qu'à cela. Elle porte
+l'historique quotidien du rapport sans encombrer l'historique du code, et sans
+déclencher de nouvelle exécution du workflow — les poussées sur `rapport` sont
+explicitement exclues.
+
+### Commits inutiles évités
+
+Le script écrit aussi `docs/avancement.json`, une sortie de données dont sont
+absentes les grandeurs qui dépendent du jour de calcul : horodatage, jours de
+silence, semaine de stage. Le workflow ne committe que si **ce fichier** a
+changé. Un jour sans activité sur le dépôt ne produit donc aucun commit.
+
+### Aller plus loin
+
+Pour une adresse permanente plutôt qu'une pièce jointe, activez GitHub Pages sur
+la branche `rapport`, dossier `/docs` : `Settings → Pages`. Le rapport y sera
+publié à chaque commit quotidien.
 
 ### En local, à chaque commit
 
