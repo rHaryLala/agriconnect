@@ -10,13 +10,7 @@ export class CreateTransactionDto {
     @IsEnum(TransactionType)
     type: TransactionType;
 
-    /**
-   * Référence facultative.
-   *
-   * Exemple :
-   * - numéro de reçu
-   * - numéro de bordereau
-   */
+  // Optionnel : une dépense en liquide sans reçu papier, ça arrive.
     @IsOptional()
     @IsString()
     reference?: string;
@@ -25,4 +19,11 @@ export class CreateTransactionDto {
     @IsString()
     notes?: string;
 
+    // Lien optionnel vers une facture (ex: le règlement d'une vente).
+  // On accepte cet id ici, mais le SERVICE devra vérifier qu'elle existe
+  // et appartient à la bonne ferme — jamais fait confiance à un DTO seul,
+  // un DTO ne vérifie qu'une FORME, jamais l'existence réelle d'une donnée.
+  @IsOptional()
+  @IsUUID()
+  invoiceId?: string;
 }
