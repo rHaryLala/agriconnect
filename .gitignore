@@ -51,3 +51,6 @@ coverage/
 .DS_Store
 Thumbs.db
 desktop.ini
+
+# --- Données fictifs ---
+seed.ts
