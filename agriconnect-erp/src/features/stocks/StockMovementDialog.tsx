@@ -1,6 +1,7 @@
-import { useEffect } from "react"
+import { useEffect, useMemo } from "react"
 import { useForm, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
+import { useTranslation } from "react-i18next"
 import { z } from "zod"
 import { Loader2 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
@@ -9,25 +10,27 @@ import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import type { StockArticle, StockMovement, MovementType } from "@/types/stock"
 
-const schema = z
-  .object({
-    articleId: z.string().min(1, "Sélectionne un article"),
-    type: z.enum(["entree", "sortie"], { errorMap: () => ({ message: "Sélectionne un type" }) }),
-    date: z.string().min(1, "Date requise"),
-    quantite: z.number({ invalid_type_error: "Nombre requis" }).positive("Doit être positif"),
-    destinataire: z.string().optional(),
-    numeroBon: z.string().optional(),
-    montant: z.number().optional(),
-    observation: z.string().min(1, "Renseigne une observation, même 'RAS'"),
-  })
-  .superRefine((data, ctx) => {
-    if (data.type === "sortie") {
-      if (!data.destinataire?.trim()) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Destinataire requis pour une sortie", path: ["destinataire"] })
-      if (!data.numeroBon?.trim()) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "N° de bon requis pour une sortie", path: ["numeroBon"] })
-      if (data.montant === undefined || data.montant < 0) ctx.addIssue({ code: z.ZodIssueCode.custom, message: "Montant requis pour une sortie", path: ["montant"] })
-    }
-  })
-type FormValues = z.infer<typeof schema>
+function buildSchema(t: (key: string) => string) {
+  return z
+    .object({
+      articleId: z.string().min(1, t("stock.movements.validationArticle")),
+      type: z.enum(["entree", "sortie"], { errorMap: () => ({ message: t("stock.movements.validationType") }) }),
+      date: z.string().min(1, t("stock.movements.validationDate")),
+      quantite: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).positive(t("stock.movements.validationQuantity")),
+      destinataire: z.string().optional(),
+      numeroBon: z.string().optional(),
+      montant: z.number().optional(),
+      observation: z.string().min(1, t("stock.movements.validationObservation")),
+    })
+    .superRefine((data, ctx) => {
+      if (data.type === "sortie") {
+        if (!data.destinataire?.trim()) ctx.addIssue({ code: z.ZodIssueCode.custom, message: t("stock.movements.validationRecipient"), path: ["destinataire"] })
+        if (!data.numeroBon?.trim()) ctx.addIssue({ code: z.ZodIssueCode.custom, message: t("stock.movements.validationInvoiceNumber"), path: ["numeroBon"] })
+        if (data.montant === undefined || data.montant < 0) ctx.addIssue({ code: z.ZodIssueCode.custom, message: t("stock.movements.validationAmount"), path: ["montant"] })
+      }
+    })
+}
+type FormValues = z.infer<ReturnType<typeof buildSchema>>
 
 interface StockMovementDialogProps {
   open: boolean
@@ -38,6 +41,9 @@ interface StockMovementDialogProps {
 }
 
 export function StockMovementDialog({ open, onOpenChange, articles, editingEntry, onSubmit }: StockMovementDialogProps) {
+  const { t } = useTranslation()
+  const schema = useMemo(() => buildSchema(t), [t])
+
   const {
     register,
     handleSubmit,
@@ -51,7 +57,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
     if (open) {
       reset({
         articleId: editingEntry?.articleId ?? articles[0]?.id ?? "",
-        type: editingEntry?.type ?? "entree",
+        type: editingEntry?.type ?? ("entree" as MovementType),
         date: editingEntry?.date ?? new Date().toISOString().slice(0, 10),
         quantite: editingEntry?.quantite ?? 0,
         destinataire: editingEntry?.destinataire ?? "",
@@ -71,9 +77,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
       date: values.date,
       quantite: values.quantite,
       observation: values.observation,
-      ...(values.type === "sortie"
-        ? { destinataire: values.destinataire, numeroBon: values.numeroBon, montant: values.montant }
-        : {}),
+      ...(values.type === "sortie" ? { destinataire: values.destinataire, numeroBon: values.numeroBon, montant: values.montant } : {}),
     })
     onOpenChange(false)
   }
@@ -82,19 +86,19 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
     <Dialog open={open} onOpenChange={onOpenChange}>
       <DialogContent>
         <DialogHeader>
-          <DialogTitle>{editingEntry ? "Modifier le mouvement de stock" : "Nouveau mouvement de stock"}</DialogTitle>
+          <DialogTitle>{editingEntry ? t("stock.movements.dialogTitleEdit") : t("stock.movements.dialogTitleNew")}</DialogTitle>
         </DialogHeader>
 
         <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-4">
           <div>
-            <Label htmlFor="articleId">Article</Label>
+            <Label htmlFor="articleId">{t("stock.movements.fieldArticle")}</Label>
             <Controller
               name="articleId"
               control={control}
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger id="articleId" className="mt-1.5">
-                    <SelectValue placeholder="Sélectionner..." />
+                    <SelectValue placeholder="..." />
                   </SelectTrigger>
                   <SelectContent>
                     {articles.map((a) => (
@@ -110,18 +114,18 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
           </div>
 
           <div>
-            <Label htmlFor="type">Type de mouvement</Label>
+            <Label htmlFor="type">{t("stock.movements.fieldType")}</Label>
             <Controller
               name="type"
               control={control}
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger id="type" className="mt-1.5">
-                    <SelectValue placeholder="Sélectionner..." />
+                    <SelectValue placeholder="..." />
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="entree">Entrée</SelectItem>
-                    <SelectItem value="sortie">Sortie</SelectItem>
+                    <SelectItem value="entree">{t("stock.movements.typeEntry")}</SelectItem>
+                    <SelectItem value="sortie">{t("stock.movements.typeExit")}</SelectItem>
                   </SelectContent>
                 </Select>
               )}
@@ -131,59 +135,34 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
 
           <div className="grid grid-cols-2 gap-3">
             <div>
-              <Label htmlFor="date">Date</Label>
-              <input
-                id="date"
-                type="date"
-                {...register("date")}
-                className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
+              <Label htmlFor="date">{t("stock.movements.fieldDate")}</Label>
+              <input id="date" type="date" {...register("date")} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
               {errors.date && <p className="mt-1 text-xs text-destructive">{errors.date.message}</p>}
             </div>
             <div>
-              <Label htmlFor="quantite">Quantité</Label>
-              <input
-                id="quantite"
-                type="number"
-                {...register("quantite", { valueAsNumber: true })}
-                className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
+              <Label htmlFor="quantite">{t("stock.movements.fieldQuantity")}</Label>
+              <input id="quantite" type="number" {...register("quantite", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
               {errors.quantite && <p className="mt-1 text-xs text-destructive">{errors.quantite.message}</p>}
             </div>
           </div>
 
           {type === "sortie" && (
             <div className="animate-content-in flex flex-col gap-4 rounded-lg border border-border bg-background p-3">
-              <p className="text-xs font-medium text-muted-foreground">Informations de sortie</p>
+              <p className="text-xs font-medium text-muted-foreground">{t("stock.movements.sectionExitOnly")}</p>
               <div>
-                <Label htmlFor="destinataire">Destinataire</Label>
-                <input
-                  id="destinataire"
-                  {...register("destinataire")}
-                  placeholder="Ex: Restaurant Chez Lala"
-                  className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                />
+                <Label htmlFor="destinataire">{t("stock.movements.fieldRecipient")}</Label>
+                <input id="destinataire" {...register("destinataire")} placeholder={t("stock.movements.fieldRecipientPlaceholder")} className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
                 {errors.destinataire && <p className="mt-1 text-xs text-destructive">{errors.destinataire.message}</p>}
               </div>
               <div className="grid grid-cols-2 gap-3">
                 <div>
-                  <Label htmlFor="numeroBon">N° Bon / Facture</Label>
-                  <input
-                    id="numeroBon"
-                    {...register("numeroBon")}
-                    placeholder="CR-14502"
-                    className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  />
+                  <Label htmlFor="numeroBon">{t("stock.movements.fieldInvoiceNumber")}</Label>
+                  <input id="numeroBon" {...register("numeroBon")} placeholder="CR-14502" className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
                   {errors.numeroBon && <p className="mt-1 text-xs text-destructive">{errors.numeroBon.message}</p>}
                 </div>
                 <div>
-                  <Label htmlFor="montant">Montant perçu (Ar)</Label>
-                  <input
-                    id="montant"
-                    type="number"
-                    {...register("montant", { valueAsNumber: true })}
-                    className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-                  />
+                  <Label htmlFor="montant">{t("stock.movements.fieldAmount")}</Label>
+                  <input id="montant" type="number" {...register("montant", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
                   {errors.montant && <p className="mt-1 text-xs text-destructive">{errors.montant.message}</p>}
                 </div>
               </div>
@@ -191,24 +170,18 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
           )}
 
           <div>
-            <Label htmlFor="observation">Observation</Label>
-            <textarea
-              id="observation"
-              rows={2}
-              {...register("observation")}
-              placeholder="RAS, ou observation"
-              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-            />
+            <Label htmlFor="observation">{t("stock.movements.fieldObservation")}</Label>
+            <textarea id="observation" rows={2} {...register("observation")} placeholder={t("stock.movements.fieldObservationPlaceholder")} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
             {errors.observation && <p className="mt-1 text-xs text-destructive">{errors.observation.message}</p>}
           </div>
 
           <DialogFooter>
             <Button type="button" variant="outline" onClick={() => onOpenChange(false)}>
-              Annuler
+              {t("common.cancel")}
             </Button>
             <Button type="submit" disabled={isSubmitting} className="gap-2">
               {isSubmitting && <Loader2 className="h-4 w-4 animate-spin" />}
-              {editingEntry ? "Enregistrer" : "Enregistrer"}
+              {t("common.save")}
             </Button>
           </DialogFooter>
         </form>
