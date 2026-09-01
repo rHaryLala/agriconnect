@@ -480,5 +480,62 @@
       "openingBalanceRow": "Opening balance",
       "emptyPeriod": "No operations for this period."
     }
+  },
+  "settings": {
+    "back": "Settings",
+    "collapsePanel": "Collapse",
+    "expandPanel": "Expand",
+    "groups": {
+      "account": "Account",
+      "administration": "Administration",
+      "data": "Data"
+    },
+    "tabs": {
+      "profile": "Profile",
+      "security": "Security",
+      "appearance": "Appearance",
+      "notifications": "Notifications",
+      "language": "Language & region",
+      "users": "Users",
+      "roles": "Roles & permissions",
+      "system": "System settings",
+      "backup": "Backup",
+      "status": "System status"
+    },
+    "placeholderDescription": "\"{{label}}\" section — real content coming in the relevant sprint.",
+    "placeholderContent": "Placeholder for \"{{label}}\" content.",
+    "users": {
+      "addButton": "Add user",
+      "colName": "Name",
+      "colEmail": "Email",
+      "colRole": "Role",
+      "emptyTitle": "No users",
+      "emptyDescription": "Add the first account with the button above.",
+      "toastAdded": "User added",
+      "toastModified": "User updated",
+      "toastDeleted": "User deleted",
+      "deleteConfirmTitle": "Delete {{name}}?",
+      "deleteConfirmDescription": "This action is irreversible. The account will immediately lose access to AgriConnect.",
+      "dialogTitleNew": "Add user",
+      "dialogTitleEdit": "Edit user",
+      "fieldName": "Full name",
+      "fieldNamePlaceholder": "Hery Rasoanaivo",
+      "fieldEmail": "Email",
+      "fieldEmailPlaceholder": "hery.r@agriconnect.mg",
+      "fieldRole": "Role",
+      "fieldRolePlaceholder": "Select a role",
+      "validationName": "Minimum 2 characters",
+      "validationEmail": "Invalid email format",
+      "validationRole": "Select a role",
+      "roleAdmin": "Administrator",
+      "roleComptable": "Finance / Commercial",
+      "roleOuvrier": "Operations"
+    }
+  },
+  "language": {
+    "label": "Choose your preferred language",
+    "fr": "French",
+    "en": "English",
+    "mg": "Malagasy"
   }
 }

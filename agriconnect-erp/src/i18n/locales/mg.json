@@ -480,5 +480,62 @@
       "openingBalanceRow": "Vola nanombohana",
       "emptyPeriod": "Tsy misy fihetsiketsehana amin'ity fe-potoana ity."
     }
+  },
+  "language": {
+    "label": "Misafidiana fiteny tianao",
+    "fr": "Frantsay",
+    "en": "English",
+    "mg": "Malagasy"
+  },
+  "settings": {
+    "back": "Fikirana",
+    "collapsePanel": "Ahena",
+    "expandPanel": "Hitatra",
+    "groups": {
+      "account": "Kaonty",
+      "administration": "Fitantanana",
+      "data": "Data"
+    },
+    "tabs": {
+      "profile": "Mombamomba",
+      "security": "Fiarovana",
+      "appearance": "Endrika",
+      "notifications": "Fampandrenesana",
+      "language": "Fiteny sy faritra",
+      "users": "Mpampiasa",
+      "roles": "Anjara asa sy fahazoan-dàlana",
+      "system": "Kirakiran'ny rafitra",
+      "backup": "Tahiry mifanitsy",
+      "status": "Toe-javatry ny rafitra"
+    },
+    "placeholderDescription": "Fizarana « {{label}} » — mbola halefa ao amin'ny sprint mifandraika.",
+    "placeholderContent": "Toerana voatokana ho an'ny « {{label}} ».",
+    "users": {
+      "addButton": "Ampio mpampiasa",
+      "colName": "Anarana",
+      "colEmail": "Mailaka",
+      "colRole": "Anjara asa",
+      "emptyTitle": "Tsy misy mpampiasa",
+      "emptyDescription": "Ampio ny kaonty voalohany amin'ny kitendry etsy ambony.",
+      "toastAdded": "Voampiana ny mpampiasa",
+      "toastModified": "Novaina ny mpampiasa",
+      "toastDeleted": "Voafafa ny mpampiasa",
+      "deleteConfirmTitle": "Hofafana ve i {{name}} ?",
+      "deleteConfirmDescription": "Tsy azo averina ity hetsika ity. Ho very avy hatrany ny fidiran'ilay kaonty ao amin'ny AgriConnect.",
+      "dialogTitleNew": "Ampio mpampiasa",
+      "dialogTitleEdit": "Ovay ny mpampiasa",
+      "fieldName": "Anarana feno",
+      "fieldNamePlaceholder": "Rasoanaivo Hery",
+      "fieldEmail": "Mailaka",
+      "fieldEmailPlaceholder": "hery.r@agriconnect.mg",
+      "fieldRole": "Anjara asa",
+      "fieldRolePlaceholder": "Misafidiana anjara asa",
+      "validationName": "Farafahakeliny litera 2",
+      "validationEmail": "Endrika mailaka tsy mety",
+      "validationRole": "Misafidiana anjara asa",
+      "roleAdmin": "Mpitantana",
+      "roleComptable": "Vola / Varotra",
+      "roleOuvrier": "Asa fikarakarana"
+    }
   }
 }

@@ -480,5 +480,62 @@
       "openingBalanceRow": "Solde d'ouverture",
       "emptyPeriod": "Aucune opération sur cette période."
     }
+  },
+  "settings": {
+    "back": "Paramètres",
+    "collapsePanel": "Réduire",
+    "expandPanel": "Déplier",
+    "groups": { 
+      "account": "Compte", 
+      "administration": "Administration", 
+      "data": "Données" 
+    },
+    "tabs": {
+      "profile": "Profil",
+      "security": "Sécurité",
+      "appearance": "Apparence",
+      "notifications": "Notifications",
+      "language": "Langue & région",
+      "users": "Utilisateurs",
+      "roles": "Rôles & permissions",
+      "system": "Configuration système",
+      "backup": "Sauvegarde",
+      "status": "Statut système"
+    },
+    "placeholderDescription": "Section « {{label}} » — contenu réel à brancher au sprint concerné.",
+    "placeholderContent": "Emplacement réservé pour le contenu de « {{label}} ».",
+    "users": {
+      "addButton": "Ajouter un utilisateur",
+      "colName": "Nom",
+      "colEmail": "Email",
+      "colRole": "Rôle",
+      "emptyTitle": "Aucun utilisateur",
+      "emptyDescription": "Ajoute le premier compte avec le bouton ci-dessus.",
+      "toastAdded": "Utilisateur ajouté",
+      "toastModified": "Utilisateur modifié",
+      "toastDeleted": "Utilisateur supprimé",
+      "deleteConfirmTitle": "Supprimer {{name}} ?",
+      "deleteConfirmDescription": "Cette action est irréversible. Le compte perdra immédiatement l'accès à AgriConnect.",
+      "dialogTitleNew": "Ajouter un utilisateur",
+      "dialogTitleEdit": "Modifier l'utilisateur",
+      "fieldName": "Nom complet",
+      "fieldNamePlaceholder": "Rasoanaivo Hery",
+      "fieldEmail": "Email",
+      "fieldEmailPlaceholder": "hery.r@agriconnect.mg",
+      "fieldRole": "Rôle",
+      "fieldRolePlaceholder": "Sélectionner un rôle",
+      "validationName": "Minimum 2 caractères",
+      "validationEmail": "Format d'email invalide",
+      "validationRole": "Sélectionne un rôle",
+      "roleAdmin": "Administrateur",
+      "roleComptable": "Finance / Commercial",
+      "roleOuvrier": "Opérations"
+    }
+  },
+  "language": {
+    "label": "Choisissez votre langue préférée",
+    "fr":"Français",
+    "en":"Anglais",
+    "mg":"Malgache"
   }
 }
