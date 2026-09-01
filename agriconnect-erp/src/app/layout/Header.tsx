@@ -59,11 +59,17 @@ export function Header({ onMenuClick }: HeaderProps) {
           role="status"
           title={isOnline ? t("offline.onlineTooltip") : t("offline.offlineTooltip")}
           aria-label={isOnline ? t("offline.onlineTooltip") : t("offline.offlineTooltip")}
-          className={`flex h-9 w-9 items-center justify-center rounded-md ${isOnline ? "text-muted-foreground" : "text-warning"}`}
+          className="relative flex h-9 w-9 items-center justify-center rounded-md text-muted-foreground"
         >
           <span key={isOnline ? "online" : "offline"} className="inline-flex animate-fade-in">
             {isOnline ? <Wifi className="h-4 w-4" /> : <WifiOff className="h-4 w-4" />}
           </span>
+          <span
+            aria-hidden
+            className={`absolute right-1.5 top-1.5 h-2 w-2 rounded-full ring-2 ring-surface transition-colors duration-300 ${
+              isOnline ? "bg-success" : "bg-destructive"
+            }`}
+          />
         </div>
 
         <Button variant="ghost" size="icon" onClick={toggleTheme} aria-label={theme === "light" ? t("nav.darkMode") : t("nav.lightMode")}>
