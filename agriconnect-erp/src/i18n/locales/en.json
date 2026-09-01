@@ -1,5 +1,5 @@
 {
-  "common": { "loading": "Loading...", "save": "Save", "cancel": "Cancel", "search": "Search...", "add": "Add", "edit": "Edit", "delete": "Delete", "close": "Close" },
+  "common": { "loading": "Loading...", "save": "Save", "cancel": "Cancel", "search": "Search...", "add": "Add", "edit": "Edit", "delete": "Delete", "close": "Close", "appName" : "AgriConnect" },
   "nav": { "dashboard": "Dashboard", "production": "Production", "stocks": "Stock", "finance": "Finance", "clients": "Clients & Suppliers", "reports": "Reports", "settings": "Settings", "collapse": "Collapse", "expand": "Expand menu", "menu": "Menu", "openMenu": "Open menu", "logout": "Log out", "offline": "Offline mode (coming soon)", "more": "More" },
   "language": { "label": "Language", "fr": "French", "en": "English", "mg": "Malagasy" },
   "landing": {
@@ -530,12 +530,25 @@
       "roleAdmin": "Administrator",
       "roleComptable": "Finance / Commercial",
       "roleOuvrier": "Operations"
+    },
+  "language": {
+    "sectionTitle": "Interface language",
+    "sectionDescription": "Select the display language for the application."
     }
   },
   "language": {
     "label": "Choose your preferred language",
     "fr": "French",
     "en": "English",
-    "mg": "Malagasy"
+    "mg": "Malagasy",
+    "frRegion": "France",
+    "enRegion": "United Kingdom / US",
+    "mgRegion": "Madagascar"
+  },
+  "offline": {
+    "bannerTitle": "You're offline",
+    "bannerDescription": "The app stays usable, but your entries won't be synced yet.",
+    "installButton": "Install app",
+    "backOnlineToast": "Back online"
   }
 }

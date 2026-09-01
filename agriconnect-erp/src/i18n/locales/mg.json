@@ -1,5 +1,5 @@
 {
-  "common": { "loading": "Eo am-panamboarana...", "save": "Tehirizo", "cancel": "Aoka", "search": "Karohy...", "add": "Ampio", "edit": "Ovay", "delete": "Fafao", "close": "Akatony" },
+  "common": { "loading": "Eo am-panamboarana...", "save": "Tehirizo", "cancel": "Aoka", "search": "Karohy...", "add": "Ampio", "edit": "Ovay", "delete": "Fafao", "close": "Akatony", "appName" : "AgriConnect" },
   "nav": { "dashboard": "Tabilao mpitantana", "production": "Vokatra", "stocks": "Tahiry entana", "finance": "Vola", "clients": "Mpanjifa sy Mpamatsy", "reports": "Tatitra", "settings": "Kirakira", "collapse": "Ahakelezo", "expand": "Ahalalaho ny lisitra", "menu": "Lisitra", "openMenu": "Sokafy ny lisitra", "logout": "Hivoaka", "offline": "Fomba tsy misy aterineto (ho avy)", "more": "Bebe kokoa" },
   "language": { "label": "Fiteny", "fr": "Frantsay", "en": "Anglisy", "mg": "Malagasy" },
   "landing": {
@@ -485,7 +485,10 @@
     "label": "Misafidiana fiteny tianao",
     "fr": "Frantsay",
     "en": "English",
-    "mg": "Malagasy"
+    "mg": "Malagasy",
+    "frRegion": "Frantsa",
+    "enRegion": "Angletera / Etazonia",
+    "mgRegion": "Madagasikara"
   },
   "settings": {
     "back": "Fikirana",
@@ -536,6 +539,16 @@
       "roleAdmin": "Mpitantana",
       "roleComptable": "Vola / Varotra",
       "roleOuvrier": "Asa fikarakarana"
-    }
+    },
+    "language": {
+    "sectionTitle": "Ny fiteny asehon'ny rindrankaja",
+    "sectionDescription": "Safidio ny fiteny hasehon'ny rindrankaja."
+  }
+  },
+  "offline": {
+    "bannerTitle": "Tsy misy aterineto ianao",
+    "bannerDescription": "Azo ampiasaina ihany ny rindrambaiko, saingy mbola tsy mifanitsy amin'ny server ny fandraisan-tsoratrao.",
+    "installButton": "Hametraka ny rindrambaiko",
+    "backOnlineToast": "Niverina ny aterineto"
   }
 }

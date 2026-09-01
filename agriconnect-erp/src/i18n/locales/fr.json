@@ -1,5 +1,5 @@
 {
-  "common": { "loading": "Chargement...", "save": "Enregistrer", "cancel": "Annuler", "search": "Rechercher...", "add": "Ajouter", "edit": "Modifier", "delete": "Supprimer", "close": "Fermer" },
+  "common": { "loading": "Chargement...", "save": "Enregistrer", "cancel": "Annuler", "search": "Rechercher...", "add": "Ajouter", "edit": "Modifier", "delete": "Supprimer", "close": "Fermer", "appName" : "AgriConnect" },
   "nav": { "dashboard": "Tableau de bord", "production": "Production", "stocks": "Stocks", "finance": "Finance", "clients": "Clients & Fournisseurs", "reports": "Rapports", "settings": "Paramètres", "collapse": "Réduire", "expand": "Déplier le menu", "menu": "Menu", "openMenu": "Ouvrir le menu", "logout": "Se déconnecter", "offline": "Mode hors ligne (bientôt disponible)", "more": "Plus"},
   "language": { "label": "Langue", "fr": "Français", "en": "Anglais", "mg": "Malagasy" },
   "landing": {
@@ -530,12 +530,25 @@
       "roleAdmin": "Administrateur",
       "roleComptable": "Finance / Commercial",
       "roleOuvrier": "Opérations"
+    },
+    "language": {
+    "sectionTitle": "Langue de l'interface",
+    "sectionDescription": "Sélectionnez la langue d'affichage de l'application."
     }
   },
   "language": {
     "label": "Choisissez votre langue préférée",
     "fr":"Français",
     "en":"Anglais",
-    "mg":"Malgache"
+    "mg":"Malgache",
+    "frRegion": "France",
+    "enRegion": "Royaume-Uni / États-Unis",
+  " mgRegion": "Madagascar"
+  },
+  "offline": {
+    "bannerTitle": "Vous êtes hors ligne",
+    "bannerDescription": "L'application reste consultable, mais tes saisies ne seront pas encore synchronisées.",
+    "installButton": "Installer l'app",
+    "backOnlineToast": "Connexion rétablie"
   }
 }
