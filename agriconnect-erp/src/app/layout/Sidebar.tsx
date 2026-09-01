@@ -1,8 +1,8 @@
 import { NavLink, Link } from "react-router"
 import { useTranslation } from "react-i18next"
-import { Settings, Menu, Leaf } from "lucide-react"
+import { Menu, Leaf } from "lucide-react"
 import { useSidebarPreferenceStore } from "@/features/ui/sidebarPreferenceStore"
-import { useVisibleNavItems } from "./navItems"
+import { useGroupedNavItems } from "./navItems"
 
 interface SidebarProps {
   onNavigate?: () => void
@@ -11,7 +11,7 @@ interface SidebarProps {
 
 export function Sidebar({ onNavigate, forceExpanded = false }: SidebarProps) {
   const { t } = useTranslation()
-  const visibleItems = useVisibleNavItems()
+  const groupedItems = useGroupedNavItems()
   const collapsed = useSidebarPreferenceStore((s) => s.collapsed) && !forceExpanded
   const toggle = useSidebarPreferenceStore((s) => s.toggle)
 
@@ -37,41 +37,36 @@ export function Sidebar({ onNavigate, forceExpanded = false }: SidebarProps) {
         )}
       </div>
 
-      <ul className="flex flex-1 flex-col gap-1 overflow-y-auto p-3">
-        {visibleItems.map(({ to, labelKey, icon: Icon }) => (
-          <li key={to}>
-            <NavLink
-              to={to}
-              onClick={onNavigate}
-              title={collapsed ? t(labelKey) : undefined}
-              className={({ isActive }) =>
-                `flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm transition-colors duration-200 ${collapsed ? "justify-center" : ""} ${
-                  isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-background"
-                }`
-              }
-            >
-              <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-              {!collapsed && <span className="animate-fade-in truncate">{t(labelKey)}</span>}
-            </NavLink>
-          </li>
+      <div className="flex-1 overflow-y-auto p-3">
+        {groupedItems.map(({ group, items }) => (
+          <div key={group} className="mb-4 last:mb-0">
+            {!collapsed && (
+              <p className="mb-1.5 px-3 text-[11px] font-medium uppercase tracking-wide text-muted-foreground">
+                {t(`nav.groups.${group}`)}
+              </p>
+            )}
+            <ul className="flex flex-col gap-1">
+              {items.map(({ to, labelKey, icon: Icon }) => (
+                <li key={to}>
+                  <NavLink
+                    to={to}
+                    onClick={onNavigate}
+                    title={collapsed ? t(labelKey) : undefined}
+                    className={({ isActive }) =>
+                      `flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm transition-colors duration-200 ${collapsed ? "justify-center" : ""} ${
+                        isActive ? "bg-primary text-primary-foreground" : "text-foreground hover:bg-background"
+                      }`
+                    }
+                  >
+                    <Icon className="h-4 w-4 shrink-0" strokeWidth={1.75} />
+                    {!collapsed && <span className="animate-fade-in truncate">{t(labelKey)}</span>}
+                  </NavLink>
+                </li>
+              ))}
+            </ul>
+          </div>
         ))}
-
-        <li>
-          <NavLink
-            to="/app/settings"
-            onClick={onNavigate}
-            title={collapsed ? t("nav.settings") : undefined}
-            className={({ isActive }) =>
-              `flex items-center gap-2.5 rounded-md px-3 py-2.5 text-sm transition-colors duration-200 ${collapsed ? "justify-center" : ""} ${
-                isActive ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:bg-background hover:text-foreground"
-              }`
-            }
-          >
-            <Settings className="h-4 w-4 shrink-0" strokeWidth={1.75} />
-            {!collapsed && <span className="animate-fade-in truncate">{t("nav.settings")}</span>}
-          </NavLink>
-        </li>
-      </ul>
+      </div>
     </nav>
   )
 }
