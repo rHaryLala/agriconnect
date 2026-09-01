@@ -19,7 +19,7 @@ interface QuickAddDialogProps<T extends FieldValues> {
   open: boolean
   onOpenChange: (open: boolean) => void
   title: string
-  schema: ZodType<T>
+  schema: ZodType<T, T>
   fields: FieldConfig<T>[]
   defaultValues: T
   onSubmit: (values: T) => Promise<void>

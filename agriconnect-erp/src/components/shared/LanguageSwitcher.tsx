@@ -23,7 +23,7 @@ export function LanguageSwitcher({ compact = false, variant = "default" }: Langu
       : "h-9 w-auto gap-1 border-none bg-transparent px-2 text-foreground hover:text-foreground hover:bg-accent/10"
 
   return (
-    <Select value={i18n.language ?? undefined} onValueChange={(lang) => i18n.changeLanguage(lang)}>
+    <Select value={i18n.language ?? undefined} onValueChange={(lang) => i18n.changeLanguage(lang ?? undefined)}>
       <SelectTrigger className={compact ? compactClasses : "w-full"} aria-label={t("language.label")}>
         {compact ? (
           <>

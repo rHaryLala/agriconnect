@@ -89,7 +89,7 @@ export function TypesManagerDialog<T extends { id: string }>({
                 </>
               ) : (
                 <>
-                  <span className="flex-1 truncate text-sm text-foreground">{fields.map((f) => item[f.name]).join(" — ")}</span>
+                  <span className="flex-1 truncate text-sm text-foreground">{fields.map((f) => (item as unknown as Record<string, unknown>)[f.name]).join(" — ")}</span>
                   <Button variant="ghost" size="icon" onClick={() => startEdit(item)} aria-label={t("common.edit")}>
                     <Pencil className="h-4 w-4" />
                   </Button>
