@@ -33,7 +33,8 @@
       "modeDescription": "Entries stored locally, sent automatically once reconnected.",
       "langLabel": "Multilingual",
       "langTitle": "EN - FR - MG",
-      "langDescription": "French, Malagasy and English for the whole team, from the field to the office."
+      "langDescription": "French, Malagasy and English for the whole team, from the field to the office.",
+      "onlineTooltip": "Online — all data synchronized"
     },
     "footer": {
       "tagline": "Your whole farm, one single line at a time. Livestock, crops, stock, finances, clients and suppliers — all centralized in one tool.",
