@@ -11,11 +11,12 @@ export class ClientsService {
 
   async create(createClientDto: CreateClientDto) {
     return this.prisma.client.create({
+
       data: createClientDto,
     });
   }
 
-  async findAll(farmId: string){
+  async findAll(farmId?: string){
     return this.prisma.client.findMany({
       where: farmId? {farmId}: {},
       orderBy: { createdAt: 'desc'}, 
@@ -24,7 +25,7 @@ export class ClientsService {
 
   async findOne(id: string) {
     const client = await this.prisma.client.findUnique({where: {id}, include: {invoices: true, 
-      transaction: true},
+      transactions: true},
     });
 
     if (!client){
