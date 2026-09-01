@@ -8,7 +8,7 @@ export default defineConfig({
     react(),
     VitePWA({
       registerType: "autoUpdate",
-      includeAssets: ["favicon.ico", "hero/*.webp"],
+      includeAssets: ["favicon.ico", "hero/*.webp", "icons/*.png"],
       manifest: {
         name: "AgriConnect",
         short_name: "AgriConnect",
@@ -37,8 +37,10 @@ export default defineConfig({
         ],
       },
       workbox: {
-        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024,
+        maximumFileSizeToCacheInBytes: 5 * 1024 * 1024, // 5 MB
+        
         globPatterns: ["**/*.{js,css,html,ico,png,svg,webp}"],
+        
         runtimeCaching: [
           {
             urlPattern: ({ request }) => 
@@ -49,7 +51,7 @@ export default defineConfig({
               cacheName: "agriconnect-images",
               expiration: { 
                 maxEntries: 100, 
-                maxAgeSeconds: 60 * 60 * 24 * 30 
+                maxAgeSeconds: 60 * 60 * 24 * 30
               },
               cacheableResponse: {
                 statuses: [0, 200]
@@ -71,6 +73,7 @@ export default defineConfig({
             }
           }
         ],
+        
         navigateFallback: "index.html",
         navigateFallbackDenylist: [/^\/api/, /^\/auth/],
       },
