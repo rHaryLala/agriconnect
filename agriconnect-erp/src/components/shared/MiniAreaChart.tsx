@@ -18,7 +18,7 @@ export function MiniAreaChart({ data, color, formatValue }: MiniAreaChartProps) 
             </linearGradient>
           </defs>
           <XAxis dataKey="label" tick={{ fontSize: 10 }} axisLine={false} tickLine={false} />
-          <Tooltip formatter={(v: number) => formatValue(v)} labelStyle={{ fontSize: 12 }} />
+          <Tooltip formatter={(v) => formatValue(Number(v))} labelStyle={{ fontSize: 12 }} />
           <Area type="monotone" dataKey="value" stroke={color} strokeWidth={2} fill={`url(#grad-${color.replace("#", "")})`} />
         </AreaChart>
       </ResponsiveContainer>

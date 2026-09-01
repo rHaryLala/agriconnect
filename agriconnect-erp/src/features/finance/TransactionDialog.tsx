@@ -13,9 +13,9 @@ import type { FinanceTransaction, TransactionType } from "@/types/finance"
 
 function buildSchema(t: (key: string) => string) {
   return z.object({
-    type: z.enum(["depense", "recette"], { errorMap: () => ({ message: t("finance.transactions.validationType") }) }),
+    type: z.enum(["depense", "recette"], { error: t("finance.transactions.validationType") }),
     categorie: z.string().min(1, t("finance.transactions.validationCategory")),
-    montant: z.number({ invalid_type_error: t("finance.transactions.validationNumber") }).positive(t("finance.transactions.validationAmount")),
+    montant: z.number({ error: t("finance.transactions.validationNumber") }).positive(t("finance.transactions.validationAmount")),
     date: z.string().min(1, t("finance.transactions.validationDate")),
     description: z.string().min(1, t("finance.transactions.validationDescription")),
   })

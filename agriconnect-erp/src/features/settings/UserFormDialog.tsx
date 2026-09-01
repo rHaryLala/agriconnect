@@ -15,7 +15,7 @@ function buildSchema(t: (key: string) => string) {
   return z.object({
     name: z.string().min(2, t("settings.users.validationName")),
     email: z.string().min(1, t("stock.movements.validationArticle")).email(t("settings.users.validationEmail")),
-    role: z.enum(["admin", "comptable", "ouvrier"], { errorMap: () => ({ message: t("settings.users.validationRole") }) }),
+    role: z.enum(["admin", "comptable", "ouvrier"], { error: t("settings.users.validationRole") }),
   })
 }
 type UserFormValues = z.infer<ReturnType<typeof buildSchema>>

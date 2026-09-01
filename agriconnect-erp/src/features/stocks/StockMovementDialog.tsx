@@ -14,9 +14,9 @@ function buildSchema(t: (key: string) => string) {
   return z
     .object({
       articleId: z.string().min(1, t("stock.movements.validationArticle")),
-      type: z.enum(["entree", "sortie"], { errorMap: () => ({ message: t("stock.movements.validationType") }) }),
+      type: z.enum(["entree", "sortie"], { error: t("stock.movements.validationType") }),
       date: z.string().min(1, t("stock.movements.validationDate")),
-      quantite: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).positive(t("stock.movements.validationQuantity")),
+      quantite: z.number({ error: t("stock.inventory.validationNumber") }).positive(t("stock.movements.validationQuantity")),
       destinataire: z.string().optional(),
       numeroBon: z.string().optional(),
       montant: z.number().optional(),

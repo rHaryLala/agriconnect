@@ -1,5 +1,5 @@
 import { useEffect } from "react"
-import { useForm, type FieldValues, type Path } from "react-hook-form"
+import { useForm, type FieldValues, type Path, type Resolver } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import type { ZodType } from "zod"
 import { Loader2 } from "lucide-react"
@@ -10,10 +10,10 @@ import { Button } from "@/components/ui/button"
 import { Controller } from "react-hook-form"
 
 export type FieldConfig<T> =
-  | { type: "number"; name: Path<T>; label: string; unit?: string; step?: string }
-  | { type: "date"; name: Path<T>; label: string }
-  | { type: "text"; name: Path<T>; label: string; placeholder?: string }
-  | { type: "select"; name: Path<T>; label: string; options: { value: string; label: string }[] }
+  | { type: "number"; name: Path<T>; label: string; unit?: string; step?: string; placeholder?: string; required?: boolean }
+  | { type: "date"; name: Path<T>; label: string; required?: boolean }
+  | { type: "text"; name: Path<T>; label: string; placeholder?: string; required?: boolean }
+  | { type: "select"; name: Path<T>; label: string; options: { value: string; label: string }[]; placeholder?: string; required?: boolean }
 
 interface QuickAddDialogProps<T extends FieldValues> {
   open: boolean
@@ -40,14 +40,13 @@ export function QuickAddDialog<T extends FieldValues>({
     control,
     reset,
     formState: { errors, isSubmitting },
-  } = useForm<T>({ resolver: zodResolver(schema) })
+  } = useForm<T>({ resolver: zodResolver(schema) as unknown as Resolver<T> })
 
   useEffect(() => {
     if (open) reset(defaultValues)
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open])
 
- async function handleFormSubmit(values: T) {
+  async function handleFormSubmit(values: T) {
     try {
       await onSubmit(values)
       onOpenChange(false)
@@ -63,7 +62,7 @@ export function QuickAddDialog<T extends FieldValues>({
           <DialogTitle>{title}</DialogTitle>
         </DialogHeader>
 
-        <form onSubmit={handleSubmit(handleFormSubmit)} className="flex flex-col gap-4">
+        <form onSubmit={handleSubmit(handleFormSubmit as never)} className="flex flex-col gap-4">
           {fields.map((field) => {
             const fieldName = field.name as string
             const error = (errors as Record<string, { message?: string } | undefined>)[fieldName]
@@ -73,6 +72,7 @@ export function QuickAddDialog<T extends FieldValues>({
                 <Label htmlFor={fieldName}>
                   {field.label}
                   {field.type === "number" && field.unit ? ` (${field.unit})` : ""}
+                  {field.required === false && <span className="ml-1 text-xs font-normal text-muted-foreground">(optionnel)</span>}
                 </Label>
 
                 {field.type === "select" ? (
@@ -82,7 +82,7 @@ export function QuickAddDialog<T extends FieldValues>({
                     render={({ field: ctrl }) => (
                       <Select value={ctrl.value} onValueChange={ctrl.onChange}>
                         <SelectTrigger id={fieldName} className="mt-1.5">
-                          <SelectValue placeholder="Sélectionner..." />
+                          <SelectValue placeholder={field.placeholder ?? "Sélectionner..."} />
                         </SelectTrigger>
                         <SelectContent>
                           {field.options.map((opt) => (
@@ -99,7 +99,7 @@ export function QuickAddDialog<T extends FieldValues>({
                     id={fieldName}
                     type={field.type === "number" ? "number" : field.type === "date" ? "date" : "text"}
                     step={field.type === "number" ? field.step ?? "1" : undefined}
-                    placeholder={field.type === "text" ? field.placeholder : undefined}
+                    placeholder={field.type === "number" || field.type === "text" ? field.placeholder : undefined}
                     {...register(field.name, {
                       valueAsNumber: field.type === "number",
                     })}

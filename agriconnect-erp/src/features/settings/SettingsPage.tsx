@@ -1,7 +1,6 @@
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import {
-  ChevronDown,
   ChevronRight,
   ChevronLeft,
   ChevronsLeft,
@@ -20,7 +19,6 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import { UsersManagement } from "./UsersManagement"
-import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
 import { useAuthStore } from "@/features/auth/authStore"
 import { useSettingsPanelStore } from "@/features/ui/settingsPanelStore"
 

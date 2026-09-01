@@ -18,8 +18,8 @@ function buildArticleSchema(t: (key: string) => string) {
   return z.object({
     nom: z.string().min(2, t("stock.inventory.validationName")),
     unite: z.string().min(1, t("stock.inventory.validationUnit")),
-    quantiteInitiale: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
-    seuilCritique: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
+    quantiteInitiale: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
+    seuilCritique: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
   })
 }
 

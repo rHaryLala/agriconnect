@@ -14,11 +14,11 @@ function buildSchema(t: (key: string) => string) {
   return z
     .object({
       date: z.string().min(1, t("stock.movements.validationDate")),
-      cages: z.array(z.object({ cageId: z.string(), nom: z.string(), nbPoules: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0) })),
-      oeufsProduits: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
-      oeufsCasses: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
-      alimentsKg: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
-      mortalite: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
+      cages: z.array(z.object({ cageId: z.string(), nom: z.string(), nbPoules: z.number({ error: t("stock.inventory.validationNumber") }).min(0) })),
+      oeufsProduits: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
+      oeufsCasses: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
+      alimentsKg: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
+      mortalite: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
       observation: z.string().min(1, t("production.vaches.validationObservation")),
     })
     .superRefine((data, ctx) => {

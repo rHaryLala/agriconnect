@@ -31,9 +31,9 @@ export function PoulesKuroilerTab() {
     () =>
       z.object({
         date: z.string().min(1, t("stock.movements.validationDate")),
-        kgViande: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
-        poussinsVendus: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
-        oeufsProduits: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
+        kgViande: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
+        poussinsVendus: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
+        oeufsProduits: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
         etapeCycle: z.string().min(1, t("production.kuroiler.validationStage")),
         observation: z.string().min(1, t("production.vaches.validationObservation")),
       }),

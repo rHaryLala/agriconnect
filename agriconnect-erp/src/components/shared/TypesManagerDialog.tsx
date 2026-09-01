@@ -10,7 +10,7 @@ export interface TypeField {
   type: "text" | "number"
 }
 
-interface TypesManagerDialogProps<T extends Record<string, unknown> & { id: string }> {
+interface TypesManagerDialogProps<T extends { id: string }> {
   open: boolean
   onOpenChange: (open: boolean) => void
   title: string
@@ -27,7 +27,7 @@ function emptyDraft(fields: TypeField[]): Record<string, string | number> {
   return draft
 }
 
-export function TypesManagerDialog<T extends Record<string, unknown> & { id: string }>({
+export function TypesManagerDialog<T extends { id: string }>({
   open, onOpenChange, title, fields, items, onAdd, onUpdate, onDelete,
 }: TypesManagerDialogProps<T>) {
   const { t } = useTranslation()
@@ -37,10 +37,11 @@ export function TypesManagerDialog<T extends Record<string, unknown> & { id: str
   const [newDraft, setNewDraft] = useState<Record<string, string | number>>(emptyDraft(fields))
 
   function startEdit(item: T) {
-    const d: Record<string, string | number> = {}
-    fields.forEach((f) => { d[f.name] = item[f.name] as string | number })
-    setDraft(d)
-    setEditingId(item.id)
+  const d: Record<string, string | number> = {}
+  const record = item as unknown as Record<string, unknown>
+  fields.forEach((f) => { d[f.name] = record[f.name] as string | number })
+  setDraft(d)
+  setEditingId(item.id)
   }
 
   function saveEdit() {

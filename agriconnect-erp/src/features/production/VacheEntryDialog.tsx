@@ -15,10 +15,10 @@ function buildSchema(t: (key: string) => string) {
     date: z.string().min(1, t("stock.movements.validationDate")),
     traites: z.array(z.object({
       vacheId: z.string(), nom: z.string(),
-      matin: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
-      soir: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
+      matin: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
+      soir: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
     })),
-    alimentationKg: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
+    alimentationKg: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
     suiviSanitaire: z.string().min(1, t("production.vaches.validationObservation")),
   })
 }

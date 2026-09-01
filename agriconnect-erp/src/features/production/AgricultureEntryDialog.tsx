@@ -15,9 +15,9 @@ function buildSchema(t: (key: string) => string) {
   return z.object({
     date: z.string().min(1, t("stock.movements.validationDate")),
     culture: z.string().min(1, t("stock.movements.validationArticle")),
-    surfaceHa: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).positive(t("stock.movements.validationQuantity")),
-    recolteQty: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
-    coutIntrants: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
+    surfaceHa: z.number({ error: t("stock.inventory.validationNumber") }).positive(t("stock.movements.validationQuantity")),
+    recolteQty: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
+    coutIntrants: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
     intrants: z.string().min(1, t("production.agriculture.validationInputs")),
   })
 }

@@ -22,7 +22,7 @@ export function CustomTypeTab({ type }: CustomTypeTabProps) {
 
   const schema = z.object({
     date: z.string().min(1, t("stock.movements.validationDate")),
-    quantite: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0, t("stock.inventory.validationMin")),
+    quantite: z.number({ error: t("stock.inventory.validationNumber") }).min(0, t("stock.inventory.validationMin")),
     unite: z.string().min(1, t("production.customType.validationUnit")),
     notes: z.string().optional().default(""),
   })

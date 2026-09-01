@@ -1,6 +1,6 @@
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
-import { Wallet, ArrowDownCircle, ArrowUpCircle, PiggyBank, Download } from "lucide-react"
+import { ArrowDownCircle, ArrowUpCircle, PiggyBank, Download } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { useFinanceStore } from "./financeStore"

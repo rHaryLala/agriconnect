@@ -33,7 +33,7 @@ export function CategoryBreakdownChart({ transactions, type }: CategoryBreakdown
               <Cell key={i} fill={COLORS[i % COLORS.length]} />
             ))}
           </Pie>
-          <Tooltip formatter={(v: number) => formatCurrency(v)} />
+          <Tooltip formatter={(v) => formatCurrency(Number(v))} />
           <Legend wrapperStyle={{ fontSize: 11 }} />
         </PieChart>
       </ResponsiveContainer>

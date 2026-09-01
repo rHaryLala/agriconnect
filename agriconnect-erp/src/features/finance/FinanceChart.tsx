@@ -28,7 +28,7 @@ export function FinanceChart({ data }: FinanceChartProps) {
           <CartesianGrid strokeDasharray="3 3" stroke="var(--border)" vertical={false} />
           <XAxis dataKey="label" tick={{ fontSize: 12 }} />
           <YAxis tick={{ fontSize: 12 }} tickFormatter={(v) => formatCurrency(v)} width={90} />
-          <Tooltip formatter={(value: number) => formatCurrency(value)} />
+         <Tooltip formatter={(value) => formatCurrency(Number(value))} />
           <Legend />
           <Bar dataKey="recettes" name={t("finance.chartLegend.revenue")} fill={COLOR_RECETTES} radius={[4, 4, 0, 0]} />
           <Bar dataKey="depenses" name={t("finance.chartLegend.expenses")} fill={COLOR_DEPENSES} radius={[4, 4, 0, 0]} />
