@@ -1,0 +1,16 @@
+export const UNIT_OPTIONS = [
+  { value: "kg", label: "Kilogrammes (kg)" },
+  { value: "g", label: "Grammes (g)" },
+  { value: "t", label: "Tonnes (t)" },
+  { value: "L", label: "Litres (L)" },
+  { value: "mL", label: "Millilitres (mL)" },
+  { value: "unites", label: "Unités" },
+  { value: "pieces", label: "Pièces" },
+  { value: "sacs", label: "Sacs" },
+  { value: "bottes", label: "Bottes" },
+  { value: "douzaines", label: "Douzaines" },
+  { value: "m2", label: "Mètres carrés (m²)" },
+  { value: "ha", label: "Hectares (ha)" },
+  { value: "heures", label: "Heures" },
+  { value: "jours", label: "Jours" },
+]

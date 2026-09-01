@@ -7,6 +7,7 @@ import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { QuickAddDialog, type FieldConfig } from "@/components/shared/QuickAddDialog"
 import { useCustomTypesStore, type CustomTypeEntry, type CustomProductionType } from "./customTypesStore"
+import { UNIT_OPTIONS } from "@/lib/units"
 import { formatDate, formatNumber } from "@/lib/format"
 import { toast } from "sonner"
 
@@ -21,29 +22,74 @@ export function CustomTypeTab({ type }: CustomTypeTabProps) {
 
   const schema = z.object({
     date: z.string().min(1, t("stock.movements.validationDate")),
-    quantite: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0),
+    quantite: z.number({ invalid_type_error: t("stock.inventory.validationNumber") }).min(0, t("stock.inventory.validationMin")),
     unite: z.string().min(1, t("production.customType.validationUnit")),
     notes: z.string().optional().default(""),
   })
   type FormValues = z.infer<typeof schema>
 
   const fields: FieldConfig<FormValues>[] = [
-    { type: "date", name: "date", label: t("production.common.date") },
-    { type: "number", name: "quantite", label: t("production.customType.fieldQuantity") },
-    { type: "text", name: "unite", label: t("production.customType.fieldUnit"), placeholder: t("production.customType.fieldUnitPlaceholder") },
-    { type: "text", name: "notes", label: t("production.customType.fieldNotes"), placeholder: t("production.customType.fieldNotesPlaceholder") },
+    { 
+      type: "date", 
+      name: "date", 
+      label: t("production.common.date") 
+    },
+    { 
+      type: "number", 
+      name: "quantite", 
+      label: t("production.customType.fieldQuantity"),
+      placeholder: t("production.customType.fieldQuantityPlaceholder", { defaultValue: "0" })
+    },
+    { 
+      type: "select", 
+      name: "unite", 
+      label: t("production.customType.fieldUnit"), 
+      options: UNIT_OPTIONS,
+      placeholder: t("production.customType.fieldUnitPlaceholder")
+    },
+    { 
+      type: "text", 
+      name: "notes", 
+      label: t("production.customType.fieldNotes"), 
+      placeholder: t("production.customType.fieldNotesPlaceholder"),
+      required: false
+    },
   ]
 
   const totalQuantite = type.entries.reduce((sum, e) => sum + e.quantite, 0)
 
   const columns: DataTableColumn<CustomTypeEntry>[] = [
-    { key: "date", label: t("production.customType.colDate"), render: (e) => formatDate(e.date) },
-    { key: "quantite", label: t("production.customType.colQuantity"), render: (e) => `${formatNumber(e.quantite)} ${e.unite}` },
-    { key: "notes", label: t("production.customType.colNotes"), render: (e) => <span className="text-muted-foreground">{e.notes || "—"}</span> },
-    {
-      key: "actions", label: "", className: "text-right", sticky: true,
+    { 
+      key: "date", 
+      label: t("production.customType.colDate"), 
+      render: (e) => formatDate(e.date) 
+    },
+    { 
+      key: "quantite", 
+      label: t("production.customType.colQuantity"), 
+      render: (e) => `${formatNumber(e.quantite)} ${e.unite}` 
+    },
+    { 
+      key: "notes", 
+      label: t("production.customType.colNotes"), 
       render: (e) => (
-        <Button variant="ghost" size="icon" onClick={() => deleteEntry(type.id, e.id)} aria-label={t("common.delete")}>
+        <span className="text-muted-foreground">
+          {e.notes || "—"}
+        </span>
+      ) 
+    },
+    {
+      key: "actions", 
+      label: "", 
+      className: "text-right", 
+      sticky: true,
+      render: (e) => (
+        <Button 
+          variant="ghost" 
+          size="icon" 
+          onClick={() => deleteEntry(type.id, e.id)} 
+          aria-label={t("common.delete")}
+        >
           <Trash2 className="h-4 w-4 text-destructive" />
         </Button>
       ),
@@ -53,7 +99,12 @@ export function CustomTypeTab({ type }: CustomTypeTabProps) {
   return (
     <div>
       <div className="mb-4">
-        <StatCard icon={Layers} label={t("production.customType.statTotal", { label: type.label })} value={formatNumber(totalQuantite)} tone="primary" />
+        <StatCard 
+          icon={Layers} 
+          label={t("production.customType.statTotal", { label: type.label })} 
+          value={formatNumber(totalQuantite)} 
+          tone="primary" 
+        />
       </div>
 
       <div className="mb-3 flex justify-end">
@@ -63,7 +114,14 @@ export function CustomTypeTab({ type }: CustomTypeTabProps) {
         </Button>
       </div>
 
-      <DataTable columns={columns} rows={type.entries} rowKey={(e) => e.id} emptyIcon={Layers} emptyTitle={t("production.customType.emptyTitle")} emptyDescription={t("production.customType.emptyDescription")} />
+      <DataTable 
+        columns={columns} 
+        rows={type.entries} 
+        rowKey={(e) => e.id} 
+        emptyIcon={Layers} 
+        emptyTitle={t("production.customType.emptyTitle")} 
+        emptyDescription={t("production.customType.emptyDescription")} 
+      />
 
       <QuickAddDialog
         open={open}
@@ -71,15 +129,17 @@ export function CustomTypeTab({ type }: CustomTypeTabProps) {
         title={t("production.customType.dialogTitle", { label: type.label })}
         schema={schema}
         fields={fields}
-        defaultValues={{ date: new Date().toISOString().slice(0, 10), quantite: 0, unite: "", notes: "" }}
+        defaultValues={{ 
+          date: new Date().toISOString().slice(0, 10), 
+          quantite: 0, 
+          unite: "", 
+          notes: "" 
+        }}
         onSubmit={async (values) => {
           await addEntry(type.id, values)
           toast.success(t("production.customType.toastCreated"))
-          toast_success(t)
         }}
       />
     </div>
   )
 }
-
-function toast_success(_t: (key: string) => string) {}
