@@ -52,7 +52,7 @@ export default function LoginPage() {
       <div aria-hidden className="pointer-events-none absolute -bottom-24 -right-16 h-64 w-64 animate-drift-slow rounded-full bg-[#8FE3B3]/20 blur-3xl" />
 
       <div className="absolute right-4 top-4 z-20 sm:right-6 sm:top-6">
-        <LanguageSwitcher compact />
+        <LanguageSwitcher compact variant="onDark" />
       </div>
 
       <div className="relative z-10 flex min-h-screen flex-col lg:flex-row lg:items-center lg:justify-between lg:gap-12 lg:px-16 xl:px-24">
