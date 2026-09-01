@@ -34,7 +34,13 @@
       "langLabel": "Miteny maro",
       "langTitle": "EN - FR - MG",
       "langDescription": "Frantsay, Malagasy ary Anglisy ho an'ny ekipa manontolo, hatrany an-tsaha ka hatrany am-piasana.",
-      "onlineTooltip": "Misy aterineto — mifamatsy daholo ny data"
+      "onlineTooltip": "Misy aterineto — mifamatsy daholo ny data",
+      "bannerTitle": "Tsy misy aterineto ianao",
+      "bannerDescription": "Azo ampiasaina ihany ny rindrambaiko, saingy mbola tsy mifanitsy amin'ny server ny fandraisan-tsoratrao.",
+      "installButton": "Hametraka ny rindrambaiko",
+      "backOnlineToast": "Niverina ny aterineto",
+      "syncSuccess": "Nifanitsy ny zavatra {{count}}",
+      "pendingTooltip": "Miandry fifanitsiana {{count}}"
     },
     "footer": {
       "tagline": "Ny fambolenao manontolo, amin'ny tsipika iray ihany. Fiompiana, fambolena, tahiry entana, vola, mpanjifa ary mpamatsy — voaangona ao anaty fitaovana iray.",

@@ -34,7 +34,13 @@
       "langLabel": "Multilingual",
       "langTitle": "EN - FR - MG",
       "langDescription": "French, Malagasy and English for the whole team, from the field to the office.",
-      "onlineTooltip": "Online — all data synchronized"
+      "onlineTooltip": "Online — all data synchronized",
+      "bannerTitle": "You're offline",
+      "bannerDescription": "The app stays usable, but your entries won't be synced yet.",
+      "installButton": "Install app",
+      "backOnlineToast": "Back online",
+      "syncSuccess": "{{count}} item(s) synced",
+      "pendingTooltip": "{{count}} pending sync"
     },
     "footer": {
       "tagline": "Your whole farm, one single line at a time. Livestock, crops, stock, finances, clients and suppliers — all centralized in one tool.",

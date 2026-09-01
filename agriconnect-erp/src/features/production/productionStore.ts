@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry } from "@/types/production"
 import { SEED_POULES, SEED_VACHES, SEED_KUROILER, SEED_CULTURES } from "./mockProductionData"
+import { enqueue, registerReplayer } from "@/lib/offlineQueue"
 
 const FAKE_LATENCY_MS = 500
 
@@ -41,13 +42,21 @@ export const useProductionStore = create<ProductionState>((set, get) => ({
       }, FAKE_LATENCY_MS)
     }),
 
-  addPoule: (data) =>
-    new Promise((resolve) => {
+  addPoule: async (data) => {
+    if (!navigator.onLine) {
+      const optimisticEntry: PouleEntry = { ...data, id: `offline-${Date.now()}` }
+      set({ poules: [optimisticEntry, ...get().poules] })
+      await enqueue("production.poules", "add", data)
+      return
+    }
+    return new Promise((resolve) => {
       setTimeout(() => {
         set({ poules: [{ ...data, id: `p-${Date.now()}` }, ...get().poules] })
         resolve()
       }, FAKE_LATENCY_MS)
-    }),
+    })
+  },
+
   updatePoule: (id, data) =>
     new Promise((resolve) => {
       setTimeout(() => {
@@ -106,3 +115,5 @@ export const useProductionStore = create<ProductionState>((set, get) => ({
   deleteKuroiler: (id) => set({ kuroiler: get().kuroiler.filter((e) => e.id !== id) }),
   deleteCulture: (id) => set({ cultures: get().cultures.filter((e) => e.id !== id) }),
 }))
+
+registerReplayer("production.poules", async () => {})

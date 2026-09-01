@@ -1,12 +1,12 @@
 import { useTranslation } from "react-i18next"
-import { Sun, Moon, LogOut, Menu, Download, Wifi, WifiOff } from "lucide-react"
+import { Sun, Moon, LogOut, Menu, Download, Wifi, WifiOff, CloudUpload } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { useTheme } from "@/hooks/useTheme"
 import { useAuthStore } from "@/features/auth/authStore"
 import { useInstallPrompt } from "@/hooks/useInstallPrompt"
 import { useOnlineStatus } from "@/hooks/useOnlineStatus"
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
-
+import { useOfflineSyncStore } from "@/features/offline/offlineSyncStore"
 interface HeaderProps {
   onMenuClick: () => void
 }
@@ -17,6 +17,7 @@ export function Header({ onMenuClick }: HeaderProps) {
   const user = useAuthStore((s) => s.user)
   const { isInstallable, promptInstall } = useInstallPrompt()
   const isOnline = useOnlineStatus()
+  const pendingCount = useOfflineSyncStore((s) => s.pendingCount)
 
   function handleLogout() {
     useAuthStore.getState().logout("manual")
@@ -47,7 +48,12 @@ export function Header({ onMenuClick }: HeaderProps) {
       )}
 
       <div className="ml-auto flex items-center gap-1">
-        <LanguageSwitcher compact />
+        <LanguageSwitcher compact /> {pendingCount > 0 && (
+          <span title={t("offline.pendingTooltip", { count: pendingCount })} className="flex items-center gap-1 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
+        <CloudUpload className="h-3.5 w-3.5" />
+        {pendingCount}
+      </span>
+    )}
 
         {isInstallable && (
           <Button variant="ghost" size="icon" onClick={promptInstall} aria-label={t("offline.installButton")} title={t("offline.installButton")}>

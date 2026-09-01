@@ -34,7 +34,13 @@
       "langLabel": "Multilingue",
       "langTitle": "EN - FR - MG",
       "langDescription": "Français, Malagasy et Anglais pour toute l'équipe, du champ au bureau.",
-      "onlineTooltip": "En ligne — toutes les données synchronisées"
+      "onlineTooltip": "En ligne — toutes les données synchronisées",
+      "bannerTitle": "Vous êtes hors ligne",
+      "bannerDescription": "L'application reste consultable, mais tes saisies ne seront pas encore synchronisées.",
+      "installButton": "Installer l'app",
+      "backOnlineToast": "Connexion rétablie",
+      "syncSuccess": "{{count}} élément(s) synchronisé(s)",
+      "pendingTooltip": "{{count}} en attente de synchronisation"
     },
     "footer": {
       "tagline": "Toute votre ferme, une seule ligne à la fois. Élevage, cultures, stock, finances, clients et fournisseurs — centralisés dans un seul outil.",
