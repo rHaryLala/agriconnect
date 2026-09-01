@@ -9,9 +9,9 @@ import { create } from 'domain';
 export class ClientsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(CreateClientDto: CreateClientDto) {
+  async create(createClientDto: CreateClientDto) {
     return this.prisma.client.create({
-      data: CreateClientDto,
+      data: createClientDto,
     });
   }
 
@@ -31,7 +31,21 @@ export class ClientsService {
       throw new NotFoundException(`Client avec ID ${id} introuvable`);
     }
 
-    return client;
+    return client;  
+  }
+
+  async update(id: string, updateClientDto: UpdateClientDto){
+    await this.findOne(id);
+
+    return this.prisma.client.update({where: {id}, data: updateClientDto });
+  }
+
+  async remove(id: string) {
+    await this.findOne(id);
+
+    return this.prisma.client.delete({
+      where: {id}, 
+    });
   }
 
 }

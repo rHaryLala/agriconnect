@@ -3,7 +3,7 @@ import { IsEmail, IsNotEmpty, IsOptional, IsString, isPhoneNumber} from "class-v
 export class CreateClientDto {
     @IsString()
     @IsNotEmpty()
-    name?: string;
+    name!: string;
 
     @IsEmail()
     @IsOptional()
@@ -12,4 +12,12 @@ export class CreateClientDto {
     @IsString()
     @IsOptional()
     phone?: string;
+
+    @IsString()
+    @IsOptional()
+    address?: string;
+
+    @IsString()
+    @IsNotEmpty()
+    farmId!: string;
 }
