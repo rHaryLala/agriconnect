@@ -24,22 +24,47 @@ export default defineConfig({
         ],
       },
       workbox: {
+        globPatterns: ["**/*.{js,css,html,ico,png,svg,webp}"],
         runtimeCaching: [
           {
-            urlPattern: /\/(hero|backgrounds)\/.*\.(jpg|jpeg|webp|png)$/,
+            urlPattern: ({ request }) => 
+              request.destination === "image" || 
+              /^\/(hero|backgrounds)\/.*\.(jpg|jpeg|webp|png)$/.test(request.url),
             handler: "CacheFirst",
             options: {
               cacheName: "agriconnect-images",
-              expiration: { maxEntries: 60, maxAgeSeconds: 60 * 60 * 24 * 30 },
+              expiration: { 
+                maxEntries: 100, 
+                maxAgeSeconds: 60 * 60 * 24 * 30 
+              },
+              cacheableResponse: {
+                statuses: [0, 200]
+              },
+              matchOptions: {
+                ignoreSearch: true
+              }
             },
           },
+          {
+            urlPattern: /^\/$/,
+            handler: "NetworkFirst",
+            options: {
+              cacheName: "start-url",
+              expiration: {
+                maxEntries: 1,
+                maxAgeSeconds: 60 * 60 * 24 * 30
+              }
+            }
+          }
         ],
+        navigateFallback: "index.html",
+        navigateFallbackDenylist: [/^\/api/, /^\/auth/],
       },
     }),
   ],
   resolve: {
     alias: {
-      "@": path.resolve(import.meta.dirname, "./src"),
+      "@": path.resolve(process.cwd(), "./src"),
     },
   },
 })
