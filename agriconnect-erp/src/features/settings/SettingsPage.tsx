@@ -15,7 +15,8 @@ import {
   UserCog,
   SlidersHorizontal,
   DatabaseBackup,
-  CircleCheck,
+  CircleCheck, 
+  Check,
   type LucideIcon,
 } from "lucide-react"
 import { UsersManagement } from "./UsersManagement"
@@ -45,6 +46,58 @@ const TABS: SettingsTab[] = [
 
 const ALL_GROUPS = ["account", "administration", "data"] as const
 
+const LANGUAGE_OPTIONS = [
+  { code: "fr", flag: "🇫🇷" },
+  { code: "en", flag: "🇬🇧" },
+  { code: "mg", flag: "🇲🇬" },
+] as const
+
+function LanguageSettingsPanel() {
+  const { t, i18n } = useTranslation()
+
+  return (
+    <div className="grid grid-cols-1 gap-6 lg:grid-cols-[240px_1fr]">
+      <div>
+        <p className="mb-1 text-sm font-semibold text-foreground">{t("settings.language.sectionTitle")}</p>
+        <p className="text-sm text-muted-foreground">{t("settings.language.sectionDescription")}</p>
+      </div>
+
+      <div className="max-w-xl rounded-2xl border border-border bg-surface p-2">
+        <div className="flex flex-col gap-2">
+          {LANGUAGE_OPTIONS.map(({ code, flag }) => {
+            const isActive = i18n.language === code
+            return (
+              <button
+                key={code}
+                type="button"
+                onClick={() => i18n.changeLanguage(code)}
+                aria-pressed={isActive}
+                className={`flex items-center gap-3 rounded-xl border px-4 py-3 text-left transition-colors duration-200 ${
+                  isActive ? "border-success bg-success/10" : "border-transparent hover:bg-background"
+                }`}
+              >
+                <span className={`flex h-4 w-4 shrink-0 items-center justify-center rounded-full border-2 ${isActive ? "border-success" : "border-border"}`}>
+                  {isActive && <span className="h-2 w-2 rounded-full bg-success" />}
+                </span>
+                <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-background text-base">{flag}</span>
+                <span className="min-w-0 flex-1">
+                  <span className="block truncate text-sm font-semibold text-foreground">{t(`language.${code}`)}</span>
+                  <span className="block truncate text-xs text-muted-foreground">{t(`language.${code}Region`)}</span>
+                </span>
+                {isActive && (
+                  <span className="flex h-5 w-5 shrink-0 items-center justify-center rounded-full bg-success text-white">
+                    <Check className="h-3 w-3" strokeWidth={3} />
+                  </span>
+                )}
+              </button>
+            )
+          })}
+        </div>
+      </div>
+    </div>
+  )
+}
+
 export default function SettingsPage() {
   const { t } = useTranslation()
   const role = useAuthStore((s) => s.user?.role)
@@ -68,13 +121,9 @@ export default function SettingsPage() {
     }
 
     if (tab.id === "langue") {
-      return (
-        <div className="max-w-sm">
-          <p className="mb-4 text-sm text-muted-foreground">{t("language.label")}</p>
-          <LanguageSwitcher />
-        </div>
-      )
+      return <LanguageSettingsPanel />
     }
+
     return (
       <>
         <p className="mb-6 text-sm text-muted-foreground">
@@ -184,6 +233,9 @@ export default function SettingsPage() {
             {t("settings.back")}
           </button>
           <h2 className="mb-1 text-xl font-bold">{t(active.labelKey)}</h2>
+          <p className="mb-1 text-sm text-muted-foreground">
+            {t(`settings.groups.${active.group}`)} · {t("common.appName")}
+          </p>
           <div key={active.id} className="animate-content-in mt-4">
             {renderContent(active)}
           </div>
@@ -192,6 +244,9 @@ export default function SettingsPage() {
 
       <section key={active.id} className="hidden flex-1 animate-content-in lg:block">
         <h2 className="mb-1 text-2xl font-bold">{t(active.labelKey)}</h2>
+        <p className="mb-1 text-sm text-muted-foreground">
+          {t(`settings.groups.${active.group}`)} · {t("common.appName")}
+        </p>
         <div className="mt-4">{renderContent(active)}</div>
       </section>
     </div>
