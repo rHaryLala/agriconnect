@@ -1,26 +1,37 @@
-import { Injectable } from '@nestjs/common';
+import { Injectable, NotFoundException } from '@nestjs/common';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
+import { PrismaService } from '../../prisma/prisma.service';
+import { create } from 'domain';
+
 
 @Injectable()
 export class ClientsService {
-  create(createClientDto: CreateClientDto) {
-    return 'This action adds a new client';
+  constructor(private readonly prisma: PrismaService) {}
+
+  async create(CreateClientDto: CreateClientDto) {
+    return this.prisma.client.create({
+      data: CreateClientDto,
+    });
   }
 
-  findAll() {
-    return `This action returns all clients`;
+  async findAll(farmId: string){
+    return this.prisma.client.findMany({
+      where: farmId? {farmId}: {},
+      orderBy: { createdAt: 'desc'}, 
+    });
   }
 
-  findOne(id: number) {
-    return `This action returns a #${id} client`;
+  async findOne(id: string) {
+    const client = await this.prisma.client.findUnique({where: {id}, include: {invoices: true, 
+      transaction: true},
+    });
+
+    if (!client){
+      throw new NotFoundException(`Client avec ID ${id} introuvable`);
+    }
+
+    return client;
   }
 
-  update(id: number, updateClientDto: UpdateClientDto) {
-    return `This action updates a #${id} client`;
-  }
-
-  remove(id: number) {
-    return `This action removes a #${id} client`;
-  }
 }
