@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Chargement...", "save": "Enregistrer", "cancel": "Annuler", "search": "Rechercher...", "add": "Ajouter", "edit": "Modifier", "delete": "Supprimer", "close": "Fermer", "appName" : "AgriConnect" },
-  "nav": { "dashboard": "Tableau de bord", "production": "Production", "stocks": "Stocks", "finance": "Finance", "clients": "Clients & Fournisseurs", "reports": "Rapports", "settings": "Paramètres", "collapse": "Réduire", "expand": "Déplier le menu", "menu": "Menu", "openMenu": "Ouvrir le menu", "logout": "Se déconnecter", "offline": "Mode hors ligne (bientôt disponible)", "more": "Plus","groups": {"principal": "Principal", "finances": "Finances","commerce": "Commerce", "analyse": "Analyse"}},
+  "nav": { "dashboard": "Tableau de bord", "production": "Production", "stocks": "Stocks", "finance": "Finance", "clients": "Clients", "reports": "Rapports", "settings": "Paramètres", "collapse": "Réduire", "expand": "Déplier le menu", "menu": "Menu", "openMenu": "Ouvrir le menu", "logout": "Se déconnecter", "offline": "Mode hors ligne (bientôt disponible)", "more": "Plus","groups": {"principal": "Principal", "finances": "Finances","commerce": "Commerce", "analyse": "Analyse"}},
   "language": { "label": "Langue", "fr": "Français", "en": "Anglais", "mg": "Malagasy" },
   "landing": {
     "header": { "login": "Se connecter", "register": "S'inscrire" },
@@ -8,7 +8,7 @@
       "badge": "Logiciel de Gestion de Ferme",
       "titleLine1": "Toute votre ferme,",
       "titleLine2": "une seule ligne à la fois",
-      "subtitle": "Élevage, cultures, stock, finances, clients et fournisseurs — centralisés dans un seul outil, du poulailler au bureau du comptable.",
+      "subtitle": "Élevage, cultures, stock, finances, clients — centralisés dans un seul outil, du poulailler au bureau du comptable.",
       "ctaLogin": "Se connecter au tableau de bord",
       "ctaRegister": "Créer un compte"
     },
@@ -20,7 +20,7 @@
       "production": { "title": "Production", "description": "Pondeuses, Kuroiler, vaches laitières, maïs, riz, soja — une saisie par jour, un historique complet." },
       "stock": { "title": "Stock", "description": "Entrées et sorties tracées automatiquement. Alerte dès qu'un article passe sous le seuil critique." },
       "finance": { "title": "Finance", "description": "Dépenses et recettes catégorisées par activité. Le bénéfice se calcule tout seul." },
-      "clients": { "title": "Clients & fournisseurs", "description": "Historique des achats, soldes et dettes à jour à chaque paiement enregistré." },
+      "clients": { "title": "Clients", "description": "Historique des achats, soldes et dettes à jour à chaque paiement enregistré." },
       "transactions": { "title": "Transactions", "description": "Facturation, paiements partiels, crédits — un journal de caisse qui ne ment pas." },
       "reports": { "title": "Rapports", "description": "Financier, production, stock. Export PDF et Excel en un clic." }
     },
@@ -43,7 +43,7 @@
       "pendingTooltip": "{{count}} en attente de synchronisation"
     },
     "footer": {
-      "tagline": "Toute votre ferme, une seule ligne à la fois. Élevage, cultures, stock, finances, clients et fournisseurs — centralisés dans un seul outil.",
+      "tagline": "Toute votre ferme, une seule ligne à la fois. Élevage, cultures, stock, finances, clients — centralisés dans un seul outil.",
       "quickLinks": "Quick Links",
       "documentation": "Documentation",
       "support": "Support",
@@ -557,5 +557,36 @@
     "bannerDescription": "L'application reste consultable, mais tes saisies ne seront pas encore synchronisées.",
     "installButton": "Installer l'app",
     "backOnlineToast": "Connexion rétablie"
+  },
+    "clients": {
+    "pageTitle": "Clients",
+    "pageSubtitle": "Cafétéria, Store, personnel et clients externes",
+    "tabs": { "clients": "Clients", "invoices": "Factures" },
+    "types": { "cafeteria": "Cafétéria", "store": "Store", "personnel": "Personnel", "externe": "Externe" },
+    "newClient": "Nouveau client",
+    "colName": "Nom",
+    "colType": "Type",
+    "colPhone": "Téléphone",
+    "colMatricule": "Matricule UAZ",
+    "emptyTitle": "Aucun client",
+    "emptyDescription": "Ajoute le premier client avec le bouton ci-dessus.",
+    "toastCreated": "Client ajouté",
+    "toastModified": "Client modifié",
+    "toastDeleted": "Client supprimé",
+    "deleteConfirmTitle": "Supprimer {{name}} ?",
+    "deleteConfirmDescription": "Cette action est irréversible.",
+    "dialogTitleNew": "Nouveau client",
+    "dialogTitleEdit": "Modifier le client",
+    "fieldName": "Nom",
+    "fieldNamePlaceholder": "Ex: Restaurant Belle Vue",
+    "fieldType": "Type de client",
+    "fieldPhone": "Téléphone (optionnel)",
+    "fieldPhonePlaceholder": "034 12 345 67",
+    "fieldMatricule": "Matricule UAZ",
+    "fieldMatriculePlaceholder": "UAZ-0231",
+    "validationName": "Minimum 2 caractères",
+    "validationType": "Sélectionne un type",
+    "invoicesComingSoonTitle": "Factures",
+    "invoicesComingSoonDescription": "Comptant, commande, ou prélèvement sur salaire pour le personnel — prochaine étape."
   }
 }

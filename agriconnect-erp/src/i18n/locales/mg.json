@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Eo am-panamboarana...", "save": "Tehirizo", "cancel": "Aoka", "search": "Karohy...", "add": "Ampio", "edit": "Ovay", "delete": "Fafao", "close": "Akatony", "appName" : "AgriConnect" },
-  "nav": { "dashboard": "Tabilao mpitantana", "production": "Vokatra", "stocks": "Tahiry entana", "finance": "Vola", "clients": "Mpanjifa sy Mpamatsy", "reports": "Tatitra", "settings": "Kirakira", "collapse": "Ahakelezo", "expand": "Ahalalaho ny lisitra", "menu": "Lisitra", "openMenu": "Sokafy ny lisitra", "logout": "Hivoaka", "offline": "Fomba tsy misy aterineto (ho avy)", "more": "Bebe kokoa", "groups": {"principal": "Lehibe", "finances": "Vola","commerce": "Varotra", "analyse": "Fandinihana"} },
+  "nav": { "dashboard": "Tabilao mpitantana", "production": "Vokatra", "stocks": "Tahiry entana", "finance": "Vola", "clients": "Mpanjifa", "reports": "Tatitra", "settings": "Kirakira", "collapse": "Ahakelezo", "expand": "Ahalalaho ny lisitra", "menu": "Lisitra", "openMenu": "Sokafy ny lisitra", "logout": "Hivoaka", "offline": "Fomba tsy misy aterineto (ho avy)", "more": "Bebe kokoa", "groups": {"principal": "Lehibe", "finances": "Vola","commerce": "Varotra", "analyse": "Fandinihana"} },
   "language": { "label": "Fiteny", "fr": "Frantsay", "en": "Anglisy", "mg": "Malagasy" },
   "landing": {
     "header": { "login": "Hiditra", "register": "Hisoratra anarana" },
@@ -8,7 +8,7 @@
       "badge": "Rindrambaiko Fitantanana Toeram-pambolena",
       "titleLine1": "Ny fambolenao manontolo,",
       "titleLine2": "amin'ny tsipika iray ihany",
-      "subtitle": "Fiompiana, fambolena, tahiry entana, vola, mpanjifa ary mpamatsy — voaangona ao anaty fitaovana iray, hatramin'ny trano akoho ka hatramin'ny biraon'ny mpitam-bola.",
+      "subtitle": "Fiompiana, fambolena, tahiry entana, vola, mpanjifa — voaangona ao anaty fitaovana iray, hatramin'ny trano akoho ka hatramin'ny biraon'ny mpitam-bola.",
       "ctaLogin": "Hiditra amin'ny tabilao mpitantana",
       "ctaRegister": "Hamorona kaonty"
     },
@@ -20,7 +20,7 @@
       "production": { "title": "Vokatra", "description": "Akoho mpanatody, Kuroiler, omby mpampinono, katsaka, vary, soja — fandraisan-tsoratra isan'andro, tantara feno." },
       "stock": { "title": "Tahiry entana", "description": "Ny fidirana sy fivoahan'entana voasoratra ho azy. Fampitandremana raha tafidina ambanin'ny fetra ny entana." },
       "finance": { "title": "Vola", "description": "Ny fandaniana sy ny fidiram-bola voasokajy araka ny asa. Ny tombom-barotra kajiana ho azy." },
-      "clients": { "title": "Mpanjifa sy mpamatsy", "description": "Tantaran'ny fividianana, volany ary trosa voavaozina isaky ny misy fandoavam-bola voasoratra." },
+      "clients": { "title": "Mpanjifa", "description": "Tantaran'ny fividianana, volany ary trosa voavaozina isaky ny misy fandoavam-bola voasoratra." },
       "transactions": { "title": "Fifanakalozana", "description": "Fanaovana fatorana, fandoavana ampahany, trosa — bokim-bola tsy mandainga." },
       "reports": { "title": "Tatitra", "description": "Vola, vokatra, tahiry entana. Fanondranana amin'ny PDF sy Excel amin'ny kitendry tokana." }
     },
@@ -43,7 +43,7 @@
       "pendingTooltip": "Miandry fifanitsiana {{count}}"
     },
     "footer": {
-      "tagline": "Ny fambolenao manontolo, amin'ny tsipika iray ihany. Fiompiana, fambolena, tahiry entana, vola, mpanjifa ary mpamatsy — voaangona ao anaty fitaovana iray.",
+      "tagline": "Ny fambolenao manontolo, amin'ny tsipika iray ihany. Fiompiana, fambolena, tahiry entana, vola, mpanjifa — voaangona ao anaty fitaovana iray.",
       "quickLinks": "Rohy haingana",
       "documentation": "Antontan-taratasy",
       "support": "Fanampiana",
@@ -557,5 +557,36 @@
     "bannerDescription": "Azo ampiasaina ihany ny rindrambaiko, saingy mbola tsy mifanitsy amin'ny server ny fandraisan-tsoratrao.",
     "installButton": "Hametraka ny rindrambaiko",
     "backOnlineToast": "Niverina ny aterineto"
+  },
+  "clients": {
+    "pageTitle": "Mpanjifa",
+    "pageSubtitle": "Cafétéria, Store, mpiasa ary mpanjifa ivelany",
+    "tabs": { "clients": "Mpanjifa", "invoices": "Fatorana" },
+    "types": { "cafeteria": "Cafétéria", "store": "Store", "personnel": "Mpiasa", "externe": "Ivelany" },
+    "newClient": "Mpanjifa vaovao",
+    "colName": "Anarana",
+    "colType": "Karazana",
+    "colPhone": "Finday",
+    "colMatricule": "Matricule UAZ",
+    "emptyTitle": "Tsy misy mpanjifa",
+    "emptyDescription": "Ampio ny mpanjifa voalohany amin'ny kitendry etsy ambony.",
+    "toastCreated": "Voampiana ny mpanjifa",
+    "toastModified": "Novaina ny mpanjifa",
+    "toastDeleted": "Voafafa ny mpanjifa",
+    "deleteConfirmTitle": "Hofafana ve i {{name}} ?",
+    "deleteConfirmDescription": "Tsy azo averina ity hetsika ity.",
+    "dialogTitleNew": "Mpanjifa vaovao",
+    "dialogTitleEdit": "Ovay ny mpanjifa",
+    "fieldName": "Anarana",
+    "fieldNamePlaceholder": "Oh: Trano fisakafoanana Belle Vue",
+    "fieldType": "Karazana mpanjifa",
+    "fieldPhone": "Finday (tsy voatery)",
+    "fieldPhonePlaceholder": "034 12 345 67",
+    "fieldMatricule": "Matricule UAZ",
+    "fieldMatriculePlaceholder": "UAZ-0231",
+    "validationName": "Farafahakeliny litera 2",
+    "validationType": "Misafidiana karazana",
+    "invoicesComingSoonTitle": "Fatorana",
+    "invoicesComingSoonDescription": "Cash, baiko, na fanesorana amin'ny karama ho an'ny mpiasa — dingana manaraka."
   }
 }

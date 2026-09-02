@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Loading...", "save": "Save", "cancel": "Cancel", "search": "Search...", "add": "Add", "edit": "Edit", "delete": "Delete", "close": "Close", "appName" : "AgriConnect" },
-  "nav": { "dashboard": "Dashboard", "production": "Production", "stocks": "Stock", "finance": "Finance", "clients": "Clients & Suppliers", "reports": "Reports", "settings": "Settings", "collapse": "Collapse", "expand": "Expand menu", "menu": "Menu", "openMenu": "Open menu", "logout": "Log out", "offline": "Offline mode (coming soon)", "more": "More", "groups": {"principal": "Main", "finances": "Finances","commerce": "Commerce", "analyse": "Analysis"} },
+  "nav": { "dashboard": "Dashboard", "production": "Production", "stocks": "Stock", "finance": "Finance", "clients": "Clients", "reports": "Reports", "settings": "Settings", "collapse": "Collapse", "expand": "Expand menu", "menu": "Menu", "openMenu": "Open menu", "logout": "Log out", "offline": "Offline mode (coming soon)", "more": "More", "groups": {"principal": "Main", "finances": "Finances","commerce": "Commerce", "analyse": "Analysis"} },
   "language": { "label": "Language", "fr": "French", "en": "English", "mg": "Malagasy" },
   "landing": {
     "header": { "login": "Log in", "register": "Sign up" },
@@ -8,7 +8,7 @@
       "badge": "Farm Management Software",
       "titleLine1": "Your whole farm,",
       "titleLine2": "one single line at a time",
-      "subtitle": "Livestock, crops, stock, finances, clients and suppliers — all centralized in one tool, from the henhouse to the accountant's desk.",
+      "subtitle": "Livestock, crops, stock, finances, clients — all centralized in one tool, from the henhouse to the accountant's desk.",
       "ctaLogin": "Log in to dashboard",
       "ctaRegister": "Create an account"
     },
@@ -20,7 +20,7 @@
       "production": { "title": "Production", "description": "Layer hens, Kuroiler, dairy cows, maize, rice, soy — one entry per day, a complete history." },
       "stock": { "title": "Stock", "description": "Entries and exits tracked automatically. Alerted as soon as an item drops below the critical threshold." },
       "finance": { "title": "Finance", "description": "Expenses and income categorized by activity. Profit calculates itself." },
-      "clients": { "title": "Clients & suppliers", "description": "Purchase history, balances and debts kept up to date with every recorded payment." },
+      "clients": { "title": "Clients", "description": "Purchase history, balances and debts kept up to date with every recorded payment." },
       "transactions": { "title": "Transactions", "description": "Invoicing, partial payments, credit — a cash journal that never lies." },
       "reports": { "title": "Reports", "description": "Financial, production, stock. Export to PDF and Excel in one click." }
     },
@@ -43,7 +43,7 @@
       "pendingTooltip": "{{count}} pending sync"
     },
     "footer": {
-      "tagline": "Your whole farm, one single line at a time. Livestock, crops, stock, finances, clients and suppliers — all centralized in one tool.",
+      "tagline": "Your whole farm, one single line at a time. Livestock, crops, stock, finances, clients — all centralized in one tool.",
       "quickLinks": "Quick Links",
       "documentation": "Documentation",
       "support": "Support",
@@ -557,5 +557,36 @@
     "bannerDescription": "The app stays usable, but your entries won't be synced yet.",
     "installButton": "Install app",
     "backOnlineToast": "Back online"
+  },
+    "clients": {
+    "pageTitle": "Clients",
+    "pageSubtitle": "Cafeteria, Store, staff and external clients",
+    "tabs": { "clients": "Clients", "invoices": "Invoices" },
+    "types": { "cafeteria": "Cafeteria", "store": "Store", "personnel": "Staff", "externe": "External" },
+    "newClient": "New client",
+    "colName": "Name",
+    "colType": "Type",
+    "colPhone": "Phone",
+    "colMatricule": "UAZ ID",
+    "emptyTitle": "No clients",
+    "emptyDescription": "Add the first client with the button above.",
+    "toastCreated": "Client added",
+    "toastModified": "Client updated",
+    "toastDeleted": "Client deleted",
+    "deleteConfirmTitle": "Delete {{name}}?",
+    "deleteConfirmDescription": "This action is irreversible.",
+    "dialogTitleNew": "New client",
+    "dialogTitleEdit": "Edit client",
+    "fieldName": "Name",
+    "fieldNamePlaceholder": "e.g. Belle Vue Restaurant",
+    "fieldType": "Client type",
+    "fieldPhone": "Phone (optional)",
+    "fieldPhonePlaceholder": "034 12 345 67",
+    "fieldMatricule": "UAZ staff ID",
+    "fieldMatriculePlaceholder": "UAZ-0231",
+    "validationName": "Minimum 2 characters",
+    "validationType": "Select a type",
+    "invoicesComingSoonTitle": "Invoices",
+    "invoicesComingSoonDescription": "Cash, on-account order, or payroll deduction for staff — coming next."
   }
 }

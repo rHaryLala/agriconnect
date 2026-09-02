@@ -20,9 +20,9 @@ export const NAV_ITEMS: NavItem[] = [
   { to: "/app/production", labelKey: "nav.production", icon: Sprout, group: "principal", roles: ["admin", "ouvrier"] },
   { to: "/app/stocks", labelKey: "nav.stocks", icon: Package, group: "principal", roles: ["admin", "ouvrier"] },
   { to: "/app/finance", labelKey: "nav.finance", icon: Wallet, group: "finances", roles: ["admin", "comptable"] },
-  { to: "/app/clients-fournisseurs", labelKey: "nav.clients", icon: Handshake, group: "commerce", roles: ["admin", "comptable"] },
   { to: "/app/rapports", labelKey: "nav.reports", icon: BarChart3, group: "analyse" },
   { to: "/app/settings", labelKey: "nav.settings", icon: Settings, group: "analyse" },
+  { to: "/app/clients", labelKey: "nav.clients", icon: Handshake, group: "commerce", roles: ["admin", "comptable"] },
 ]
 
 const NAV_GROUPS: NavGroup[] = ["principal", "finances", "commerce", "analyse"]

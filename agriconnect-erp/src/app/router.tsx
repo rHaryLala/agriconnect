@@ -81,13 +81,13 @@ export const router = createBrowserRouter([
                       return { Component }
                     },
                   },
-                  {
-                    path: "clients-fournisseurs",
+                 {
+                    path: "clients",
                     lazy: async () => {
-                      const { default: Component } = await import("@/features/clients-fournisseurs/ClientsFournisseursPage")
+                      const { default: Component } = await import("@/features/clients/ClientsPage")
                       return { Component }
-                    },
                   },
+                 },
                 ],
               },
               {
