@@ -30,11 +30,15 @@ export class CreateTransactionDto {
 
     @IsString()
     @IsNotEmpty()
+    userId!: string;
+
+    @IsString()
+    @IsNotEmpty()
     clientId!: string;
 
     @IsString()
     @IsOptional()
-    categoryId?: string;
+    invoiceId?: string;
 
 }
 

@@ -1,0 +1,33 @@
+# Environnement de développement commun aux trois postes.
+# Objectif : que Lesoa, Siméon et Voahary aient exactement la même base de données.
+#
+# Démarrer :  docker compose up -d
+# Arrêter  :  docker compose down
+# Réinitialiser complètement (⚠ efface les données) : docker compose down -v
+
+services:
+  db:
+    # Version figée. Jamais « latest » : sinon l'image change sous vos pieds
+    # et un poste se met à diverger des deux autres sans prévenir.
+    image: postgres:16.4-alpine
+    container_name: agriconnect-db
+    restart: unless-stopped
+    environment:
+      # Les valeurs viennent du fichier .env local, jamais d'ici.
+      POSTGRES_USER: ${POSTGRES_USER}
+      POSTGRES_PASSWORD: ${POSTGRES_PASSWORD}
+      POSTGRES_DB: ${POSTGRES_DB}
+    ports:
+      - "${POSTGRES_PORT:-5432}:5432"
+    volumes:
+      # Volume nommé : les données survivent à un redémarrage du conteneur.
+      - agriconnect_data:/var/lib/postgresql/data
+    healthcheck:
+      test: ["CMD-SHELL", "pg_isready -U ${POSTGRES_USER} -d ${POSTGRES_DB}"]
+      interval: 10s
+      timeout: 5s
+      retries: 5
+
+volumes:
+  agriconnect_data:
+  
