@@ -24,7 +24,7 @@ export class TransactionsController {
   @Get(':id')
   @ApiOperation({ summary: 'Récupérer une transaction par son ID' })
   findOne(@Param('id') id: string) {
-    return this.transactionsService.findOne(id); // On a retiré le +
+    return this.transactionsService.findOne(id); 
   }
 
   @Patch(':id')
@@ -33,12 +33,12 @@ export class TransactionsController {
     @Param('id') id: string, 
     @Body() updateTransactionDto: UpdateTransactionDto,
   ) {
-    return this.transactionsService.update(id, updateTransactionDto); // On a retiré le +
+    return this.transactionsService.update(id, updateTransactionDto); 
   }
 
   @Delete(':id')
   @ApiOperation({ summary: 'Supprimer une transaction' })
   remove(@Param('id') id: string) {
-    return this.transactionsService.remove(id); // On a retiré le +
+    return this.transactionsService.remove(id); 
   }
 }
