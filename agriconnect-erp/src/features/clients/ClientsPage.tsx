@@ -1,9 +1,8 @@
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
-import { Receipt } from "lucide-react"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
-import { ComingSoonPage } from "@/components/shared/ComingSoonPage"
 import { ClientsListTab } from "./ClientsListTab"
+import { InvoicesTab } from "./InvoicesTab"
 
 export default function ClientsPage() {
   const { t } = useTranslation()
@@ -23,7 +22,7 @@ export default function ClientsPage() {
 
       <div key={activeTab} className="animate-content-in mt-4">
         {activeTab === "clients" && <ClientsListTab />}
-        {activeTab === "factures" && <ComingSoonPage icon={Receipt} title={t("clients.invoicesComingSoonTitle")} description={t("clients.invoicesComingSoonDescription")} />}
+        {activeTab === "factures" && <InvoicesTab />}
       </div>
     </div>
   )
