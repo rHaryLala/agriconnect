@@ -18,7 +18,11 @@ async function bootstrap() {
   SwaggerModule.setup('api/docs', app, document); // accessible sur /api/docs
 
     app.enableCors({
-  origin: process.env.FRONTEND_URL || 'http://localhost:5173', 
+  origin: [
+    'http://localhost:5173', 
+    'http://192.168.0.232:5173',// http://192.168.0.232:5173 est pour le test du front en local si jamais
+     process.env.FRONTEND_URL,
+  ].filter(Boolean),  // enlève les valeurs undefined si FRONTEND_URL n'est pas défini
   credentials: true,
 });
 
