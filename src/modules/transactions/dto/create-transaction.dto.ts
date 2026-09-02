@@ -18,7 +18,7 @@ export class CreateTransactionDto {
 
     @IsString()
     @IsOptional()
-    description!: String;
+    description?: string;
 
     @IsDateString()
     @IsOptional()
@@ -27,6 +27,10 @@ export class CreateTransactionDto {
     @IsString()
     @IsNotEmpty()
     farmId!: string;
+
+    @IsString()
+    @IsNotEmpty()
+    clientId!: string;
 
     @IsString()
     @IsOptional()
