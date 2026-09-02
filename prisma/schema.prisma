@@ -126,6 +126,7 @@ model Client {
   id           String     @id @default(uuid())
   name         String
   phone        String?
+  email        String?
   type         ClientType @default(EXTERNE) // externe sy personnelle iany ny
   matriculeuaz String?    @map("matricule_uaz") // Pour identifier l'employé sur le rapport comptable
 
