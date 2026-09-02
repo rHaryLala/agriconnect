@@ -53,7 +53,7 @@ export async function updateUserApi(token: string, id: string, values: { name: s
   const data = await apiFetch<BackendUser>(`/users/${id}`, {
     method: "PATCH",
     token,
-    body: { firstname: firstName, lastname: lastName, role: toBackendRole(values.role) },
+    body: { firstName, lastName, role: toBackendRole(values.role) },
   })
   return toFrontendUser(data)
 }
