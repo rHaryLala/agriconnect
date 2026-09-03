@@ -1,23 +1,24 @@
-import { IsEmail, IsNotEmpty, IsOptional, IsString, isPhoneNumber} from "class-validator";
+import { IsString, IsNotEmpty, IsOptional, IsEnum } from 'class-validator';
+import { ClientType } from '@prisma/client';
 
 export class CreateClientDto {
-    @IsString()
-    @IsNotEmpty()
-    name!: string;
+  @IsString()
+  @IsNotEmpty()
+  name!: string;
 
-    @IsEmail()
-    @IsOptional()
-    email?: string;
+  @IsString()
+  @IsOptional()
+  phone?: string;
 
-    @IsString()
-    @IsOptional()
-    phone?: string;
+  @IsEnum(ClientType)
+  @IsOptional()
+  type?: ClientType;
 
-    @IsString()
-    @IsOptional()
-    address?: string;
+  @IsString()
+  @IsOptional()
+  matriculeuaz?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    farmId!: string;
+  @IsString()
+  @IsNotEmpty()
+  farmId!: string;
 }
