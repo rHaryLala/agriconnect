@@ -318,7 +318,18 @@
       "validationMortalityExceedHens": "Cannot exceed the total hen count",
       "toastCreated": "Entry saved",
       "toastModified": "Entry updated",
-      "toastDeleted": "Entry deleted"
+      "toastDeleted": "Entry deleted",
+       "eggCategories": {
+        "gmNormal": "Large — Normal",
+        "gmCasse": "Large — Broken",
+        "pmNormal": "Small — Normal",
+        "pmCasse": "Small — Broken"
+      },
+      "statEggsTotal": "Total eggs (day)",
+      "statEggsValue": "Estimated value (day)",
+      "managePricesButton": "Manage prices",
+      "managePricesTitle": "Sale price per category",
+      "priceLabel": "Price ({{category}})"
     },
     "vaches": {
       "statCowsCount": "Cows tracked",

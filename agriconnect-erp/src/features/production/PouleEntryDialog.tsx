@@ -7,24 +7,32 @@ import { Loader2 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { EGG_CATEGORIES, type PouleEntry } from "@/types/production"
+import { totalPoules as computeTotalPoules } from "@/lib/eggCalc"
 import type { CageProfile } from "./cagesStore"
-import type { PouleEntry } from "@/types/production"
 
 function buildSchema(t: (key: string) => string) {
   return z
     .object({
       date: z.string().min(1, t("stock.movements.validationDate")),
-      cages: z.array(z.object({ cageId: z.string(), nom: z.string(), nbPoules: z.number({ error: t("stock.inventory.validationNumber") }).min(0) })),
-      oeufsProduits: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
-      oeufsCasses: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
-      alimentsKg: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
-      mortalite: z.number({ error: t("stock.inventory.validationNumber") }).min(0),
+      cages: z.array(z.object({ cageId: z.string(), nom: z.string(), nbPoules: z.number({error: t("stock.inventory.validationNumber") }).min(0) })),
+      gmNormal: z.number({error: t("stock.inventory.validationNumber") }).min(0),
+      gmCasse: z.number({error: t("stock.inventory.validationNumber") }).min(0),
+      pmNormal: z.number({error: t("stock.inventory.validationNumber") }).min(0),
+      pmCasse: z.number({error: t("stock.inventory.validationNumber") }).min(0),
+      alimentsKg: z.number({error: t("stock.inventory.validationNumber") }).min(0),
+      mortalite: z.number({error: t("stock.inventory.validationNumber") }).min(0),
       observation: z.string().min(1, t("production.vaches.validationObservation")),
     })
     .superRefine((data, ctx) => {
-      const totalPoules = data.cages.reduce((sum, c) => sum + c.nbPoules, 0)
-      if (data.oeufsProduits > totalPoules) ctx.addIssue({ code: z.ZodIssueCode.custom, message: t("production.poules.validationEggsExceedHens"), path: ["oeufsProduits"] })
-      if (data.mortalite > totalPoules) ctx.addIssue({ code: z.ZodIssueCode.custom, message: t("production.poules.validationMortalityExceedHens"), path: ["mortalite"] })
+      const totalPoulesCount = data.cages.reduce((sum, c) => sum + c.nbPoules, 0)
+      const totalOeufs = data.gmNormal + data.gmCasse + data.pmNormal + data.pmCasse
+      if (totalOeufs > totalPoulesCount) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: t("production.poules.validationEggsExceedHens"), path: ["gmNormal"] })
+      }
+      if (data.mortalite > totalPoulesCount) {
+        ctx.addIssue({ code: z.ZodIssueCode.custom, message: t("production.poules.validationMortalityExceedHens"), path: ["mortalite"] })
+      }
     })
 }
 type FormValues = z.infer<ReturnType<typeof buildSchema>>
@@ -56,21 +64,23 @@ export function PouleEntryDialog({ open, onOpenChange, cages, editingEntry, onSu
           const existing = editingEntry?.cages.find((cg) => cg.cageId === c.id)
           return { cageId: c.id, nom: c.nom, nbPoules: existing?.nbPoules ?? 0 }
         }),
-        oeufsProduits: editingEntry?.oeufsProduits ?? 0,
-        oeufsCasses: editingEntry?.oeufsCasses ?? 0,
+        gmNormal: editingEntry?.production.gmNormal ?? 0,
+        gmCasse: editingEntry?.production.gmCasse ?? 0,
+        pmNormal: editingEntry?.production.pmNormal ?? 0,
+        pmCasse: editingEntry?.production.pmCasse ?? 0,
         alimentsKg: editingEntry?.alimentsKg ?? 0,
         mortalite: editingEntry?.mortalite ?? 0,
         observation: editingEntry?.observation ?? "",
       })
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, cages, editingEntry])
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit({
       date: values.date,
       cages: values.cages.map((c) => ({ cageId: c.cageId, nbPoules: c.nbPoules })),
-      oeufsProduits: values.oeufsProduits,
-      oeufsCasses: values.oeufsCasses,
+      production: { gmNormal: values.gmNormal, gmCasse: values.gmCasse, pmNormal: values.pmNormal, pmCasse: values.pmCasse },
       alimentsKg: values.alimentsKg,
       mortalite: values.mortalite,
       observation: values.observation,
@@ -80,7 +90,7 @@ export function PouleEntryDialog({ open, onOpenChange, cages, editingEntry, onSu
 
   return (
     <Dialog open={open} onOpenChange={onOpenChange}>
-      <DialogContent className="max-h-[85vh] overflow-y-auto sm:max-w-lg">
+      <DialogContent className="sm:max-w-lg">
         <DialogHeader>
           <DialogTitle>{editingEntry ? t("production.poules.dialogTitleEdit") : t("production.poules.dialogTitleNew")}</DialogTitle>
         </DialogHeader>
@@ -105,17 +115,27 @@ export function PouleEntryDialog({ open, onOpenChange, cages, editingEntry, onSu
             </div>
           </div>
 
-          <div className="grid grid-cols-2 gap-3">
-            <div>
-              <Label htmlFor="oeufsProduits">{t("production.poules.fieldEggsProduced")}</Label>
-              <input id="oeufsProduits" type="number" {...register("oeufsProduits", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
-              {errors.oeufsProduits && <p className="mt-1 text-xs text-destructive">{errors.oeufsProduits.message}</p>}
+          <div>
+            <Label>{t("production.poules.statEggsTotal")}</Label>
+            <div className="mt-1.5 grid grid-cols-2 gap-3 rounded-lg border border-border p-3">
+              <div>
+                <span className="mb-1 block text-xs text-muted-foreground">{t("production.poules.eggCategories.gmNormal")}</span>
+                <input type="number" {...register("gmNormal", { valueAsNumber: true })} className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+              </div>
+              <div>
+                <span className="mb-1 block text-xs text-muted-foreground">{t("production.poules.eggCategories.gmCasse")}</span>
+                <input type="number" {...register("gmCasse", { valueAsNumber: true })} className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+              </div>
+              <div>
+                <span className="mb-1 block text-xs text-muted-foreground">{t("production.poules.eggCategories.pmNormal")}</span>
+                <input type="number" {...register("pmNormal", { valueAsNumber: true })} className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+              </div>
+              <div>
+                <span className="mb-1 block text-xs text-muted-foreground">{t("production.poules.eggCategories.pmCasse")}</span>
+                <input type="number" {...register("pmCasse", { valueAsNumber: true })} className="w-full rounded-lg border border-border bg-background px-2 py-1.5 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+              </div>
             </div>
-            <div>
-              <Label htmlFor="oeufsCasses">{t("production.poules.fieldBrokenEggs")}</Label>
-              <input id="oeufsCasses" type="number" {...register("oeufsCasses", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
-              {errors.oeufsCasses && <p className="mt-1 text-xs text-destructive">{errors.oeufsCasses.message}</p>}
-            </div>
+            {errors.gmNormal && <p className="mt-1 text-xs text-destructive">{errors.gmNormal.message}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-3">

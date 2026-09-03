@@ -318,7 +318,18 @@
       "validationMortalityExceedHens": "Tsy azo mihoatra ny isan'ny akoho",
       "toastCreated": "Voatahiry ny fandraisan-tsoratra",
       "toastModified": "Novaina ny fandraisan-tsoratra",
-      "toastDeleted": "Voafafa ny fandraisan-tsoratra"
+      "toastDeleted": "Voafafa ny fandraisan-tsoratra",
+       "eggCategories": {
+        "gmNormal": "Lehibe — Tsotra",
+        "gmCasse": "Lehibe — Vaky",
+        "pmNormal": "Kely — Tsotra",
+        "pmCasse": "Kely — Vaky"
+      },
+      "statEggsTotal": "Totaly atody (andro)",
+      "statEggsValue": "Vidiny voatombana (andro)",
+      "managePricesButton": "Kirakirao ny vidiny",
+      "managePricesTitle": "Vidiny fivarotana isaky ny sokajy",
+      "priceLabel": "Vidiny ({{category}})"
     },
     "vaches": {
       "statCowsCount": "Omby araka",

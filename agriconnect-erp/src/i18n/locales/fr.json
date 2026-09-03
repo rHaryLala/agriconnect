@@ -318,7 +318,18 @@
       "validationMortalityExceedHens": "Ne peut pas dépasser le total de poules",
       "toastCreated": "Relevé enregistré",
       "toastModified": "Relevé modifié",
-      "toastDeleted": "Relevé supprimé"
+      "toastDeleted": "Relevé supprimé",
+      "eggCategories": {
+        "gmNormal": "GM Normal",
+        "gmCasse": "GM Cassé",
+        "pmNormal": "PM Normal",
+        "pmCasse": "PM Cassé"
+      },
+      "statEggsTotal": "Total œufs (jour)",
+      "statEggsValue": "Valeur estimée (jour)",
+      "managePricesButton": "Gérer les prix",
+      "managePricesTitle": "Prix de vente par catégorie",
+      "priceLabel": "Prix ({{category}})"
     },
     "vaches": {
       "statCowsCount": "Vaches suivies",

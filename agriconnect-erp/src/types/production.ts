@@ -3,12 +3,15 @@ export interface PouleCageReleve {
   nbPoules: number
 }
 
+export type EggCategory = "gmNormal" | "gmCasse" | "pmNormal" | "pmCasse"
+
+export const EGG_CATEGORIES: EggCategory[] = ["gmNormal", "gmCasse", "pmNormal", "pmCasse"]
+
 export interface PouleEntry {
   id: string
   date: string
   cages: PouleCageReleve[]
-  oeufsProduits: number
-  oeufsCasses: number
+  production: Record<EggCategory, number>
   alimentsKg: number
   mortalite: number
   observation: string
