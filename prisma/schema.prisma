@@ -132,6 +132,7 @@ model Client {
   farmId       String
   farm         Farm       @relation(fields: [farmId], references: [id])
   invoices     Invoice[]
+  transactions Transaction[]
 
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -201,6 +202,9 @@ model Transaction{
 
   farmId String
   farm Farm @relation(fields: [farmId], references: [id])
+
+  clientId String?
+  client Client? @relation(fields: [clientId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
