@@ -7,6 +7,10 @@ export type EggCategory = "gmNormal" | "gmCasse" | "pmNormal" | "pmCasse"
 
 export const EGG_CATEGORIES: EggCategory[] = ["gmNormal", "gmCasse", "pmNormal", "pmCasse"]
 
+export function emptyProduction(): Record<EggCategory, number> {
+  return { gmNormal: 0, gmCasse: 0, pmNormal: 0, pmCasse: 0 }
+}
+
 export interface PouleEntry {
   id: string
   date: string

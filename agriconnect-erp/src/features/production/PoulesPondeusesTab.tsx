@@ -15,6 +15,7 @@ import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
 import { totalPoules, totalOeufs, estimateValue } from "@/lib/eggCalc"
 import { hasAlertKeyword, type RowTone } from "@/lib/alerts"
 import { EGG_CATEGORIES, type PouleEntry } from "@/types/production"
+import { EggCircuitSection } from "./EggCircuitSection"
 
 export function PoulesPondeusesTab() {
   const { t } = useTranslation()
@@ -131,6 +132,7 @@ export function PoulesPondeusesTab() {
       />
 
       <EggPricesDialog open={pricesOpen} onOpenChange={setPricesOpen} />
+      <EggCircuitSection pouleEntries={entries} />
     </div>
   )
 }
