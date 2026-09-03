@@ -1,7 +1,7 @@
-import { EGG_CATEGORIES, emptyProduction, type PouleEntry } from "@/types/production"
+import { EGG_CATEGORIES, emptyProduction, type EggCategory, type PouleEntry } from "@/types/production"
 import type { EggLocation, EggTransfer } from "@/types/eggLocation"
 
-export function computeLocationStock(location: EggLocation, pouleEntries: PouleEntry[], transfers: EggTransfer[]): Record<import("@/types/production").EggCategory, number> {
+export function computeLocationStock(location: EggLocation, pouleEntries: PouleEntry[], transfers: EggTransfer[]): Record<EggCategory, number> {
   const stock = emptyProduction()
 
   if (location === "ferme") {
@@ -22,6 +22,6 @@ export function computeLocationStock(location: EggLocation, pouleEntries: PouleE
   return stock
 }
 
-export function totalStock(stock: Record<import("@/types/production").EggCategory, number>): number {
+export function totalStock(stock: Record<EggCategory, number>): number {
   return EGG_CATEGORIES.reduce((sum, cat) => sum + stock[cat], 0)
 }

@@ -4,10 +4,11 @@ import type { Client } from "@/types/client"
 const FAKE_LATENCY_MS = 500
 
 const SEED_CLIENTS: Client[] = [
-  { id: "cl-1", nom: "Cafétéria", type: "cafeteria" },
+  { id: "cl-magasinier", nom: "Magasinier de la Ferme", type: "magasinier" },
   { id: "cl-2", nom: "Store", type: "store" },
+  { id: "cl-1", nom: "Cafétéria", type: "cafeteria" },
   { id: "cl-3", nom: "Hary Lala", type: "personnel", matriculeUaz: "UAZ-0231", telephone: "034 12 345 67" },
-  { id: "cl-4", nom: "Restaurant Belle Vue", type: "externe", telephone: "032 98 765 43" },
+  { id: "cl-4", nom: "Restaurant LESOA Hideout", type: "externe", telephone: "032 98 765 43" },
 ]
 
 interface ClientsState {

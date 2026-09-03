@@ -456,7 +456,19 @@
       "validationResponsible": "Le responsable est requis",
       "insufficientStock": "Stock insuffisant à {{location}} pour {{category}} : {{available}} disponible(s), {{requested}} demandé(s).",
       "toastCreated": "Transfert enregistré",
-      "toastDeleted": "Transfert supprimé"
+      "toastDeleted": "Transfert supprimé",
+       "newSale": "Nouvelle vente",
+      "saleDialogTitle": "Nouvelle vente — génère une facture",
+      "fieldDestinationType": "Destination",
+      "destinationInternal": "Emplacement interne (Magasinier / Store)",
+      "destinationExternal": "Client externe",
+      "fieldInternalLocation": "Emplacement",
+      "fieldExternalClient": "Client",
+      "fieldPaymentInitial": "Montant payé à la création (Ar)",
+      "colInvoiced": "Facturé",
+      "invoicedYes": "Oui",
+      "invoicedNo": "Non",
+      "toastSaleCreated": "Vente enregistrée, facture générée"
     }
   },
   "finance": {
@@ -599,9 +611,9 @@
   },
     "clients": {
     "pageTitle": "Clients",
-    "pageSubtitle": "Cafétéria, Store, personnel et clients externes",
+    "pageSubtitle": "Cafétéria, Store, Magasinier, personnel et clients externes",
     "tabs": { "clients": "Clients", "invoices": "Factures" },
-    "types": { "cafeteria": "Cafétéria", "store": "Store", "personnel": "Personnel", "externe": "Externe" },
+    "types": { "cafeteria": "Cafétéria", "store": "Store", "magasinier": "Magasinier", "personnel": "Personnel", "externe": "Externe" },
     "newClient": "Nouveau client",
     "colName": "Nom",
     "colType": "Type",

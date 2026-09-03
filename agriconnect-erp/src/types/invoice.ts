@@ -1,7 +1,10 @@
+import type { EggCategory } from "./production"
+
 export type PaymentMethod = "comptant" | "commande" | "salaire"
 
 export interface InvoiceLineItem {
-  articleId: string
+  articleId?: string
+  eggCategory?: EggCategory
   quantite: number
   prixUnitaire: number
 }

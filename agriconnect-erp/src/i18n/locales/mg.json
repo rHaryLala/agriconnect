@@ -601,7 +601,7 @@
     "pageTitle": "Mpanjifa",
     "pageSubtitle": "Cafétéria, Store, mpiasa ary mpanjifa ivelany",
     "tabs": { "clients": "Mpanjifa", "invoices": "Fatorana" },
-    "types": { "cafeteria": "Cafétéria", "store": "Store", "personnel": "Mpiasa", "externe": "Ivelany" },
+    "types": { "cafeteria": "Cafétéria", "store": "Store", "magasinier": "Magasinier", "personnel": "Mpiasa", "externe": "Ivelany" },
     "newClient": "Mpanjifa vaovao",
     "colName": "Anarana",
     "colType": "Karazana",
