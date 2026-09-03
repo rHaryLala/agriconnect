@@ -11,13 +11,17 @@ import { Button } from "@/components/ui/button"
 import { ROLE_LABEL_KEYS } from "./roleLabels"
 import type { User } from "@/types/user"
 
-function buildSchema(t: (key: string) => string) {
+function buildSchema(t: (key: string) => string, isEditing: boolean) {
   return z.object({
     name: z.string().min(2, t("settings.users.validationName")),
     email: z.string().min(1, t("stock.movements.validationArticle")).email(t("settings.users.validationEmail")),
     role: z.enum(["admin", "comptable", "ouvrier"], { error: t("settings.users.validationRole") }),
+    password: isEditing
+      ? z.string().optional().or(z.literal(""))
+      : z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
   })
 }
+
 type UserFormValues = z.infer<ReturnType<typeof buildSchema>>
 
 interface UserFormDialogProps {
@@ -29,7 +33,8 @@ interface UserFormDialogProps {
 
 export function UserFormDialog({ open, onOpenChange, editingUser, onSubmit }: UserFormDialogProps) {
   const { t } = useTranslation()
-  const schema = useMemo(() => buildSchema(t), [t])
+  const isEditing = !!editingUser
+    const schema = useMemo(() => buildSchema(t, isEditing), [t, isEditing])
 
   const {
     register, handleSubmit, control, reset,
@@ -38,12 +43,21 @@ export function UserFormDialog({ open, onOpenChange, editingUser, onSubmit }: Us
 
   useEffect(() => {
     if (open) {
-      reset(editingUser ? { name: editingUser.name, email: editingUser.email, role: editingUser.role } : { name: "", email: "", role: undefined })
+      reset(
+        editingUser 
+          ? { name: editingUser.name, email: editingUser.email, role: editingUser.role, password: "" } 
+          : { name: "", email: "", role: undefined, password: "" }
+      )
     }
   }, [open, editingUser, reset])
 
   async function handleFormSubmit(values: UserFormValues) {
-    await onSubmit(values)
+    const payload = { ...values }
+    if (isEditing && !payload.password) {
+      delete payload.password
+    }
+    
+    await onSubmit(payload)
     onOpenChange(false)
   }
 
@@ -73,6 +87,18 @@ export function UserFormDialog({ open, onOpenChange, editingUser, onSubmit }: Us
               placeholder={t("settings.users.fieldEmailPlaceholder")}
             />
             {errors.email && <p className="mt-1 text-xs text-destructive">{errors.email.message}</p>}
+          </div>
+
+          <div>
+            <Label htmlFor="password">
+              {isEditing ? "Nouveau mot de passe (optionnel)" : "Mot de passe"}
+            </Label>
+            <input
+              id="password" type="password" {...register("password")} aria-invalid={!!errors.password}
+              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+              placeholder={isEditing ? "Laisser vide pour ne pas changer" : "Minimum 8 caractères"}
+            />
+            {errors.password && <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>}
           </div>
 
           <div>

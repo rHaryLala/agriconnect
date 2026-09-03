@@ -544,8 +544,8 @@
       "validationEmail": "Endrika mailaka tsy mety",
       "validationRole": "Misafidiana anjara asa",
       "roleAdmin": "Mpitantana",
-      "roleComptable": "Vola / Varotra",
-      "roleOuvrier": "Asa fikarakarana"
+      "roleComptable": "Mpitantana vola",
+      "roleOuvrier": "Mpiasa"
     },
     "language": {
     "sectionTitle": "Ny fiteny asehon'ny rindrankaja",

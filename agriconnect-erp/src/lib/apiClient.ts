@@ -27,6 +27,7 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
   if (!res.ok) {
     const errorBody = await res.json().catch(() => null)
     const rawMessage = errorBody?.message
+    console.error("DÉTAIL DE L'ERREUR BACKEND :", errorBody);
     const message = Array.isArray(rawMessage) ? rawMessage.join(", ") : (rawMessage ?? `Erreur ${res.status}`)
     throw new ApiError(res.status, message)
   }

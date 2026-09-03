@@ -535,8 +535,8 @@
       "validationEmail": "Format d'email invalide",
       "validationRole": "Sélectionne un rôle",
       "roleAdmin": "Administrateur",
-      "roleComptable": "Finance / Commercial",
-      "roleOuvrier": "Opérations"
+      "roleComptable": "Comptable",
+      "roleOuvrier": "Ouvrier"
     },
     "language": {
     "sectionTitle": "Langue de l'interface",
