@@ -10,6 +10,9 @@ enum Role {
   ADMIN
   COMPTABLE
   OUVRIER
+  //mise a jours users
+  MAGASINIER
+  AGENT_STORE
 }
 
 model Farm {
@@ -76,6 +79,8 @@ enum MouvementType {
   IN
   OUT
   AJUSTEMENT
+  //mise a jour
+  TRANFERT
 }
 
 model StockItem {
@@ -101,6 +106,7 @@ model StockMovement {
   type               MouvementType
   quantity           Float
   reason             String?
+  repeseeQuantity    Float? //mise a jour
   date               DateTime       @default(now())
   userId             String
   user               User           @relation(fields: [userId], references: [id])
@@ -119,7 +125,7 @@ enum ClientType {
   EXTERNE
   PERSONNEL_UAZ
   CAF
-  STORE
+  AGENT_STORE //mise a jour
 }
 
 model Client {
@@ -141,6 +147,8 @@ model Client {
 enum InvoiceStatus {
   UNPAID
   PAID
+  // mise a jour
+  PARTIALLY_PAID
 }
 
 model Invoice {
