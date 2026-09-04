@@ -25,6 +25,8 @@ model Farm {
   clients     Client[]
   invoices    Invoice[]
   transactions Transaction[]
+  stockLocation stockLocation[]
+  cattle  Cattle[]
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -54,6 +56,10 @@ enum ProductionType {
   LAIT
   VIANDE
   RECOLTES
+  //mise a jour
+  POULARD
+  KUROILER
+  PADDY
 }
 
 model Production {
@@ -93,6 +99,10 @@ model StockItem {
 
   farmId      String
   farm        Farm            @relation(fields: [farmId], references: [id])
+
+  locationId String?
+  location stockLocation @relation(fields: [locationId], references: [id])
+
   movements   StockMovement[]
   production  Production[]
   invoiceItem InvoiceItem[]
@@ -123,6 +133,7 @@ model StockMovement {
 
 enum ClientType {
   EXTERNE
+  INTERNE
   PERSONNEL_UAZ
   CAF
   AGENT_STORE //mise a jour
@@ -132,7 +143,7 @@ model Client {
   id           String     @id @default(uuid())
   name         String
   phone        String?
-  type         ClientType @default(EXTERNE) // externe sy personnelle iany ny
+  type         ClientType @default(INTERNE) // ny interne (olona normal)
   matriculeuaz String?    @map("matricule_uaz") // Pour identifier l'employé sur le rapport comptable
 
   farmId       String
@@ -168,6 +179,8 @@ model Invoice {
   // relation de paiment ici, quand le table paiment sera fini
   invoiceItem InvoiceItem[]
   transactions Transaction[]
+  //mise a jour
+  payments Payment[]
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -213,6 +226,87 @@ model Transaction{
 
   clientId String?
   client Client? @relation(fields: [clientId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// Mise a jour
+
+enum locationType {
+  FERME
+  STORE
+}
+
+model stockLocation {
+  id String @id @default(uuid())
+  name String
+  type locationType @default(FERME)
+
+  farmId String
+  farm  Farm  @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  stockItem StockItem[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+//mise a jour: suivi des bovin
+enum statusBovin{
+  EN_ELEVAGE
+  VENDU
+  DECEDE
+}
+model Cattle{
+  id String @id @default(uuid())
+  nameOrTag String //anarana na fiantsoana anazy
+  gender String // male/female
+  status statusBovin @default(EN_ELEVAGE)
+  birthDate DateTime?
+  notes String?
+
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// mise a jour: table model paiment et Historique des règlements / versements
+enum PaymentMethod{
+  CAISSE
+  RETENUE_SUR_SALAIRE
+}
+
+model Payment {
+  id String @id @default(uuid())
+  recuNumber String @unique //numero du recu
+  amount Float
+  method PaymentMethod @default(CAISSE)
+  date DateTime @default(now())
+
+  invoiceId String
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  salaryDeduction salaryDeduction ?
+
+  createdAt DateTime @default(now())
+
+}
+
+//mise a jour: deduction au salaire pour les personnel
+model salaryDeduction {
+  id String @id @default(uuid())
+  amount  Float
+  status String @default("En_attente")//en attente na deduit
+  period String //deduction du salaire sur le moi du paie ex: 
+
+  payementId String @unique
+  payment Payment @relation(fields: [payementId], references: [id], onDelete: Cascade)
+
+  employeeId String 
+  employee User @relation(fields: [employeeId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
