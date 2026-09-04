@@ -27,6 +27,7 @@ model Farm {
   transactions Transaction[]
   stockLocation stockLocation[]
   cattle  Cattle[]
+  paddyProcess paddyProcess[]
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -44,6 +45,7 @@ model User {
   production    Production[]
   stockMovment  StockMovement[]
   transactions Transaction[]
+  salaryDeduction salaryDeduction[]
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -311,3 +313,23 @@ model salaryDeduction {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+
+//suivi du riziculture (paddy en riz decortiqué)
+model paddyProcess{
+  id String @id @default(uuid())
+  lotNumber String
+  paddyInputKg Float //quantité akotry engagée
+  paddyInputLot Int //quantité akotry par gony engagée
+  waveNumber Int @default(1) //vague de sechage
+  statu String @default("IN_PROGRESS") //in progress na completed
+
+  riceOutputKg Float? //riz obtenu au final
+  note String? // affirmation a faire si il y a
+
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
