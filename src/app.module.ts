@@ -9,6 +9,9 @@ import { UsersModule } from './users/users.module';
 import { StockModule } from './stock/stock.module';
 import { ProductionModule } from './production/production.module';
 import { FinanceModule } from './finance/finance.module';
+import { DashboardModule } from './dashboard.module';
+import { DashboardController } from './dashboard.controller';
+import { DashboardService } from './dashboard.service';
 
 @Module({
   imports: [
@@ -19,8 +22,9 @@ import { FinanceModule } from './finance/finance.module';
     StockModule,
     ProductionModule,
     FinanceModule,
+    DashboardModule,
   ],
-  controllers: [AppController, ExempleController], // ExempleController ajouté ici
-  providers: [AppService],
+  controllers: [AppController, ExempleController, DashboardController], // ExempleController ajouté ici
+  providers: [AppService, DashboardService],
 })
 export class AppModule {}

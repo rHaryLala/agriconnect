@@ -41,7 +41,7 @@ export class ProductionService {
     }
 
     // À partir d'ici, on sait que la date est dans le passé.
-    // RG-07 : seuls Gérant et Comptable ont le droit de saisir a posteriori —
+    // RG-07 : seuls Gérant et Comptable ont le droit de saisir un date au passé—
     // un Employé de terrain ne peut saisir que le jour même.
     if (role !== 'ADMIN' && role !== 'COMPTABLE') {
       throw new ForbiddenException(
@@ -71,7 +71,7 @@ export class ProductionService {
     // sans article de stock correspondant. Mais SI un id est fourni, on doit
     // vérifier qu'il existe réellement et qu'il appartient bien à la ferme
     // de l'utilisateur — sinon n'importe qui pourrait pointer vers l'article
-    // d'une autre ferme en devinant un UUID.
+    // d'une autre ferme en devinant un UUID.(C'est un config pour une futur amélioration)
     if (dto.stockItemId) {
       const item = await this.prisma.stockItem.findFirst({
         where: { id: dto.stockItemId, farmId },
