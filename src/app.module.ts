@@ -12,6 +12,7 @@ import { FinanceModule } from './finance/finance.module';
 import { DashboardModule } from './dashboard.module';
 import { DashboardController } from './dashboard.controller';
 import { DashboardService } from './dashboard.service';
+import { DashboardModule } from './dashboard/dashboard.module';
 
 @Module({
   imports: [
