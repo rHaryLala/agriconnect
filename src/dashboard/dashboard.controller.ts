@@ -21,7 +21,7 @@ export class DashboardController {
     @Get('summary')
     getSummary(@Query() query: DashboardQueryDto, @CurrentUser() user: AuthUser)
     {
-        // @Query() récupère et valide automatiquement le paramètre "date"
+    // @Query() récupère et valide automatiquement le paramètre "date"
     // depuis l'URL (ex: /dashboard/summary?date=2026-09-01), grâce au
     // ValidationPipe global déjà configuré dans main.ts.
     return this.dashboardService.getSummary(user.farmId, query.date);
