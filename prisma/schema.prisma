@@ -25,7 +25,7 @@ model Farm {
   clients     Client[]
   invoices    Invoice[]
   transactions Transaction[]
-  stockLocation stockLocation[]
+  stockLocation StockLocation[]
   cattle  Cattle[]
   paddyProcess paddyProcess[]
 
@@ -88,7 +88,7 @@ enum MouvementType {
   OUT
   AJUSTEMENT
   //mise a jour
-  TRANFERT
+  TRANFERTS
 }
 
 model StockItem {
@@ -103,7 +103,7 @@ model StockItem {
   farm        Farm            @relation(fields: [farmId], references: [id])
 
   locationId String?
-  location stockLocation @relation(fields: [locationId], references: [id])
+  location StockLocation? @relation(fields: [locationId], references: [id])
 
   movements   StockMovement[]
   production  Production[]
@@ -240,7 +240,7 @@ enum locationType {
   STORE
 }
 
-model stockLocation {
+model StockLocation {
   id String @id @default(uuid())
   name String
   type locationType @default(FERME)
