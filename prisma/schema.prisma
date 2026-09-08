@@ -10,9 +10,12 @@ enum Role {
   ADMIN
   COMPTABLE
   OUVRIER
+<<<<<<< HEAD
   //mise a jours users
   MAGASINIER
   AGENT_STORE
+=======
+>>>>>>> feature/database
 }
 
 model Farm {
@@ -25,9 +28,12 @@ model Farm {
   clients     Client[]
   invoices    Invoice[]
   transactions Transaction[]
+<<<<<<< HEAD
   stockLocation StockLocation[]
   cattle  Cattle[]
   paddyProcess paddyProcess[]
+=======
+>>>>>>> feature/database
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -45,7 +51,10 @@ model User {
   production    Production[]
   stockMovment  StockMovement[]
   transactions Transaction[]
+<<<<<<< HEAD
   salaryDeduction salaryDeduction[]
+=======
+>>>>>>> feature/database
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -58,10 +67,13 @@ enum ProductionType {
   LAIT
   VIANDE
   RECOLTES
+<<<<<<< HEAD
   //mise a jour
   POULARD
   KUROILER
   PADDY
+=======
+>>>>>>> feature/database
 }
 
 model Production {
@@ -87,8 +99,11 @@ enum MouvementType {
   IN
   OUT
   AJUSTEMENT
+<<<<<<< HEAD
   //mise a jour
   TRANSFERTS
+=======
+>>>>>>> feature/database
 }
 
 model StockItem {
@@ -101,10 +116,13 @@ model StockItem {
 
   farmId      String
   farm        Farm            @relation(fields: [farmId], references: [id])
+<<<<<<< HEAD
 
   locationId String?
   location StockLocation? @relation(fields: [locationId], references: [id])
 
+=======
+>>>>>>> feature/database
   movements   StockMovement[]
   production  Production[]
   invoiceItem InvoiceItem[]
@@ -112,14 +130,21 @@ model StockItem {
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 }
+<<<<<<< HEAD
 // Tu as ajouté TRANFERTS dans les types de mouvement, mais rien ne permet de savoir que deux mouvements
  (un OUT, un IN) font partie du même transfert. Comment tu veux qu'on les relie ?
+=======
+
+>>>>>>> feature/database
 model StockMovement {
   id                 String         @id @default(uuid())
   type               MouvementType
   quantity           Float
   reason             String?
+<<<<<<< HEAD
   repeseeQuantity    Float? //mise a jour
+=======
+>>>>>>> feature/database
   date               DateTime       @default(now())
   userId             String
   user               User           @relation(fields: [userId], references: [id])
@@ -136,23 +161,36 @@ model StockMovement {
 
 enum ClientType {
   EXTERNE
+<<<<<<< HEAD
   INTERNE
   PERSONNEL_UAZ
   CAF
   AGENT_STORE //mise a jour
+=======
+  PERSONNEL_UAZ
+  CAF
+  STORE
+>>>>>>> feature/database
 }
 
 model Client {
   id           String     @id @default(uuid())
   name         String
   phone        String?
+<<<<<<< HEAD
   type         ClientType @default(INTERNE) // ny interne (olona normal)
+=======
+  type         ClientType @default(EXTERNE) // externe sy personnelle iany ny
+>>>>>>> feature/database
   matriculeuaz String?    @map("matricule_uaz") // Pour identifier l'employé sur le rapport comptable
 
   farmId       String
   farm         Farm       @relation(fields: [farmId], references: [id])
   invoices     Invoice[]
+<<<<<<< HEAD
   transactions Transaction[]
+=======
+>>>>>>> feature/database
 
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -161,8 +199,11 @@ model Client {
 enum InvoiceStatus {
   UNPAID
   PAID
+<<<<<<< HEAD
   // mise a jour
   PARTIALLY_PAID
+=======
+>>>>>>> feature/database
 }
 
 model Invoice {
@@ -182,8 +223,11 @@ model Invoice {
   // relation de paiment ici, quand le table paiment sera fini
   invoiceItem InvoiceItem[]
   transactions Transaction[]
+<<<<<<< HEAD
   //mise a jour
   payments Payment[]
+=======
+>>>>>>> feature/database
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -227,6 +271,7 @@ model Transaction{
   farmId String
   farm Farm @relation(fields: [farmId], references: [id])
 
+<<<<<<< HEAD
   clientId String?
   client Client? @relation(fields: [clientId], references: [id])
 
@@ -334,3 +379,8 @@ model paddyProcess{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
+=======
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+>>>>>>> feature/database
