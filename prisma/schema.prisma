@@ -333,3 +333,11 @@ model paddyProcess{
   updatedAt DateTime @updatedAt
 }
 
+//model ProductVariant mbola tsisy
+model ProductVariant{
+  id String @id @default(uuid())
+  name String //anaran'ilay varieté anle produit, ex: gros model cassé, petit model normal, haricot rouge
+  
+}
+//model stockTransfer
+//model StockTransferItem

@@ -1,4 +1,5 @@
-import { defineConfig } from "prisma/config";
+import { defineConfig, env } from "prisma/config";
+import "dotenv/config"
 
 export default defineConfig({
   schema: "prisma/schema.prisma",
@@ -7,7 +8,7 @@ export default defineConfig({
     seed: "npx tsx prisma/seed.ts",
   },
   datasource: {
-    url: "postgresql://postgres:jerosalema666@localhost:5432/agriconnect?schema=public",
+    url: env("DATABASE_URL"),
     
   },
 });
