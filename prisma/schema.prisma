@@ -260,7 +260,7 @@ enum statusBovin{
   VENDU
   DECEDE
 }
-//Absence d'entrées sorties de client, prix, reçu, décès, effectif rapporté
+//Absence d'entrées sorties de client, prix, reçu, décès, effectif
 model Cattle{
   id String @id @default(uuid())
   nameOrTag String //anarana na fiantsoana anazy
