@@ -51,6 +51,8 @@ export class StockService {
       );
     }
 
+    const quantiteReelle = dto.repeseeQuantity ?? dto.quantity;
+
     // Choix de conception sur AJUSTEMENT : "quantity"
     // représente ici la NOUVELLE quantité absolue en stock (résultat d'un
     // comptage physique), pas une quantité à ajouter — c'est la seule façon
@@ -62,7 +64,8 @@ export class StockService {
           itemId,
           type: dto.type,
           quantity: dto.quantity,
-          reason: dto.reason,
+          repeseeQuantity: dto.repeseeQuantity, // ce qui était annoncé — gardé pour comparaison/audit
+          reason: dto.reason, // ce qui a été réellement pesé, si applicable
           userId,
         },
       });
@@ -71,10 +74,10 @@ export class StockService {
         where: { id: itemId },
         data:
           dto.type === 'AJUSTEMENT'
-            ? { quantity: dto.quantity } // valeur absolue
-            : dto.type === 'IN'
-              ? { quantity: { increment: dto.quantity } }
-              : { quantity: { decrement: dto.quantity } },
+            ? { quantity: quantiteReelle } // valeur absolue
+            : dto.type === 'IN' 
+              ? { quantity: { increment: quantiteReelle } }  // increment sur la quantité REPESÉE, pas l'annoncée
+              : { quantity: { decrement: quantiteReelle } },
       });
 
       return movement;
