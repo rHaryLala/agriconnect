@@ -10,54 +10,45 @@ enum Role {
   ADMIN
   COMPTABLE
   OUVRIER
-<<<<<<< HEAD
   //mise a jours users
   MAGASINIER
-  AGENT_STORE
-=======
->>>>>>> feature/database
+  CONTROLEUR_INTERNE
 }
 
 model Farm {
-  id          String        @id @default(uuid())
-  name        String
-  location    String?
-  users       User[]
-  productions Production[]
-  stockItem   StockItem[]
-  clients     Client[]
-  invoices    Invoice[]
-  transactions Transaction[]
-<<<<<<< HEAD
+  id            String          @id @default(uuid())
+  name          String
+  location      String?
+  users         User[]
+  productions   Production[]
+  stockItem     StockItem[]
+  clients       Client[]
+  invoices      Invoice[]
+  transactions  Transaction[]
   stockLocation StockLocation[]
-  cattle  Cattle[]
-  paddyProcess paddyProcess[]
-=======
->>>>>>> feature/database
+  cattle        Cattle[]
+  paddyProcess  paddyProcess[]
 
-  createdAt   DateTime      @default(now())
-  updatedAt   DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 model User {
-  id            String          @id @default(uuid())
-  email         String          @unique
-  password      String
-  firstName     String
-  lastName      String
-  role          Role            @default(OUVRIER)
-  farmId        String
-  farm          Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
-  production    Production[]
-  stockMovment  StockMovement[]
-  transactions Transaction[]
-<<<<<<< HEAD
+  id              String            @id @default(uuid())
+  email           String            @unique
+  password        String
+  firstName       String
+  lastName        String
+  role            Role              @default(OUVRIER)
+  farmId          String
+  farm            Farm              @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  production      Production[]
+  stockMovment    StockMovement[]
+  transactions    Transaction[]
   salaryDeduction salaryDeduction[]
-=======
->>>>>>> feature/database
 
-  createdAt     DateTime        @default(now())
-  updatedAt     DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([farmId])
 }
@@ -67,143 +58,110 @@ enum ProductionType {
   LAIT
   VIANDE
   RECOLTES
-<<<<<<< HEAD
   //mise a jour
   POULARD
   KUROILER
   PADDY
-=======
->>>>>>> feature/database
 }
 
 model Production {
-  id          String         @id @default(uuid())
-  type        ProductionType
-  quantity    Float
-  unit        String
-  date        DateTime       @default(now())
-  notes       String?
+  id       String         @id @default(uuid())
+  type     ProductionType
+  quantity Float
+  unit     String
+  date     DateTime       @default(now())
+  notes    String?
 
-  userId      String
-  user        User           @relation(fields: [userId], references: [id])
-  farmId      String
-  farm        Farm           @relation(fields: [farmId], references: [id])
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
+  farmId String
+  farm   Farm   @relation(fields: [farmId], references: [id])
 
   stockItemId String?
-  stockItem   StockItem?     @relation(fields: [stockItemId], references: [id])
+  stockItem   StockItem? @relation(fields: [stockItemId], references: [id])
 
-  createdAt   DateTime       @default(now())
+  createdAt DateTime @default(now())
 }
 
 enum MouvementType {
   IN
   OUT
   AJUSTEMENT
-<<<<<<< HEAD
   //mise a jour
-  TRANSFERTS
-=======
->>>>>>> feature/database
+  TRANFERTS
 }
 
 model StockItem {
-  id          String          @id @default(uuid())
-  name        String
-  category    String
-  quantity    Float           @default(0)
-  unit        String
-  miniAlert   Float           @default(10)
+  id        String @id @default(uuid())
+  name      String
+  category  String
+  quantity  Float  @default(0)
+  unit      String
+  miniAlert Float  @default(10)
 
-  farmId      String
-  farm        Farm            @relation(fields: [farmId], references: [id])
-<<<<<<< HEAD
+  farmId String
+  farm   Farm   @relation(fields: [farmId], references: [id])
 
   locationId String?
-  location StockLocation? @relation(fields: [locationId], references: [id])
+  location   StockLocation? @relation(fields: [locationId], references: [id])
 
-=======
->>>>>>> feature/database
   movements   StockMovement[]
   production  Production[]
   invoiceItem InvoiceItem[]
 
-  createdAt   DateTime        @default(now())
-  updatedAt   DateTime        @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
-<<<<<<< HEAD
-// Tu as ajouté TRANFERTS dans les types de mouvement, mais rien ne permet de savoir que deux mouvements
- (un OUT, un IN) font partie du même transfert. Comment tu veux qu'on les relie ?
-=======
 
->>>>>>> feature/database
 model StockMovement {
-  id                 String         @id @default(uuid())
-  type               MouvementType
-  quantity           Float
-  reason             String?
-<<<<<<< HEAD
-  repeseeQuantity    Float? //mise a jour
-=======
->>>>>>> feature/database
-  date               DateTime       @default(now())
-  userId             String
-  user               User           @relation(fields: [userId], references: [id])
+  id              String        @id @default(uuid())
+  type            MouvementType
+  quantity        Float
+  reason          String?
+  repeseeQuantity Float? //mise a jour
+  date            DateTime      @default(now())
+  userId          String
+  user            User          @relation(fields: [userId], references: [id])
 
-  itemId             String
-  item               StockItem      @relation(fields: [itemId], references: [id])
+  itemId String
+  item   StockItem @relation(fields: [itemId], references: [id])
 
-  originalMovmentId  String?
-  originalMovment    StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
-  corrections        StockMovement[] @relation("MovmentCorrection")
+  originalMovmentId String?
+  originalMovment   StockMovement?  @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
+  corrections       StockMovement[] @relation("MovmentCorrection")
 
-  createdAt          DateTime       @default(now())
+  createdAt DateTime @default(now())
 }
 
 enum ClientType {
   EXTERNE
-<<<<<<< HEAD
   INTERNE
   PERSONNEL_UAZ
   CAF
   AGENT_STORE //mise a jour
-=======
-  PERSONNEL_UAZ
-  CAF
-  STORE
->>>>>>> feature/database
 }
 
 model Client {
   id           String     @id @default(uuid())
   name         String
   phone        String?
-<<<<<<< HEAD
   type         ClientType @default(INTERNE) // ny interne (olona normal)
-=======
-  type         ClientType @default(EXTERNE) // externe sy personnelle iany ny
->>>>>>> feature/database
   matriculeuaz String?    @map("matricule_uaz") // Pour identifier l'employé sur le rapport comptable
 
   farmId       String
-  farm         Farm       @relation(fields: [farmId], references: [id])
+  farm         Farm          @relation(fields: [farmId], references: [id])
   invoices     Invoice[]
-<<<<<<< HEAD
   transactions Transaction[]
-=======
->>>>>>> feature/database
 
-  createdAt    DateTime   @default(now())
-  updatedAt    DateTime   @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 enum InvoiceStatus {
   UNPAID
   PAID
-<<<<<<< HEAD
   // mise a jour
   PARTIALLY_PAID
-=======
->>>>>>> feature/database
 }
 
 model Invoice {
@@ -214,66 +172,62 @@ model Invoice {
   dueAmount     Float         @map("reste_a_payer")
   status        InvoiceStatus @default(UNPAID) @map("statut_du_paiment")
 
-  clientId      String
-  client        Client        @relation(fields: [clientId], references: [id])
+  clientId String
+  client   Client @relation(fields: [clientId], references: [id])
 
-  farmId        String
-  farm          Farm          @relation(fields: [farmId], references: [id])
+  farmId String
+  farm   Farm   @relation(fields: [farmId], references: [id])
 
   // relation de paiment ici, quand le table paiment sera fini
-  invoiceItem InvoiceItem[]
+  invoiceItem  InvoiceItem[]
   transactions Transaction[]
-<<<<<<< HEAD
   //mise a jour
-  payments Payment[]
-=======
->>>>>>> feature/database
+  payments     Payment[]
 
-  createdAt     DateTime      @default(now())
-  updatedAt     DateTime      @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 //details des articles vendus dans la facture
 model InvoiceItem {
-  id String @id @default(uuid())
-  quantity Float
+  id        String @id @default(uuid())
+  quantity  Float
   unitPrice Float
-  total Float
+  total     Float
 
   invoiceId String
-  invoice Invoice   @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
   itemId String
-  item StockItem @relation(fields: [itemId], references: [id])
+  item   StockItem @relation(fields: [itemId], references: [id])
 }
 
 //transaction et finances
-enum TransactionType{
+enum TransactionType {
   RECETTE //argent qui entre
   DEPENSE //argent qui sort
 }
 
-model Transaction{
-  id String @id @default(uuid())
-  amount Float
-  type TransactionType @default(RECETTE)
+model Transaction {
+  id        String          @id @default(uuid())
+  amount    Float
+  type      TransactionType @default(RECETTE)
   reference String? //numereau physique du recuu ou bordereau
-  notes String? //remarque ou detail
-  date DateTime @default(now())
+  notes     String? //remarque ou detail
+  date      DateTime        @default(now())
 
   //liens avec la facture 
   invoiceId String?
-  invoice Invoice? @relation(fields: [invoiceId], references: [id])
+  invoice   Invoice? @relation(fields: [invoiceId], references: [id])
 
   userId String
-  user User @relation(fields: [userId], references: [id])
+  user   User   @relation(fields: [userId], references: [id])
 
   farmId String
-  farm Farm @relation(fields: [farmId], references: [id])
+  farm   Farm   @relation(fields: [farmId], references: [id])
 
-<<<<<<< HEAD
   clientId String?
-  client Client? @relation(fields: [clientId], references: [id])
+  client   Client? @relation(fields: [clientId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -287,100 +241,103 @@ enum locationType {
 }
 
 model StockLocation {
-  id String @id @default(uuid())
+  id   String       @id @default(uuid())
   name String
   type locationType @default(FERME)
 
   farmId String
-  farm  Farm  @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  farm   Farm   @relation(fields: [farmId], references: [id], onDelete: Cascade)
 
   stockItem StockItem[]
 
-  createdAt DateTime  @default(now())
-  updatedAt DateTime  @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 }
 
 //mise a jour: suivi des bovin
-enum statusBovin{
+enum statusBovin {
   EN_ELEVAGE
   VENDU
   DECEDE
 }
-//Absence d'entrées sorties de client, prix, reçu, décès, effectif
-model Cattle{
-  id String @id @default(uuid())
+
+model Cattle {
+  id        String      @id @default(uuid())
   nameOrTag String //anarana na fiantsoana anazy
-  gender String // male/female
-  status statusBovin @default(EN_ELEVAGE)
+  gender    String // male/female
+  status    statusBovin @default(EN_ELEVAGE)
   birthDate DateTime?
-  notes String?
+  notes     String?
 
   farmId String
-  farm Farm @relation(fields: [farmId], references: [id])
+  farm   Farm   @relation(fields: [farmId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 // mise a jour: table model paiment et Historique des règlements / versements
-enum PaymentMethod{
+enum PaymentMethod {
   CAISSE
   RETENUE_SUR_SALAIRE
 }
 
 model Payment {
-  id String @id @default(uuid())
-  recuNumber String @unique //numero du recu
-  amount Float
-  method PaymentMethod @default(CAISSE)
-  date DateTime @default(now())
+  id         String        @id @default(uuid())
+  recuNumber String        @unique //numero du recu
+  amount     Float
+  method     PaymentMethod @default(CAISSE)
+  date       DateTime      @default(now())
 
   invoiceId String
-  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+  invoice   Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
-  salaryDeduction salaryDeduction ?
+  salaryDeduction salaryDeduction?
 
   createdAt DateTime @default(now())
-
 }
 
 //mise a jour: deduction au salaire pour les personnel
 model salaryDeduction {
-  id String @id @default(uuid())
-  amount  Float
-  status String @default("En_attente")//en attente na deduit
+  id     String @id @default(uuid())
+  amount Float
+  status String @default("En_attente") //en attente na deduit
   period String //deduction du salaire sur le moi du paie ex: 
 
-  payementId String @unique
-  payment Payment @relation(fields: [payementId], references: [id], onDelete: Cascade)
+  payementId String  @unique
+  payment    Payment @relation(fields: [payementId], references: [id], onDelete: Cascade)
 
-  employeeId String 
-  employee User @relation(fields: [employeeId], references: [id])
+  employeeId String
+  employee   User   @relation(fields: [employeeId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
 
 //suivi du riziculture (paddy en riz decortiqué)
-model paddyProcess{
-  id String @id @default(uuid())
-  lotNumber String
-  paddyInputKg Float //quantité akotry engagée
+model paddyProcess {
+  id            String @id @default(uuid())
+  lotNumber     String
+  paddyInputKg  Float //quantité akotry engagée
   paddyInputLot Int //quantité akotry par gony engagée
-  waveNumber Int @default(1) //vague de sechage
-  statu String @default("IN_PROGRESS") //in progress na completed
+  waveNumber    Int    @default(1) //vague de sechage
+  statu         String @default("IN_PROGRESS") //in progress na completed
 
   riceOutputKg Float? //riz obtenu au final
-  note String? // affirmation a faire si il y a
+  note         String? // affirmation a faire si il y a
 
   farmId String
-  farm Farm @relation(fields: [farmId], references: [id])
+  farm   Farm   @relation(fields: [farmId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-=======
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
+
+//model ProductVariant mbola tsisy
+model ProductVariant {
+  id   String @id @default(uuid())
+  name String //anaran'ilay varieté anle produit, ex: gros model cassé, petit model normal, haricot rouge
 }
->>>>>>> feature/database
+
+//model stockTransfer
+//model StockTransferItem
