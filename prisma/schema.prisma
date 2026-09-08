@@ -112,7 +112,8 @@ model StockItem {
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 }
-
+// Tu as ajouté TRANFERTS dans les types de mouvement, mais rien ne permet de savoir que deux mouvements
+ (un OUT, un IN) font partie du même transfert. Comment tu veux qu'on les relie ?
 model StockMovement {
   id              String        @id @default(uuid())
   type            MouvementType
