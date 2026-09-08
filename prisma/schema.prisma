@@ -12,7 +12,7 @@ enum Role {
   OUVRIER
   //mise a jours users
   MAGASINIER
-  AGENT_STORE
+  CONTROLEUR_INTERNE
 }
 
 model Farm {
@@ -337,6 +337,7 @@ model paddyProcess{
 model ProductVariant{
   id String @id @default(uuid())
   name String //anaran'ilay varieté anle produit, ex: gros model cassé, petit model normal, haricot rouge
+  
   
 }
 //model stockTransfer
