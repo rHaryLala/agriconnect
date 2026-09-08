@@ -16,4 +16,8 @@ export class CreateStockMovementDto {
     @IsString()
     reason?: string;
 
+    @IsOptional()
+    @IsNumber()
+    @Min(0)
+    repeseeQuantity?: number;
 }
