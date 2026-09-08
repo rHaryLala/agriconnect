@@ -1,4 +1,4 @@
-export type ClientType = "cafeteria" | "store" | "magasinier" | "personnel" | "externe"
+export type ClientType = "cafeteria" | "store" | "personnel" | "externe"
 
 export interface Client {
   id: string

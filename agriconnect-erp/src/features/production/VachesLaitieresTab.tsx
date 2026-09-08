@@ -17,7 +17,7 @@ function totalJour(entry: VacheEntry): number {
   return entry.traites.reduce((sum, t) => sum + t.matin + t.soir, 0)
 }
 
-export function VachesLaitieresTab() {
+export function VachesLaitieresTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
   const { vaches: entries, isLoading, fetchAll, addVache, updateVache, deleteVache } = useProductionStore()
   const { vaches: vachesProfiles, addVache: addVacheProfile, updateVache: updateVacheProfile, removeVache: removeVacheProfile } = useVachesStore()
@@ -67,19 +67,21 @@ export function VachesLaitieresTab() {
     { key: "total", label: t("production.vaches.colTotal"), render: (e) => formatNumber(totalJour(e)) },
     { key: "alimentation", label: t("production.vaches.colFeed"), render: (e) => `${formatNumber(e.alimentationKg)} kg` },
     { key: "sanitaire", label: t("production.vaches.colObservation"), render: (e) => <span className="text-muted-foreground">{e.suiviSanitaire}</span> },
-    {
-      key: "actions", label: "", className: "text-right", sticky: true,
-      render: (e) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => { deleteVache(e.id); toast.success(t("production.vaches.toastDeleted")) }} aria-label={t("common.delete")}>
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-        </div>
-      ),
-    },
+    ...(canEdit
+      ? [{
+          key: "actions", label: "", className: "text-right", sticky: true,
+          render: (e: VacheEntry) => (
+            <div className="flex justify-end gap-1">
+              <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => { deleteVache(e.id); toast.success(t("production.vaches.toastDeleted")) }} aria-label={t("common.delete")}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          ),
+        } as DataTableColumn<VacheEntry>]
+      : []),
   ]
 
   return (
@@ -115,6 +117,18 @@ export function VachesLaitieresTab() {
         onUpdate={(id, v) => updateVacheProfile(id, v.nom as string)}
         onDelete={removeVacheProfile}
       />
+      {canEdit && (
+        <div className="mb-3 flex justify-end gap-2">
+          <Button variant="outline" onClick={() => setProfileOpen(true)} className="gap-2">
+            <Settings2 className="h-4 w-4" />
+            {t("production.vaches.manageCowsButton")}
+          </Button>
+          <Button onClick={openCreate} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t("production.common.newEntry")}
+          </Button>
+        </div>
+      )}
     </div>
   )
 }

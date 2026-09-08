@@ -587,7 +587,9 @@
       "validationRole": "Select a role",
       "roleAdmin": "Administrator",
       "roleComptable": "Accountant",
-      "roleOuvrier": "Worker"
+      "roleOuvrier": "Worker",
+      "roleMagasinier": "Storekeeper",
+      "roleControleurInterne": "Internal Controller"
     },
   "language": {
     "sectionTitle": "Interface language",

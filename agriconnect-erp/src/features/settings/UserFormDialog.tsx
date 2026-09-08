@@ -15,7 +15,7 @@ function buildSchema(t: (key: string) => string, isEditing: boolean) {
   return z.object({
     name: z.string().min(2, t("settings.users.validationName")),
     email: z.string().min(1, t("stock.movements.validationArticle")).email(t("settings.users.validationEmail")),
-    role: z.enum(["admin", "comptable", "ouvrier"], { error: t("settings.users.validationRole") }),
+    role: z.enum(["admin", "comptable", "ouvrier", "magasinier", "controleur_interne"], { error: () => t("settings.users.validationRole") }),
     password: isEditing
       ? z.string().optional().or(z.literal(""))
       : z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),

@@ -27,9 +27,10 @@ const PROGRESS_COLOR: Record<StockStatus, string> = { ok: "bg-success", bas: "bg
 
 interface StockInventoryTabProps {
   onGoToAlerts: () => void
+  canEdit: boolean
 }
 
-export function StockInventoryTab({ onGoToAlerts }: StockInventoryTabProps) {
+export function StockInventoryTab({ onGoToAlerts, canEdit }: StockInventoryTabProps) {
   const { t } = useTranslation()
   const { articles, movements, isLoading, addArticle } = useStockStore()
   const [articleOpen, setArticleOpen] = useState(false)
@@ -93,27 +94,31 @@ export function StockInventoryTab({ onGoToAlerts }: StockInventoryTabProps) {
         </button>
       </div>
 
-      <div className="mb-3 flex justify-end">
-        <Button variant="outline" onClick={() => setArticleOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t("stock.inventory.newArticle")}
-        </Button>
-      </div>
+      {canEdit && (
+        <div className="mb-3 flex justify-end">
+          <Button variant="outline" onClick={() => setArticleOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t("stock.inventory.newArticle")}
+          </Button>
+        </div>
+      )}
 
       <DataTable columns={columns} rows={rows} rowKey={(row) => row.article.id} isLoading={isLoading} emptyIcon={Package} emptyTitle={t("stock.inventory.emptyTitle")} />
 
-      <QuickAddDialog
-        open={articleOpen}
-        onOpenChange={setArticleOpen}
-        title={t("stock.inventory.dialogTitle")}
-        schema={articleSchema}
-        fields={articleFields}
-        defaultValues={{ nom: "", unite: "", quantiteInitiale: 0, seuilCritique: 0 }}
-        onSubmit={async (values) => {
-          addArticle(values)
-          toast.success(t("stock.inventory.toastCreated"))
-        }}
-      />
+      {canEdit && (
+        <QuickAddDialog
+          open={articleOpen}
+          onOpenChange={setArticleOpen}
+          title={t("stock.inventory.dialogTitle")}
+          schema={articleSchema}
+          fields={articleFields}
+          defaultValues={{ nom: "", unite: "", quantiteInitiale: 0, seuilCritique: 0 }}
+          onSubmit={async (values) => {
+            addArticle(values)
+            toast.success(t("stock.inventory.toastCreated"))
+          }}
+        />
+      )}
     </div>
   )
 }

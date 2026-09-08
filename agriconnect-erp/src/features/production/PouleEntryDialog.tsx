@@ -7,15 +7,14 @@ import { Loader2 } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { EGG_CATEGORIES, type PouleEntry } from "@/types/production"
-import { totalPoules as computeTotalPoules } from "@/lib/eggCalc"
 import type { CageProfile } from "./cagesStore"
+import type { PouleEntry } from "@/types/production"
 
 function buildSchema(t: (key: string) => string) {
   return z
     .object({
       date: z.string().min(1, t("stock.movements.validationDate")),
-      cages: z.array(z.object({ cageId: z.string(), nom: z.string(), nbPoules: z.number({error: t("stock.inventory.validationNumber") }).min(0) })),
+      cages: z.array(z.object({ cageId: z.string(), nom: z.string(), nbPoules: z.number({ error: t("stock.inventory.validationNumber") }).min(0) })),
       gmNormal: z.number({error: t("stock.inventory.validationNumber") }).min(0),
       gmCasse: z.number({error: t("stock.inventory.validationNumber") }).min(0),
       pmNormal: z.number({error: t("stock.inventory.validationNumber") }).min(0),
@@ -26,10 +25,6 @@ function buildSchema(t: (key: string) => string) {
     })
     .superRefine((data, ctx) => {
       const totalPoulesCount = data.cages.reduce((sum, c) => sum + c.nbPoules, 0)
-      const totalOeufs = data.gmNormal + data.gmCasse + data.pmNormal + data.pmCasse
-      if (totalOeufs > totalPoulesCount) {
-        ctx.addIssue({ code: z.ZodIssueCode.custom, message: t("production.poules.validationEggsExceedHens"), path: ["gmNormal"] })
-      }
       if (data.mortalite > totalPoulesCount) {
         ctx.addIssue({ code: z.ZodIssueCode.custom, message: t("production.poules.validationMortalityExceedHens"), path: ["mortalite"] })
       }

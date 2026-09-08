@@ -14,7 +14,7 @@ import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
 import type { RowTone } from "@/lib/alerts"
 import type { CultureEntry } from "@/types/production"
 
-export function AgricultureTab() {
+export function AgricultureTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
   const { cultures, isLoading, fetchAll, addCulture, updateCulture, deleteCulture } = useProductionStore()
   const cultureTypes = useCultureTypesStore((s) => s.types)
@@ -65,19 +65,21 @@ export function AgricultureTab() {
     { key: "rendement", label: t("production.agriculture.colYield"), render: (e) => (e.surfaceHa > 0 ? `${(e.recolteQty / e.surfaceHa).toFixed(0)} kg/ha` : "—") },
     { key: "cout", label: t("production.agriculture.colCost"), render: (e) => formatCurrency(e.coutIntrants) },
     { key: "intrants", label: t("production.agriculture.colInputs"), render: (e) => <span className="text-muted-foreground">{e.intrants}</span> },
-    {
-      key: "actions", label: "", className: "text-right", sticky: true,
-      render: (e) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => { deleteCulture(e.id); toast.success(t("production.agriculture.toastDeleted")) }} aria-label={t("common.delete")}>
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-        </div>
-      ),
-    },
+    ...(canEdit
+      ? [{
+          key: "actions", label: "", className: "text-right", sticky: true,
+          render: (e: CultureEntry) => (
+            <div className="flex justify-end gap-1">
+              <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => { deleteCulture(e.id); toast.success(t("production.agriculture.toastDeleted")) }} aria-label={t("common.delete")}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          ),
+        } as DataTableColumn<CultureEntry>]
+      : []),
   ]
 
   return (
@@ -88,31 +90,37 @@ export function AgricultureTab() {
         <StatCard icon={Wheat} label={t("production.agriculture.statCost")} value={formatCurrency(coutTotal)} tone="warning" />
       </div>
 
-      <div className="mb-3 flex flex-wrap justify-end gap-2">
-        <Button variant="outline" onClick={() => setManageOpen(true)} className="gap-2">
-          <Settings2 className="h-4 w-4" />
-          {t("production.agriculture.manageCulturesButton")}
-        </Button>
-        <Button onClick={openCreate} className="gap-2">
-          <Wheat className="h-4 w-4" />
-          {t("production.common.newEntryAlt")}
-        </Button>
-      </div>
+      {canEdit && (
+        <div className="mb-3 flex flex-wrap justify-end gap-2">
+          <Button variant="outline" onClick={() => setManageOpen(true)} className="gap-2">
+            <Settings2 className="h-4 w-4" />
+            {t("production.agriculture.manageCulturesButton")}
+          </Button>
+          <Button onClick={openCreate} className="gap-2">
+            <Wheat className="h-4 w-4" />
+            {t("production.common.newEntryAlt")}
+          </Button>
+        </div>
+      )}
 
       <DataTable columns={columns} rows={cultures} rowKey={(e) => e.id} isLoading={isLoading} emptyIcon={Wheat} emptyTitle={t("production.agriculture.emptyTitle")} emptyDescription={t("production.agriculture.emptyDescription")} rowTone={rowTone} />
 
-      <AgricultureEntryDialog open={entryOpen} onOpenChange={setEntryOpen} cultures={cultureTypes} editingEntry={editingEntry} onSubmit={handleSubmit} />
+      {canEdit && (
+        <AgricultureEntryDialog open={entryOpen} onOpenChange={setEntryOpen} cultures={cultureTypes} editingEntry={editingEntry} onSubmit={handleSubmit} />
+      )}
 
-      <TypesManagerDialog
-        open={manageOpen}
-        onOpenChange={setManageOpen}
-        title={t("production.agriculture.manageCulturesTitle")}
-        fields={[{ name: "nom", label: t("production.agriculture.cultureNameLabel"), type: "text" }]}
-        items={cultureTypes}
-        onAdd={(v) => addCultureType(v.nom as string)}
-        onUpdate={(id, v) => updateCultureType(id, v.nom as string)}
-        onDelete={removeCultureType}
-      />
+      {canEdit && (
+        <TypesManagerDialog
+          open={manageOpen}
+          onOpenChange={setManageOpen}
+          title={t("production.agriculture.manageCulturesTitle")}
+          fields={[{ name: "nom", label: t("production.agriculture.cultureNameLabel"), type: "text" }]}
+          items={cultureTypes}
+          onAdd={(v) => addCultureType(v.nom as string)}
+          onUpdate={(id, v) => updateCultureType(id, v.nom as string)}
+          onDelete={removeCultureType}
+        />
+      )}
     </div>
   )
 }

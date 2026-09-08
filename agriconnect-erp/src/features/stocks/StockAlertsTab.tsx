@@ -8,7 +8,11 @@ import { useStockStore } from "./stockStore"
 import { computeCurrentStock, getStockStatus } from "@/lib/stockCalc"
 import { formatNumber } from "@/lib/format"
 
-export function StockAlertsTab() {
+interface StockAlertsTabProps {
+  canEdit: boolean
+}
+
+export function StockAlertsTab({ canEdit }: StockAlertsTabProps) {
   const { t } = useTranslation()
   const { articles, movements } = useStockStore()
 
@@ -51,7 +55,7 @@ export function StockAlertsTab() {
               tone="destructive"
               title={t("stock.alerts.criticalBannerTitle", { name: article.nom })}
               description={t("stock.alerts.bannerDescription", { current: formatNumber(current), threshold: formatNumber(article.seuilCritique), unit: article.unite })}
-              action={{ label: t("stock.alerts.orderButton"), onClick: () => handleOrder(article.nom) }}
+              action={canEdit ? { label: t("stock.alerts.orderButton"), onClick: () => handleOrder(article.nom) } : undefined}
             />
           ))}
           {bas.map(({ article, current }) => (
@@ -60,7 +64,7 @@ export function StockAlertsTab() {
               tone="warning"
               title={t("stock.alerts.lowBannerTitle", { name: article.nom })}
               description={t("stock.alerts.bannerDescription", { current: formatNumber(current), threshold: formatNumber(article.seuilCritique), unit: article.unite })}
-              action={{ label: t("stock.alerts.orderButton"), onClick: () => handleOrder(article.nom) }}
+              action={canEdit ? { label: t("stock.alerts.orderButton"), onClick: () => handleOrder(article.nom) } : undefined}
             />
           ))}
         </div>

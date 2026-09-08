@@ -5,11 +5,13 @@ import { useStockStore } from "./stockStore"
 import { StockInventoryTab } from "./StockInventoryTab"
 import { StockMovementsTab } from "./StockMovementsTab"
 import { StockAlertsTab } from "./StockAlertsTab"
+import { usePermission } from "@/hooks/usePermission"
 
 export default function StocksPage() {
   const { t } = useTranslation()
   const fetchAll = useStockStore((s) => s.fetchAll)
   const [activeTab, setActiveTab] = useState("inventaire")
+  const { canEdit } = usePermission("stock")
 
   useEffect(() => {
     fetchAll()
@@ -29,9 +31,9 @@ export default function StocksPage() {
       <SimpleTabs tabs={TABS} activeId={activeTab} onChange={setActiveTab} />
 
       <div key={activeTab} className="animate-content-in mt-4">
-        {activeTab === "inventaire" && <StockInventoryTab onGoToAlerts={() => setActiveTab("alertes")} />}
-        {activeTab === "mouvements" && <StockMovementsTab />}
-        {activeTab === "alertes" && <StockAlertsTab />}
+        {activeTab === "inventaire" && <StockInventoryTab onGoToAlerts={() => setActiveTab("alertes")} canEdit={canEdit} />}
+        {activeTab === "mouvements" && <StockMovementsTab canEdit={canEdit} />}
+        {activeTab === "alertes" && <StockAlertsTab canEdit={canEdit} />}
       </div>
     </div>
   )

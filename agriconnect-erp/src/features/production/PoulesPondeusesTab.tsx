@@ -15,9 +15,9 @@ import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
 import { totalPoules, totalOeufs, estimateValue } from "@/lib/eggCalc"
 import { hasAlertKeyword, type RowTone } from "@/lib/alerts"
 import { EGG_CATEGORIES, type PouleEntry } from "@/types/production"
-import { EggCircuitSection } from "./EggCircuitSection"
+import { EggSalesSection } from "./EggSalesSection"
 
-export function PoulesPondeusesTab() {
+export function PoulesPondeusesTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
   const { poules: entries, isLoading, fetchAll, addPoule, updatePoule, deletePoule } = useProductionStore()
   const { cages: cagesProfiles, addCage, updateCage, removeCage } = useCagesStore()
@@ -77,19 +77,21 @@ export function PoulesPondeusesTab() {
     { key: "aliments", label: t("production.poules.colFeed"), render: (e) => `${formatNumber(e.alimentsKg)} kg` },
     { key: "mortalite", label: t("production.poules.colMortality"), render: (e) => formatNumber(e.mortalite) },
     { key: "observation", label: t("production.poules.colObservation"), render: (e) => <span className="text-muted-foreground">{e.observation}</span> },
-    {
-      key: "actions", label: "", className: "text-right", sticky: true,
-      render: (e) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => { deletePoule(e.id); toast.success(t("production.poules.toastDeleted")) }} aria-label={t("common.delete")}>
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-        </div>
-      ),
-    },
+    ...(canEdit
+      ? [{
+          key: "actions", label: "", className: "text-right", sticky: true,
+          render: (e: PouleEntry) => (
+            <div className="flex justify-end gap-1">
+              <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => { deletePoule(e.id); toast.success(t("production.poules.toastDeleted")) }} aria-label={t("common.delete")}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          ),
+        } as DataTableColumn<PouleEntry>]
+      : []),
   ]
 
   return (
@@ -102,37 +104,46 @@ export function PoulesPondeusesTab() {
         <StatCard icon={Egg} label={t("production.poules.statMortality")} value={formatNumber(mortaliteCumulee)} tone="destructive" />
       </div>
 
-      <div className="mb-3 flex flex-wrap justify-end gap-2">
-        <Button variant="outline" onClick={() => setPricesOpen(true)} className="gap-2">
-          <Settings2 className="h-4 w-4" />
-          {t("production.poules.managePricesButton")}
-        </Button>
-        <Button variant="outline" onClick={() => setCageOpen(true)} className="gap-2">
-          <Settings2 className="h-4 w-4" />
-          {t("production.poules.manageCagesButton")}
-        </Button>
-        <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t("production.common.newEntry")}
-        </Button>
-      </div>
+      {canEdit && (
+        <div className="mb-3 flex flex-wrap justify-end gap-2">
+          <Button variant="outline" onClick={() => setPricesOpen(true)} className="gap-2">
+            <Settings2 className="h-4 w-4" />
+            {t("production.poules.managePricesButton")}
+          </Button>
+          <Button variant="outline" onClick={() => setCageOpen(true)} className="gap-2">
+            <Settings2 className="h-4 w-4" />
+            {t("production.poules.manageCagesButton")}
+          </Button>
+          <Button onClick={openCreate} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t("production.common.newEntry")}
+          </Button>
+        </div>
+      )}
 
       <DataTable columns={columns} rows={entries} rowKey={(e) => e.id} isLoading={isLoading} emptyIcon={Egg} emptyTitle={t("production.poules.emptyTitle")} emptyDescription={t("production.poules.emptyDescription")} rowTone={rowTone} />
 
-      <PouleEntryDialog open={entryOpen} onOpenChange={setEntryOpen} cages={cagesProfiles} editingEntry={editingEntry} onSubmit={handleSubmit} />
+      {canEdit && (
+        <PouleEntryDialog open={entryOpen} onOpenChange={setEntryOpen} cages={cagesProfiles} editingEntry={editingEntry} onSubmit={handleSubmit} />
+      )}
 
-      <TypesManagerDialog
-        open={cageOpen} onOpenChange={setCageOpen}
-        title={t("production.poules.manageCagesTitle")}
-        fields={[{ name: "nom", label: t("production.poules.cageNameLabel"), type: "text" }, { name: "capaciteMax", label: t("production.poules.cageCapacityLabel"), type: "number" }]}
-        items={cagesProfiles}
-        onAdd={(v) => addCage(v.nom as string, v.capaciteMax as number)}
-        onUpdate={(id, v) => updateCage(id, { nom: v.nom as string, capaciteMax: v.capaciteMax as number })}
-        onDelete={removeCage}
-      />
+      {canEdit && (
+        <TypesManagerDialog
+          open={cageOpen} onOpenChange={setCageOpen}
+          title={t("production.poules.manageCagesTitle")}
+          fields={[{ name: "nom", label: t("production.poules.cageNameLabel"), type: "text" }, { name: "capaciteMax", label: t("production.poules.cageCapacityLabel"), type: "number" }]}
+          items={cagesProfiles}
+          onAdd={(v) => addCage(v.nom as string, v.capaciteMax as number)}
+          onUpdate={(id, v) => updateCage(id, { nom: v.nom as string, capaciteMax: v.capaciteMax as number })}
+          onDelete={removeCage}
+        />
+      )}
 
-      <EggPricesDialog open={pricesOpen} onOpenChange={setPricesOpen} />
-      <EggCircuitSection pouleEntries={entries} />
+      {canEdit && (
+        <EggPricesDialog open={pricesOpen} onOpenChange={setPricesOpen} />
+      )}
+
+      <EggSalesSection pouleEntries={entries} canEdit={canEdit} />
     </div>
   )
 }

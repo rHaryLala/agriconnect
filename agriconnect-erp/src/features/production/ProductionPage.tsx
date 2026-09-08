@@ -11,6 +11,7 @@ import { PoulesKuroilerTab } from "./PoulesKuroilerTab"
 import { AgricultureTab } from "./AgricultureTab"
 import { CustomTypeTab } from "./CustomTypeTab"
 import { useCustomTypesStore } from "./customTypesStore"
+import { usePermission } from "@/hooks/usePermission"
 
 export default function ProductionPage() {
   const { t } = useTranslation()
@@ -21,6 +22,7 @@ export default function ProductionPage() {
   const [activeTab, setActiveTab] = useState("apercu")
   const [addTypeOpen, setAddTypeOpen] = useState(false)
   const [manageOpen, setManageOpen] = useState(false)
+  const { canEdit } = usePermission("production")
 
   const FIXED_TABS = [
     { id: "apercu", label: t("production.tabs.overview") },
@@ -42,27 +44,29 @@ export default function ProductionPage() {
         activeId={activeTab}
         onChange={setActiveTab}
         trailing={
-          <div className="ml-1 flex items-center gap-1">
-            <button type="button" onClick={() => setAddTypeOpen(true)} className="flex items-center gap-1 rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:text-primary">
-              <Plus className="h-4 w-4" />
-              {t("production.tabs.newType")}
-            </button>
-            {customTypes.length > 0 && (
-              <button type="button" onClick={() => setManageOpen(true)} aria-label={t("production.addTypeDialog.manageCustomTypesTitle")} className="flex items-center gap-1 rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:text-primary">
-                <Settings2 className="h-4 w-4" />
+          canEdit ? (
+            <div className="ml-1 flex items-center gap-1">
+              <button type="button" onClick={() => setAddTypeOpen(true)} className="flex items-center gap-1 rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:text-primary">
+                <Plus className="h-4 w-4" />
+                {t("production.tabs.newType")}
               </button>
-            )}
-          </div>
+              {customTypes.length > 0 && (
+                <button type="button" onClick={() => setManageOpen(true)} aria-label={t("production.addTypeDialog.manageCustomTypesTitle")} className="flex items-center gap-1 rounded-md px-3 py-2.5 text-sm text-muted-foreground transition-colors hover:text-primary">
+                  <Settings2 className="h-4 w-4" />
+                </button>
+              )}
+            </div>
+          ) : undefined
         }
       />
 
       <div key={activeTab} className="animate-content-in mt-4">
         {activeTab === "apercu" && <ProductionOverviewTab onGoToTab={setActiveTab} />}
-        {activeTab === "poules" && <PoulesPondeusesTab />}
-        {activeTab === "vaches" && <VachesLaitieresTab />}
-        {activeTab === "kuroiler" && <PoulesKuroilerTab />}
-        {activeTab === "agriculture" && <AgricultureTab />}
-        {activeCustomType && <CustomTypeTab type={activeCustomType} />}
+        {activeTab === "poules" && <PoulesPondeusesTab canEdit={canEdit} />}
+        {activeTab === "vaches" && <VachesLaitieresTab canEdit={canEdit} />}
+        {activeTab === "kuroiler" && <PoulesKuroilerTab canEdit={canEdit} />}
+        {activeTab === "agriculture" && <AgricultureTab canEdit={canEdit} />}
+        {activeCustomType && <CustomTypeTab type={activeCustomType} canEdit={canEdit} />}
       </div>
 
       <AddTypeDialog

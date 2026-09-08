@@ -546,7 +546,7 @@
     "groups": { 
       "account": "Compte", 
       "administration": "Administration", 
-      "data": "Données" 
+      "data": "Données"
     },
     "tabs": {
       "profile": "Profil",
@@ -587,7 +587,9 @@
       "validationRole": "Sélectionne un rôle",
       "roleAdmin": "Administrateur",
       "roleComptable": "Comptable",
-      "roleOuvrier": "Ouvrier"
+      "roleOuvrier": "Ouvrier",
+      "roleMagasinier": "Magasinier",
+      "roleControleurInterne": "Contrôleur Interne"
     },
     "language": {
     "sectionTitle": "Langue de l'interface",

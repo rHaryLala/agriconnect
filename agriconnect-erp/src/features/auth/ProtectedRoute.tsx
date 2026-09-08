@@ -1,24 +1,19 @@
 import { Navigate, Outlet } from "react-router"
 import { useAuthStore } from "./authStore"
 import { AuthSkeleton } from "@/components/shared/AuthSkeleton"
-import type { UserRole } from "@/types/user"
+import { getPermissionLevel, type ModuleKey } from "@/lib/permissions"
 
 interface ProtectedRouteProps {
-  allowedRoles?: UserRole[]
+  module?: ModuleKey
 }
 
-export function ProtectedRoute({ allowedRoles }: ProtectedRouteProps) {
+export function ProtectedRoute({ module }: ProtectedRouteProps) {
   const { isAuthenticated, user, hasHydrated } = useAuthStore()
 
-  if (!hasHydrated) {
-    return <AuthSkeleton />
-  }
+  if (!hasHydrated) return <AuthSkeleton />
+  if (!isAuthenticated || !user) return <Navigate to="/login" replace />
 
-  if (!isAuthenticated || !user) {
-    return <Navigate to="/login" replace />
-  }
-
-  if (allowedRoles && !allowedRoles.includes(user.role)) {
+  if (module && getPermissionLevel(user.role, module) === "none") {
     return <Navigate to="/app/dashboard" replace />
   }
 

@@ -8,6 +8,7 @@ import { MiniAreaChart } from "@/components/shared/MiniAreaChart"
 import { useProductionStore } from "./productionStore"
 import { formatDate, formatNumber } from "@/lib/format"
 import { hasAlertKeyword } from "@/lib/alerts"
+import { totalOeufs } from "@/lib/eggCalc"
 
 function totalPoules(cages: { nbPoules: number }[]): number {
   return cages.reduce((sum, c) => sum + c.nbPoules, 0)
@@ -42,7 +43,10 @@ export function ProductionOverviewTab({ onGoToTab }: ProductionOverviewTabProps)
     vaches.forEach((v) => dates.add(v.date))
     return Array.from(dates)
       .sort()
-      .map((date) => ({ label: formatDate(date), value: poules.find((x) => x.date === date)?.oeufsProduits ?? 0 }))
+      .map((date) => {
+        const entry = poules.find((x) => x.date === date)
+        return { label: formatDate(date), value: entry ? totalOeufs(entry.production) : 0 }
+      })
   }, [poules, vaches])
 
   const MOCK_EVENTS = [
@@ -61,11 +65,41 @@ export function ProductionOverviewTab({ onGoToTab }: ProductionOverviewTabProps)
   return (
     <div>
       <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3 lg:grid-cols-5">
-        <StatCard icon={Egg} label={t("production.overview.statEggs")} value={latestPoule ? formatNumber(latestPoule.oeufsProduits) : "—"} tone="warning" hint={t("production.overview.statEggsHint")} />
-        <StatCard icon={Milk} label={t("production.overview.statMilk")} value={latestVache ? `${formatNumber(totalTraite(latestVache.traites))} L` : "—"} tone="info" hint={t("production.overview.statMilkHint")} />
-        <StatCard icon={Bird} label={t("production.overview.statKuroiler")} value={latestKuroiler ? formatNumber(latestKuroiler.poussinsVendus) : "—"} tone="primary" hint={t("production.overview.statKuroilerHint")} />
-        <StatCard icon={Wheat} label={t("production.overview.statSurface")} value={`${formatNumber(surfaceTotale)} ha`} tone="success" hint={t("production.overview.statSurfaceHint", { count: cultures.length })} />
-        <StatCard icon={Egg} label={t("production.overview.statHens")} value={latestPoule ? formatNumber(totalPoules(latestPoule.cages)) : "—"} tone="warning" hint={t("production.overview.statHensHint")} />
+        <StatCard 
+          icon={Egg} 
+          label={t("production.overview.statEggs")} 
+          value={latestPoule ? formatNumber(totalOeufs(latestPoule.production)) : "—"} 
+          tone="warning" 
+          hint={t("production.overview.statEggsHint")} 
+        />
+        <StatCard 
+          icon={Milk} 
+          label={t("production.overview.statMilk")} 
+          value={latestVache ? `${formatNumber(totalTraite(latestVache.traites))} L` : "—"} 
+          tone="info" 
+          hint={t("production.overview.statMilkHint")} 
+        />
+        <StatCard 
+          icon={Bird} 
+          label={t("production.overview.statKuroiler")} 
+          value={latestKuroiler ? formatNumber(latestKuroiler.poussinsVendus) : "—"} 
+          tone="primary" 
+          hint={t("production.overview.statKuroilerHint")} 
+        />
+        <StatCard 
+          icon={Wheat} 
+          label={t("production.overview.statSurface")} 
+          value={`${formatNumber(surfaceTotale)} ha`} 
+          tone="success" 
+          hint={t("production.overview.statSurfaceHint", { count: cultures.length })} 
+        />
+        <StatCard 
+          icon={Egg} 
+          label={t("production.overview.statHens")} 
+          value={latestPoule ? formatNumber(totalPoules(latestPoule.cages)) : "—"} 
+          tone="warning" 
+          hint={t("production.overview.statHensHint")} 
+        />
       </div>
 
       {alerts.length > 0 && (

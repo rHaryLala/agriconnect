@@ -584,7 +584,9 @@
       "validationRole": "Misafidiana anjara asa",
       "roleAdmin": "Mpitantana",
       "roleComptable": "Mpitantana vola",
-      "roleOuvrier": "Mpiasa"
+      "roleOuvrier": "Mpiasa",
+      "roleMagasinier": "Magasinier",
+      "roleControleurInterne": "Mpanara-maso anaty"
     },
     "language": {
     "sectionTitle": "Ny fiteny asehon'ny rindrankaja",

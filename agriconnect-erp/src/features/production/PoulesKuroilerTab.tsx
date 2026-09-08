@@ -15,7 +15,7 @@ import { formatDate, formatNumber } from "@/lib/format"
 import { hasAlertKeyword, type RowTone } from "@/lib/alerts"
 import type { KuroilerEntry } from "@/types/production"
 
-export function PoulesKuroilerTab() {
+export function PoulesKuroilerTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
   const { kuroiler, isLoading, fetchAll, addKuroiler, updateKuroiler, deleteKuroiler } = useProductionStore()
   const { etapes, addEtape, updateEtape, removeEtape } = useCycleEtapesStore()
@@ -86,19 +86,21 @@ export function PoulesKuroilerTab() {
     { key: "oeufs", label: t("production.kuroiler.colEggs"), render: (e) => formatNumber(e.oeufsProduits) },
     { key: "etape", label: t("production.kuroiler.colStage"), render: (e) => <StatusBadge label={e.etapeCycle} tone="info" /> },
     { key: "observation", label: t("production.vaches.colObservation"), render: (e) => <span className="text-muted-foreground">{e.observation}</span> },
-    {
-      key: "actions", label: "", className: "text-right", sticky: true,
-      render: (e) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => { deleteKuroiler(e.id); toast.success(t("production.kuroiler.toastDeleted")) }} aria-label={t("common.delete")}>
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-        </div>
-      ),
-    },
+    ...(canEdit
+      ? [{
+          key: "actions", label: "", className: "text-right", sticky: true,
+          render: (e: KuroilerEntry) => (
+            <div className="flex justify-end gap-1">
+              <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => { deleteKuroiler(e.id); toast.success(t("production.kuroiler.toastDeleted")) }} aria-label={t("common.delete")}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          ),
+        } as DataTableColumn<KuroilerEntry>]
+      : []),
   ]
 
   return (
@@ -108,39 +110,45 @@ export function PoulesKuroilerTab() {
         <StatCard icon={Bird} label={t("production.kuroiler.statChicks")} value={formatNumber(poussinsCumules)} tone="success" />
       </div>
 
-      <div className="mb-3 flex flex-wrap justify-end gap-2">
-        <Button variant="outline" onClick={() => setManageOpen(true)} className="gap-2">
-          <Settings2 className="h-4 w-4" />
-          {t("production.common.manageStagesButton")}
-        </Button>
-        <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t("production.common.newEntry")}
-        </Button>
-      </div>
+      {canEdit && (
+        <div className="mb-3 flex flex-wrap justify-end gap-2">
+          <Button variant="outline" onClick={() => setManageOpen(true)} className="gap-2">
+            <Settings2 className="h-4 w-4" />
+            {t("production.common.manageStagesButton")}
+          </Button>
+          <Button onClick={openCreate} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t("production.common.newEntry")}
+          </Button>
+        </div>
+      )}
 
       <DataTable columns={columns} rows={kuroiler} rowKey={(e) => e.id} isLoading={isLoading} emptyIcon={Bird} emptyTitle={t("production.kuroiler.emptyTitle")} emptyDescription={t("production.kuroiler.emptyDescription")} rowTone={rowTone} />
 
-      <QuickAddDialog
-        open={open}
-        onOpenChange={setOpen}
-        title={editingEntry ? t("production.kuroiler.dialogTitleEdit") : t("production.kuroiler.dialogTitleNew")}
-        schema={schema}
-        fields={fields}
-        defaultValues={editingEntry ?? { date: new Date().toISOString().slice(0, 10), kgViande: 0, poussinsVendus: 0, oeufsProduits: 0, etapeCycle: etapes[0]?.nom ?? "", observation: "" }}
-        onSubmit={handleSubmit}
-      />
+      {canEdit && (
+        <QuickAddDialog
+          open={open}
+          onOpenChange={setOpen}
+          title={editingEntry ? t("production.kuroiler.dialogTitleEdit") : t("production.kuroiler.dialogTitleNew")}
+          schema={schema}
+          fields={fields}
+          defaultValues={editingEntry ?? { date: new Date().toISOString().slice(0, 10), kgViande: 0, poussinsVendus: 0, oeufsProduits: 0, etapeCycle: etapes[0]?.nom ?? "", observation: "" }}
+          onSubmit={handleSubmit}
+        />
+      )}
 
-      <TypesManagerDialog
-        open={manageOpen}
-        onOpenChange={setManageOpen}
-        title={t("production.common.manageStagesTitle")}
-        fields={[{ name: "nom", label: t("production.common.stageNameLabel"), type: "text" }]}
-        items={etapes}
-        onAdd={(v) => addEtape(v.nom as string)}
-        onUpdate={(id, v) => updateEtape(id, v.nom as string)}
-        onDelete={removeEtape}
-      />
+      {canEdit && (
+        <TypesManagerDialog
+          open={manageOpen}
+          onOpenChange={setManageOpen}
+          title={t("production.common.manageStagesTitle")}
+          fields={[{ name: "nom", label: t("production.common.stageNameLabel"), type: "text" }]}
+          items={etapes}
+          onAdd={(v) => addEtape(v.nom as string)}
+          onUpdate={(id, v) => updateEtape(id, v.nom as string)}
+          onDelete={removeEtape}
+        />
+      )}
     </div>
   )
 }

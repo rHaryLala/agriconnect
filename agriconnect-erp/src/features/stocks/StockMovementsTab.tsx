@@ -16,7 +16,11 @@ function isWithinLastDays(dateStr: string, days: number): boolean {
   return diff <= days
 }
 
-export function StockMovementsTab() {
+interface StockMovementsTabProps {
+  canEdit: boolean
+}
+
+export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
   const { t } = useTranslation()
   const { articles, movements, isLoading, addMovement, updateMovement, deleteMovement } = useStockStore()
   const [movementOpen, setMovementOpen] = useState(false)
@@ -101,22 +105,24 @@ export function StockMovementsTab() {
         return balance !== undefined && article ? `${formatNumber(balance)} ${article.unite}` : "—"
       },
     },
-    {
-      key: "actions",
-      label: "",
-      className: "text-right",
-      sticky: true,
-      render: (m) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => openEdit(m)} aria-label={t("common.edit")}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => { deleteMovement(m.id); toast.success(t("stock.movements.toastDeleted")) }} aria-label={t("common.delete")}>
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-        </div>
-      ),
-    },
+    ...(canEdit
+      ? [{
+          key: "actions",
+          label: "",
+          className: "text-right",
+          sticky: true,
+          render: (m: StockMovement) => (
+            <div className="flex justify-end gap-1">
+              <Button variant="ghost" size="icon" onClick={() => openEdit(m)} aria-label={t("common.edit")}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => { deleteMovement(m.id); toast.success(t("stock.movements.toastDeleted")) }} aria-label={t("common.delete")}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          ),
+        } as DataTableColumn<StockMovement>]
+      : []),
   ]
 
   return (
@@ -138,15 +144,19 @@ export function StockMovementsTab() {
             </button>
           )}
         </div>
-        <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t("stock.movements.newMovement")}
-        </Button>
+        {canEdit && (
+          <Button onClick={openCreate} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t("stock.movements.newMovement")}
+          </Button>
+        )}
       </div>
 
       <DataTable columns={columns} rows={filtered} rowKey={(m) => m.id} isLoading={isLoading} emptyIcon={ArrowDownCircle} emptyTitle={t("stock.movements.emptyTitle")} rowTone={rowTone} />
 
-      <StockMovementDialog open={movementOpen} onOpenChange={setMovementOpen} articles={articles} editingEntry={editingMovement} onSubmit={handleSubmit} />
+      {canEdit && (
+        <StockMovementDialog open={movementOpen} onOpenChange={setMovementOpen} articles={articles} editingEntry={editingMovement} onSubmit={handleSubmit} />
+      )}
     </div>
   )
 }

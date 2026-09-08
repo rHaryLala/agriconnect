@@ -13,9 +13,10 @@ import { toast } from "sonner"
 
 interface CustomTypeTabProps {
   type: CustomProductionType
+  canEdit: boolean
 }
 
-export function CustomTypeTab({ type }: CustomTypeTabProps) {
+export function CustomTypeTab({ type, canEdit }: CustomTypeTabProps) {
   const { t } = useTranslation()
   const { addEntry, deleteEntry } = useCustomTypesStore()
   const [open, setOpen] = useState(false)
@@ -78,22 +79,24 @@ export function CustomTypeTab({ type }: CustomTypeTabProps) {
         </span>
       ) 
     },
-    {
-      key: "actions", 
-      label: "", 
-      className: "text-right", 
-      sticky: true,
-      render: (e) => (
-        <Button 
-          variant="ghost" 
-          size="icon" 
-          onClick={() => deleteEntry(type.id, e.id)} 
-          aria-label={t("common.delete")}
-        >
-          <Trash2 className="h-4 w-4 text-destructive" />
-        </Button>
-      ),
-    },
+    ...(canEdit
+      ? [{
+          key: "actions", 
+          label: "", 
+          className: "text-right", 
+          sticky: true,
+          render: (e: CustomTypeEntry) => (
+            <Button 
+              variant="ghost" 
+              size="icon" 
+              onClick={() => deleteEntry(type.id, e.id)} 
+              aria-label={t("common.delete")}
+            >
+              <Trash2 className="h-4 w-4 text-destructive" />
+            </Button>
+          ),
+        } as DataTableColumn<CustomTypeEntry>]
+      : []),
   ]
 
   return (
@@ -107,12 +110,14 @@ export function CustomTypeTab({ type }: CustomTypeTabProps) {
         />
       </div>
 
-      <div className="mb-3 flex justify-end">
-        <Button onClick={() => setOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t("production.common.newEntry")}
-        </Button>
-      </div>
+      {canEdit && (
+        <div className="mb-3 flex justify-end">
+          <Button onClick={() => setOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t("production.common.newEntry")}
+          </Button>
+        </div>
+      )}
 
       <DataTable 
         columns={columns} 
@@ -123,23 +128,25 @@ export function CustomTypeTab({ type }: CustomTypeTabProps) {
         emptyDescription={t("production.customType.emptyDescription")} 
       />
 
-      <QuickAddDialog
-        open={open}
-        onOpenChange={setOpen}
-        title={t("production.customType.dialogTitle", { label: type.label })}
-        schema={schema}
-        fields={fields}
-        defaultValues={{ 
-          date: new Date().toISOString().slice(0, 10), 
-          quantite: 0, 
-          unite: "", 
-          notes: "" 
-        }}
-        onSubmit={async (values) => {
-          await addEntry(type.id, values)
-          toast.success(t("production.customType.toastCreated"))
-        }}
-      />
+      {canEdit && (
+        <QuickAddDialog
+          open={open}
+          onOpenChange={setOpen}
+          title={t("production.customType.dialogTitle", { label: type.label })}
+          schema={schema}
+          fields={fields}
+          defaultValues={{ 
+            date: new Date().toISOString().slice(0, 10), 
+            quantite: 0, 
+            unite: "", 
+            notes: "" 
+          }}
+          onSubmit={async (values) => {
+            await addEntry(type.id, values)
+            toast.success(t("production.customType.toastCreated"))
+          }}
+        />
+      )}
     </div>
   )
 }

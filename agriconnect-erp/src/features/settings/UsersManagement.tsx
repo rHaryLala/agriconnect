@@ -34,11 +34,12 @@ export function UsersManagement() {
   }
 
   async function handleSubmit(values: UserFormValues) {
+    const { name, email, role } = values
     if (editingUser) {
-      await updateUser(editingUser.id, values)
+      await updateUser(editingUser.id, { name, email, role })
       toast.success(t("settings.users.toastModified"))
     } else {
-      await addUser(values)
+      await addUser({ name, email, role })
       toast.success(t("settings.users.toastAdded"))
     }
   }

@@ -1,4 +1,5 @@
 import { EGG_CATEGORIES, type EggCategory, type PouleEntry } from "@/types/production"
+import type { EggSale } from "@/types/eggSale"
 
 export function totalOeufs(production: Record<EggCategory, number>): number {
   return EGG_CATEGORIES.reduce((sum, cat) => sum + (production[cat] ?? 0), 0)
@@ -22,4 +23,11 @@ export function emptyProduction(): Record<EggCategory, number> {
 
 export function estimateValue(production: Record<EggCategory, number>, prices: Record<EggCategory, number>): number {
   return EGG_CATEGORIES.reduce((sum, cat) => sum + (production[cat] ?? 0) * (prices[cat] ?? 0), 0)
+}
+
+export function computeFermeStock(pouleEntries: PouleEntry[], sales: EggSale[]): Record<EggCategory, number> {
+  const stock = emptyProduction()
+  for (const entry of pouleEntries) for (const cat of EGG_CATEGORIES) stock[cat] += entry.production[cat]
+  for (const sale of sales) for (const cat of EGG_CATEGORIES) stock[cat] -= sale.quantities[cat]
+  return stock
 }
