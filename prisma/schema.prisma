@@ -136,6 +136,10 @@ model StockMovement {
   originalMovmentId  String?
   originalMovment    StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
   corrections        StockMovement[] @relation("MovmentCorrection")
+  //mise a jour
+
+  transfertId   String
+  transfert   StockTransfer   @relation(fields: [transfertId], references: [id])  
 
   createdAt          DateTime       @default(now())
 }
@@ -385,6 +389,9 @@ model StockTransfer {
 
   items   StockTransferItem[]
 
+  //mise a jour
+  movements      StockMovement[] // Un transfert contient ses 2 mouvements (IN et OUT)
+
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt   
 }
@@ -393,6 +400,7 @@ model StockTransfer {
 model StockTransferItem{
   id    String    @id @default(uuid())
   quantity    Float
+  type    MouvementType
 
   transfertId   String
   transfert   StockTransfer   @relation(fields: [transfertId], references: [id], onDelete: Cascade)
