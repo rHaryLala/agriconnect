@@ -16,7 +16,7 @@ import { computeInvoiceTotal, computeInvoiceDue, computeInvoiceStatus } from "@/
 import { formatDate, formatCurrency } from "@/lib/format"
 import type { Invoice } from "@/types/invoice"
 
-export function InvoicesTab() {
+export function InvoicesTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
   const { invoices, isLoading, fetchAll, addInvoice, recordPayment, deleteInvoice } = useInvoicesStore()
   const clients = useClientsStore((s) => s.clients)
@@ -66,25 +66,27 @@ export function InvoicesTab() {
         return <StatusBadge label={t(INVOICE_STATUS_LABEL_KEYS[status])} tone={INVOICE_STATUS_TONES[status]} />
       },
     },
-    {
-      key: "actions", label: "", className: "text-right", sticky: true,
-      render: (inv) => {
-        const status = computeInvoiceStatus(inv)
-        const canPay = status === "impayee" || status === "partielle"
-        return (
-          <div className="flex justify-end gap-1">
-            {canPay && (
-              <Button variant="ghost" size="icon" onClick={() => setPayingInvoice(inv)} aria-label={t("clients.invoices.recordPayment")} title={t("clients.invoices.recordPayment")}>
-                <CreditCard className="h-4 w-4" />
-              </Button>
-            )}
-            <Button variant="ghost" size="icon" onClick={() => { deleteInvoice(inv.id); toast.success(t("clients.invoices.toastDeleted")) }} aria-label={t("common.delete")}>
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
-          </div>
-        )
-      },
-    },
+    ...(canEdit
+      ? [{
+          key: "actions", label: "", className: "text-right", sticky: true,
+          render: (inv: Invoice) => {
+            const status = computeInvoiceStatus(inv)
+            const canPay = status === "impayee" || status === "partielle"
+            return (
+              <div className="flex justify-end gap-1">
+                {canPay && (
+                  <Button variant="ghost" size="icon" onClick={() => setPayingInvoice(inv)} aria-label={t("clients.invoices.recordPayment")} title={t("clients.invoices.recordPayment")}>
+                    <CreditCard className="h-4 w-4" />
+                  </Button>
+                )}
+                <Button variant="ghost" size="icon" onClick={() => { deleteInvoice(inv.id); toast.success(t("clients.invoices.toastDeleted")) }} aria-label={t("common.delete")}>
+                  <Trash2 className="h-4 w-4 text-destructive" />
+                </Button>
+              </div>
+            )
+          },
+        } as DataTableColumn<Invoice>]
+      : []),
   ]
 
   return (
@@ -95,17 +97,23 @@ export function InvoicesTab() {
         <StatCard icon={TrendingDown} label={t("clients.invoices.statDue")} value={formatCurrency(totalDue)} tone={totalDue > 0 ? "warning" : "success"} />
       </div>
 
-      <div className="mb-3 flex justify-end">
-        <Button onClick={() => setFormOpen(true)} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t("clients.invoices.newInvoice")}
-        </Button>
-      </div>
+      {canEdit && (
+        <div className="mb-3 flex justify-end">
+          <Button onClick={() => setFormOpen(true)} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t("clients.invoices.newInvoice")}
+          </Button>
+        </div>
+      )}
 
       <DataTable columns={columns} rows={invoices} rowKey={(inv) => inv.id} isLoading={isLoading} emptyIcon={Receipt} emptyTitle={t("clients.invoices.emptyTitle")} emptyDescription={t("clients.invoices.emptyDescription")} />
 
-      <InvoiceFormDialog open={formOpen} onOpenChange={setFormOpen} clients={clients} articles={articles} onSubmit={handleAdd} />
-      <RecordPaymentDialog open={!!payingInvoice} onOpenChange={(open) => !open && setPayingInvoice(null)} invoice={payingInvoice} onSubmit={handlePayment} />
+      {canEdit && (
+        <>
+          <InvoiceFormDialog open={formOpen} onOpenChange={setFormOpen} clients={clients} articles={articles} onSubmit={handleAdd} />
+          <RecordPaymentDialog open={!!payingInvoice} onOpenChange={(open) => !open && setPayingInvoice(null)} invoice={payingInvoice} onSubmit={handlePayment} />
+        </>
+      )}
     </div>
   )
 }

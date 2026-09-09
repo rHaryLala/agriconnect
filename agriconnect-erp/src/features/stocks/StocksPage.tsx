@@ -6,6 +6,7 @@ import { StockInventoryTab } from "./StockInventoryTab"
 import { StockMovementsTab } from "./StockMovementsTab"
 import { StockAlertsTab } from "./StockAlertsTab"
 import { usePermission } from "@/hooks/usePermission"
+import { ReadOnlyBanner } from "@/components/shared/ReadOnlyBanner";
 
 export default function StocksPage() {
   const { t } = useTranslation()
@@ -28,6 +29,7 @@ export default function StocksPage() {
       <h2 className="mb-1 text-2xl font-bold">{t("stock.pageTitle")}</h2>
       <p className="mb-6 text-sm text-muted-foreground">{t("stock.pageSubtitle")}</p>
 
+      {!canEdit && <ReadOnlyBanner />}
       <SimpleTabs tabs={TABS} activeId={activeTab} onChange={setActiveTab} />
 
       <div key={activeTab} className="animate-content-in mt-4">

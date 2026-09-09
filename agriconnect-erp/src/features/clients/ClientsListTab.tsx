@@ -11,7 +11,7 @@ import { useClientsStore } from "./clientsStore"
 import { CLIENT_TYPE_LABEL_KEYS, CLIENT_TYPE_TONES } from "./clientLabels"
 import type { Client } from "@/types/client"
 
-export function ClientsListTab() {
+export function ClientsListTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
   const { clients, isLoading, fetchAll, addClient, updateClient, deleteClient } = useClientsStore()
   const [formOpen, setFormOpen] = useState(false)
@@ -53,48 +53,55 @@ export function ClientsListTab() {
     { key: "type", label: t("clients.colType"), render: (c) => <StatusBadge label={t(CLIENT_TYPE_LABEL_KEYS[c.type])} tone={CLIENT_TYPE_TONES[c.type]} /> },
     { key: "telephone", label: t("clients.colPhone"), render: (c) => c.telephone || <span className="text-muted-foreground">—</span> },
     { key: "matricule", label: t("clients.colMatricule"), render: (c) => c.matriculeUaz || <span className="text-muted-foreground">—</span> },
-    {
-      key: "actions", label: "", className: "text-right", sticky: true,
-      render: (c) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => openEdit(c)} aria-label={`${t("common.edit")} ${c.nom}`}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => setDeletingClient(c)} aria-label={`${t("common.delete")} ${c.nom}`}>
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-        </div>
-      ),
-    },
+    ...(canEdit
+      ? [{
+          key: "actions", label: "", className: "text-right", sticky: true,
+          render: (c: Client) => (
+            <div className="flex justify-end gap-1">
+              <Button variant="ghost" size="icon" onClick={() => openEdit(c)} aria-label={`${t("common.edit")} ${c.nom}`}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => setDeletingClient(c)} aria-label={`${t("common.delete")} ${c.nom}`}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          ),
+        } as DataTableColumn<Client>]
+      : []),
   ]
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-end">
-        <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t("clients.newClient")}
-        </Button>
-      </div>
+      {canEdit && (
+        <div className="mb-4 flex items-center justify-end">
+          <Button onClick={openCreate} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t("clients.newClient")}
+          </Button>
+        </div>
+      )}
 
       <DataTable columns={columns} rows={clients} rowKey={(c) => c.id} isLoading={isLoading} emptyIcon={Users} emptyTitle={t("clients.emptyTitle")} emptyDescription={t("clients.emptyDescription")} />
 
-      <ClientFormDialog open={formOpen} onOpenChange={setFormOpen} editingClient={editingClient} onSubmit={handleSubmit} />
-
-      <AlertDialog open={!!deletingClient} onOpenChange={(open) => !open && setDeletingClient(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("clients.deleteConfirmTitle", { name: deletingClient?.nom })}</AlertDialogTitle>
-            <AlertDialogDescription>{t("clients.deleteConfirmDescription")}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {t("common.delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {canEdit && (
+        <>
+          <ClientFormDialog open={formOpen} onOpenChange={setFormOpen} editingClient={editingClient} onSubmit={handleSubmit} />
+          <AlertDialog open={!!deletingClient} onOpenChange={(open) => !open && setDeletingClient(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{t("clients.deleteConfirmTitle", { name: deletingClient?.nom })}</AlertDialogTitle>
+                <AlertDialogDescription>{t("clients.deleteConfirmDescription")}</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+                <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  {t("common.delete")}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      )}
     </div>
   )
 }

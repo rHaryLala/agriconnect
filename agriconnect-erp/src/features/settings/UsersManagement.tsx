@@ -13,7 +13,7 @@ import type { RowTone } from "@/lib/alerts"
 import type { User } from "@/types/user"
 import type { UserFormValues } from "./userFormSchema"
 
-export function UsersManagement() {
+export function UsersManagement({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
   const { users, isLoading, fetchUsers, addUser, updateUser, deleteUser } = useUsersStore()
   const [formOpen, setFormOpen] = useState(false)
@@ -34,12 +34,11 @@ export function UsersManagement() {
   }
 
   async function handleSubmit(values: UserFormValues) {
-    const { name, email, role } = values
     if (editingUser) {
-      await updateUser(editingUser.id, { name, email, role })
+      await updateUser(editingUser.id, values)
       toast.success(t("settings.users.toastModified"))
     } else {
-      await addUser({ name, email, role })
+      await addUser(values)
       toast.success(t("settings.users.toastAdded"))
     }
   }
@@ -67,48 +66,55 @@ export function UsersManagement() {
     },
     { key: "email", label: t("settings.users.colEmail"), render: (u) => <span className="text-muted-foreground">{u.email}</span> },
     { key: "role", label: t("settings.users.colRole"), render: (u) => <StatusBadge label={t(ROLE_LABEL_KEYS[u.role])} tone={ROLE_TONES[u.role]} /> },
-    {
-      key: "actions", label: "", className: "text-right", sticky: true,
-      render: (u) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => openEdit(u)} aria-label={`${t("common.edit")} ${u.name}`}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => setDeletingUser(u)} aria-label={`${t("common.delete")} ${u.name}`}>
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-        </div>
-      ),
-    },
+    ...(canEdit
+      ? [{
+          key: "actions", label: "", className: "text-right", sticky: true,
+          render: (u: User) => (
+            <div className="flex justify-end gap-1">
+              <Button variant="ghost" size="icon" onClick={() => openEdit(u)} aria-label={`${t("common.edit")} ${u.name}`}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => setDeletingUser(u)} aria-label={`${t("common.delete")} ${u.name}`}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          ),
+        } as DataTableColumn<User>]
+      : []),
   ]
 
   return (
     <div>
-      <div className="mb-4 flex items-center justify-end">
-        <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t("settings.users.addButton")}
-        </Button>
-      </div>
+      {canEdit && (
+        <div className="mb-4 flex items-center justify-end">
+          <Button onClick={openCreate} className="gap-2">
+            <Plus className="h-4 w-4" />
+            {t("settings.users.addButton")}
+          </Button>
+        </div>
+      )}
 
       <DataTable columns={columns} rows={users} rowKey={(u) => u.id} isLoading={isLoading} emptyIcon={UsersIcon} emptyTitle={t("settings.users.emptyTitle")} emptyDescription={t("settings.users.emptyDescription")} rowTone={rowTone} />
 
-      <UserFormDialog open={formOpen} onOpenChange={setFormOpen} editingUser={editingUser} onSubmit={handleSubmit} />
-
-      <AlertDialog open={!!deletingUser} onOpenChange={(open) => !open && setDeletingUser(null)}>
-        <AlertDialogContent>
-          <AlertDialogHeader>
-            <AlertDialogTitle>{t("settings.users.deleteConfirmTitle", { name: deletingUser?.name })}</AlertDialogTitle>
-            <AlertDialogDescription>{t("settings.users.deleteConfirmDescription")}</AlertDialogDescription>
-          </AlertDialogHeader>
-          <AlertDialogFooter>
-            <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-            <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
-              {t("common.delete")}
-            </AlertDialogAction>
-          </AlertDialogFooter>
-        </AlertDialogContent>
-      </AlertDialog>
+      {canEdit && (
+        <>
+          <UserFormDialog open={formOpen} onOpenChange={setFormOpen} editingUser={editingUser} onSubmit={handleSubmit} />
+          <AlertDialog open={!!deletingUser} onOpenChange={(open) => !open && setDeletingUser(null)}>
+            <AlertDialogContent>
+              <AlertDialogHeader>
+                <AlertDialogTitle>{t("settings.users.deleteConfirmTitle", { name: deletingUser?.name })}</AlertDialogTitle>
+                <AlertDialogDescription>{t("settings.users.deleteConfirmDescription")}</AlertDialogDescription>
+              </AlertDialogHeader>
+              <AlertDialogFooter>
+                <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
+                <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                  {t("common.delete")}
+                </AlertDialogAction>
+              </AlertDialogFooter>
+            </AlertDialogContent>
+          </AlertDialog>
+        </>
+      )}
     </div>
   )
 }

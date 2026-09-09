@@ -1,5 +1,5 @@
 {
-  "common": { "loading": "Loading...", "save": "Save", "cancel": "Cancel", "search": "Search...", "add": "Add", "edit": "Edit", "delete": "Delete", "close": "Close", "appName" : "AgriConnect" },
+  "common": { "loading": "Loading...", "save": "Save", "cancel": "Cancel", "search": "Search...", "add": "Add", "edit": "Edit", "delete": "Delete", "close": "Close", "appName" : "AgriConnect", "readOnlyBanner": "You're viewing this module in read-only mode." },
   "nav": { "dashboard": "Dashboard", "production": "Production", "stocks": "Stock", "finance": "Finance", "clients": "Clients", "reports": "Reports", "settings": "Settings", "collapse": "Collapse", "expand": "Expand menu", "menu": "Menu", "openMenu": "Open menu", "logout": "Log out", "offline": "Offline mode (coming soon)", "more": "More", "groups": {"principal": "Main", "finances": "Finances","commerce": "Commerce", "analyse": "Analysis"} },
   "language": { "label": "Language", "fr": "French", "en": "English", "mg": "Malagasy" },
   "landing": {

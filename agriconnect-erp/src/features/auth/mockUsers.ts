@@ -25,4 +25,21 @@ export const MOCK_USERS: (User & { password: string })[] = [
     role: "ouvrier",
     avatarInitials: "RV",
   },
+
+  {
+    id: "4",
+    name: "RAKOTONDRAMANANA Fanja",
+    email: "rakotondramanana.f@zurcher.edu.mg",
+    password: "1234qwerty",
+    role: "controleur_interne",
+    avatarInitials: "RF",
+  },
+  {
+    id: "5",
+    name: "LESOA Hideout",
+    email: "lesoa.hideout@zurcher.edu.mg",
+    password: "1234qwerty",
+    role: "magasinier",
+    avatarInitials: "LH",
+  }
 ]

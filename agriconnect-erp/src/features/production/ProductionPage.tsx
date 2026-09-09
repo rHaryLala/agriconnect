@@ -12,6 +12,7 @@ import { AgricultureTab } from "./AgricultureTab"
 import { CustomTypeTab } from "./CustomTypeTab"
 import { useCustomTypesStore } from "./customTypesStore"
 import { usePermission } from "@/hooks/usePermission"
+import { ReadOnlyBanner } from "@/components/shared/ReadOnlyBanner";
 
 export default function ProductionPage() {
   const { t } = useTranslation()
@@ -39,6 +40,7 @@ export default function ProductionPage() {
       <h2 className="mb-1 text-2xl font-bold">{t("production.pageTitle")}</h2>
       <p className="mb-6 text-sm text-muted-foreground">{t("production.pageSubtitle")}</p>
 
+      {!canEdit && <ReadOnlyBanner />}
       <SimpleTabs
         tabs={allTabs}
         activeId={activeTab}

@@ -15,12 +15,13 @@ import type { FinanceTransaction } from "@/types/finance"
 interface FinanceTransactionsTabProps {
   transactions: FinanceTransaction[]
   isLoading: boolean
+  canEdit: boolean
   onAdd: (values: Omit<FinanceTransaction, "id">) => Promise<void>
   onUpdate: (id: string, values: Omit<FinanceTransaction, "id">) => Promise<void>
   onDelete: (id: string) => void
 }
 
-export function FinanceTransactionsTab({ transactions, isLoading, onAdd, onUpdate, onDelete }: FinanceTransactionsTabProps) {
+export function FinanceTransactionsTab({ transactions, isLoading, canEdit, onAdd, onUpdate, onDelete }: FinanceTransactionsTabProps) {
   const { t } = useTranslation()
   const { depense: depenseCategories, recette: recetteCategories, addCategory, updateCategory, removeCategory } = useCategoriesStore()
 
@@ -79,19 +80,21 @@ export function FinanceTransactionsTab({ transactions, isLoading, onAdd, onUpdat
       ),
     },
     { key: "description", label: t("finance.transactions.colDescription"), render: (tx) => <span className="text-muted-foreground">{tx.description}</span> },
-    {
-      key: "actions", label: "", className: "text-right", sticky: true,
-      render: (tx) => (
-        <div className="flex justify-end gap-1">
-          <Button variant="ghost" size="icon" onClick={() => openEdit(tx)} aria-label={t("common.edit")}>
-            <Pencil className="h-4 w-4" />
-          </Button>
-          <Button variant="ghost" size="icon" onClick={() => { onDelete(tx.id); toast.success(t("finance.transactions.toastDeleted")) }} aria-label={t("common.delete")}>
-            <Trash2 className="h-4 w-4 text-destructive" />
-          </Button>
-        </div>
-      ),
-    },
+    ...(canEdit
+      ? [{
+          key: "actions", label: "", className: "text-right", sticky: true,
+          render: (tx: FinanceTransaction) => (
+            <div className="flex justify-end gap-1">
+              <Button variant="ghost" size="icon" onClick={() => openEdit(tx)} aria-label={t("common.edit")}>
+                <Pencil className="h-4 w-4" />
+              </Button>
+              <Button variant="ghost" size="icon" onClick={() => { onDelete(tx.id); toast.success(t("finance.transactions.toastDeleted")) }} aria-label={t("common.delete")}>
+                <Trash2 className="h-4 w-4 text-destructive" />
+              </Button>
+            </div>
+          ),
+        } as DataTableColumn<FinanceTransaction>]
+      : []),
   ]
 
   return (
@@ -119,43 +122,50 @@ export function FinanceTransactionsTab({ transactions, isLoading, onAdd, onUpdat
               </button>
             )}
           </div>
-          <Button variant="outline" onClick={() => setManageDepensesOpen(true)} className="gap-2">
-            <Settings2 className="h-4 w-4" />
-            {t("finance.transactions.manageExpenseCategories")}
-          </Button>
-          <Button variant="outline" onClick={() => setManageRecettesOpen(true)} className="gap-2">
-            <Settings2 className="h-4 w-4" />
-            {t("finance.transactions.manageRevenueCategories")}
-          </Button>
-          <Button onClick={openCreate} className="gap-2">
-            <Plus className="h-4 w-4" />
-            {t("finance.transactions.newTransaction")}
-          </Button>
+          {canEdit && (
+            <>
+              <Button variant="outline" onClick={() => setManageDepensesOpen(true)} className="gap-2">
+                <Settings2 className="h-4 w-4" />
+                {t("finance.transactions.manageExpenseCategories")}
+              </Button>
+              <Button variant="outline" onClick={() => setManageRecettesOpen(true)} className="gap-2">
+                <Settings2 className="h-4 w-4" />
+                {t("finance.transactions.manageRevenueCategories")}
+              </Button>
+              <Button onClick={openCreate} className="gap-2">
+                <Plus className="h-4 w-4" />
+                {t("finance.transactions.newTransaction")}
+              </Button>
+            </>
+          )}
         </div>
       </div>
 
       <DataTable columns={columns} rows={filtered} rowKey={(tx) => tx.id} isLoading={isLoading} emptyIcon={Wallet} emptyTitle={t("finance.transactions.emptyTitle")} emptyDescription={t("finance.transactions.emptyDescription")} rowTone={rowTone} />
 
-      <TransactionDialog open={entryOpen} onOpenChange={setEntryOpen} depenseCategories={depenseCategories} recetteCategories={recetteCategories} editingEntry={editingEntry} onSubmit={handleSubmit} />
-
-      <TypesManagerDialog
-        open={manageDepensesOpen} onOpenChange={setManageDepensesOpen}
-        title={t("finance.transactions.manageExpenseCategoriesTitle")}
-        fields={[{ name: "nom", label: t("finance.transactions.categoryNameLabel"), type: "text" }]}
-        items={depenseCategories}
-        onAdd={(v) => addCategory("depense", v.nom as string)}
-        onUpdate={(id, v) => updateCategory("depense", id, v.nom as string)}
-        onDelete={(id) => removeCategory("depense", id)}
-      />
-      <TypesManagerDialog
-        open={manageRecettesOpen} onOpenChange={setManageRecettesOpen}
-        title={t("finance.transactions.manageRevenueCategoriesTitle")}
-        fields={[{ name: "nom", label: t("finance.transactions.categoryNameLabel"), type: "text" }]}
-        items={recetteCategories}
-        onAdd={(v) => addCategory("recette", v.nom as string)}
-        onUpdate={(id, v) => updateCategory("recette", id, v.nom as string)}
-        onDelete={(id) => removeCategory("recette", id)}
-      />
+      {canEdit && (
+        <>
+          <TransactionDialog open={entryOpen} onOpenChange={setEntryOpen} depenseCategories={depenseCategories} recetteCategories={recetteCategories} editingEntry={editingEntry} onSubmit={handleSubmit} />
+          <TypesManagerDialog
+            open={manageDepensesOpen} onOpenChange={setManageDepensesOpen}
+            title={t("finance.transactions.manageExpenseCategoriesTitle")}
+            fields={[{ name: "nom", label: t("finance.transactions.categoryNameLabel"), type: "text" }]}
+            items={depenseCategories}
+            onAdd={(v) => addCategory("depense", v.nom as string)}
+            onUpdate={(id, v) => updateCategory("depense", id, v.nom as string)}
+            onDelete={(id) => removeCategory("depense", id)}
+          />
+          <TypesManagerDialog
+            open={manageRecettesOpen} onOpenChange={setManageRecettesOpen}
+            title={t("finance.transactions.manageRevenueCategoriesTitle")}
+            fields={[{ name: "nom", label: t("finance.transactions.categoryNameLabel"), type: "text" }]}
+            items={recetteCategories}
+            onAdd={(v) => addCategory("recette", v.nom as string)}
+            onUpdate={(id, v) => updateCategory("recette", id, v.nom as string)}
+            onDelete={(id) => removeCategory("recette", id)}
+          />
+        </>
+      )}
     </div>
   )
 }
