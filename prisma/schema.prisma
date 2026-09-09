@@ -27,7 +27,7 @@ model Farm {
   transactions Transaction[]
   stockLocation StockLocation[]
   cattle  Cattle[]
-  paddyProcess paddyProcess[]
+  paddyProcess PaddyProcess[]
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -46,9 +46,9 @@ model User {
   stockMovment  StockMovement[]
   transactions Transaction[]
   
-  salaryDeduction salaryDeduction[]
+  salaryDeduction SalaryDeduction[]
 
-  sentTransfers     StockTransfer[] @relation("TransferSender")
+  sentTransfers     StockTransfer[] @relation("TransferSender")   
   receivedTransfers StockTransfer[] @relation("TransferReceiver")
 
   createdAt     DateTime        @default(now())
@@ -138,8 +138,8 @@ model StockMovement {
   corrections        StockMovement[] @relation("MovmentCorrection")
   //mise a jour
 
-  transfertId   String
-  transfert   StockTransfer   @relation(fields: [transfertId], references: [id])  
+  transfertId   String?
+  transfert   StockTransfer?   @relation(fields: [transfertId], references: [id], onDelete: Cascade)  
 
   createdAt          DateTime       @default(now())
 }
@@ -179,7 +179,7 @@ model Invoice {
   id            String        @id @default(uuid())
   invoiceNumber String        @unique @map("numero_du_recu")
   totalAmount   Float         @map("total_ttc")
-  paidAmount    Float         @default(0) @map("montant_reglé")
+  paidAmount    Float         @default(0) @map("montant_regle")
   dueAmount     Float         @map("reste_a_payer")
   status        InvoiceStatus @default(UNPAID) @map("statut_du_paiment")
 
@@ -249,15 +249,16 @@ model Transaction{
 
 // Mise a jour
 
-enum locationType {
+enum LocationType {
   FERME
   STORE
+  TRANSIT // stock en cours de transfert
 }
 
 model StockLocation {
   id String @id @default(uuid())
   name String
-  type locationType @default(FERME)
+  type LocationType @default(FERME)
 
   farmId String
   farm  Farm  @relation(fields: [farmId], references: [id], onDelete: Cascade)
@@ -272,7 +273,7 @@ model StockLocation {
 }
 
 //mise a jour: suivi des bovin
-enum statusBovin{
+enum StatusBovin{
   EN_ELEVAGE
   VENDU
   DECEDE
@@ -281,7 +282,7 @@ model Cattle{
   id String @id @default(uuid())
   nameOrTag String //anarana na fiantsoana anazy
   gender String // male/female
-  status statusBovin @default(EN_ELEVAGE)
+  status StatusBovin @default(EN_ELEVAGE)
   birthDate DateTime?
   notes String?
 
@@ -308,21 +309,21 @@ model Payment {
   invoiceId String
   invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
 
-  salaryDeduction salaryDeduction ?
+  salaryDeduction SalaryDeduction ?
 
   createdAt DateTime @default(now())
 
 }
 
 //mise a jour: deduction au salaire pour les personnel
-model salaryDeduction {
+model SalaryDeduction {
   id String @id @default(uuid())
   amount  Float
   status String @default("En_attente")//en attente na deduit
   period String //deduction du salaire sur le moi du paie ex: 
 
-  payementId String @unique
-  payment Payment @relation(fields: [payementId], references: [id], onDelete: Cascade)
+  paymentId String @unique
+  payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
 
   employeeId String 
   employee User @relation(fields: [employeeId], references: [id])
@@ -332,7 +333,7 @@ model salaryDeduction {
 }
 
 //suivi du riziculture (paddy en riz decortiqué)
-model paddyProcess{
+model PaddyProcess{
   id String @id @default(uuid())
   lotNumber String
   paddyInputKg Float //quantité akotry engagée
@@ -362,6 +363,8 @@ model ProductVariant{
   stockItem StockItem @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
 
   invoiceItems    InvoiceItem[]
+
+  stockTranferItems StockTransferItem[]
 
   createdAt   DateTime @default(now())
   updatedAt DateTime    @updatedAt
@@ -400,11 +403,13 @@ model StockTransfer {
 model StockTransferItem{
   id    String    @id @default(uuid())
   quantity    Float
-  type    MouvementType
 
   transfertId   String
   transfert   StockTransfer   @relation(fields: [transfertId], references: [id], onDelete: Cascade)
 
   itemId    String
   item    StockItem   @relation(fields: [itemId], references: [id])
+
+  variantId   String?
+  variant     ProductVariant? @relation(fields: [variantId], references: [id])
 }
