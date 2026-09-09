@@ -10,6 +10,9 @@ enum Role {
   ADMIN
   COMPTABLE
   OUVRIER
+  //mise a jours users
+  MAGASINIER
+  CONTROLEUR_INTERNE
 }
 
 model Farm {
@@ -22,6 +25,9 @@ model Farm {
   clients     Client[]
   invoices    Invoice[]
   transactions Transaction[]
+  stockLocation StockLocation[]
+  cattle  Cattle[]
+  paddyProcess paddyProcess[]
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -39,6 +45,11 @@ model User {
   production    Production[]
   stockMovment  StockMovement[]
   transactions Transaction[]
+  
+  salaryDeduction salaryDeduction[]
+
+  sentTransfers     StockTransfer[] @relation("TransferSender")   
+  receivedTransfers StockTransfer[] @relation("TransferReceiver")
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -51,6 +62,10 @@ enum ProductionType {
   LAIT
   VIANDE
   RECOLTES
+  //mise a jour
+  POULARD
+  KUROILER
+  PADDY
 }
 
 model Production {
@@ -76,6 +91,8 @@ enum MouvementType {
   IN
   OUT
   AJUSTEMENT
+  //mise a jour
+  TRANFERTS
 }
 
 model StockItem {
@@ -88,9 +105,16 @@ model StockItem {
 
   farmId      String
   farm        Farm            @relation(fields: [farmId], references: [id])
+
+  locationId String?
+  location StockLocation? @relation(fields: [locationId], references: [id])
+
   movements   StockMovement[]
   production  Production[]
   invoiceItem InvoiceItem[]
+  variants     ProductVariant[]
+  //lise a jour
+  items   StockTransferItem[]
 
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -101,6 +125,7 @@ model StockMovement {
   type               MouvementType
   quantity           Float
   reason             String?
+  repeseeQuantity    Float? //mise a jour
   date               DateTime       @default(now())
   userId             String
   user               User           @relation(fields: [userId], references: [id])
@@ -111,27 +136,33 @@ model StockMovement {
   originalMovmentId  String?
   originalMovment    StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
   corrections        StockMovement[] @relation("MovmentCorrection")
+  //mise a jour
+
+  transfertId   String
+  transfert   StockTransfer   @relation(fields: [transfertId], references: [id])  
 
   createdAt          DateTime       @default(now())
 }
 
 enum ClientType {
   EXTERNE
+  INTERNE
   PERSONNEL_UAZ
   CAF
-  STORE
+  AGENT_STORE //mise a jour
 }
 
 model Client {
   id           String     @id @default(uuid())
   name         String
   phone        String?
-  type         ClientType @default(EXTERNE) // externe sy personnelle iany ny
+  type         ClientType @default(INTERNE) // ny interne (olona normal)
   matriculeuaz String?    @map("matricule_uaz") // Pour identifier l'employé sur le rapport comptable
 
   farmId       String
   farm         Farm       @relation(fields: [farmId], references: [id])
   invoices     Invoice[]
+  transactions Transaction[]
 
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -140,6 +171,8 @@ model Client {
 enum InvoiceStatus {
   UNPAID
   PAID
+  // mise a jour
+  PARTIALLY_PAID
 }
 
 model Invoice {
@@ -159,6 +192,8 @@ model Invoice {
   // relation de paiment ici, quand le table paiment sera fini
   invoiceItem InvoiceItem[]
   transactions Transaction[]
+  //mise a jour
+  payments Payment[]
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
@@ -176,6 +211,9 @@ model InvoiceItem {
 
   itemId String
   item StockItem @relation(fields: [itemId], references: [id])
+
+  variantId   String?
+  variant   ProductVariant? @relation(fields: [variantId], references: [id])
 }
 
 //transaction et finances
@@ -202,6 +240,171 @@ model Transaction{
   farmId String
   farm Farm @relation(fields: [farmId], references: [id])
 
+  clientId String?
+  client Client? @relation(fields: [clientId], references: [id])
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+// Mise a jour
+
+enum locationType {
+  FERME
+  STORE
+}
+
+model StockLocation {
+  id String @id @default(uuid())
+  name String
+  type locationType @default(FERME)
+
+  farmId String
+  farm  Farm  @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  stockItem StockItem[]
+  //mise a jour
+  fromTransfers StockTransfer[] @relation("FromLocation")
+  toTransfers   StockTransfer[] @relation("ToLocation")
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+}
+
+//mise a jour: suivi des bovin
+enum statusBovin{
+  EN_ELEVAGE
+  VENDU
+  DECEDE
+}
+model Cattle{
+  id String @id @default(uuid())
+  nameOrTag String //anarana na fiantsoana anazy
+  gender String // male/female
+  status statusBovin @default(EN_ELEVAGE)
+  birthDate DateTime?
+  notes String?
+
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+// mise a jour: table model paiment et Historique des règlements / versements
+enum PaymentMethod{
+  CAISSE
+  RETENUE_SUR_SALAIRE
+}
+
+model Payment {
+  id String @id @default(uuid())
+  recuNumber String @unique //numero du recu
+  amount Float
+  method PaymentMethod @default(CAISSE)
+  date DateTime @default(now())
+
+  invoiceId String
+  invoice Invoice @relation(fields: [invoiceId], references: [id], onDelete: Cascade)
+
+  salaryDeduction salaryDeduction ?
+
+  createdAt DateTime @default(now())
+
+}
+
+//mise a jour: deduction au salaire pour les personnel
+model salaryDeduction {
+  id String @id @default(uuid())
+  amount  Float
+  status String @default("En_attente")//en attente na deduit
+  period String //deduction du salaire sur le moi du paie ex: 
+
+  payementId String @unique
+  payment Payment @relation(fields: [payementId], references: [id], onDelete: Cascade)
+
+  employeeId String 
+  employee User @relation(fields: [employeeId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//suivi du riziculture (paddy en riz decortiqué)
+model paddyProcess{
+  id String @id @default(uuid())
+  lotNumber String
+  paddyInputKg Float //quantité akotry engagée
+  paddyInputLot Int //quantité akotry par gony engagée
+  waveNumber Int @default(1) //vague de sechage
+  statu String @default("IN_PROGRESS") //in progress na completed
+
+  riceOutputKg Float? //riz obtenu au final
+  note String? // affirmation a faire si il y a
+
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+}
+
+//model ProductVariant mbola tsisy
+model ProductVariant{
+  id String @id @default(uuid())
+  name String //anaran'ilay varieté anle produit, ex: gros model cassé, petit model normal, haricot rouge
+  sku String? @unique //Sac de 10 kg = SKU: AGR-BST-10KGSac de 50 kg = SKU: AGR-BST-50KG
+  unitPrice Float @default(0)
+  quantity  Float @default(0)
+
+  stockItemId String
+  stockItem StockItem @relation(fields: [stockItemId], references: [id], onDelete: Cascade)
+
+  invoiceItems    InvoiceItem[]
+
+  createdAt   DateTime @default(now())
+  updatedAt DateTime    @updatedAt
+}
+
+//model stockTransfer avec gestion des transfert inter-emplacement
+model StockTransfer {
+  id String @id @default(uuid())
+  transfertNumber String  @unique
+  status    String    @default("PENDING")//PENDING,CANCELLED, COMPLETED
+  date    DateTime    @default(now())
+
+
+  fromLocationId    String
+  fromLocation    StockLocation   @relation("FromLocation", fields: [fromLocationId], references: [id])
+
+  toLocationId    String
+  toLocation    StockLocation   @relation("ToLocation", fields: [toLocationId], references: [id])
+
+  senderId    String?
+  sender    User?    @relation("TransferSender", fields: [senderId], references: [id])
+
+  receiverId    String?
+  receiver    User?   @relation("TransferReceiver", fields: [receiverId], references: [id])
+
+  items   StockTransferItem[]
+
+  //mise a jour
+  movements      StockMovement[] // Un transfert contient ses 2 mouvements (IN et OUT)
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt   
+}
+
+//model StockTransferItem
+model StockTransferItem{
+  id    String    @id @default(uuid())
+  quantity    Float
+  type    MouvementType
+
+  transfertId   String
+  transfert   StockTransfer   @relation(fields: [transfertId], references: [id], onDelete: Cascade)
+
+  itemId    String
+  item    StockItem   @relation(fields: [itemId], references: [id])
 }
