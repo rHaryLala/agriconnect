@@ -9,10 +9,9 @@ import { UsersModule } from './users/users.module';
 import { StockModule } from './stock/stock.module';
 import { ProductionModule } from './production/production.module';
 import { FinanceModule } from './finance/finance.module';
-import { DashboardModule } from './dashboard.module';
-import { DashboardController } from './dashboard.controller';
-import { DashboardService } from './dashboard.service';
 import { DashboardModule } from './dashboard/dashboard.module';
+import { DashboardController } from './dashboard/dashboard.controller';
+import { DashboardService } from './dashboard/dashboard.service';
 
 @Module({
   imports: [
