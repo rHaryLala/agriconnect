@@ -45,7 +45,11 @@ model User {
   production    Production[]
   stockMovment  StockMovement[]
   transactions Transaction[]
+  
   salaryDeduction salaryDeduction[]
+
+  sentTransfers     StockTransfer[] @relation("TransferSender")   
+  receivedTransfers StockTransfer[] @relation("TransferReceiver")
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -109,6 +113,8 @@ model StockItem {
   production  Production[]
   invoiceItem InvoiceItem[]
   variants     ProductVariant[]
+  //lise a jour
+  items   StockTransferItem[]
 
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -253,6 +259,9 @@ model StockLocation {
   farm  Farm  @relation(fields: [farmId], references: [id], onDelete: Cascade)
 
   stockItem StockItem[]
+  //mise a jour
+  fromTransfers StockTransfer[] @relation("FromLocation")
+  toTransfers   StockTransfer[] @relation("ToLocation")
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -354,5 +363,40 @@ model ProductVariant{
   updatedAt DateTime    @updatedAt
 }
 
-//model stockTransfer
+//model stockTransfer avec gestion des transfert inter-emplacement
+model StockTransfer {
+  id String @id @default(uuid())
+  transfertNumber String  @unique
+  status    String    @default("PENDING")//PENDING,CANCELLED, COMPLETED
+  date    DateTime    @default(now())
+
+
+  fromLocationId    String
+  fromLocation    StockLocation   @relation("FromLocation", fields: [fromLocationId], references: [id])
+
+  toLocationId    String
+  toLocation    StockLocation   @relation("ToLocation", fields: [toLocationId], references: [id])
+
+  senderId    String?
+  sender    User?    @relation("TransferSender", fields: [senderId], references: [id])
+
+  receiverId    String?
+  receiver    User?   @relation("TransferReceiver", fields: [receiverId], references: [id])
+
+  items   StockTransferItem[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt   
+}
+
 //model StockTransferItem
+model StockTransferItem{
+  id    String    @id @default(uuid())
+  quantity    Float
+
+  transfertId   String
+  transfert   StockTransfer   @relation(fields: [transfertId], references: [id], onDelete: Cascade)
+
+  itemId    String
+  item    StockItem   @relation(fields: [itemId], references: [id])
+}
