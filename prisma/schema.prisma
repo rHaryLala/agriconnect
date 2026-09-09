@@ -48,7 +48,7 @@ model User {
   
   salaryDeduction salaryDeduction[]
 
-  sentTransfers     StockTransfer[] @relation("TransferSender")   
+  sentTransfers     StockTransfer[] @relation("TransferSender")
   receivedTransfers StockTransfer[] @relation("TransferReceiver")
 
   createdAt     DateTime        @default(now())
