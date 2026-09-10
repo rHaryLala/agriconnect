@@ -255,6 +255,7 @@ enum LocationType {
   FERME
   STORE
   TRANSIT // stock en cours de transfert
+  MAGASINIER // Depot principal sous la responsabilité du magasinier
 }
 
 model StockLocation {
