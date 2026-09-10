@@ -1,4 +1,4 @@
-import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry } from "@/types/production"
+import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry, BovinAnimal } from "@/types/production"
 
 export const SEED_POULES: PouleEntry[] = [
   {
@@ -40,4 +40,23 @@ export const SEED_KUROILER: KuroilerEntry[] = [
 export const SEED_CULTURES: CultureEntry[] = [
   { id: "c-1", date: "2026-06-01", culture: "Maïs", surfaceHa: 4, recolteQty: 0, coutIntrants: 180_000, intrants: "Engrais NPK 50kg" },
   { id: "c-2", date: "2026-03-01", culture: "Riz", surfaceHa: 2.5, recolteQty: 6250, coutIntrants: 220_000, intrants: "Semences certifiées" },
+]
+
+export const SEED_BOVINS: BovinAnimal[] = [
+  { id: "b-1", identifiant: "Vero", genre: "femelle", dateEntree: "2024-02-10", typeEntree: "achat", statut: "present", observation: "RAS" },
+  { id: "b-2", identifiant: "Bruno", genre: "male", dateEntree: "2024-05-03", typeEntree: "naissance", statut: "present", observation: "RAS" },
+  {
+    id: "b-3",
+    identifiant: "Tsara",
+    genre: "femelle",
+    dateEntree: "2023-11-20",
+    typeEntree: "achat",
+    statut: "vendu",
+    dateSortie: "2026-07-12",
+    typeSortie: "vente",
+    clientId: "cl-4",
+    prixVente: 1_800_000,
+    signataire: "Rakoto",
+    observation: "RAS",
+  },
 ]

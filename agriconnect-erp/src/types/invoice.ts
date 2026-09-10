@@ -5,6 +5,7 @@ export type PaymentMethod = "comptant" | "commande" | "salaire"
 export interface InvoiceLineItem {
   articleId?: string
   eggCategory?: EggCategory
+  bovinId?: string
   quantite: number
   prixUnitaire: number
 }

@@ -7,6 +7,7 @@ import { TypesManagerDialog } from "@/components/shared/TypesManagerDialog"
 import { ProductionOverviewTab } from "./ProductionOverviewTab"
 import { PoulesPondeusesTab } from "./PoulesPondeusesTab"
 import { VachesLaitieresTab } from "./VachesLaitieresTab"
+import { BovinsTab } from "./BovinsTab"
 import { PoulesKuroilerTab } from "./PoulesKuroilerTab"
 import { AgricultureTab } from "./AgricultureTab"
 import { CustomTypeTab } from "./CustomTypeTab"
@@ -29,6 +30,7 @@ export default function ProductionPage() {
     { id: "apercu", label: t("production.tabs.overview") },
     { id: "poules", label: t("production.tabs.poules") },
     { id: "vaches", label: t("production.tabs.vaches") },
+    { id: "bovins", label: t("production.tabs.bovins") },
     { id: "kuroiler", label: t("production.tabs.kuroiler") },
     { id: "agriculture", label: t("production.tabs.agriculture") },
   ]
@@ -66,6 +68,7 @@ export default function ProductionPage() {
         {activeTab === "apercu" && <ProductionOverviewTab onGoToTab={setActiveTab} />}
         {activeTab === "poules" && <PoulesPondeusesTab canEdit={canEdit} />}
         {activeTab === "vaches" && <VachesLaitieresTab canEdit={canEdit} />}
+        {activeTab === "bovins" && <BovinsTab canEdit={canEdit} />}
         {activeTab === "kuroiler" && <PoulesKuroilerTab canEdit={canEdit} />}
         {activeTab === "agriculture" && <AgricultureTab canEdit={canEdit} />}
         {activeCustomType && <CustomTypeTab type={activeCustomType} canEdit={canEdit} />}

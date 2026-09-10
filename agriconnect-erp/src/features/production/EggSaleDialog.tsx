@@ -86,7 +86,7 @@ export function EggSaleDialog({ open, onOpenChange, pouleEntries, sales, clients
                 render={({ field }) => (
                   <Select value={field.value} onValueChange={field.onChange}>
                     <SelectTrigger id="clientId" className="mt-1.5">
-                      <SelectValue placeholder="..." />
+                      <SelectValue placeholder="...">{(v: string) => clients.find((c) => c.id === v)?.nom ?? "..."}</SelectValue>
                     </SelectTrigger>
                     <SelectContent>
                       {clients.map((c) => (

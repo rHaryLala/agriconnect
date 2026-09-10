@@ -56,3 +56,23 @@ export interface CultureEntry {
   coutIntrants: number
   intrants: string
 }
+
+export type BovinGenre = "male" | "femelle"
+export type BovinEntreeType = "achat" | "naissance"
+export type BovinSortieType = "vente" | "deces"
+export type BovinStatut = "present" | "vendu" | "mort"
+
+export interface BovinAnimal {
+  id: string
+  identifiant: string
+  genre: BovinGenre
+  dateEntree: string
+  typeEntree: BovinEntreeType
+  statut: BovinStatut
+  dateSortie?: string
+  typeSortie?: BovinSortieType
+  clientId?: string
+  prixVente?: number
+  signataire?: string
+  observation: string
+}
