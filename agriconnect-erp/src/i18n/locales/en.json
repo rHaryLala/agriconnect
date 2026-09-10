@@ -10,7 +10,8 @@
       "titleLine2": "one single line at a time",
       "subtitle": "Livestock, crops, stock, finances, clients — all centralized in one tool, from the henhouse to the accountant's desk.",
       "ctaLogin": "Log in to dashboard",
-      "ctaRegister": "Create an account"
+      "ctaRegister": "Create an account",
+      "slideAlt": "Go to image {{number}}"
     },
     "stats": { "modules": "Connected modules", "modulesShort": "Modules", "offline": "Works offline", "offlineShort": "Offline", "languages": "Languages (FR / MG / EN)", "languagesShort": "Languages" },
     "features": {

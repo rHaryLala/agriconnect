@@ -10,7 +10,8 @@
       "titleLine2": "amin'ny tsipika iray ihany",
       "subtitle": "Fiompiana, fambolena, tahiry entana, vola, mpanjifa — voaangona ao anaty fitaovana iray, hatramin'ny trano akoho ka hatramin'ny biraon'ny mpitam-bola.",
       "ctaLogin": "Hiditra amin'ny tabilao mpitantana",
-      "ctaRegister": "Hamorona kaonty"
+      "ctaRegister": "Hamorona kaonty",
+      "slideAlt": "Mankany amin'ny sary {{number}}"
     },
     "stats": { "modules": "Sampana mifandray", "modulesShort": "Sampana", "offline": "Miasa na dia tsy misy aterineto aza", "offlineShort": "Tsy misy aterineto", "languages": "Fiteny (FR / MG / EN)", "languagesShort": "Fiteny" },
     "features": {

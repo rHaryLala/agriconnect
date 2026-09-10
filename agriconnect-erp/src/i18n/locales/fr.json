@@ -10,7 +10,8 @@
       "titleLine2": "une seule ligne à la fois",
       "subtitle": "Élevage, cultures, stock, finances, clients — centralisés dans un seul outil, du poulailler au bureau du comptable.",
       "ctaLogin": "Se connecter au tableau de bord",
-      "ctaRegister": "Créer un compte"
+      "ctaRegister": "Créer un compte",
+      "slideAlt": "Aller à l'image {{number}}"
     },
     "stats": { "modules": "Modules connectés", "modulesShort": "Modules", "offline": "Fonctionne hors ligne", "offlineShort": "Hors ligne", "languages": "Langues (FR / MG / EN)", "languagesShort": "Langues" },
     "features": {

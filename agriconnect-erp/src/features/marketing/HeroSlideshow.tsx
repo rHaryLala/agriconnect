@@ -1,4 +1,5 @@
 import { useEffect, useState } from "react"
+import { useTranslation } from "react-i18next"
 
 const IMAGE_NAMES = [
   "hero-01", "hero-02", "hero-03", "hero-04",
@@ -9,6 +10,7 @@ const IMAGE_NAMES = [
 const INTERVAL_MS = 5500
 
 export function HeroSlideshow() {
+  const { t } = useTranslation()
   const [index, setIndex] = useState(0)
   const [loaded, setLoaded] = useState<Set<number>>(() => new Set([0, 1 % IMAGE_NAMES.length]))
   const [reducedMotion] = useState(
@@ -90,7 +92,7 @@ export function HeroSlideshow() {
             key={i}
             type="button"
             onClick={() => goTo(i)}
-            aria-label={`Aller à l'image ${i + 1}`}
+            aria-label={t("landing.hero.slideAlt", { number: i + 1 })}
             className={`h-1.5 rounded-full transition-all duration-500 ${
               i === index ? "w-6 bg-white/90" : "w-1.5 bg-white/35 hover:bg-white/60"
             }`}
