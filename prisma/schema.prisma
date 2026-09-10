@@ -405,6 +405,7 @@ model StockTransferItem{
   quantity    Float
 
   transfertId   String
+  // retirer onDelete: Cascade
   transfert   StockTransfer   @relation(fields: [transfertId], references: [id], onDelete: Cascade)
 
   itemId    String
