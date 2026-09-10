@@ -1,4 +1,4 @@
-import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry, BovinAnimal, PoulardMouvement } from "@/types/production"
+import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente } from "@/types/production"
 
 export const SEED_POULES: PouleEntry[] = [
   {
@@ -39,7 +39,6 @@ export const SEED_KUROILER: KuroilerEntry[] = [
 
 export const SEED_CULTURES: CultureEntry[] = [
   { id: "c-1", date: "2026-06-01", culture: "Maïs", surfaceHa: 4, recolteQty: 0, coutIntrants: 180_000, intrants: "Engrais NPK 50kg" },
-  { id: "c-2", date: "2026-03-01", culture: "Riz", surfaceHa: 2.5, recolteQty: 6250, coutIntrants: 220_000, intrants: "Semences certifiées" },
 ]
 
 export const SEED_BOVINS: BovinAnimal[] = [
@@ -65,4 +64,21 @@ export const SEED_POULARD: PoulardMouvement[] = [
   { id: "pl-1", date: "2026-07-05", type: "entree", quantite: 200, observation: "Mise en élevage — bande D" },
   { id: "pl-2", date: "2026-08-02", type: "mortalite", quantite: 6, observation: "RAS" },
   { id: "pl-3", date: "2026-08-20", type: "vente", quantite: 50, clientId: "cl-1", prixUnitaire: 12_000, observation: "RAS" },
+]
+
+export const SEED_RIZ_RECOLTES: RizRecolte[] = [
+  { id: "rr-1", date: "2026-06-10", sacs: 120, quantiteKg: 6_000, transport: "Camion UAZ-01", conducteur: "Njaka", magasinier: "Rakoto", observation: "Parcelle P02" },
+]
+
+export const SEED_RIZ_SECHAGE: RizSechageEvent[] = [
+  { id: "rs-1", date: "2026-06-15", type: "passage", quantiteSortie: 3_000, quantiteRetournee: 2_700, observation: "1ère vague" },
+  { id: "rs-2", date: "2026-06-22", type: "finalisation", sacs: 100, quantiteKg: 4_800, observation: "Séchage terminé" },
+]
+
+export const SEED_RIZ_DECORTICAGE: RizDecorticage[] = [
+  { id: "rd-1", date: "2026-07-01", quantitePaddyKg: 2_000, quantiteRizKg: 1_300, observation: "RAS" },
+]
+
+export const SEED_RIZ_VENTES: RizVente[] = [
+  { id: "rv-1", date: "2026-08-05", quantiteKg: 300, clientId: "cl-2", prixUnitaire: 3_200, paymentMethod: "commande", observation: "RAS" },
 ]

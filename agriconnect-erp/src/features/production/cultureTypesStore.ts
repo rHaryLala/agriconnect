@@ -18,7 +18,6 @@ export const useCultureTypesStore = create<CultureTypesState>()(
     (set, get) => ({
       types: [
         { id: "culture-mais", nom: "Maïs" },
-        { id: "culture-riz", nom: "Riz" },
         { id: "culture-soja", nom: "Soja" },
       ],
       addType: (nom) => {

@@ -89,3 +89,48 @@ export interface PoulardMouvement {
   invoiceId?: string
   observation: string
 }
+
+export interface RizRecolte {
+  id: string
+  date: string
+  sacs: number
+  quantiteKg: number
+  transport: string
+  conducteur: string
+  magasinier: string
+  observation: string
+}
+
+export type RizSechageType = "passage" | "finalisation"
+
+export interface RizSechageEvent {
+  id: string
+  date: string
+  type: RizSechageType
+  quantiteSortie?: number
+  quantiteRetournee?: number
+  sacs?: number
+  quantiteKg?: number
+  observation: string
+}
+
+export interface RizDecorticage {
+  id: string
+  date: string
+  quantitePaddyKg: number
+  quantiteRizKg: number
+  observation: string
+}
+
+export type RizPaymentMethod = "comptant" | "commande" | "salaire"
+
+export interface RizVente {
+  id: string
+  date: string
+  quantiteKg: number
+  clientId: string
+  prixUnitaire: number
+  paymentMethod: RizPaymentMethod
+  invoiceId?: string
+  observation: string
+}
