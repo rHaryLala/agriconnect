@@ -1,6 +1,6 @@
 import { apiFetch } from "@/lib/apiClient"
 import { toFrontendRole, toBackendRole } from "@/lib/roleMapping"
-import type { User, UserRole } from "@/types/user"
+import type { User, UserRole, UserStatus } from "@/types/user"
 import { mockFetchUsers, mockCreateUser, mockUpdateUser, mockDeleteUser } from "@/features/auth/mockUsersApi"
 
 const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === "true"
@@ -20,6 +20,8 @@ function toFrontendUser(u: BackendUser): User {
     email: u.email,
     role: toFrontendRole(u.role),
     avatarInitials: `${u.firstName[0] ?? ""}${u.lastName[0] ?? ""}`.toUpperCase(),
+    // The backend has no account-status field yet; every account it returns is active.
+    status: "actif",
   }
 }
 
@@ -36,7 +38,7 @@ export async function fetchUsers(token: string): Promise<User[]> {
 
 const TEMP_INITIAL_PASSWORD = "1234qwerty" // TODO: Générer un mot de passe temporaire aléatoire et l'envoyer par email à l'utilisateur
 
-export async function createUser(token: string, values: { name: string; email: string; role: UserRole }): Promise<User> {
+export async function createUser(token: string, values: { name: string; email: string; role: UserRole; status?: UserStatus }): Promise<User> {
   if (USE_MOCK_API) return mockCreateUser(values)
   const { firstName, lastName } = splitName(values.name)
   const data = await apiFetch<BackendUser>("/users", {
@@ -47,7 +49,7 @@ export async function createUser(token: string, values: { name: string; email: s
   return toFrontendUser(data)
 }
 
-export async function updateUserApi(token: string, id: string, values: { name: string; email: string; role: UserRole }): Promise<User> {
+export async function updateUserApi(token: string, id: string, values: { name: string; email: string; role: UserRole; status?: UserStatus }): Promise<User> {
   if (USE_MOCK_API) return mockUpdateUser(id, values)
   const { firstName, lastName } = splitName(values.name)
   const data = await apiFetch<BackendUser>(`/users/${id}`, {

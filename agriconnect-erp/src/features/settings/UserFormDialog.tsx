@@ -8,17 +8,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { ROLE_LABEL_KEYS } from "./roleLabels"
-import type { User } from "@/types/user"
+import { ROLE_LABEL_KEYS, ROLE_ICONS, STATUS_LABEL_KEYS } from "./roleLabels"
+import type { User, UserRole, UserStatus } from "@/types/user"
 
 function buildSchema(t: (key: string) => string, isEditing: boolean) {
   return z.object({
     name: z.string().min(2, t("settings.users.validationName")),
     email: z.string().min(1, t("stock.movements.validationArticle")).email(t("settings.users.validationEmail")),
     role: z.enum(["admin", "comptable", "ouvrier", "magasinier", "controleur_interne"], { error: () => t("settings.users.validationRole") }),
+    status: z.enum(["actif", "inactif", "suspendu"]),
     password: isEditing
       ? z.string().optional().or(z.literal(""))
-      : z.string().min(8, "Le mot de passe doit contenir au moins 8 caractères"),
+      : z.string().min(8, t("settings.security.validationMinLength")),
   })
 }
 
@@ -44,9 +45,9 @@ export function UserFormDialog({ open, onOpenChange, editingUser, onSubmit }: Us
   useEffect(() => {
     if (open) {
       reset(
-        editingUser 
-          ? { name: editingUser.name, email: editingUser.email, role: editingUser.role, password: "" } 
-          : { name: "", email: "", role: undefined, password: "" }
+        editingUser
+          ? { name: editingUser.name, email: editingUser.email, role: editingUser.role, status: editingUser.status ?? "actif", password: "" }
+          : { name: "", email: "", role: undefined, status: "actif", password: "" }
       )
     }
   }, [open, editingUser, reset])
@@ -101,24 +102,55 @@ export function UserFormDialog({ open, onOpenChange, editingUser, onSubmit }: Us
             {errors.password && <p className="mt-1 text-xs text-destructive">{errors.password.message}</p>}
           </div>
 
-          <div>
-            <Label htmlFor="role">{t("settings.users.fieldRole")}</Label>
-            <Controller
-              name="role" control={control}
-              render={({ field }) => (
-                <Select value={field.value} onValueChange={field.onChange}>
-                  <SelectTrigger id="role" className="mt-1.5">
-                    <SelectValue placeholder={t("settings.users.fieldRolePlaceholder")} />
-                  </SelectTrigger>
-                  <SelectContent>
-                    {Object.entries(ROLE_LABEL_KEYS).map(([value, labelKey]) => (
-                      <SelectItem key={value} value={value}>{t(labelKey)}</SelectItem>
-                    ))}
-                  </SelectContent>
-                </Select>
-              )}
-            />
-            {errors.role && <p className="mt-1 text-xs text-destructive">{errors.role.message}</p>}
+          <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+            <div>
+              <Label htmlFor="role">{t("settings.users.fieldRole")}</Label>
+              <Controller
+                name="role" control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="role" className="mt-1.5 w-full">
+                      <SelectValue placeholder={t("settings.users.fieldRolePlaceholder")}>
+                        {(value: UserRole | null) => (value ? t(ROLE_LABEL_KEYS[value]) : t("settings.users.fieldRolePlaceholder"))}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(ROLE_LABEL_KEYS) as UserRole[]).map((value) => {
+                        const RoleIcon = ROLE_ICONS[value]
+                        return (
+                          <SelectItem key={value} value={value}>
+                            <RoleIcon className="h-4 w-4 text-muted-foreground" />
+                            {t(ROLE_LABEL_KEYS[value])}
+                          </SelectItem>
+                        )
+                      })}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.role && <p className="mt-1 text-xs text-destructive">{errors.role.message}</p>}
+            </div>
+
+            <div>
+              <Label htmlFor="status">{t("settings.users.fieldStatus")}</Label>
+              <Controller
+                name="status" control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="status" className="mt-1.5 w-full">
+                      <SelectValue>
+                        {(value: UserStatus | null) => t(STATUS_LABEL_KEYS[value ?? "actif"])}
+                      </SelectValue>
+                    </SelectTrigger>
+                    <SelectContent>
+                      {(Object.keys(STATUS_LABEL_KEYS) as UserStatus[]).map((value) => (
+                        <SelectItem key={value} value={value}>{t(STATUS_LABEL_KEYS[value])}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
           </div>
 
           <DialogFooter>

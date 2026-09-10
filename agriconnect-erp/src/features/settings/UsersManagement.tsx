@@ -6,10 +6,11 @@ import { Button } from "@/components/ui/button"
 import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { StatusBadge } from "@/components/shared/StatusBadge"
+import { StatCard } from "@/components/shared/StatCard"
+import { Avatar } from "@/components/shared/Avatar"
 import { useUsersStore } from "./usersStore"
 import { UserFormDialog } from "./UserFormDialog"
-import { ROLE_LABEL_KEYS, ROLE_TONES } from "./roleLabels"
-import type { RowTone } from "@/lib/alerts"
+import { ROLE_LABEL_KEYS, ROLE_TONES, STATUS_LABEL_KEYS, STATUS_TONES } from "./roleLabels"
 import type { User } from "@/types/user"
 import type { UserFormValues } from "./userFormSchema"
 
@@ -23,6 +24,9 @@ export function UsersManagement({ canEdit }: { canEdit: boolean }) {
   useEffect(() => {
     fetchUsers()
   }, [fetchUsers])
+
+  const activeCount = users.filter((u) => (u.status ?? "actif") === "actif").length
+  const adminCount = users.filter((u) => u.role === "admin").length
 
   function openCreate() {
     setEditingUser(null)
@@ -50,22 +54,27 @@ export function UsersManagement({ canEdit }: { canEdit: boolean }) {
     setDeletingUser(null)
   }
 
-  function rowTone(u: User): RowTone {
-    return u.role === "admin" ? "warning" : null
-  }
-
   const columns: DataTableColumn<User>[] = [
     {
       key: "name", label: t("settings.users.colName"),
       render: (u) => (
-        <div className="flex items-center gap-2.5">
-          <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-full bg-primary/10 text-xs font-semibold text-primary">{u.avatarInitials}</span>
-          {u.name}
+        <div className="flex items-center gap-3">
+          <Avatar userId={u.id} initials={u.avatarInitials} size="sm" />
+          <div className="min-w-0">
+            <p className="truncate font-medium text-foreground">{u.name}</p>
+            <p className="truncate text-xs text-muted-foreground">{u.email}</p>
+          </div>
         </div>
       ),
     },
-    { key: "email", label: t("settings.users.colEmail"), render: (u) => <span className="text-muted-foreground">{u.email}</span> },
     { key: "role", label: t("settings.users.colRole"), render: (u) => <StatusBadge label={t(ROLE_LABEL_KEYS[u.role])} tone={ROLE_TONES[u.role]} /> },
+    {
+      key: "status", label: t("settings.users.colStatus"),
+      render: (u) => {
+        const status = u.status ?? "actif"
+        return <StatusBadge label={t(STATUS_LABEL_KEYS[status])} tone={STATUS_TONES[status]} />
+      },
+    },
     ...(canEdit
       ? [{
           key: "actions", label: "", className: "text-right", sticky: true,
@@ -85,6 +94,12 @@ export function UsersManagement({ canEdit }: { canEdit: boolean }) {
 
   return (
     <div>
+      <div className="mb-4 grid grid-cols-2 gap-4 sm:grid-cols-3">
+        <StatCard icon={UsersIcon} label={t("settings.users.statTotal")} value={String(users.length)} tone="primary" />
+        <StatCard icon={UsersIcon} label={t("settings.users.statActive")} value={String(activeCount)} tone="success" />
+        <StatCard icon={UsersIcon} label={t("settings.users.statAdmins")} value={String(adminCount)} tone="info" />
+      </div>
+
       {canEdit && (
         <div className="mb-4 flex items-center justify-end">
           <Button onClick={openCreate} className="gap-2">
@@ -94,7 +109,7 @@ export function UsersManagement({ canEdit }: { canEdit: boolean }) {
         </div>
       )}
 
-      <DataTable columns={columns} rows={users} rowKey={(u) => u.id} isLoading={isLoading} emptyIcon={UsersIcon} emptyTitle={t("settings.users.emptyTitle")} emptyDescription={t("settings.users.emptyDescription")} rowTone={rowTone} />
+      <DataTable columns={columns} rows={users} rowKey={(u) => u.id} isLoading={isLoading} emptyIcon={UsersIcon} emptyTitle={t("settings.users.emptyTitle")} emptyDescription={t("settings.users.emptyDescription")} />
 
       {canEdit && (
         <>

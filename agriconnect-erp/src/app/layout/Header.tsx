@@ -6,6 +6,7 @@ import { useAuthStore } from "@/features/auth/authStore"
 import { useInstallPrompt } from "@/hooks/useInstallPrompt"
 import { useOnlineStatus } from "@/hooks/useOnlineStatus"
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
+import { Avatar } from "@/components/shared/Avatar"
 import { useOfflineSyncStore } from "@/features/offline/offlineSyncStore"
 interface HeaderProps {
   onMenuClick: () => void
@@ -40,9 +41,7 @@ export function Header({ onMenuClick }: HeaderProps) {
 
       {user && (
         <div className="flex min-w-0 items-center gap-2">
-          <div className="flex h-8 w-8 shrink-0 items-center justify-center rounded-full bg-primary/15 text-xs font-semibold text-primary">
-            {user.avatarInitials || getInitials(user.name)}
-          </div>
+          <Avatar userId={user.id} initials={user.avatarInitials || getInitials(user.name)} />
           <span className="hidden truncate text-sm font-medium text-foreground sm:inline">{user.name}</span>
         </div>
       )}

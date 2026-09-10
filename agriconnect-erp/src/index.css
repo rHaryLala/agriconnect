@@ -114,3 +114,17 @@
         transition-duration: 0.01ms !important;
     }
 }
+
+/* Appearance preferences (Paramètres → Apparence). Tailwind spacing is rem-based,
+   so shrinking the root font size tightens the whole interface at once. */
+html.compact {
+    font-size: 14px;
+}
+
+html.no-animations *,
+html.no-animations *::before,
+html.no-animations *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+}

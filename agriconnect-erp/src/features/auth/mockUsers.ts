@@ -8,6 +8,7 @@ export const MOCK_USERS: (User & { password: string })[] = [
     password: "1234qwerty",
     role: "admin",
     avatarInitials: "LA",
+    status: "actif",
   },
   {
     id: "2",
@@ -16,6 +17,7 @@ export const MOCK_USERS: (User & { password: string })[] = [
     password: "1234qwerty",
     role: "comptable",
     avatarInitials: "RS",
+    status: "actif",
   },
   {
     id: "3",
@@ -24,8 +26,8 @@ export const MOCK_USERS: (User & { password: string })[] = [
     password: "1234qwerty",
     role: "ouvrier",
     avatarInitials: "RV",
+    status: "actif",
   },
-
   {
     id: "4",
     name: "RAKOTONDRAMANANA Fanja",
@@ -33,6 +35,7 @@ export const MOCK_USERS: (User & { password: string })[] = [
     password: "1234qwerty",
     role: "controleur_interne",
     avatarInitials: "RF",
+    status: "actif",
   },
   {
     id: "5",
@@ -41,5 +44,33 @@ export const MOCK_USERS: (User & { password: string })[] = [
     password: "1234qwerty",
     role: "magasinier",
     avatarInitials: "LH",
-  }
+    status: "actif",
+  },
+  {
+    id: "6",
+    name: "RABEMANANJARA Hery",
+    email: "rabemananjara.h@zurcher.edu.mg",
+    password: "1234qwerty",
+    role: "ouvrier",
+    avatarInitials: "RH",
+    status: "actif",
+  },
+  {
+    id: "7",
+    name: "ANDRIANARISOA Miora",
+    email: "andrianarisoa.m@zurcher.edu.mg",
+    password: "1234qwerty",
+    role: "comptable",
+    avatarInitials: "AM",
+    status: "inactif",
+  },
+  {
+    id: "8",
+    name: "RANDRIAMAHEFA Tojo",
+    email: "randriamahefa.t@zurcher.edu.mg",
+    password: "1234qwerty",
+    role: "magasinier",
+    avatarInitials: "RT",
+    status: "suspendu",
+  },
 ]
