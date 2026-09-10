@@ -10,9 +10,10 @@ import { EggSaleDialog } from "./EggSaleDialog"
 import { useEggSalesStore } from "./eggSalesStore"
 import { useInvoicesStore } from "@/features/clients/invoicesStore"
 import { useClientsStore } from "@/features/clients/clientsStore"
+import { useEggPricesStore } from "./eggPricesStore"
 import { computeFermeStock, totalOeufs } from "@/lib/eggCalc"
 import { formatDate, formatNumber } from "@/lib/format"
-import type { PouleEntry } from "@/types/production"
+import type { EggCategory, PouleEntry } from "@/types/production"
 import type { EggSale } from "@/types/eggSale"
 
 interface EggSalesSectionProps {
@@ -25,6 +26,7 @@ export function EggSalesSection({ pouleEntries, canEdit }: EggSalesSectionProps)
   const { sales, isLoading, fetchAll, addSale, deleteSale } = useEggSalesStore()
   const { addInvoice } = useInvoicesStore()
   const { clients, fetchAll: fetchClients } = useClientsStore()
+  const eggPrices = useEggPricesStore((s) => s.prices)
   const [saleOpen, setSaleOpen] = useState(false)
 
   useEffect(() => {
@@ -44,7 +46,7 @@ export function EggSalesSection({ pouleEntries, canEdit }: EggSalesSectionProps)
       clientId: sale.clientId,
       date: sale.date,
       paymentMethod: "commande",
-      items: Object.entries(sale.quantities).filter(([, qty]) => qty > 0).map(([eggCategory, qty]) => ({ eggCategory: eggCategory as never, quantite: qty, prixUnitaire: 0 })),
+      items: Object.entries(sale.quantities).filter(([, qty]) => qty > 0).map(([eggCategory, qty]) => ({ eggCategory: eggCategory as never, quantite: qty, prixUnitaire: eggPrices[eggCategory as EggCategory] })),
       montantPaye: montantInitial,
     })
     toast.success(t("production.circuit.toastSaleCreated"))
