@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Eo am-panamboarana...", "save": "Tehirizo", "cancel": "Aoka", "search": "Karohy...", "add": "Ampio", "edit": "Ovay", "delete": "Fafao", "close": "Akatony", "appName" : "AgriConnect", "readOnlyBanner": "Fijerena fotsiny no azonao atao amin'ity sampana ity." },
-  "nav": { "dashboard": "Tabilao mpitantana", "production": "Vokatra", "stocks": "Tahiry entana", "finance": "Vola", "clients": "Mpanjifa", "reports": "Tatitra", "settings": "Kirakira", "collapse": "Ahakelezo", "expand": "Ahalalaho ny lisitra", "menu": "Lisitra", "openMenu": "Sokafy ny lisitra", "logout": "Hivoaka", "offline": "Fomba tsy misy aterineto (ho avy)", "more": "Bebe kokoa", "groups": {"principal": "Lehibe", "finances": "Vola","commerce": "Varotra", "analyse": "Fandinihana"} },
+  "nav": { "dashboard": "Tabilao mpitantana", "production": "Vokatra", "stocks": "Tahiry entana", "finance": "Vola", "clients": "Mpanjifa", "reports": "Export", "settings": "Kirakira", "collapse": "Ahakelezo", "expand": "Ahalalaho ny lisitra", "menu": "Lisitra", "openMenu": "Sokafy ny lisitra", "logout": "Hivoaka", "offline": "Fomba tsy misy aterineto (ho avy)", "more": "Bebe kokoa", "groups": {"principal": "Lehibe", "finances": "Vola","commerce": "Varotra", "analyse": "Fandinihana"} },
   "landing": {
     "header": { "login": "Hiditra", "register": "Hisoratra anarana" },
     "hero": {
@@ -994,9 +994,16 @@
     }
   },
   "rapports": {
-    "pageTitle": "Tatitra",
+    "pageTitle": "Export",
     "pageSubtitle": "Ara-bola, famokarana, tahiry — avoahy PDF na Excel amin'ny kitika iray.",
-    "periodLabel": "Vanim-potoana (volana)",
+    "periodLabel": "Vanim-potoana",
+    "periodicityLabel": "Fahamatetihana",
+    "periodicityDay": "Isan'andro",
+    "periodicityWeek": "Isan-kerinandro",
+    "periodicityMonth": "Isam-bolana",
+    "periodicityYear": "Isan-taona",
+    "weekLabel": "Herinandron'ny {{start}} ka hatramin'ny {{end}}",
+    "periodSummary": "Vanim-potoana voafantina: {{period}}",
     "colDate": "Daty",
     "exportPdf": "Avoahy PDF",
     "exportExcel": "Avoahy Excel",

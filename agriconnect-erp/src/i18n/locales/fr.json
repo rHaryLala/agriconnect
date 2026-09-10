@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Chargement...", "save": "Enregistrer", "cancel": "Annuler", "search": "Rechercher...", "add": "Ajouter", "edit": "Modifier", "delete": "Supprimer", "close": "Fermer", "appName" : "AgriConnect", "readOnlyBanner": "Vous consultez ce module en lecture seule." },
-  "nav": { "dashboard": "Tableau de bord", "production": "Production", "stocks": "Stocks", "finance": "Finance", "clients": "Clients", "reports": "Rapports", "settings": "Paramètres", "collapse": "Réduire", "expand": "Déplier le menu", "menu": "Menu", "openMenu": "Ouvrir le menu", "logout": "Se déconnecter", "offline": "Mode hors ligne (bientôt disponible)", "more": "Plus","groups": {"principal": "Principal", "finances": "Finances","commerce": "Commerce", "analyse": "Analyse"}},
+  "nav": { "dashboard": "Tableau de bord", "production": "Production", "stocks": "Stocks", "finance": "Finance", "clients": "Clients", "reports": "Export", "settings": "Paramètres", "collapse": "Réduire", "expand": "Déplier le menu", "menu": "Menu", "openMenu": "Ouvrir le menu", "logout": "Se déconnecter", "offline": "Mode hors ligne (bientôt disponible)", "more": "Plus","groups": {"principal": "Principal", "finances": "Finances","commerce": "Commerce", "analyse": "Analyse"}},
   "landing": {
     "header": { "login": "Se connecter", "register": "S'inscrire" },
     "hero": {
@@ -1005,9 +1005,16 @@
     }
   },
   "rapports": {
-    "pageTitle": "Rapports",
+    "pageTitle": "Export",
     "pageSubtitle": "Financier, production, stock — export PDF et Excel en un clic.",
-    "periodLabel": "Période (mois)",
+    "periodLabel": "Période",
+    "periodicityLabel": "Périodicité",
+    "periodicityDay": "Journalière",
+    "periodicityWeek": "Hebdomadaire",
+    "periodicityMonth": "Mensuelle",
+    "periodicityYear": "Annuelle",
+    "weekLabel": "Semaine du {{start}} au {{end}}",
+    "periodSummary": "Période sélectionnée : {{period}}",
     "colDate": "Date",
     "exportPdf": "Exporter PDF",
     "exportExcel": "Exporter Excel",

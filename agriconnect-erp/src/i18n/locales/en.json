@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Loading...", "save": "Save", "cancel": "Cancel", "search": "Search...", "add": "Add", "edit": "Edit", "delete": "Delete", "close": "Close", "appName" : "AgriConnect", "readOnlyBanner": "You're viewing this module in read-only mode." },
-  "nav": { "dashboard": "Dashboard", "production": "Production", "stocks": "Stock", "finance": "Finance", "clients": "Clients", "reports": "Reports", "settings": "Settings", "collapse": "Collapse", "expand": "Expand menu", "menu": "Menu", "openMenu": "Open menu", "logout": "Log out", "offline": "Offline mode (coming soon)", "more": "More", "groups": {"principal": "Main", "finances": "Finances","commerce": "Commerce", "analyse": "Analysis"} },
+  "nav": { "dashboard": "Dashboard", "production": "Production", "stocks": "Stock", "finance": "Finance", "clients": "Clients", "reports": "Export", "settings": "Settings", "collapse": "Collapse", "expand": "Expand menu", "menu": "Menu", "openMenu": "Open menu", "logout": "Log out", "offline": "Offline mode (coming soon)", "more": "More", "groups": {"principal": "Main", "finances": "Finances","commerce": "Commerce", "analyse": "Analysis"} },
   "landing": {
     "header": { "login": "Log in", "register": "Sign up" },
     "hero": {
@@ -1005,9 +1005,16 @@
     }
   },
   "rapports": {
-    "pageTitle": "Reports",
+    "pageTitle": "Export",
     "pageSubtitle": "Financial, production, stock — export to PDF and Excel in one click.",
-    "periodLabel": "Period (month)",
+    "periodLabel": "Period",
+    "periodicityLabel": "Frequency",
+    "periodicityDay": "Daily",
+    "periodicityWeek": "Weekly",
+    "periodicityMonth": "Monthly",
+    "periodicityYear": "Yearly",
+    "weekLabel": "Week of {{start}} to {{end}}",
+    "periodSummary": "Selected period: {{period}}",
     "colDate": "Date",
     "exportPdf": "Export PDF",
     "exportExcel": "Export Excel",
