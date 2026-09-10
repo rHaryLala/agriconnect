@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -33,7 +33,7 @@ export function ClientFormDialog({ open, onOpenChange, editingClient, onSubmit }
   const schema = useMemo(() => buildSchema(t), [t])
 
   const {
-    register, handleSubmit, control, watch, reset,
+    register, handleSubmit, control, reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
@@ -46,7 +46,7 @@ export function ClientFormDialog({ open, onOpenChange, editingClient, onSubmit }
       )
     }
   }, [open, editingClient, reset])
-  const type: ClientType = watch("type")
+  const type: ClientType = useWatch({ control, name: "type" })
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit({

@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useForm, useFieldArray, Controller } from "react-hook-form"
+import { useForm, useFieldArray, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -46,7 +46,7 @@ export function InvoiceFormDialog({ open, onOpenChange, clients, articles, onSub
   const schema = useMemo(() => buildSchema(t), [t])
 
   const {
-    register, handleSubmit, control, watch, setValue, reset,
+    register, handleSubmit, control, setValue, reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
@@ -65,8 +65,8 @@ export function InvoiceFormDialog({ open, onOpenChange, clients, articles, onSub
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [open, clients, articles])
 
-  const items = watch("items")
-  const paymentMethod: PaymentMethod = watch("paymentMethod")
+  const items = useWatch({ control, name: "items" })
+  const paymentMethod: PaymentMethod = useWatch({ control, name: "paymentMethod" })
   const total = items?.reduce((sum, it) => sum + (it.quantite || 0) * (it.prixUnitaire || 0), 0) ?? 0
   useEffect(() => {
     if (paymentMethod === "comptant") setValue("montantInitial", total)

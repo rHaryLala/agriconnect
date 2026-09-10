@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -36,7 +36,7 @@ export function TransactionDialog({ open, onOpenChange, depenseCategories, recet
   const schema = useMemo(() => buildSchema(t), [t])
 
   const {
-    register, handleSubmit, control, watch, setValue, reset,
+    register, handleSubmit, control, setValue, reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
@@ -52,14 +52,14 @@ export function TransactionDialog({ open, onOpenChange, depenseCategories, recet
     }
   }, [open, editingEntry, depenseCategories, recetteCategories, reset])
 
-  const type: TransactionType = watch("type")
+  const type: TransactionType = useWatch({ control, name: "type" })
+  const categorie = useWatch({ control, name: "categorie" })
   const categoryOptions = type === "recette" ? recetteCategories : depenseCategories
 
   useEffect(() => {
-    const currentCategorie = watch("categorie")
-    const stillValid = categoryOptions.some((c) => c.nom === currentCategorie)
+    const stillValid = categoryOptions.some((c) => c.nom === categorie)
     if (!stillValid) setValue("categorie", categoryOptions[0]?.nom ?? "")
-  },[type, categoryOptions, setValue, watch])
+  }, [categorie, categoryOptions, setValue])
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit(values)

@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -41,7 +41,7 @@ export function BovinSortieDialog({ open, onOpenChange, animal, clients, onSubmi
   const schema = useMemo(() => buildSchema(t), [t])
 
   const {
-    register, handleSubmit, control, watch, reset,
+    register, handleSubmit, control, reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
@@ -49,7 +49,7 @@ export function BovinSortieDialog({ open, onOpenChange, animal, clients, onSubmi
     if (open) reset({ dateSortie: new Date().toISOString().slice(0, 10), typeSortie: "vente", clientId: clients[0]?.id ?? "", prixVente: 0, signataire: "", observation: "" })
   }, [open, clients, reset])
 
-  const typeSortie = watch("typeSortie")
+  const typeSortie = useWatch({ control, name: "typeSortie" })
 
   async function handleFormSubmit(values: FormValues) {
     if (!animal) return

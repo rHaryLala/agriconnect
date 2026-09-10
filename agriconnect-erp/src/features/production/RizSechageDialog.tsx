@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -34,7 +34,7 @@ export function RizSechageDialog({ open, onOpenChange, onSubmit }: RizSechageDia
   const schema = useMemo(() => buildSchema(t), [t])
 
   const {
-    register, handleSubmit, control, watch, reset,
+    register, handleSubmit, control, reset,
     formState: { isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
@@ -42,7 +42,7 @@ export function RizSechageDialog({ open, onOpenChange, onSubmit }: RizSechageDia
     if (open) reset({ date: new Date().toISOString().slice(0, 10), type: "passage", quantiteSortie: 0, quantiteRetournee: 0, sacs: 0, quantiteKg: 0, observation: "" })
   }, [open, reset])
 
-  const type = watch("type")
+  const type = useWatch({ control, name: "type" })
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit({

@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -48,7 +48,6 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
     register,
     handleSubmit,
     control,
-    watch,
     reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
@@ -68,7 +67,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
     }
   }, [open, articles, editingEntry, reset])
 
-  const type = watch("type")
+  const type = useWatch({ control, name: "type" })
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit({

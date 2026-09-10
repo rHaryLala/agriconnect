@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -36,7 +36,7 @@ export function AgricultureEntryDialog({ open, onOpenChange, cultures, editingEn
   const schema = useMemo(() => buildSchema(t), [t])
 
   const {
-    register, handleSubmit, control, watch, reset,
+    register, handleSubmit, control, reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
@@ -53,8 +53,8 @@ export function AgricultureEntryDialog({ open, onOpenChange, cultures, editingEn
     }
   }, [open, cultures, editingEntry, reset])
 
-  const surfaceHa = watch("surfaceHa")
-  const recolteQty = watch("recolteQty")
+  const surfaceHa = useWatch({ control, name: "surfaceHa" })
+  const recolteQty = useWatch({ control, name: "recolteQty" })
   const rendementPreview = surfaceHa > 0 ? Math.round((recolteQty || 0) / surfaceHa) : 0
 
   async function handleFormSubmit(values: FormValues) {

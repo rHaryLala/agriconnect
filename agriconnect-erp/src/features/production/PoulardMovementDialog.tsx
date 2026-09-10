@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -40,7 +40,7 @@ export function PoulardMovementDialog({ open, onOpenChange, clients, onSubmit }:
   const schema = useMemo(() => buildSchema(t), [t])
 
   const {
-    register, handleSubmit, control, watch, reset,
+    register, handleSubmit, control, reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
@@ -48,7 +48,7 @@ export function PoulardMovementDialog({ open, onOpenChange, clients, onSubmit }:
     if (open) reset({ date: new Date().toISOString().slice(0, 10), type: "entree", quantite: 0, clientId: clients[0]?.id ?? "", prixUnitaire: 0, observation: "" })
   }, [open, clients, reset])
 
-  const type = watch("type")
+  const type = useWatch({ control, name: "type" })
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit({

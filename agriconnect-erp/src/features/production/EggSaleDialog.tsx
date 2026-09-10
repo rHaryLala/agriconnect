@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -45,7 +45,7 @@ export function EggSaleDialog({ open, onOpenChange, pouleEntries, sales, clients
   const prices = useEggPricesStore((s) => s.prices)
 
   const {
-    register, handleSubmit, control, watch, reset,
+    register, handleSubmit, control, reset,
     formState: { errors, isSubmitting },
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
@@ -55,7 +55,7 @@ export function EggSaleDialog({ open, onOpenChange, pouleEntries, sales, clients
     if (open) reset({ date: new Date().toISOString().slice(0, 10), clientId: clients[0]?.id ?? "", gmNormal: 0, gmCasse: 0, pmNormal: 0, pmCasse: 0, responsable: "", montantInitial: 0, observation: "" })
   }, [open, clients, reset])
 
-  const quantities = watch(["gmNormal", "gmCasse", "pmNormal", "pmCasse"])
+  const quantities = useWatch({ control, name: ["gmNormal", "gmCasse", "pmNormal", "pmCasse"] })
   const total = EGG_CATEGORIES.reduce((sum, cat, i) => sum + (quantities[i] || 0) * prices[cat], 0)
 
   async function handleFormSubmit(values: FormValues) {
