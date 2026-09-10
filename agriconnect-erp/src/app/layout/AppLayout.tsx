@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react"
+import { useState } from "react"
 import { Outlet, useLocation } from "react-router"
 import { Header } from "./Header"
 import { Sidebar } from "./Sidebar"
@@ -9,10 +9,11 @@ export function AppLayout() {
   const location = useLocation()
   const { theme } = useTheme()
   const [mobileMenuOpen, setMobileMenuOpen] = useState(false)
-
-  useEffect(() => {
+  const [lastPathname, setLastPathname] = useState(location.pathname)
+  if (location.pathname !== lastPathname) {
+    setLastPathname(location.pathname)
     setMobileMenuOpen(false)
-  }, [location.pathname])
+  }
 
   const bgImage = theme === "dark" ? "/backgrounds/app-bg-dark.webp" : "/backgrounds/app-bg-light.webp"
 
@@ -38,7 +39,6 @@ export function AppLayout() {
 
       <div className="flex flex-1 flex-col overflow-hidden">
         <Header onMenuClick={() => setMobileMenuOpen(true)} />
-
         <main className="relative flex-1 overflow-y-auto p-4 pb-24 sm:p-6 lg:pb-6">
           <div key={location.pathname} className="animate-content-in">
             <Outlet />
