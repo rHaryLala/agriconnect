@@ -1,4 +1,4 @@
-import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente } from "@/types/production"
+import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
 
 export const SEED_POULES: PouleEntry[] = [
   {
@@ -81,4 +81,10 @@ export const SEED_RIZ_DECORTICAGE: RizDecorticage[] = [
 
 export const SEED_RIZ_VENTES: RizVente[] = [
   { id: "rv-1", date: "2026-08-05", quantiteKg: 300, clientId: "cl-2", prixUnitaire: 3_200, paymentMethod: "commande", observation: "RAS" },
+]
+
+export const SEED_HARICOTS: HaricotMouvement[] = [
+  { id: "hs-1", date: "2026-06-20", variante: "blanc", type: "entree", quantiteKg: 400, observation: "Récolte parcelle P05" },
+  { id: "hs-2", date: "2026-06-20", variante: "rouge", type: "entree", quantiteKg: 250, observation: "Récolte parcelle P06" },
+  { id: "hs-3", date: "2026-08-10", variante: "blanc", type: "vente", quantiteKg: 60, clientId: "cl-1", prixUnitaire: 4_500, paymentMethod: "comptant", observation: "RAS" },
 ]

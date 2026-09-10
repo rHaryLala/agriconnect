@@ -9,7 +9,7 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { formatNumber } from "@/lib/format"
-import type { RizVente, RizPaymentMethod } from "@/types/production"
+import type { RizVente, ProductionPaymentMethod } from "@/types/production"
 import type { Client } from "@/types/client"
 
 function buildSchema(t: (key: string) => string) {
@@ -50,7 +50,7 @@ export function RizVenteDialog({ open, onOpenChange, clients, stockRizDecortique
       alert(t("production.riz.insufficientStockRiz", { available: formatNumber(stockRizDecortique), requested: formatNumber(values.quantiteKg) }))
       return
     }
-    await onSubmit({ ...values, paymentMethod: values.paymentMethod as RizPaymentMethod })
+    await onSubmit({ ...values, paymentMethod: values.paymentMethod as ProductionPaymentMethod })
     onOpenChange(false)
   }
 

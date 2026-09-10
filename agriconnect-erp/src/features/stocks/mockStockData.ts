@@ -7,6 +7,7 @@ export const SEED_ARTICLES: StockArticle[] = [
   { id: "a-riz", nom: "Riz", unite: "kg", quantiteInitiale: 800, seuilCritique: 150 },
   { id: "a-soja", nom: "Soja", unite: "kg", quantiteInitiale: 400, seuilCritique: 100 },
   { id: "a-aliments", nom: "Aliments pour animaux", unite: "kg", quantiteInitiale: 250, seuilCritique: 300 },
+  { id: "a-provende", nom: "Provende", unite: "kg", quantiteInitiale: 150, seuilCritique: 100 },
 ]
 
 export const SEED_MOVEMENTS: StockMovement[] = [

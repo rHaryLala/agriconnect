@@ -262,7 +262,7 @@
   "production": {
     "pageTitle": "Production",
     "pageSubtitle": "Daily tracking of livestock and crops",
-    "tabs": { "overview": "Overview", "poules": "Layer hens", "vaches": "Dairy cows", "bovins": "Cattle", "kuroiler": "Kuroiler chickens", "poulard": "Broiler chickens", "riz": "Rice / Paddy", "agriculture": "Agriculture", "newType": "New type" },
+    "tabs": { "overview": "Overview", "poules": "Layer hens", "vaches": "Dairy cows", "bovins": "Cattle", "kuroiler": "Kuroiler chickens", "poulard": "Broiler chickens", "riz": "Rice / Paddy", "haricots": "Dried beans", "agriculture": "Agriculture", "newType": "New type" },
     "common": { "newEntry": "Log an entry", "newEntryAlt": "Log an entry", "editTooltip": "Edit", "deleteTooltip": "Delete", "date": "Date", "observation": "Notes", "observationPlaceholder": "None, or a note", "manageStagesButton": "Manage stages", "manageStagesTitle": "Manage cycle stages", "stageNameLabel": "Stage name" },
     "overview": {
       "statEggs": "Eggs / day",
@@ -479,6 +479,23 @@
       "emptyDescription": "Record the first entry with the button above.",
       "toastCreated": "Recorded",
       "toastDeleted": "Deleted"
+    },
+    "haricots": {
+      "statStockBlanc": "Stock — White beans",
+      "statStockRouge": "Stock — Red beans",
+      "newMovement": "New movement",
+      "dialogTitle": "New movement — Dried beans",
+      "fieldVariante": "Variant",
+      "fieldType": "Movement type",
+      "varianteBlanc": "White",
+      "varianteRouge": "Red",
+      "typeEntree": "Entry",
+      "typeVente": "Sale",
+      "insufficientStock": "Not enough stock: {{available}} kg available, {{requested}} kg requested.",
+      "emptyTitle": "No movement",
+      "emptyDescription": "Record the first movement with the button above.",
+      "toastCreated": "Movement recorded",
+      "toastDeleted": "Movement deleted"
     },
     "agriculture": {
       "statSurface": "Cultivated area",

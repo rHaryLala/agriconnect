@@ -262,7 +262,7 @@
   "production": {
     "pageTitle": "Production",
     "pageSubtitle": "Suivi quotidien des élevages et cultures",
-    "tabs": { "overview": "Vue d'ensemble", "poules": "Poules pondeuses", "vaches": "Vaches laitières", "bovins": "Bovins", "kuroiler": "Poules Kuroiler", "poulard": "Poulard", "riz": "Riz / Paddy", "agriculture": "Agriculture", "newType": "Nouveau type" },
+    "tabs": { "overview": "Vue d'ensemble", "poules": "Poules pondeuses", "vaches": "Vaches laitières", "bovins": "Bovins", "kuroiler": "Poules Kuroiler", "poulard": "Poulard", "riz": "Riz / Paddy", "haricots": "Haricots secs", "agriculture": "Agriculture", "newType": "Nouveau type" },
     "common": { "newEntry": "Saisir un relevé", "newEntryAlt": "Saisir une entrée", "editTooltip": "Modifier", "deleteTooltip": "Supprimer", "date": "Date", "observation": "Observation", "observationPlaceholder": "RAS, ou observation", "manageStagesButton": "Gérer les étapes", "manageStagesTitle": "Gérer les étapes du cycle", "stageNameLabel": "Nom de l'étape" },
     "overview": {
       "statEggs": "Œufs / jour",
@@ -479,6 +479,23 @@
       "emptyDescription": "Enregistre la première saisie avec le bouton ci-dessus.",
       "toastCreated": "Enregistré",
       "toastDeleted": "Supprimé"
+    },
+    "haricots": {
+      "statStockBlanc": "Stock — Haricot Blanc",
+      "statStockRouge": "Stock — Haricot Rouge",
+      "newMovement": "Nouveau mouvement",
+      "dialogTitle": "Nouveau mouvement — Haricots secs",
+      "fieldVariante": "Variante",
+      "fieldType": "Type de mouvement",
+      "varianteBlanc": "Blanc",
+      "varianteRouge": "Rouge",
+      "typeEntree": "Entrée",
+      "typeVente": "Vente",
+      "insufficientStock": "Stock insuffisant : {{available}} kg disponibles, {{requested}} kg demandés.",
+      "emptyTitle": "Aucun mouvement",
+      "emptyDescription": "Enregistre le premier mouvement avec le bouton ci-dessus.",
+      "toastCreated": "Mouvement enregistré",
+      "toastDeleted": "Mouvement supprimé"
     },
     "agriculture": {
       "statSurface": "Surface cultivée",

@@ -122,7 +122,7 @@ export interface RizDecorticage {
   observation: string
 }
 
-export type RizPaymentMethod = "comptant" | "commande" | "salaire"
+export type ProductionPaymentMethod = "comptant" | "commande" | "salaire"
 
 export interface RizVente {
   id: string
@@ -130,7 +130,23 @@ export interface RizVente {
   quantiteKg: number
   clientId: string
   prixUnitaire: number
-  paymentMethod: RizPaymentMethod
+  paymentMethod: ProductionPaymentMethod
+  invoiceId?: string
+  observation: string
+}
+
+export type HaricotVariante = "blanc" | "rouge"
+export type HaricotMouvementType = "entree" | "vente"
+
+export interface HaricotMouvement {
+  id: string
+  date: string
+  variante: HaricotVariante
+  type: HaricotMouvementType
+  quantiteKg: number
+  clientId?: string
+  prixUnitaire?: number
+  paymentMethod?: ProductionPaymentMethod
   invoiceId?: string
   observation: string
 }

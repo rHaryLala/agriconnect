@@ -262,7 +262,7 @@
   "production": {
     "pageTitle": "Vokatra",
     "pageSubtitle": "Fanaraha-maso isan'andro ny fiompiana sy fambolena",
-    "tabs": { "overview": "Fijery ankapobeny", "poules": "Akoho mpanatody", "vaches": "Omby mpampinono", "bovins": "Omby", "kuroiler": "Akoho Kuroiler", "poulard": "Akoho Poulard", "riz": "Vary / Paddy", "agriculture": "Fambolena", "newType": "Karazana vaovao" },
+    "tabs": { "overview": "Fijery ankapobeny", "poules": "Akoho mpanatody", "vaches": "Omby mpampinono", "bovins": "Omby", "kuroiler": "Akoho Kuroiler", "poulard": "Akoho Poulard", "riz": "Vary / Paddy", "haricots": "Tsaramaso maina", "agriculture": "Fambolena", "newType": "Karazana vaovao" },
     "common": { "newEntry": "Soraty ny vokatra", "newEntryAlt": "Ampidiro ny vokatra", "editTooltip": "Ovay", "deleteTooltip": "Fafao", "date": "Daty", "observation": "Fanamarihana", "observationPlaceholder": "Tsy misy, na fanamarihana", "manageStagesButton": "Kirakirao ny dingana", "manageStagesTitle": "Kirakirao ny dingan'ny tsingerin'aina", "stageNameLabel": "Anaran'ny dingana" },
     "overview": {
       "statEggs": "Atody / andro",
@@ -479,6 +479,23 @@
       "emptyDescription": "Soraty ny voalohany amin'ny baotao eo ambony.",
       "toastCreated": "Voatahiry",
       "toastDeleted": "Voafafa"
+    },
+    "haricots": {
+      "statStockBlanc": "Tahiry — Tsaramaso Fotsy",
+      "statStockRouge": "Tahiry — Tsaramaso Mena",
+      "newMovement": "Fihetsiketsehana vaovao",
+      "dialogTitle": "Fihetsiketsehana vaovao — Tsaramaso maina",
+      "fieldVariante": "Karazany",
+      "fieldType": "Karazana fihetsiketsehana",
+      "varianteBlanc": "Fotsy",
+      "varianteRouge": "Mena",
+      "typeEntree": "Miditra",
+      "typeVente": "Varotra",
+      "insufficientStock": "Tsy ampy ny tahiry: {{available}} kg misy, {{requested}} kg angatahina.",
+      "emptyTitle": "Tsy misy fihetsiketsehana",
+      "emptyDescription": "Soraty ny fihetsiketsehana voalohany amin'ny baotao eo ambony.",
+      "toastCreated": "Voatahiry ny fihetsiketsehana",
+      "toastDeleted": "Voafafa ny fihetsiketsehana"
     },
     "agriculture": {
       "statSurface": "Velaran-tany volena",
