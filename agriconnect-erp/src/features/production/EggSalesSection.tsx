@@ -23,7 +23,7 @@ interface EggSalesSectionProps {
 
 export function EggSalesSection({ pouleEntries, canEdit }: EggSalesSectionProps) {
   const { t } = useTranslation()
-  const { sales, isLoading, fetchAll, addSale, deleteSale } = useEggSalesStore()
+  const { sales, isLoading, fetchAll, addSale, linkInvoice, deleteSale } = useEggSalesStore()
   const { addInvoice } = useInvoicesStore()
   const { clients, fetchAll: fetchClients } = useClientsStore()
   const eggPrices = useEggPricesStore((s) => s.prices)
@@ -41,14 +41,15 @@ export function EggSalesSection({ pouleEntries, canEdit }: EggSalesSectionProps)
   }
 
   async function handleAddSale(sale: Omit<EggSale, "id">, montantInitial: number) {
-    await addSale(sale)
-    await addInvoice({
+    const created = await addSale(sale)
+    const invoice = await addInvoice({
       clientId: sale.clientId,
       date: sale.date,
       paymentMethod: "commande",
       items: Object.entries(sale.quantities).filter(([, qty]) => qty > 0).map(([eggCategory, qty]) => ({ eggCategory: eggCategory as never, quantite: qty, prixUnitaire: eggPrices[eggCategory as EggCategory] })),
       montantPaye: montantInitial,
     })
+    linkInvoice(created.id, invoice.id)
     toast.success(t("production.circuit.toastSaleCreated"))
   }
 

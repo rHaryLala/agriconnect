@@ -9,6 +9,7 @@ import { PoulesPondeusesTab } from "./PoulesPondeusesTab"
 import { VachesLaitieresTab } from "./VachesLaitieresTab"
 import { BovinsTab } from "./BovinsTab"
 import { PoulesKuroilerTab } from "./PoulesKuroilerTab"
+import { PoulardTab } from "./PoulardTab"
 import { AgricultureTab } from "./AgricultureTab"
 import { CustomTypeTab } from "./CustomTypeTab"
 import { useCustomTypesStore } from "./customTypesStore"
@@ -32,6 +33,7 @@ export default function ProductionPage() {
     { id: "vaches", label: t("production.tabs.vaches") },
     { id: "bovins", label: t("production.tabs.bovins") },
     { id: "kuroiler", label: t("production.tabs.kuroiler") },
+    { id: "poulard", label: t("production.tabs.poulard") },
     { id: "agriculture", label: t("production.tabs.agriculture") },
   ]
   const allTabs = [...FIXED_TABS, ...customTypes.map((t) => ({ id: t.id, label: t.label }))]
@@ -70,6 +72,7 @@ export default function ProductionPage() {
         {activeTab === "vaches" && <VachesLaitieresTab canEdit={canEdit} />}
         {activeTab === "bovins" && <BovinsTab canEdit={canEdit} />}
         {activeTab === "kuroiler" && <PoulesKuroilerTab canEdit={canEdit} />}
+        {activeTab === "poulard" && <PoulardTab canEdit={canEdit} />}
         {activeTab === "agriculture" && <AgricultureTab canEdit={canEdit} />}
         {activeCustomType && <CustomTypeTab type={activeCustomType} canEdit={canEdit} />}
       </div>

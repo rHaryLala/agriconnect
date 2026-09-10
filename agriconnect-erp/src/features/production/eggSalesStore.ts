@@ -11,7 +11,8 @@ interface EggSalesState {
   sales: EggSale[]
   isLoading: boolean
   fetchAll: () => Promise<void>
-  addSale: (data: Omit<EggSale, "id">) => Promise<void>
+  addSale: (data: Omit<EggSale, "id">) => Promise<EggSale>
+  linkInvoice: (id: string, invoiceId: string) => void
   deleteSale: (id: string) => void
 }
 
@@ -31,10 +32,14 @@ export const useEggSalesStore = create<EggSalesState>((set, get) => ({
   addSale: (data) =>
     new Promise((resolve) => {
       setTimeout(() => {
-        set({ sales: [{ ...data, id: `es-${Date.now()}` }, ...get().sales] })
-        resolve()
+        const sale: EggSale = { ...data, id: `es-${Date.now()}` }
+        set({ sales: [sale, ...get().sales] })
+        resolve(sale)
       }, FAKE_LATENCY_MS)
     }),
+
+  linkInvoice: (id, invoiceId) =>
+    set({ sales: get().sales.map((s) => (s.id === id ? { ...s, invoiceId } : s)) }),
 
   deleteSale: (id) => set({ sales: get().sales.filter((s) => s.id !== id) }),
 }))

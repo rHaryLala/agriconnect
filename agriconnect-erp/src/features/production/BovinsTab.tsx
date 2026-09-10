@@ -17,8 +17,8 @@ import {
   countEffectifAt,
   countEntreesSurPeriode,
   countSortiesSurPeriode,
-  endOfPreviousMonth,
 } from "@/lib/bovinsCalc"
+import { endOfPreviousMonth, startOfMonth } from "@/lib/dateRange"
 import type { BovinAnimal, BovinSortieType } from "@/types/production"
 
 export function BovinsTab({ canEdit }: { canEdit: boolean }) {
@@ -40,7 +40,7 @@ export function BovinsTab({ canEdit }: { canEdit: boolean }) {
   }
 
   const today = new Date().toISOString().slice(0, 10)
-  const startMonth = today.slice(0, 8) + "01"
+  const startMonth = startOfMonth(today)
   const effectifActuel = countEffectifActuel(animaux)
   const entreesMois = countEntreesSurPeriode(animaux, startMonth, today)
   const ventesMois = countSortiesSurPeriode(animaux, "vente", startMonth, today)

@@ -1,4 +1,4 @@
-import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry, BovinAnimal } from "@/types/production"
+import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry, BovinAnimal, PoulardMouvement } from "@/types/production"
 
 export const SEED_POULES: PouleEntry[] = [
   {
@@ -59,4 +59,10 @@ export const SEED_BOVINS: BovinAnimal[] = [
     signataire: "Rakoto",
     observation: "RAS",
   },
+]
+
+export const SEED_POULARD: PoulardMouvement[] = [
+  { id: "pl-1", date: "2026-07-05", type: "entree", quantite: 200, observation: "Mise en élevage — bande D" },
+  { id: "pl-2", date: "2026-08-02", type: "mortalite", quantite: 6, observation: "RAS" },
+  { id: "pl-3", date: "2026-08-20", type: "vente", quantite: 50, clientId: "cl-1", prixUnitaire: 12_000, observation: "RAS" },
 ]

@@ -262,7 +262,7 @@
   "production": {
     "pageTitle": "Production",
     "pageSubtitle": "Suivi quotidien des élevages et cultures",
-    "tabs": { "overview": "Vue d'ensemble", "poules": "Poules pondeuses", "vaches": "Vaches laitières", "bovins": "Bovins", "kuroiler": "Poules Kuroiler", "agriculture": "Agriculture", "newType": "Nouveau type" },
+    "tabs": { "overview": "Vue d'ensemble", "poules": "Poules pondeuses", "vaches": "Vaches laitières", "bovins": "Bovins", "kuroiler": "Poules Kuroiler", "poulard": "Poulard", "agriculture": "Agriculture", "newType": "Nouveau type" },
     "common": { "newEntry": "Saisir un relevé", "newEntryAlt": "Saisir une entrée", "editTooltip": "Modifier", "deleteTooltip": "Supprimer", "date": "Date", "observation": "Observation", "observationPlaceholder": "RAS, ou observation", "manageStagesButton": "Gérer les étapes", "manageStagesTitle": "Gérer les étapes du cycle", "stageNameLabel": "Nom de l'étape" },
     "overview": {
       "statEggs": "Œufs / jour",
@@ -417,6 +417,28 @@
       "toastCreated": "Relevé enregistré",
       "toastModified": "Relevé modifié",
       "toastDeleted": "Relevé supprimé"
+    },
+    "poulard": {
+      "statEffectifActuel": "Effectif actuel",
+      "statEntreesMois": "Entrées (mois)",
+      "statVentesMois": "Ventes (mois)",
+      "statMortaliteMois": "Mortalité (mois)",
+      "statEffectifReporte": "Effectif reporté",
+      "statEffectifReporteHint": "Fin du mois précédent",
+      "newMovement": "Nouveau mouvement",
+      "dialogTitle": "Nouveau mouvement — Poulard",
+      "fieldType": "Type de mouvement",
+      "fieldDate": "Date",
+      "fieldQuantite": "Quantité",
+      "fieldPrixUnitaire": "Prix unitaire (Ar)",
+      "colReceiptNumber": "N° de reçu",
+      "typeEntree": "Entrée",
+      "typeVente": "Vente",
+      "typeMortalite": "Mortalité",
+      "emptyTitle": "Aucun mouvement",
+      "emptyDescription": "Enregistre le premier mouvement avec le bouton ci-dessus.",
+      "toastCreated": "Mouvement enregistré",
+      "toastDeleted": "Mouvement supprimé"
     },
     "agriculture": {
       "statSurface": "Surface cultivée",

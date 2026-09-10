@@ -262,7 +262,7 @@
   "production": {
     "pageTitle": "Production",
     "pageSubtitle": "Daily tracking of livestock and crops",
-    "tabs": { "overview": "Overview", "poules": "Layer hens", "vaches": "Dairy cows", "bovins": "Cattle", "kuroiler": "Kuroiler chickens", "agriculture": "Agriculture", "newType": "New type" },
+    "tabs": { "overview": "Overview", "poules": "Layer hens", "vaches": "Dairy cows", "bovins": "Cattle", "kuroiler": "Kuroiler chickens", "poulard": "Broiler chickens", "agriculture": "Agriculture", "newType": "New type" },
     "common": { "newEntry": "Log an entry", "newEntryAlt": "Log an entry", "editTooltip": "Edit", "deleteTooltip": "Delete", "date": "Date", "observation": "Notes", "observationPlaceholder": "None, or a note", "manageStagesButton": "Manage stages", "manageStagesTitle": "Manage cycle stages", "stageNameLabel": "Stage name" },
     "overview": {
       "statEggs": "Eggs / day",
@@ -417,6 +417,28 @@
       "toastCreated": "Entry saved",
       "toastModified": "Entry updated",
       "toastDeleted": "Entry deleted"
+    },
+    "poulard": {
+      "statEffectifActuel": "Current headcount",
+      "statEntreesMois": "Entries (month)",
+      "statVentesMois": "Sales (month)",
+      "statMortaliteMois": "Deaths (month)",
+      "statEffectifReporte": "Carried-over headcount",
+      "statEffectifReporteHint": "End of previous month",
+      "newMovement": "New movement",
+      "dialogTitle": "New movement — Broiler chickens",
+      "fieldType": "Movement type",
+      "fieldDate": "Date",
+      "fieldQuantite": "Quantity",
+      "fieldPrixUnitaire": "Unit price (Ar)",
+      "colReceiptNumber": "Receipt No.",
+      "typeEntree": "Entry",
+      "typeVente": "Sale",
+      "typeMortalite": "Death",
+      "emptyTitle": "No movement",
+      "emptyDescription": "Record the first movement with the button above.",
+      "toastCreated": "Movement recorded",
+      "toastDeleted": "Movement deleted"
     },
     "agriculture": {
       "statSurface": "Cultivated area",

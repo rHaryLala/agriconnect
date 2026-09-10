@@ -76,3 +76,16 @@ export interface BovinAnimal {
   signataire?: string
   observation: string
 }
+
+export type PoulardMouvementType = "entree" | "vente" | "mortalite"
+
+export interface PoulardMouvement {
+  id: string
+  date: string
+  type: PoulardMouvementType
+  quantite: number
+  clientId?: string
+  prixUnitaire?: number
+  invoiceId?: string
+  observation: string
+}

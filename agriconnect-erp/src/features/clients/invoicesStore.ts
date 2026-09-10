@@ -14,7 +14,7 @@ interface InvoicesState {
   invoices: Invoice[]
   isLoading: boolean
   fetchAll: () => Promise<void>
-  addInvoice: (data: Omit<Invoice, "id" | "numero">) => Promise<void>
+  addInvoice: (data: Omit<Invoice, "id" | "numero">) => Promise<Invoice>
   recordPayment: (id: string, amount: number) => Promise<void>
   deleteInvoice: (id: string) => void
 }
@@ -38,7 +38,7 @@ export const useInvoicesStore = create<InvoicesState>((set, get) => ({
         const invoices = get().invoices
         const invoice: Invoice = { ...data, id: `inv-${Date.now()}`, numero: nextNumero(invoices) }
         set({ invoices: [invoice, ...invoices] })
-        resolve()
+        resolve(invoice)
       }, FAKE_LATENCY_MS)
     }),
 

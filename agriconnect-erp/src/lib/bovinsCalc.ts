@@ -12,12 +12,6 @@ export function countEffectifAt(animaux: BovinAnimal[], dateIso: string): number
   }).length
 }
 
-export function endOfPreviousMonth(dateIso: string): string {
-  const d = new Date(dateIso)
-  d.setDate(0)
-  return d.toISOString().slice(0, 10)
-}
-
 export function countEntreesSurPeriode(animaux: BovinAnimal[], startIso: string, endIso: string): number {
   return animaux.filter((a) => a.dateEntree >= startIso && a.dateEntree <= endIso).length
 }
