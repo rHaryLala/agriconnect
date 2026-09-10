@@ -25,8 +25,10 @@ export async function realLogin(email: string, password: string): Promise<{ user
     }
     return { user, token: data.access_token }
   } catch (err) {
-    if (err instanceof ApiError) throw new Error(err.status === 401 ? "Email ou mot de passe incorrect." : err.message)
-    throw new Error("Impossible de contacter le serveur. Vérifie ta connexion.")
+    if (err instanceof ApiError) {
+      throw new Error(err.status === 401 ? "Email ou mot de passe incorrect." : err.message, { cause: err })
+    }
+    throw new Error("Impossible de contacter le serveur. Vérifie ta connexion.", { cause: err })
   }
 }
 
