@@ -1,7 +1,6 @@
 {
   "common": { "loading": "Eo am-panamboarana...", "save": "Tehirizo", "cancel": "Aoka", "search": "Karohy...", "add": "Ampio", "edit": "Ovay", "delete": "Fafao", "close": "Akatony", "appName" : "AgriConnect", "readOnlyBanner": "Fijerena fotsiny no azonao atao amin'ity sampana ity." },
   "nav": { "dashboard": "Tabilao mpitantana", "production": "Vokatra", "stocks": "Tahiry entana", "finance": "Vola", "clients": "Mpanjifa", "reports": "Tatitra", "settings": "Kirakira", "collapse": "Ahakelezo", "expand": "Ahalalaho ny lisitra", "menu": "Lisitra", "openMenu": "Sokafy ny lisitra", "logout": "Hivoaka", "offline": "Fomba tsy misy aterineto (ho avy)", "more": "Bebe kokoa", "groups": {"principal": "Lehibe", "finances": "Vola","commerce": "Varotra", "analyse": "Fandinihana"} },
-  "language": { "label": "Fiteny", "fr": "Frantsay", "en": "Anglisy", "mg": "Malagasy" },
   "landing": {
     "header": { "login": "Hiditra", "register": "Hisoratra anarana" },
     "hero": {
@@ -709,9 +708,114 @@
       "roleControleurInterne": "Mpanara-maso anaty"
     },
     "language": {
-    "sectionTitle": "Ny fiteny asehon'ny rindrankaja",
-    "sectionDescription": "Safidio ny fiteny hasehon'ny rindrankaja."
-  }
+      "sectionTitle": "Ny fiteny asehon'ny rindrankaja",
+      "sectionDescription": "Safidio ny fiteny hasehon'ny rindrankaja.",
+      "regionTitle": "Faritra & endrika",
+      "regionDescription": "Ora, endriky ny daty ary vola ampiasaina manerana ny rindrankaja.",
+      "fieldTimezone": "Faritra ora",
+      "fieldDateFormat": "Endriky ny daty",
+      "fieldCurrency": "Vola"
+    },
+    "profile": {
+      "avatarTitle": "Sarin'ny mombamomba",
+      "avatarDescription": "Vokarina ho azy avy amin'ny litera voalohan'ny anaranao.",
+      "avatarHint": "Tsy misy sary manokana mbola azo ampiasaina — ny litera voalohan'ny anaranao no mombamomba ampiasaina manerana ny rindrankaja.",
+      "infoTitle": "Fampahalalana manokana",
+      "infoDescription": "Ny anaranao no ampiasaina hamantarana anao manerana ny rindrankaja.",
+      "fieldFirstName": "Fanampin'anarana",
+      "fieldLastName": "Anarana",
+      "fieldEmail": "Adiresy mailaka",
+      "emailHint": "Ny adiresy mailaka no ampiasaina hidirana ary tsy azo ovaina eto.",
+      "fieldRole": "Anjara asa",
+      "roleHint": "Ny mpitantana ihany no afaka manova ny anjara asanao, ao amin'ny Kirakira → Mpampiasa.",
+      "toastSaved": "Voatahiry ny mombamomba"
+    },
+    "security": {
+      "passwordTitle": "Tenimiafina",
+      "passwordDescription": "Misafidiana tenimiafina misy litera 8 farafahakeliny.",
+      "fieldCurrentPassword": "Tenimiafina ankehitriny",
+      "fieldNewPassword": "Tenimiafina vaovao",
+      "fieldConfirmPassword": "Hamafiso ny tenimiafina",
+      "validationRequired": "Ilaina ity saha ity",
+      "validationMinLength": "8 litera farafahakeliny",
+      "validationMismatch": "Tsy mitovy ny tenimiafina",
+      "submitButton": "Ovay ny tenimiafina",
+      "toastComingSoon": "Ho avy tsy ho ela ny fanovana ny tenimiafina amin'ity pejy ity.",
+      "twoFaTitle": "Fanamarinana roa dingana",
+      "twoFaDescription": "Mandray kaody vonjimaika isaky ny fidirana mba hanamafisana ny fiarovana ny kaontinao.",
+      "comingSoon": "Ho avy tsy ho ela"
+    },
+    "appearance": {
+      "themeTitle": "Endrika",
+      "themeDescription": "Misafidiana ny endriky ny rindrankaja.",
+      "themeLight": "Mazava",
+      "themeDark": "Maizina"
+    },
+    "notifications": {
+      "colNotification": "Fampandrenesana",
+      "channelEmail": "Mailaka",
+      "channelPush": "Push",
+      "stockAlertsTitle": "Fampitandremana tahiry lehibe",
+      "stockAlertsDescription": "Rehefa mihena ambanin'ny fetra mafy ny entana",
+      "newTransactionsTitle": "Fihetsiketsehana vaovao",
+      "newTransactionsDescription": "Fandaniana sy vola miditra voarakitra",
+      "pendingInvoicesTitle": "Faktiora miandry",
+      "pendingInvoicesDescription": "Fampahatsiahivana fandoavana andrasana",
+      "dailyReportTitle": "Tatitra isan'andro",
+      "dailyReportDescription": "Famintinana ny vokatra, varotra ary tahiry isan'andro",
+      "unusualLoginsTitle": "Fidirana tsy fahazatra",
+      "unusualLoginsDescription": "Fampitandremana fiarovana momba ny kaontinao",
+      "newUsersTitle": "Mpampiasa vaovao",
+      "newUsersDescription": "Famoronana na fanovana kaonty",
+      "systemBackupTitle": "Tahiry rindrankaja",
+      "systemBackupDescription": "Satan'ny tahiry eo an-toerana"
+    },
+    "roles": {
+      "infoBanner": "Ity tabilao ity dia mampiseho ny fahazoan-dàlana marina ampiharina ao amin'ny rindrankaja, isaky ny anjara asa sy singa.",
+      "memberCount": "Mpikambana {{count}}",
+      "fullAccessCount": "{{count}} fahazoan-dàlana feno",
+      "readonlyAccessCount": "{{count}} fanovana ihany",
+      "levelFull": "Fahazoan-dàlana feno",
+      "levelReadonly": "Famakiana ihany",
+      "levelNone": "Tsy misy fahazoan-dàlana"
+    },
+    "system": {
+      "readOnlyHint": "Ho an'ny mpitantana ihany ireto fandrindrana ireto.",
+      "autoBackupTitle": "Tahiry ho azy",
+      "autoBackupDescription": "Fampahatsiahivana tsy tapaka hanao tahiry eo an-toerana.",
+      "auditLogTitle": "Diarin'ny fanaraha-maso",
+      "auditLogDescription": "Mitahiry ny hetsiky ny mpampiasa manan-danja.",
+      "maintenanceModeTitle": "Fomba fanamboarana",
+      "maintenanceModeDescription": "Manakana ny fidiran'ny mpampiasa tsy mpitantana.",
+      "debugModeTitle": "Fomba fitadiavana kilema",
+      "debugModeDescription": "Mampiseho ny diary ara-teknika ao amin'ny console."
+    },
+    "backup": {
+      "statTotalSize": "Habe iray manontolo",
+      "statKeyCount": "Sombin-tahiry",
+      "exportButton": "Avoahy ny tahiry",
+      "importButton": "Averina avy amin'ny rakitra",
+      "hint": "Satria 100% eo amin'ny mpampiasa ny rindrankaja, ny tahiry dia mamoaka ny angona voarakitra eo an-toerana (vokatra, tahiry, vola, mpanjifa) amin'ny endrika JSON. Ny fanaovana averina dia mamerina misokatra ny pejy rehefa avy nampidirina.",
+      "colKey": "Sombin-tahiry",
+      "colSize": "Habe",
+      "toastExported": "Voaomana ny tahiry",
+      "toastRestored": "Naverina ny tahiry",
+      "toastRestoreError": "Tsy mety ny rakitra tahiry"
+    },
+    "status": {
+      "itemConnectivity": "Fifandraisana tambajotra",
+      "online": "Mifandray",
+      "offline": "Tsy mifandray",
+      "itemBackend": "Loharanon'ny angona",
+      "mockMode": "Fampisehoana (angona eo an-toerana)",
+      "realMode": "Mpizara mifandray",
+      "itemSyncQueue": "Filaharan'ny fampifanarahana",
+      "syncPending": "{{count}} miandry",
+      "syncUpToDate": "Vao haingana",
+      "itemStorage": "Angona voarakitra eo an-toerana",
+      "itemLanguage": "Fiteny mihatra",
+      "itemTheme": "Endrika mihatra"
+    }
   },
   "offline": {
     "bannerTitle": "Tsy misy aterineto ianao",

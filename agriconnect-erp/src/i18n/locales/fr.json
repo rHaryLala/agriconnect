@@ -1,7 +1,6 @@
 {
   "common": { "loading": "Chargement...", "save": "Enregistrer", "cancel": "Annuler", "search": "Rechercher...", "add": "Ajouter", "edit": "Modifier", "delete": "Supprimer", "close": "Fermer", "appName" : "AgriConnect", "readOnlyBanner": "Vous consultez ce module en lecture seule." },
   "nav": { "dashboard": "Tableau de bord", "production": "Production", "stocks": "Stocks", "finance": "Finance", "clients": "Clients", "reports": "Rapports", "settings": "Paramètres", "collapse": "Réduire", "expand": "Déplier le menu", "menu": "Menu", "openMenu": "Ouvrir le menu", "logout": "Se déconnecter", "offline": "Mode hors ligne (bientôt disponible)", "more": "Plus","groups": {"principal": "Principal", "finances": "Finances","commerce": "Commerce", "analyse": "Analyse"}},
-  "language": { "label": "Langue", "fr": "Français", "en": "Anglais", "mg": "Malagasy" },
   "landing": {
     "header": { "login": "Se connecter", "register": "S'inscrire" },
     "hero": {
@@ -712,8 +711,113 @@
       "roleControleurInterne": "Contrôleur Interne"
     },
     "language": {
-    "sectionTitle": "Langue de l'interface",
-    "sectionDescription": "Sélectionnez la langue d'affichage de l'application."
+      "sectionTitle": "Langue de l'interface",
+      "sectionDescription": "Sélectionnez la langue d'affichage de l'application.",
+      "regionTitle": "Région & formats",
+      "regionDescription": "Fuseau horaire, format de date et devise utilisés dans toute l'application.",
+      "fieldTimezone": "Fuseau horaire",
+      "fieldDateFormat": "Format de date",
+      "fieldCurrency": "Devise"
+    },
+    "profile": {
+      "avatarTitle": "Photo de profil",
+      "avatarDescription": "Générée automatiquement à partir de vos initiales.",
+      "avatarHint": "Aucune photo personnalisée n'est disponible pour le moment — vos initiales servent d'avatar partout dans l'application.",
+      "infoTitle": "Informations personnelles",
+      "infoDescription": "Votre nom est utilisé pour vous identifier dans l'application.",
+      "fieldFirstName": "Prénom",
+      "fieldLastName": "Nom",
+      "fieldEmail": "Adresse e-mail",
+      "emailHint": "L'adresse e-mail sert d'identifiant de connexion et ne peut pas être modifiée ici.",
+      "fieldRole": "Rôle",
+      "roleHint": "Seul un administrateur peut modifier votre rôle, depuis Paramètres → Utilisateurs.",
+      "toastSaved": "Profil mis à jour"
+    },
+    "security": {
+      "passwordTitle": "Mot de passe",
+      "passwordDescription": "Choisissez un mot de passe d'au moins 8 caractères.",
+      "fieldCurrentPassword": "Mot de passe actuel",
+      "fieldNewPassword": "Nouveau mot de passe",
+      "fieldConfirmPassword": "Confirmer le mot de passe",
+      "validationRequired": "Ce champ est requis",
+      "validationMinLength": "8 caractères minimum",
+      "validationMismatch": "Les mots de passe ne correspondent pas",
+      "submitButton": "Modifier le mot de passe",
+      "toastComingSoon": "La modification du mot de passe depuis cette page arrive bientôt.",
+      "twoFaTitle": "Authentification à deux facteurs",
+      "twoFaDescription": "Recevez un code temporaire à chaque connexion pour renforcer la sécurité de votre compte.",
+      "comingSoon": "Bientôt disponible"
+    },
+    "appearance": {
+      "themeTitle": "Thème",
+      "themeDescription": "Choisissez l'apparence de l'interface.",
+      "themeLight": "Clair",
+      "themeDark": "Sombre"
+    },
+    "notifications": {
+      "colNotification": "Notification",
+      "channelEmail": "E-mail",
+      "channelPush": "Push",
+      "stockAlertsTitle": "Alertes stock critiques",
+      "stockAlertsDescription": "Quand un article passe sous son seuil critique",
+      "newTransactionsTitle": "Nouvelles transactions",
+      "newTransactionsDescription": "Dépenses et recettes enregistrées",
+      "pendingInvoicesTitle": "Factures en attente",
+      "pendingInvoicesDescription": "Rappels de paiement à recevoir",
+      "dailyReportTitle": "Rapport quotidien",
+      "dailyReportDescription": "Synthèse de la production, des ventes et du stock du jour",
+      "unusualLoginsTitle": "Connexions inhabituelles",
+      "unusualLoginsDescription": "Alertes de sécurité sur votre compte",
+      "newUsersTitle": "Nouveaux utilisateurs",
+      "newUsersDescription": "Création ou modification de comptes",
+      "systemBackupTitle": "Sauvegarde système",
+      "systemBackupDescription": "Statut des sauvegardes locales"
+    },
+    "roles": {
+      "infoBanner": "Cette matrice reflète les permissions réellement appliquées dans l'application, par rôle et par module.",
+      "memberCount": "{{count}} membre(s)",
+      "fullAccessCount": "{{count}} accès complet(s)",
+      "readonlyAccessCount": "{{count}} en lecture seule",
+      "levelFull": "Accès complet",
+      "levelReadonly": "Lecture seule",
+      "levelNone": "Aucun accès"
+    },
+    "system": {
+      "readOnlyHint": "Ces paramètres sont réservés aux administrateurs.",
+      "autoBackupTitle": "Sauvegarde automatique",
+      "autoBackupDescription": "Rappel régulier d'exporter une sauvegarde locale des données.",
+      "auditLogTitle": "Journal d'audit",
+      "auditLogDescription": "Enregistrer les actions sensibles des utilisateurs.",
+      "maintenanceModeTitle": "Mode maintenance",
+      "maintenanceModeDescription": "Désactiver l'accès pour les utilisateurs non-admins.",
+      "debugModeTitle": "Mode débogage",
+      "debugModeDescription": "Afficher les journaux techniques dans la console."
+    },
+    "backup": {
+      "statTotalSize": "Taille totale",
+      "statKeyCount": "Blocs de données",
+      "exportButton": "Exporter une sauvegarde",
+      "importButton": "Restaurer depuis un fichier",
+      "hint": "L'application étant 100% front-end, la sauvegarde exporte les données stockées localement (production, stock, finance, clients) au format JSON. La restauration recharge la page une fois importée.",
+      "colKey": "Bloc de données",
+      "colSize": "Taille",
+      "toastExported": "Sauvegarde exportée",
+      "toastRestored": "Sauvegarde restaurée",
+      "toastRestoreError": "Fichier de sauvegarde invalide"
+    },
+    "status": {
+      "itemConnectivity": "Connexion réseau",
+      "online": "En ligne",
+      "offline": "Hors ligne",
+      "itemBackend": "Source des données",
+      "mockMode": "Démonstration (données locales)",
+      "realMode": "Serveur connecté",
+      "itemSyncQueue": "File de synchronisation",
+      "syncPending": "{{count}} en attente",
+      "syncUpToDate": "À jour",
+      "itemStorage": "Données stockées localement",
+      "itemLanguage": "Langue active",
+      "itemTheme": "Thème actif"
     }
   },
   "language": {
@@ -723,7 +827,7 @@
     "mg":"Malgache",
     "frRegion": "France",
     "enRegion": "Royaume-Uni / États-Unis",
-  " mgRegion": "Madagascar"
+    "mgRegion": "Madagascar"
   },
   "offline": {
     "bannerTitle": "Vous êtes hors ligne",

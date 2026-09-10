@@ -8,7 +8,7 @@ interface UsersState {
   isLoading: boolean
   fetchUsers: () => Promise<void>
   addUser: (data: Omit<User, "id" | "avatarInitials">) => Promise<void>
-  updateUser: (id: string, data: Omit<User, "id" | "avatarInitials">) => Promise<void>
+  updateUser: (id: string, data: Omit<User, "id" | "avatarInitials">) => Promise<User>
   deleteUser: (id: string) => Promise<void>
 }
 
@@ -41,6 +41,7 @@ export const useUsersStore = create<UsersState>((set, get) => ({
   updateUser: async (id, data) => {
     const user = await updateUserApi(getToken(), id, data)
     set({ users: get().users.map((u) => (u.id === id ? user : u)) })
+    return user
   },
 
   deleteUser: async (id) => {

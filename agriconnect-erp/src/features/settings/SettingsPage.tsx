@@ -2,7 +2,15 @@ import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { ChevronDown } from "lucide-react"
 import { UsersManagement } from "./UsersManagement"
-import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
+import { ProfileSection } from "./ProfileSection"
+import { SecuritySection } from "./SecuritySection"
+import { AppearanceSection } from "./AppearanceSection"
+import { NotificationsSection } from "./NotificationsSection"
+import { LanguageRegionSection } from "./LanguageRegionSection"
+import { RolesPermissionsSection } from "./RolesPermissionsSection"
+import { SystemConfigSection } from "./SystemConfigSection"
+import { BackupSection } from "./BackupSection"
+import { SystemStatusSection } from "./SystemStatusSection"
 import { ReadOnlyBanner } from "@/components/shared/ReadOnlyBanner"
 import { usePermission } from "@/hooks/usePermission"
 import { User, ShieldCheck, Palette, Bell, Globe, Users, UserCog, SlidersHorizontal, DatabaseBackup, CircleCheck, type LucideIcon } from "lucide-react"
@@ -30,7 +38,10 @@ export default function SettingsPage() {
   const [activeTab, setActiveTab] = useState<string>("profil")
   const [openGroupMobile, setOpenGroupMobile] = useState<string>("account")
 
-  const groups = ALL_GROUPS.filter((g) => g !== "administration" || canView)
+  // "administration" and "data" both hold sensitive/technical sections (users, roles,
+  // system config, backup, system status), so both require settings access beyond "none" —
+  // only "account" (personal profile/security/appearance/notifications/language) stays open to everyone.
+  const groups = ALL_GROUPS.filter((g) => g === "account" || canView)
   const visibleTabs = TABS.filter((tab) => groups.includes(tab.group))
   const active = visibleTabs.find((tab) => tab.id === activeTab) ?? visibleTabs[0]
 
@@ -96,20 +107,17 @@ export default function SettingsPage() {
         </div>
 
         <section key={active.id} className="flex-1 animate-content-in">
-          <h2 className="mb-1 text-2xl font-bold">{t(active.labelKey)}</h2>
-          {active.id === "utilisateurs" ? (
-            <UsersManagement canEdit={canEdit} />
-          ) : active.id === "langue" ? (
-            <div className="max-w-sm">
-              <p className="mb-4 text-sm text-muted-foreground">{t("language.label")}</p>
-              <LanguageSwitcher />
-            </div>
-          ) : (
-            <>
-              <p className="mb-6 text-sm text-muted-foreground">{t("settings.placeholderDescription", { label: t(active.labelKey) })}</p>
-              <div className="rounded-xl border border-border bg-surface p-8 text-sm text-muted-foreground">{t("settings.placeholderContent", { label: t(active.labelKey) })}</div>
-            </>
-          )}
+          <h2 className="mb-6 text-2xl font-bold">{t(active.labelKey)}</h2>
+          {active.id === "profil" && <ProfileSection />}
+          {active.id === "securite" && <SecuritySection />}
+          {active.id === "apparence" && <AppearanceSection />}
+          {active.id === "notifications" && <NotificationsSection />}
+          {active.id === "langue" && <LanguageRegionSection />}
+          {active.id === "utilisateurs" && <UsersManagement canEdit={canEdit} />}
+          {active.id === "roles" && <RolesPermissionsSection />}
+          {active.id === "systeme" && <SystemConfigSection canEdit={canEdit} />}
+          {active.id === "sauvegarde" && <BackupSection canEdit={canEdit} />}
+          {active.id === "statut" && <SystemStatusSection />}
         </section>
       </div>
     </div>

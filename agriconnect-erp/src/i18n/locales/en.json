@@ -1,7 +1,6 @@
 {
   "common": { "loading": "Loading...", "save": "Save", "cancel": "Cancel", "search": "Search...", "add": "Add", "edit": "Edit", "delete": "Delete", "close": "Close", "appName" : "AgriConnect", "readOnlyBanner": "You're viewing this module in read-only mode." },
   "nav": { "dashboard": "Dashboard", "production": "Production", "stocks": "Stock", "finance": "Finance", "clients": "Clients", "reports": "Reports", "settings": "Settings", "collapse": "Collapse", "expand": "Expand menu", "menu": "Menu", "openMenu": "Open menu", "logout": "Log out", "offline": "Offline mode (coming soon)", "more": "More", "groups": {"principal": "Main", "finances": "Finances","commerce": "Commerce", "analyse": "Analysis"} },
-  "language": { "label": "Language", "fr": "French", "en": "English", "mg": "Malagasy" },
   "landing": {
     "header": { "login": "Log in", "register": "Sign up" },
     "hero": {
@@ -712,8 +711,113 @@
       "roleControleurInterne": "Internal Controller"
     },
   "language": {
-    "sectionTitle": "Interface language",
-    "sectionDescription": "Select the display language for the application."
+      "sectionTitle": "Interface language",
+      "sectionDescription": "Select the display language for the application.",
+      "regionTitle": "Region & formats",
+      "regionDescription": "Timezone, date format and currency used throughout the application.",
+      "fieldTimezone": "Timezone",
+      "fieldDateFormat": "Date format",
+      "fieldCurrency": "Currency"
+    },
+    "profile": {
+      "avatarTitle": "Profile photo",
+      "avatarDescription": "Automatically generated from your initials.",
+      "avatarHint": "No custom photo is available yet — your initials serve as your avatar throughout the application.",
+      "infoTitle": "Personal information",
+      "infoDescription": "Your name is used to identify you across the application.",
+      "fieldFirstName": "First name",
+      "fieldLastName": "Last name",
+      "fieldEmail": "Email address",
+      "emailHint": "The email address is used as your login and cannot be changed here.",
+      "fieldRole": "Role",
+      "roleHint": "Only an administrator can change your role, from Settings → Users.",
+      "toastSaved": "Profile updated"
+    },
+    "security": {
+      "passwordTitle": "Password",
+      "passwordDescription": "Choose a password with at least 8 characters.",
+      "fieldCurrentPassword": "Current password",
+      "fieldNewPassword": "New password",
+      "fieldConfirmPassword": "Confirm password",
+      "validationRequired": "This field is required",
+      "validationMinLength": "8 characters minimum",
+      "validationMismatch": "Passwords don't match",
+      "submitButton": "Change password",
+      "toastComingSoon": "Changing your password from this page is coming soon.",
+      "twoFaTitle": "Two-factor authentication",
+      "twoFaDescription": "Receive a one-time code at every login to strengthen your account's security.",
+      "comingSoon": "Coming soon"
+    },
+    "appearance": {
+      "themeTitle": "Theme",
+      "themeDescription": "Choose the interface's appearance.",
+      "themeLight": "Light",
+      "themeDark": "Dark"
+    },
+    "notifications": {
+      "colNotification": "Notification",
+      "channelEmail": "Email",
+      "channelPush": "Push",
+      "stockAlertsTitle": "Critical stock alerts",
+      "stockAlertsDescription": "When an article drops below its critical threshold",
+      "newTransactionsTitle": "New transactions",
+      "newTransactionsDescription": "Expenses and revenue recorded",
+      "pendingInvoicesTitle": "Pending invoices",
+      "pendingInvoicesDescription": "Payment reminders to receive",
+      "dailyReportTitle": "Daily report",
+      "dailyReportDescription": "Summary of the day's production, sales and stock",
+      "unusualLoginsTitle": "Unusual logins",
+      "unusualLoginsDescription": "Security alerts on your account",
+      "newUsersTitle": "New users",
+      "newUsersDescription": "Account creation or changes",
+      "systemBackupTitle": "System backup",
+      "systemBackupDescription": "Status of local backups"
+    },
+    "roles": {
+      "infoBanner": "This matrix reflects the permissions actually applied in the application, by role and by module.",
+      "memberCount": "{{count}} member(s)",
+      "fullAccessCount": "{{count}} full access",
+      "readonlyAccessCount": "{{count}} read-only",
+      "levelFull": "Full access",
+      "levelReadonly": "Read-only",
+      "levelNone": "No access"
+    },
+    "system": {
+      "readOnlyHint": "These settings are reserved for administrators.",
+      "autoBackupTitle": "Automatic backup",
+      "autoBackupDescription": "Regular reminder to export a local backup of the data.",
+      "auditLogTitle": "Audit log",
+      "auditLogDescription": "Record sensitive user actions.",
+      "maintenanceModeTitle": "Maintenance mode",
+      "maintenanceModeDescription": "Disable access for non-admin users.",
+      "debugModeTitle": "Debug mode",
+      "debugModeDescription": "Show technical logs in the console."
+    },
+    "backup": {
+      "statTotalSize": "Total size",
+      "statKeyCount": "Data blocks",
+      "exportButton": "Export a backup",
+      "importButton": "Restore from a file",
+      "hint": "Since the application is 100% front-end, the backup exports the data stored locally (production, stock, finance, clients) as JSON. Restoring reloads the page once imported.",
+      "colKey": "Data block",
+      "colSize": "Size",
+      "toastExported": "Backup exported",
+      "toastRestored": "Backup restored",
+      "toastRestoreError": "Invalid backup file"
+    },
+    "status": {
+      "itemConnectivity": "Network connection",
+      "online": "Online",
+      "offline": "Offline",
+      "itemBackend": "Data source",
+      "mockMode": "Demo (local data)",
+      "realMode": "Connected server",
+      "itemSyncQueue": "Sync queue",
+      "syncPending": "{{count}} pending",
+      "syncUpToDate": "Up to date",
+      "itemStorage": "Locally stored data",
+      "itemLanguage": "Active language",
+      "itemTheme": "Active theme"
     }
   },
   "language": {

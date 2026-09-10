@@ -18,6 +18,7 @@ interface AuthState {
   logout: (reason?: LogoutReason) => void
   clearLogoutReason: () => void
   setHasHydrated: (value: boolean) => void
+  updateUser: (user: User) => void
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -48,6 +49,8 @@ export const useAuthStore = create<AuthState>()(
       clearLogoutReason: () => set({ logoutReason: null }),
 
       setHasHydrated: (value) => set({ hasHydrated: value }),
+
+      updateUser: (user) => set({ user }),
     }),
     {
       name: "agriconnect-auth",
