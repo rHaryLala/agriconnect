@@ -164,6 +164,8 @@ model Client {
   invoices     Invoice[]
   transactions Transaction[]
 
+  cattles   Cattle[]    
+
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
@@ -278,12 +280,35 @@ enum StatusBovin{
   VENDU
   DECEDE
 }
+
+enum EntryTypeBovin{
+  NAISSANCE
+  ACHAT
+}
+
 model Cattle{
   id String @id @default(uuid())
   nameOrTag String //anarana na fiantsoana anazy
   gender String // male/female
+  category    String?   @default("Vache laitière")// Veau, Vache laitière, etc.
   status StatusBovin @default(EN_ELEVAGE)
+
+  //Entrée------------------------
+  entryType   EntryTypeBovin    @default(NAISSANCE)
+  entryDate   DateTime    @default(now())
   birthDate DateTime?
+
+  //SORTIE-------------------------
+  saleDate    DateTime?
+  salePrice   Float? //prix unitaire
+  signature   String?  // URL/path de la signature ou validation
+  clientId    String?
+  client    Client? @relation(fields: [clientId], references: [id])
+
+  //Décès / Mortalité---------------
+  deathDate   DateTime?
+  deathReason   String?   // Motif
+
   notes String?
 
   farmId String
