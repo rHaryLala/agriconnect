@@ -16,7 +16,14 @@ export default function LoginPage() {
   const login = useAuthStore((s) => s.login)
   const [showPassword, setShowPassword] = useState(false)
   const [serverError, setServerError] = useState<string | null>(null)
-  const cardTilt = useTilt3D<HTMLDivElement>(3)
+
+  const {
+  ref: cardTiltRef,
+  style: cardTiltStyle,
+  onMouseMove: cardTiltOnMouseMove,
+  onMouseEnter: cardTiltOnMouseEnter,
+  onMouseLeave: cardTiltOnMouseLeave,
+} = useTilt3D<HTMLDivElement>(3)
 
   const HIGHLIGHTS = [
     { icon: ShieldCheck, text: t("auth.login.highlight1") },
@@ -44,7 +51,7 @@ export default function LoginPage() {
     <div className="relative min-h-screen overflow-hidden bg-[#0B3B27]">
       <picture className="absolute inset-0">
         <source srcSet="/hero/hero-09.webp" type="image/webp" />
-        <img src="/hero/hero-09.jpg" alt="" aria-hidden fetchPriority="high" decoding="async" className="h-full w-full object-cover" />
+        <img src="/hero/hero-09.webp" alt="" aria-hidden fetchPriority="high" decoding="async" className="h-full w-full object-cover" />
       </picture>
       <div className="absolute inset-0 bg-gradient-to-r from-[#0B3B27]/95 via-[#0B3B27]/60 to-[#0B3B27]/80" />
       <div aria-hidden className="pointer-events-none absolute inset-0 bg-[radial-gradient(ellipse_60%_50%_at_75%_50%,rgba(11,59,39,0.55),transparent_70%)]" />
@@ -81,12 +88,11 @@ export default function LoginPage() {
 
         <div className="relative flex flex-1 items-center justify-center px-4 pb-10 pt-4 sm:px-6 lg:flex-none lg:py-10">
           <div
-            ref={cardTilt.ref}
-            onMouseMove={cardTilt.onMouseMove}
-            onMouseEnter={cardTilt.onMouseEnter}
-            onMouseLeave={cardTilt.onMouseLeave}
-            style={cardTilt.style}
-            className="glass-strong relative z-10 w-full max-w-sm animate-card-in rounded-2xl p-7 text-white shadow-2xl transition-shadow duration-500 will-change-transform hover:shadow-black/20 sm:p-9"
+            ref={cardTiltRef}
+            onMouseMove={cardTiltOnMouseMove}
+            onMouseEnter={cardTiltOnMouseEnter}
+            onMouseLeave={cardTiltOnMouseLeave}
+            style={cardTiltStyle}
           >
             <div className="mb-7 text-center lg:text-left">
               <p className="font-serif text-2xl">{t("auth.login.cardTitle")}</p>

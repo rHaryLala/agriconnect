@@ -11,25 +11,43 @@ const INTERVAL_MS = 5500
 export function HeroSlideshow() {
   const [index, setIndex] = useState(0)
   const [loaded, setLoaded] = useState<Set<number>>(() => new Set([0, 1 % IMAGE_NAMES.length]))
-  const [reducedMotion, setReducedMotion] = useState(false)
+  const [reducedMotion] = useState(
+    () => typeof window !== "undefined" && window.matchMedia("(prefers-reduced-motion: reduce)").matches,
+  )
 
-  useEffect(() => {
-    const mq = window.matchMedia("(prefers-reduced-motion: reduce)")
-    setReducedMotion(mq.matches)
-  }, [])
+  function goTo(next: number) {
+    setIndex(next)
+    setLoaded((prev) => {
+      const after = (next + 1) % IMAGE_NAMES.length
+      if (prev.has(next) && prev.has(after)) return prev
+      const updated = new Set(prev)
+      updated.add(next)
+      updated.add(after)
+      return updated
+    })
+  }
 
   useEffect(() => {
     if (reducedMotion) return
 
     let paused = document.hidden
-    const onVisibility = () => {
-      paused = document.hidden
-    }
+    const onVisibility = () => { paused = document.hidden }
     document.addEventListener("visibilitychange", onVisibility)
 
     const timer = setInterval(() => {
       if (paused) return
-      setIndex((i) => (i + 1) % IMAGE_NAMES.length)
+      setIndex((i) => {
+        const next = (i + 1) % IMAGE_NAMES.length
+        setLoaded((prev) => {
+          const after = (next + 1) % IMAGE_NAMES.length
+          if (prev.has(next) && prev.has(after)) return prev
+          const updated = new Set(prev)
+          updated.add(next)
+          updated.add(after)
+          return updated
+        })
+        return next
+      })
     }, INTERVAL_MS)
 
     return () => {
@@ -38,28 +56,16 @@ export function HeroSlideshow() {
     }
   }, [reducedMotion])
 
-  useEffect(() => {
-    setLoaded((prev) => {
-      const next = (index + 1) % IMAGE_NAMES.length
-      if (prev.has(index) && prev.has(next)) return prev
-      const updated = new Set(prev)
-      updated.add(index)
-      updated.add(next)
-      return updated
-    })
-  }, [index])
-
   return (
     <div className="absolute inset-0 overflow-hidden">
       {IMAGE_NAMES.map((name, i) => {
         if (!loaded.has(i)) return null
         const active = i === index
-
         return (
           <picture key={name}>
             <source srcSet={`/hero/${name}.webp`} type="image/webp" />
             <img
-              src={`/hero/${name}.jpg`}
+              src={`/hero/${name}.webp`}
               alt=""
               aria-hidden
               decoding="async"
@@ -83,7 +89,7 @@ export function HeroSlideshow() {
           <button
             key={i}
             type="button"
-            onClick={() => setIndex(i)}
+            onClick={() => goTo(i)}
             aria-label={`Aller à l'image ${i + 1}`}
             className={`h-1.5 rounded-full transition-all duration-500 ${
               i === index ? "w-6 bg-white/90" : "w-1.5 bg-white/35 hover:bg-white/60"
