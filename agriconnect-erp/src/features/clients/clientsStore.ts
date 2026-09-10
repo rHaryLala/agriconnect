@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { persist, createJSONStorage } from "zustand/middleware"
 import type { Client } from "@/types/client"
 
 const FAKE_LATENCY_MS = 500
@@ -13,40 +14,53 @@ const SEED_CLIENTS: Client[] = [
 interface ClientsState {
   clients: Client[]
   isLoading: boolean
+  hasFetched: boolean
   fetchAll: () => Promise<void>
   addClient: (data: Omit<Client, "id">) => Promise<void>
   updateClient: (id: string, data: Omit<Client, "id">) => Promise<void>
   deleteClient: (id: string) => void
 }
 
-export const useClientsStore = create<ClientsState>((set, get) => ({
-  clients: [],
-  isLoading: false,
+export const useClientsStore = create<ClientsState>()(
+  persist(
+    (set, get) => ({
+      clients: [],
+      isLoading: false,
+      hasFetched: false,
 
-  fetchAll: () =>
-    new Promise((resolve) => {
-      set({ isLoading: true })
-      setTimeout(() => {
-        set({ clients: SEED_CLIENTS, isLoading: false })
-        resolve()
-      }, FAKE_LATENCY_MS)
+      fetchAll: () => {
+        if (get().hasFetched) return Promise.resolve()
+        return new Promise((resolve) => {
+          set({ isLoading: true })
+          setTimeout(() => {
+            set({ clients: SEED_CLIENTS, isLoading: false, hasFetched: true })
+            resolve()
+          }, FAKE_LATENCY_MS)
+        })
+      },
+
+      addClient: (data) =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            set({ clients: [{ ...data, id: `cl-${Date.now()}` }, ...get().clients] })
+            resolve()
+          }, FAKE_LATENCY_MS)
+        }),
+
+      updateClient: (id, data) =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            set({ clients: get().clients.map((c) => (c.id === id ? { ...data, id } : c)) })
+            resolve()
+          }, FAKE_LATENCY_MS)
+        }),
+
+      deleteClient: (id) => set({ clients: get().clients.filter((c) => c.id !== id) }),
     }),
-
-  addClient: (data) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        set({ clients: [{ ...data, id: `cl-${Date.now()}` }, ...get().clients] })
-        resolve()
-      }, FAKE_LATENCY_MS)
-    }),
-
-  updateClient: (id, data) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        set({ clients: get().clients.map((c) => (c.id === id ? { ...data, id } : c)) })
-        resolve()
-      }, FAKE_LATENCY_MS)
-    }),
-
-  deleteClient: (id) => set({ clients: get().clients.filter((c) => c.id !== id) }),
-}))
+    {
+      name: "agriconnect-clients",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ clients: state.clients, hasFetched: state.hasFetched }),
+    }
+  )
+)

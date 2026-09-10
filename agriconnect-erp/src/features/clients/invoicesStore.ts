@@ -1,4 +1,5 @@
 import { create } from "zustand"
+import { persist, createJSONStorage } from "zustand/middleware"
 import type { Invoice } from "@/types/invoice"
 
 const FAKE_LATENCY_MS = 500
@@ -13,46 +14,59 @@ function nextNumero(existing: Invoice[]): string {
 interface InvoicesState {
   invoices: Invoice[]
   isLoading: boolean
+  hasFetched: boolean
   fetchAll: () => Promise<void>
   addInvoice: (data: Omit<Invoice, "id" | "numero">) => Promise<Invoice>
   recordPayment: (id: string, amount: number) => Promise<void>
   deleteInvoice: (id: string) => void
 }
 
-export const useInvoicesStore = create<InvoicesState>((set, get) => ({
-  invoices: [],
-  isLoading: false,
+export const useInvoicesStore = create<InvoicesState>()(
+  persist(
+    (set, get) => ({
+      invoices: [],
+      isLoading: false,
+      hasFetched: false,
 
-  fetchAll: () =>
-    new Promise((resolve) => {
-      set({ isLoading: true })
-      setTimeout(() => {
-        set({ invoices: SEED_INVOICES, isLoading: false })
-        resolve()
-      }, FAKE_LATENCY_MS)
-    }),
-
-  addInvoice: (data) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        const invoices = get().invoices
-        const invoice: Invoice = { ...data, id: `inv-${Date.now()}`, numero: nextNumero(invoices) }
-        set({ invoices: [invoice, ...invoices] })
-        resolve(invoice)
-      }, FAKE_LATENCY_MS)
-    }),
-
-  recordPayment: (id, amount) =>
-    new Promise((resolve) => {
-      setTimeout(() => {
-        set({
-          invoices: get().invoices.map((inv) =>
-            inv.id === id ? { ...inv, montantPaye: inv.montantPaye + amount } : inv
-          ),
+      fetchAll: () => {
+        if (get().hasFetched) return Promise.resolve()
+        return new Promise((resolve) => {
+          set({ isLoading: true })
+          setTimeout(() => {
+            set({ invoices: SEED_INVOICES, isLoading: false, hasFetched: true })
+            resolve()
+          }, FAKE_LATENCY_MS)
         })
-        resolve()
-      }, FAKE_LATENCY_MS)
-    }),
+      },
 
-  deleteInvoice: (id) => set({ invoices: get().invoices.filter((inv) => inv.id !== id) }),
-}))
+      addInvoice: (data) =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            const invoices = get().invoices
+            const invoice: Invoice = { ...data, id: `inv-${Date.now()}`, numero: nextNumero(invoices) }
+            set({ invoices: [invoice, ...invoices], hasFetched: true })
+            resolve(invoice)
+          }, FAKE_LATENCY_MS)
+        }),
+
+      recordPayment: (id, amount) =>
+        new Promise((resolve) => {
+          setTimeout(() => {
+            set({
+              invoices: get().invoices.map((inv) =>
+                inv.id === id ? { ...inv, montantPaye: inv.montantPaye + amount } : inv
+              ),
+            })
+            resolve()
+          }, FAKE_LATENCY_MS)
+        }),
+
+      deleteInvoice: (id) => set({ invoices: get().invoices.filter((inv) => inv.id !== id) }),
+    }),
+    {
+      name: "agriconnect-invoices",
+      storage: createJSONStorage(() => localStorage),
+      partialize: (state) => ({ invoices: state.invoices, hasFetched: state.hasFetched }),
+    }
+  )
+)
