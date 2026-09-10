@@ -51,7 +51,7 @@ export function AgricultureEntryDialog({ open, onOpenChange, cultures, editingEn
         intrants: editingEntry?.intrants ?? "",
       })
     }
-  }, [open, cultures, editingEntry])
+  }, [open, cultures, editingEntry, reset])
 
   const surfaceHa = watch("surfaceHa")
   const recolteQty = watch("recolteQty")

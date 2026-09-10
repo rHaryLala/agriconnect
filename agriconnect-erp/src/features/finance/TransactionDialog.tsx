@@ -50,7 +50,7 @@ export function TransactionDialog({ open, onOpenChange, depenseCategories, recet
         description: editingEntry?.description ?? "",
       })
     }
-  }, [open, editingEntry])
+  }, [open, editingEntry, depenseCategories, recetteCategories, reset])
 
   const type: TransactionType = watch("type")
   const categoryOptions = type === "recette" ? recetteCategories : depenseCategories
@@ -59,7 +59,7 @@ export function TransactionDialog({ open, onOpenChange, depenseCategories, recet
     const currentCategorie = watch("categorie")
     const stillValid = categoryOptions.some((c) => c.nom === currentCategorie)
     if (!stillValid) setValue("categorie", categoryOptions[0]?.nom ?? "")
-  }, [type])
+  },[type, categoryOptions, setValue, watch])
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit(values)

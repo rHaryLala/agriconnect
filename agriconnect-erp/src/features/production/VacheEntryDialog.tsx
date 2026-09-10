@@ -55,7 +55,7 @@ export function VacheEntryDialog({ open, onOpenChange, vaches, editingEntry, onS
         suiviSanitaire: editingEntry?.suiviSanitaire ?? "",
       })
     }
-  }, [open, vaches, editingEntry])
+  }, [open, vaches, editingEntry, reset])
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit({

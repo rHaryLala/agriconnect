@@ -66,7 +66,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
         observation: editingEntry?.observation ?? "",
       })
     }
-  }, [open, articles, editingEntry])
+  }, [open, articles, editingEntry, reset])
 
   const type = watch("type")
 
