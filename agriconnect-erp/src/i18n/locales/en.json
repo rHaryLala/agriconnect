@@ -815,5 +815,54 @@
       "validationPaymentAmount": "Must be positive",
       "validationPaymentExceedsDue": "Cannot exceed the amount due ({{amount}})"
     }
+  },
+  "rapports": {
+    "pageTitle": "Reports",
+    "pageSubtitle": "Financial, production, stock — export to PDF and Excel in one click.",
+    "periodLabel": "Period (month)",
+    "colDate": "Date",
+    "exportPdf": "Export PDF",
+    "exportExcel": "Export Excel",
+    "emptyTitle": "No data",
+    "emptyDescription": "No data for the selected period.",
+    "tabs": { "financial": "Financial", "production": "Production", "stock": "Stock", "recap": "Monthly recap" },
+    "financial": {
+      "title": "Financial report",
+      "statRevenue": "Total revenue",
+      "statExpenses": "Total expenses",
+      "statMargin": "Margin",
+      "colType": "Type",
+      "colCategory": "Category",
+      "colDescription": "Description",
+      "colAmount": "Amount"
+    },
+    "production": {
+      "title": "Production report",
+      "colFiliere": "Line",
+      "colIndicator": "Indicator",
+      "colValue": "Value",
+      "colUnit": "Unit"
+    },
+    "stock": {
+      "title": "Stock report",
+      "statArticles": "Tracked articles",
+      "statCritical": "Critical alerts",
+      "statMovements": "Movements (period)",
+      "colArticle": "Article",
+      "colCurrentLevel": "Current level",
+      "colThreshold": "Threshold",
+      "colStatus": "Status",
+      "sectionInventory": "Inventory",
+      "sectionMovements": "Movements over the period"
+    },
+    "recap": {
+      "title": "Consolidated monthly recap",
+      "statInvoiced": "Invoiced amount",
+      "statCollected": "Collected amount",
+      "statOutstanding": "Outstanding balance",
+      "colFiliere": "Line",
+      "colQuantitySold": "Quantity sold",
+      "colAmount": "Amount"
+    }
   }
 }

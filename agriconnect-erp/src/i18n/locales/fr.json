@@ -815,5 +815,54 @@
       "validationPaymentAmount": "Doit être positif",
       "validationPaymentExceedsDue": "Ne peut pas dépasser le reste dû ({{amount}})"
     }
+  },
+  "rapports": {
+    "pageTitle": "Rapports",
+    "pageSubtitle": "Financier, production, stock — export PDF et Excel en un clic.",
+    "periodLabel": "Période (mois)",
+    "colDate": "Date",
+    "exportPdf": "Exporter PDF",
+    "exportExcel": "Exporter Excel",
+    "emptyTitle": "Aucune donnée",
+    "emptyDescription": "Aucune donnée pour la période sélectionnée.",
+    "tabs": { "financial": "Financier", "production": "Production", "stock": "Stock", "recap": "Récap mensuel" },
+    "financial": {
+      "title": "Rapport financier",
+      "statRevenue": "Recettes totales",
+      "statExpenses": "Dépenses totales",
+      "statMargin": "Marge",
+      "colType": "Type",
+      "colCategory": "Catégorie",
+      "colDescription": "Description",
+      "colAmount": "Montant"
+    },
+    "production": {
+      "title": "Rapport de production",
+      "colFiliere": "Filière",
+      "colIndicator": "Indicateur",
+      "colValue": "Valeur",
+      "colUnit": "Unité"
+    },
+    "stock": {
+      "title": "Rapport de stock",
+      "statArticles": "Articles suivis",
+      "statCritical": "Alertes critiques",
+      "statMovements": "Mouvements (période)",
+      "colArticle": "Article",
+      "colCurrentLevel": "Niveau actuel",
+      "colThreshold": "Seuil",
+      "colStatus": "Statut",
+      "sectionInventory": "Inventaire",
+      "sectionMovements": "Mouvements sur la période"
+    },
+    "recap": {
+      "title": "Récapitulatif mensuel consolidé",
+      "statInvoiced": "Montant facturé",
+      "statCollected": "Montant encaissé",
+      "statOutstanding": "Reste à percevoir",
+      "colFiliere": "Filière",
+      "colQuantitySold": "Quantité vendue",
+      "colAmount": "Montant"
+    }
   }
 }

@@ -803,5 +803,54 @@
       "validationPaymentAmount": "Tsy maintsy mihoatra ny aotra",
       "validationPaymentExceedsDue": "Tsy azo mihoatra ny trosa sisa ({{amount}})"
     }
+  },
+  "rapports": {
+    "pageTitle": "Tatitra",
+    "pageSubtitle": "Ara-bola, famokarana, tahiry — avoahy PDF na Excel amin'ny kitika iray.",
+    "periodLabel": "Vanim-potoana (volana)",
+    "colDate": "Daty",
+    "exportPdf": "Avoahy PDF",
+    "exportExcel": "Avoahy Excel",
+    "emptyTitle": "Tsy misy angona",
+    "emptyDescription": "Tsy misy angona amin'ny vanim-potoana voafantina.",
+    "tabs": { "financial": "Ara-bola", "production": "Famokarana", "stock": "Tahiry", "recap": "Famintinana isam-bolana" },
+    "financial": {
+      "title": "Tatitra ara-bola",
+      "statRevenue": "Vola miditra rehetra",
+      "statExpenses": "Fandaniana rehetra",
+      "statMargin": "Tombom-barotra",
+      "colType": "Karazany",
+      "colCategory": "Sokajy",
+      "colDescription": "Famaritana",
+      "colAmount": "Vola"
+    },
+    "production": {
+      "title": "Tatitra famokarana",
+      "colFiliere": "Sampana",
+      "colIndicator": "Fanamarihana",
+      "colValue": "Sanda",
+      "colUnit": "Refy"
+    },
+    "stock": {
+      "title": "Tatitra tahiry",
+      "statArticles": "Entana arahi-maso",
+      "statCritical": "Fampitandremana lehibe",
+      "statMovements": "Fihetsiketsehana (vanim-potoana)",
+      "colArticle": "Entana",
+      "colCurrentLevel": "Habe ankehitriny",
+      "colThreshold": "Fetra",
+      "colStatus": "Sata",
+      "sectionInventory": "Fitatan-tahiry",
+      "sectionMovements": "Fihetsiketsehana nandritra ny vanim-potoana"
+    },
+    "recap": {
+      "title": "Famintinana isam-bolana",
+      "statInvoiced": "Vola nofakturaina",
+      "statCollected": "Vola voaray",
+      "statOutstanding": "Sisa tsy voaray",
+      "colFiliere": "Sampana",
+      "colQuantitySold": "Habe namidy",
+      "colAmount": "Vola"
+    }
   }
 }
