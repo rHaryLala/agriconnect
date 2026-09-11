@@ -13,6 +13,7 @@ import { DashboardModule } from './dashboard/dashboard.module';
 import { DashboardController } from './dashboard/dashboard.controller';
 import { DashboardService } from './dashboard/dashboard.service';
 import { StockTransferModule } from './stock-transfer/stock-transfer.module';
+import { ProductVariantModule } from './product-variant/product-variant.module';
 
 @Module({
   imports: [
@@ -25,6 +26,7 @@ import { StockTransferModule } from './stock-transfer/stock-transfer.module';
     FinanceModule,
     DashboardModule,
     StockTransferModule,
+    ProductVariantModule,
   ],
   controllers: [AppController, ExempleController, DashboardController], // ExempleController ajouté ici
   providers: [AppService, DashboardService],
