@@ -59,29 +59,39 @@ export class StockService {
     // cohérente de gérer un écart qui peut aller dans les deux sens, alors
     // que le DTO impose @Min(0.01) (donc jamais de valeur négative).
     return this.prisma.$transaction(async (tx) => {
-      const movement = await tx.stockMovement.create({
-        data: {
-          itemId,
-          type: dto.type,
-          quantity: dto.quantity,
-          repeseeQuantity: dto.repeseeQuantity, // ce qui était annoncé — gardé pour comparaison/audit
-          reason: dto.reason, // ce qui a été réellement pesé, si applicable
-          userId,
-        },
-      });
+  const movement = await tx.stockMovement.create({
+    data: {
+      itemId, type: dto.type, quantity: dto.quantity,
+      repeseeQuantity: dto.repeseeQuantity, reason: dto.reason,
+      variantId: dto.variantId, // ajouté — trace la variante précise si fournie
+      userId,
+    },
+  });
 
-      await tx.stockItem.update({
-        where: { id: itemId },
-        data:
-          dto.type === 'AJUSTEMENT'
-            ? { quantity: quantiteReelle } // valeur absolue
-            : dto.type === 'IN' 
-              ? { quantity: { increment: quantiteReelle } }  // increment sur la quantité REPESÉE, pas l'annoncée
-              : { quantity: { decrement: quantiteReelle } },
-      });
+  const quantiteReelle = dto.repeseeQuantity ?? dto.quantity;
 
-      return movement;
+  if (dto.variantId) {
+    // Si une variante est ciblée, c'est ELLE qu'on met à jour, pas
+    // l'article parent — StockItem.quantity reste recalculé à la
+    // demande (getQuantiteTotale), jamais modifié directement ici.
+    await tx.productVariant.update({
+      where: { id: dto.variantId },
+      data: dto.type === 'AJUSTEMENT'
+        ? { quantity: quantiteReelle }
+        : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
     });
+  } else {
+    // Comportement inchangé si pas de variante (article simple, sans GM/PM)
+    await tx.stockItem.update({
+      where: { id: itemId },
+      data: dto.type === 'AJUSTEMENT'
+        ? { quantity: quantiteReelle }
+        : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
+    });
+  }
+
+  return movement;
+});
   }
 
   // RG-06 : corriger un mouvement déjà validé, jamais le supprimer.

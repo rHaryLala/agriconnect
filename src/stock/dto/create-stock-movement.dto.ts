@@ -1,9 +1,13 @@
-import { IsEnum, IsNumber, IsOptional, IsString, Min } from "class-validator";
+import { IsEnum, IsNumber, IsOptional, IsString, IsUUID, Min } from "class-validator";
 import { MouvementType } from "@prisma/client";
 
 //DTO pour l'enregistrement des entrées, sorties ou ajustement de stock
 
 export class CreateStockMovementDto {
+    @IsOptional()
+    @IsUUID()
+    variantId?: string; // si le mouvement concerne une variante précise (ex: "Oeufs GM Normal")
+    
     @IsEnum(MouvementType)
     type: MouvementType;
 
