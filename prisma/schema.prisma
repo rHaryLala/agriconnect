@@ -46,7 +46,7 @@ model User {
   stockMovment  StockMovement[]
   transactions Transaction[]
   
-  salaryDeduction SalaryDeduction[]
+  salaryDeductions SalaryDeduction[]
 
   sentTransfers     StockTransfer[] @relation("TransferSender")   
   receivedTransfers StockTransfer[] @relation("TransferReceiver")
@@ -66,6 +66,7 @@ enum ProductionType {
   POULARD
   KUROILER
   PADDY
+  HARICOT
 }
 
 model Production {
@@ -126,6 +127,7 @@ model StockMovement {
   quantity           Float
   reason             String?
   repeseeQuantity    Float? //mise a jour
+  announceQuantity    Float?
   date               DateTime       @default(now())
   userId             String
   user               User           @relation(fields: [userId], references: [id])
@@ -133,13 +135,17 @@ model StockMovement {
   itemId             String
   item               StockItem      @relation(fields: [itemId], references: [id])
 
+// ajout du product variant
+  variantId   String?
+  variant    ProductVariant?   @relation(fields: [variantId], references: [id])
+
   originalMovmentId  String?
   originalMovment    StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
   corrections        StockMovement[] @relation("MovmentCorrection")
   //mise a jour
 
   transfertId   String?
-  transfert   StockTransfer?   @relation(fields: [transfertId], references: [id], onDelete: Cascade)  
+  transfert   StockTransfer?   @relation(fields: [transfertId], references: [id])  
 
   createdAt          DateTime       @default(now())
 }
@@ -391,6 +397,8 @@ model ProductVariant{
   invoiceItems    InvoiceItem[]
 
   stockTranferItems StockTransferItem[]
+
+  movements      StockMovement[]
 
   createdAt   DateTime @default(now())
   updatedAt DateTime    @updatedAt
