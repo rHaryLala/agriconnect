@@ -1133,9 +1133,9 @@
   },
   "clients": {
     "pageTitle": "Mpanjifa",
-    "pageSubtitle": "Cafétéria, Store, mpiasa ary mpanjifa ivelany",
+    "pageSubtitle": "Cafétéria, Store, Famokarana, mpiasa ary mpanjifa ivelany",
     "tabs": { "clients": "Mpanjifa", "invoices": "Fatorana" },
-    "types": { "cafeteria": "Cafétéria", "store": "Store", "magasinier": "Magasinier", "personnel": "Mpiasa", "externe": "Ivelany", "production": "Famokarana" },
+    "types": { "cafeteria": "Cafétéria", "store": "Store", "personnel": "Mpiasa", "externe": "Ivelany", "production": "Famokarana" },
     "newClient": "Mpanjifa vaovao",
     "colName": "Anarana",
     "colType": "Karazana",

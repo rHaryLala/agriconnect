@@ -1144,9 +1144,9 @@
   },
     "clients": {
     "pageTitle": "Clients",
-    "pageSubtitle": "Cafeteria, Store, Storekeeper, staff and external clients",
+    "pageSubtitle": "Cafeteria, Store, Production, staff and external clients",
     "tabs": { "clients": "Clients", "invoices": "Invoices" },
-     "types": { "cafeteria": "Cafeteria", "store": "Store", "magasinier": "Storekeeper", "personnel": "Staff", "externe": "External", "production": "Production" },
+     "types": { "cafeteria": "Cafeteria", "store": "Store", "personnel": "Staff", "externe": "External", "production": "Production" },
     "newClient": "New client",
     "colName": "Name",
     "colType": "Type",

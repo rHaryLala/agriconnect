@@ -7,7 +7,6 @@ const FAKE_LATENCY_MS = 500
 const SEED_CLIENTS: Client[] = [
   { id: "cl-2", nom: "Store", type: "store" },
   { id: "cl-1", nom: "Cafétéria", type: "cafeteria" },
-  { id: "cl-5", nom: "Magasinier de la Ferme", type: "magasinier" },
   { id: "cl-6", nom: "Production", type: "production" },
   { id: "cl-3", nom: "Hary Lala", type: "personnel", matriculeUaz: "UAZ-0231", telephone: "034 12 345 67" },
   { id: "cl-4", nom: "Restaurant LESOA Hideout", type: "externe", telephone: "032 98 765 43" },
@@ -62,12 +61,16 @@ export const useClientsStore = create<ClientsState>()(
     {
       name: "agriconnect-clients",
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
       migrate: (persisted, version) => {
-        const state = persisted as ClientsState
+        let state = persisted as ClientsState
         if (version < 1 && state.hasFetched) {
           const known = new Set((state.clients ?? []).map((c) => c.id))
-          return { ...state, clients: [...(state.clients ?? []), ...SEED_CLIENTS.filter((c) => !known.has(c.id))] }
+          state = { ...state, clients: [...(state.clients ?? []), ...SEED_CLIENTS.filter((c) => !known.has(c.id))] }
+        }
+        if (version < 2) {
+          // The storekeeper went back to being a role and a stock location.
+          state = { ...state, clients: (state.clients ?? []).filter((c) => (c.type as string) !== "magasinier") }
         }
         return state
       },
