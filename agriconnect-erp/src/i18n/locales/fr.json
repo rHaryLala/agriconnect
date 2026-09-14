@@ -407,7 +407,12 @@
       "validationObservation": "Renseigne une observation, même 'RAS'",
       "toastCreated": "Relevé enregistré",
       "toastModified": "Relevé modifié",
-      "toastDeleted": "Relevé supprimé"
+      "toastDeleted": "Relevé supprimé",
+      "viewHerd": "Par troupeau",
+      "viewPerCow": "Par vache",
+      "colMorning": "Matin",
+      "colEvening": "Après-midi",
+      "perCowTotalsTitle": "Cumul par vache (matin / après-midi)"
     },
     "bovins": {
       "statEffectifActuel": "Effectif actuel",

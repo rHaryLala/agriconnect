@@ -407,7 +407,12 @@
       "validationObservation": "Add a note, even 'none'",
       "toastCreated": "Entry saved",
       "toastModified": "Entry updated",
-      "toastDeleted": "Entry deleted"
+      "toastDeleted": "Entry deleted",
+      "viewHerd": "Per herd",
+      "viewPerCow": "Per cow",
+      "colMorning": "Morning",
+      "colEvening": "Afternoon",
+      "perCowTotalsTitle": "Total per cow (morning / afternoon)"
     },
     "bovins": {
       "statEffectifActuel": "Current headcount",

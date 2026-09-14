@@ -407,7 +407,12 @@
       "validationObservation": "Asio fanamarihana, na dia 'tsy misy' aza",
       "toastCreated": "Voatahiry ny fandraisan-tsoratra",
       "toastModified": "Novaina ny fandraisan-tsoratra",
-      "toastDeleted": "Voafafa ny fandraisan-tsoratra"
+      "toastDeleted": "Voafafa ny fandraisan-tsoratra",
+      "viewHerd": "Isaky ny andiany",
+      "viewPerCow": "Isaky ny omby",
+      "colMorning": "Maraina",
+      "colEvening": "Tolakandro",
+      "perCowTotalsTitle": "Totalin'ny omby tsirairay (maraina / tolakandro)"
     },
     "bovins": {
       "statEffectifActuel": "Isan'ny biby ankehitriny",

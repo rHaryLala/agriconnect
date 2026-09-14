@@ -10,12 +10,11 @@ import { VacheEntryDialog } from "./VacheEntryDialog"
 import { useProductionStore } from "./productionStore"
 import { useVachesStore } from "./vachesStore"
 import { formatDate, formatNumber } from "@/lib/format"
+import { totalJour, totalMatin, totalSoir, totalTroupeau, totalsForVache } from "@/lib/vachesCalc"
 import { hasAlertKeyword, type RowTone } from "@/lib/alerts"
 import type { VacheEntry } from "@/types/production"
 
-function totalJour(entry: VacheEntry): number {
-  return entry.traites.reduce((sum, t) => sum + t.matin + t.soir, 0)
-}
+type MilkView = "troupeau" | "vache"
 
 export function VachesLaitieresTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -24,12 +23,13 @@ export function VachesLaitieresTab({ canEdit }: { canEdit: boolean }) {
   const [entryOpen, setEntryOpen] = useState(false)
   const [profileOpen, setProfileOpen] = useState(false)
   const [editingEntry, setEditingEntry] = useState<VacheEntry | null>(null)
+  const [view, setView] = useState<MilkView>("troupeau")
 
   useEffect(() => {
     fetchAll()
   }, [fetchAll])
 
-  const litresCumules = entries.reduce((sum, e) => sum + totalJour(e), 0)
+  const litresCumules = totalTroupeau(entries)
   const latest = entries[0]
 
   function openCreate() {
@@ -55,15 +55,23 @@ export function VachesLaitieresTab({ canEdit }: { canEdit: boolean }) {
     return hasAlertKeyword(e.suiviSanitaire) ? "critical" : null
   }
 
+  const perCowColumns: DataTableColumn<VacheEntry>[] = vachesProfiles.map((v) => ({
+    key: v.id,
+    label: v.nom,
+    render: (e) => {
+      const traite = e.traites.find((tr) => tr.vacheId === v.id)
+      return traite ? `${formatNumber(traite.matin)} / ${formatNumber(traite.soir)}` : "— / —"
+    },
+  }))
+
+  const herdColumns: DataTableColumn<VacheEntry>[] = [
+    { key: "matin", label: t("production.vaches.colMorning"), render: (e) => formatNumber(totalMatin(e)) },
+    { key: "soir", label: t("production.vaches.colEvening"), render: (e) => formatNumber(totalSoir(e)) },
+  ]
+
   const columns: DataTableColumn<VacheEntry>[] = [
     { key: "date", label: t("production.vaches.colDate"), render: (e) => formatDate(e.date) },
-    ...vachesProfiles.map((v): DataTableColumn<VacheEntry> => ({
-      key: v.id, label: v.nom,
-      render: (e) => {
-        const t = e.traites.find((tr) => tr.vacheId === v.id)
-        return t ? `${formatNumber(t.matin)} / ${formatNumber(t.soir)}` : "— / —"
-      },
-    })),
+    ...(view === "vache" ? perCowColumns : herdColumns),
     { key: "total", label: t("production.vaches.colTotal"), render: (e) => formatNumber(totalJour(e)) },
     { key: "alimentation", label: t("production.vaches.colFeed"), render: (e) => `${formatNumber(e.alimentationKg)} kg` },
     { key: "sanitaire", label: t("production.vaches.colObservation"), render: (e) => <span className="text-muted-foreground">{e.suiviSanitaire}</span> },
@@ -92,16 +100,50 @@ export function VachesLaitieresTab({ canEdit }: { canEdit: boolean }) {
         <StatCard icon={Milk} label={t("production.vaches.statTotalMilk")} value={`${formatNumber(litresCumules)} L`} tone="info" />
       </div>
 
-      <div className="mb-3 flex justify-end gap-2">
-        <Button variant="outline" onClick={() => setProfileOpen(true)} className="gap-2">
-          <Settings2 className="h-4 w-4" />
-          {t("production.vaches.manageCowsButton")}
-        </Button>
-        <Button onClick={openCreate} className="gap-2">
-          <Plus className="h-4 w-4" />
-          {t("production.common.newEntry")}
-        </Button>
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex gap-1 rounded-lg border border-border bg-surface p-1">
+          {(["troupeau", "vache"] as const).map((mode) => (
+            <button
+              key={mode}
+              type="button"
+              onClick={() => setView(mode)}
+              className={`rounded-md px-3 py-1.5 text-sm transition-colors duration-200 ${view === mode ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              {mode === "troupeau" ? t("production.vaches.viewHerd") : t("production.vaches.viewPerCow")}
+            </button>
+          ))}
+        </div>
+
+        {canEdit && (
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" onClick={() => setProfileOpen(true)} className="gap-2">
+              <Settings2 className="h-4 w-4" />
+              {t("production.vaches.manageCowsButton")}
+            </Button>
+            <Button onClick={openCreate} className="gap-2">
+              <Plus className="h-4 w-4" />
+              {t("production.common.newEntry")}
+            </Button>
+          </div>
+        )}
       </div>
+
+      {view === "vache" && vachesProfiles.length > 0 && (
+        <div className="mb-4 rounded-xl border border-border bg-surface p-4">
+          <p className="mb-3 text-sm font-semibold text-foreground">{t("production.vaches.perCowTotalsTitle")}</p>
+          <ul className="flex flex-wrap gap-2">
+            {vachesProfiles.map((v) => {
+              const totals = totalsForVache(entries, v.id)
+              return (
+                <li key={v.id} className="rounded-full border border-border bg-background px-3 py-1 text-xs text-muted-foreground">
+                  <span className="font-medium text-foreground">{v.nom}</span> {formatNumber(totals.total)} L
+                  <span className="ml-1 opacity-70">({formatNumber(totals.matin)} / {formatNumber(totals.soir)})</span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      )}
 
       <DataTable columns={columns} rows={entries} rowKey={(e) => e.id} isLoading={isLoading} emptyIcon={Milk} emptyTitle={t("production.vaches.emptyTitle")} emptyDescription={t("production.vaches.emptyDescription")} rowTone={rowTone} />
 
@@ -117,18 +159,6 @@ export function VachesLaitieresTab({ canEdit }: { canEdit: boolean }) {
         onUpdate={(id, v) => updateVacheProfile(id, v.nom as string)}
         onDelete={removeVacheProfile}
       />
-      {canEdit && (
-        <div className="mb-3 flex justify-end gap-2">
-          <Button variant="outline" onClick={() => setProfileOpen(true)} className="gap-2">
-            <Settings2 className="h-4 w-4" />
-            {t("production.vaches.manageCowsButton")}
-          </Button>
-          <Button onClick={openCreate} className="gap-2">
-            <Plus className="h-4 w-4" />
-            {t("production.common.newEntry")}
-          </Button>
-        </div>
-      )}
     </div>
   )
 }
