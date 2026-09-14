@@ -6,6 +6,8 @@ export interface InvoiceLineItem {
   articleId?: string
   eggCategory?: EggCategory
   bovinId?: string
+  /** Product name, for lines that do not point at a stock article. */
+  libelle?: string
   quantite: number
   prixUnitaire: number
 }

@@ -57,7 +57,7 @@ export function KuroilerEggsTab({ canEdit }: { canEdit: boolean }) {
         clientId: data.clientId,
         date: data.date,
         paymentMethod: data.paymentMethod ?? "comptant",
-        items: [{ quantite: data.quantite, prixUnitaire: data.prixUnitaire ?? 0 }],
+        items: [{ libelle: "Œufs Kuroiler", quantite: data.quantite, prixUnitaire: data.prixUnitaire ?? 0 }],
         montantPaye: data.paymentMethod === "comptant" ? total : 0,
       })
       linkInvoice(created.id, invoice.id)

@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Loading...", "save": "Save", "cancel": "Cancel", "search": "Search...", "add": "Add", "edit": "Edit", "delete": "Delete", "close": "Close", "appName" : "AgriConnect", "readOnlyBanner": "You're viewing this module in read-only mode.", "yes": "Yes", "no": "No" },
-  "nav": { "dashboard": "Dashboard", "production": "Production", "stocks": "Stock", "finance": "Finance", "clients": "Clients", "reports": "Export", "settings": "Settings", "collapse": "Collapse", "expand": "Expand menu", "menu": "Menu", "openMenu": "Open menu", "logout": "Log out", "offline": "Offline mode (coming soon)", "more": "More", "groups": {"principal": "Main", "finances": "Finances","commerce": "Commerce", "analyse": "Analysis"} },
+  "nav": { "dashboard": "Dashboard", "production": "Production", "stocks": "Stock", "finance": "Finance", "clients": "Clients", "reports": "Export", "settings": "Settings", "collapse": "Collapse", "expand": "Expand menu", "menu": "Menu", "openMenu": "Open menu", "logout": "Log out", "offline": "Offline mode (coming soon)", "more": "More", "groups": {"principal": "Main", "finances": "Finances","commerce": "Commerce", "analyse": "Analysis"}, "personnel": "Staff" },
   "landing": {
     "header": { "login": "Log in", "register": "Sign up" },
     "hero": {
@@ -1276,5 +1276,44 @@
       "colQuantitySold": "Quantity sold",
       "colAmount": "Amount"
     }
+  },
+  "personnel": {
+    "pageTitle": "Staff",
+    "pageSubtitle": "Records of the staff in the circuit and their payroll deductions",
+    "tabsStaff": "Records",
+    "tabsDeductions": "Payroll deductions",
+    "newEmploye": "New staff member",
+    "fieldName": "Name",
+    "fieldNamePlaceholder": "Full name",
+    "fieldRole": "Role",
+    "fieldRolePlaceholder": "Storekeeper, driver…",
+    "fieldDepartment": "Department",
+    "fieldDepartmentPlaceholder": "Logistics, sales…",
+    "fieldMatricule": "UAZ number",
+    "fieldStatus": "Status",
+    "fieldClient": "Linked client account",
+    "fieldClientHint": "Used to attach their purchases to their payroll deductions.",
+    "noClient": "None",
+    "statusActive": "Active",
+    "statusInactive": "Inactive",
+    "statusSettled": "Settled",
+    "dialogTitleNew": "New staff member",
+    "dialogTitleEdit": "Edit staff member",
+    "validationName": "Name required",
+    "validationRole": "Role required",
+    "validationDepartment": "Department required",
+    "emptyTitle": "No staff member",
+    "emptyDescription": "Add the staff involved in the farm circuit.",
+    "toastCreated": "Staff member saved",
+    "toastModified": "Staff member updated",
+    "toastDeleted": "Staff member deleted",
+    "statPending": "Pending deductions",
+    "statStaffConcerned": "Staff concerned",
+    "statLines": "Pending lines",
+    "byEmployeTitle": "Outstanding per staff member",
+    "colEmploye": "Staff member",
+    "colProduct": "Product",
+    "retenuesEmptyTitle": "No pending deduction",
+    "retenuesEmptyDescription": "Sales paid by payroll deduction will show up here."
   }
 }

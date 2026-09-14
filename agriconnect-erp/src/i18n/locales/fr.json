@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Chargement...", "save": "Enregistrer", "cancel": "Annuler", "search": "Rechercher...", "add": "Ajouter", "edit": "Modifier", "delete": "Supprimer", "close": "Fermer", "appName" : "AgriConnect", "readOnlyBanner": "Vous consultez ce module en lecture seule.", "yes": "Oui", "no": "Non" },
-  "nav": { "dashboard": "Tableau de bord", "production": "Production", "stocks": "Stocks", "finance": "Finance", "clients": "Clients", "reports": "Export", "settings": "Paramètres", "collapse": "Réduire", "expand": "Déplier le menu", "menu": "Menu", "openMenu": "Ouvrir le menu", "logout": "Se déconnecter", "offline": "Mode hors ligne (bientôt disponible)", "more": "Plus","groups": {"principal": "Principal", "finances": "Finances","commerce": "Commerce", "analyse": "Analyse"}},
+  "nav": { "dashboard": "Tableau de bord", "production": "Production", "stocks": "Stocks", "finance": "Finance", "clients": "Clients", "reports": "Export", "settings": "Paramètres", "collapse": "Réduire", "expand": "Déplier le menu", "menu": "Menu", "openMenu": "Ouvrir le menu", "logout": "Se déconnecter", "offline": "Mode hors ligne (bientôt disponible)", "more": "Plus","groups": {"principal": "Principal", "finances": "Finances","commerce": "Commerce", "analyse": "Analyse"}, "personnel": "Personnel" },
   "landing": {
     "header": { "login": "Se connecter", "register": "S'inscrire" },
     "hero": {
@@ -1276,5 +1276,44 @@
       "colQuantitySold": "Quantité vendue",
       "colAmount": "Montant"
     }
+  },
+  "personnel": {
+    "pageTitle": "Personnel",
+    "pageSubtitle": "Fiches du personnel du circuit et retenues sur salaire",
+    "tabsStaff": "Fiches",
+    "tabsDeductions": "Retenues sur salaire",
+    "newEmploye": "Nouvel employé",
+    "fieldName": "Nom",
+    "fieldNamePlaceholder": "Nom et prénom",
+    "fieldRole": "Fonction",
+    "fieldRolePlaceholder": "Magasinier, conducteur…",
+    "fieldDepartment": "Département / service",
+    "fieldDepartmentPlaceholder": "Logistique, commercial…",
+    "fieldMatricule": "Matricule UAZ",
+    "fieldStatus": "Statut",
+    "fieldClient": "Compte client associé",
+    "fieldClientHint": "Sert à rattacher ses achats à ses retenues sur salaire.",
+    "noClient": "Aucun",
+    "statusActive": "Actif",
+    "statusInactive": "Inactif",
+    "statusSettled": "Soldée",
+    "dialogTitleNew": "Nouvel employé",
+    "dialogTitleEdit": "Modifier l'employé",
+    "validationName": "Nom requis",
+    "validationRole": "Fonction requise",
+    "validationDepartment": "Département requis",
+    "emptyTitle": "Aucun employé",
+    "emptyDescription": "Ajoute les membres du personnel impliqués dans le circuit.",
+    "toastCreated": "Employé enregistré",
+    "toastModified": "Employé modifié",
+    "toastDeleted": "Employé supprimé",
+    "statPending": "Retenues en attente",
+    "statStaffConcerned": "Employés concernés",
+    "statLines": "Lignes en attente",
+    "byEmployeTitle": "Reste dû par employé",
+    "colEmploye": "Employé",
+    "colProduct": "Produit",
+    "retenuesEmptyTitle": "Aucune retenue en attente",
+    "retenuesEmptyDescription": "Les ventes payées par retenue sur salaire apparaîtront ici."
   }
 }

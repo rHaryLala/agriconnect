@@ -3,7 +3,26 @@ import { persist, createJSONStorage } from "zustand/middleware"
 import type { Invoice } from "@/types/invoice"
 
 const FAKE_LATENCY_MS = 500
-const SEED_INVOICES: Invoice[] = []
+const SEED_INVOICES: Invoice[] = [
+  {
+    id: "inv-seed-1",
+    numero: "FA-2026-0001",
+    clientId: "cl-3",
+    date: "2026-09-02",
+    paymentMethod: "salaire",
+    items: [{ libelle: "Riz décortiqué", quantite: 25, prixUnitaire: 3_200 }],
+    montantPaye: 0,
+  },
+  {
+    id: "inv-seed-2",
+    numero: "FA-2026-0002",
+    clientId: "cl-3",
+    date: "2026-09-06",
+    paymentMethod: "salaire",
+    items: [{ libelle: "Haricot blanc", quantite: 10, prixUnitaire: 4_500 }],
+    montantPaye: 20_000,
+  },
+]
 
 function nextNumero(existing: Invoice[]): string {
   const year = new Date().getFullYear()

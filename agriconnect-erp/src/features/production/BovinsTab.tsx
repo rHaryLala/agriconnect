@@ -82,7 +82,7 @@ export function BovinsTab({ canEdit }: { canEdit: boolean }) {
         clientId: data.clientId,
         date: data.dateSortie,
         paymentMethod: "commande",
-        items: [{ bovinId: id, quantite: 1, prixUnitaire: data.prixVente ?? 0 }],
+        items: [{ bovinId: id, libelle: "Bovin", quantite: 1, prixUnitaire: data.prixVente ?? 0 }],
         montantPaye: 0,
       })
     }

@@ -8,13 +8,14 @@ import { useUsersStore } from "./usersStore"
 import type { UserRole } from "@/types/user"
 
 const ROLES: UserRole[] = ["admin", "comptable", "ouvrier", "magasinier", "controleur_interne"]
-const MODULES: ModuleKey[] = ["dashboard", "production", "stock", "finance", "clients", "settings"]
+const MODULES: ModuleKey[] = ["dashboard", "production", "stock", "finance", "clients", "personnel", "settings"]
 const MODULE_LABEL_KEYS: Record<ModuleKey, string> = {
   dashboard: "nav.dashboard",
   production: "nav.production",
   stock: "nav.stocks",
   finance: "nav.finance",
   clients: "nav.clients",
+  personnel: "nav.personnel",
   settings: "nav.settings",
 }
 

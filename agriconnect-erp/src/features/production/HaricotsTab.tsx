@@ -46,7 +46,7 @@ export function HaricotsTab({ canEdit }: { canEdit: boolean }) {
         clientId: data.clientId,
         date: data.date,
         paymentMethod: data.paymentMethod ?? "comptant",
-        items: [{ quantite: data.quantiteKg, prixUnitaire: data.prixUnitaire ?? 0 }],
+        items: [{ libelle: `Haricot ${data.variante}`, quantite: data.quantiteKg, prixUnitaire: data.prixUnitaire ?? 0 }],
         montantPaye: data.paymentMethod === "comptant" ? total : 0,
       })
       linkInvoice(created.id, invoice.id)

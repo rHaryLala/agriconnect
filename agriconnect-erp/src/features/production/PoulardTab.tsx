@@ -58,7 +58,7 @@ export function PoulardTab({ canEdit }: { canEdit: boolean }) {
         clientId: data.clientId,
         date: data.date,
         paymentMethod: "commande",
-        items: [{ quantite: data.quantite, prixUnitaire: data.prixUnitaire ?? 0 }],
+        items: [{ libelle: "Poulard", quantite: data.quantite, prixUnitaire: data.prixUnitaire ?? 0 }],
         montantPaye: 0,
       })
       linkInvoice(created.id, invoice.id)

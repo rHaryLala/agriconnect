@@ -72,6 +72,12 @@ export const router = createBrowserRouter([
                 ],
               },
               {
+                element: <ProtectedRoute module="personnel" />,
+                children: [
+                  { path: "personnel", lazy: async () => ({ Component: (await import("@/features/personnel/PersonnelPage")).default }) },
+                ],
+              },
+              {
                 path: "rapports",
                 lazy: async () => {
                   const { default: Component } = await import("@/features/rapports/RapportsPage")

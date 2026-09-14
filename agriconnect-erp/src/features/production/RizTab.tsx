@@ -58,7 +58,7 @@ export function RizTab({ canEdit }: { canEdit: boolean }) {
       clientId: data.clientId,
       date: data.date,
       paymentMethod: data.paymentMethod,
-      items: [{ quantite: data.quantiteKg, prixUnitaire: data.prixUnitaire }],
+      items: [{ libelle: "Riz décortiqué", quantite: data.quantiteKg, prixUnitaire: data.prixUnitaire }],
       montantPaye: data.paymentMethod === "comptant" ? total : 0,
     })
     linkInvoice(created.id, invoice.id)

@@ -1,6 +1,6 @@
 {
   "common": { "loading": "Eo am-panamboarana...", "save": "Tehirizo", "cancel": "Aoka", "search": "Karohy...", "add": "Ampio", "edit": "Ovay", "delete": "Fafao", "close": "Akatony", "appName" : "AgriConnect", "readOnlyBanner": "Fijerena fotsiny no azonao atao amin'ity sampana ity.", "yes": "Eny", "no": "Tsia" },
-  "nav": { "dashboard": "Tabilao mpitantana", "production": "Vokatra", "stocks": "Tahiry entana", "finance": "Vola", "clients": "Mpanjifa", "reports": "Export", "settings": "Kirakira", "collapse": "Ahakelezo", "expand": "Ahalalaho ny lisitra", "menu": "Lisitra", "openMenu": "Sokafy ny lisitra", "logout": "Hivoaka", "offline": "Fomba tsy misy aterineto (ho avy)", "more": "Bebe kokoa", "groups": {"principal": "Lehibe", "finances": "Vola","commerce": "Varotra", "analyse": "Fandinihana"} },
+  "nav": { "dashboard": "Tabilao mpitantana", "production": "Vokatra", "stocks": "Tahiry entana", "finance": "Vola", "clients": "Mpanjifa", "reports": "Export", "settings": "Kirakira", "collapse": "Ahakelezo", "expand": "Ahalalaho ny lisitra", "menu": "Lisitra", "openMenu": "Sokafy ny lisitra", "logout": "Hivoaka", "offline": "Fomba tsy misy aterineto (ho avy)", "more": "Bebe kokoa", "groups": {"principal": "Lehibe", "finances": "Vola","commerce": "Varotra", "analyse": "Fandinihana"}, "personnel": "Mpiasa" },
   "landing": {
     "header": { "login": "Hiditra", "register": "Hisoratra anarana" },
     "hero": {
@@ -1265,5 +1265,44 @@
       "colQuantitySold": "Habe namidy",
       "colAmount": "Vola"
     }
+  },
+  "personnel": {
+    "pageTitle": "Mpiasa",
+    "pageSubtitle": "Antontan-taratasin'ny mpiasa sy ny fanalana amin'ny karama",
+    "tabsStaff": "Antontan-taratasy",
+    "tabsDeductions": "Fanalana amin'ny karama",
+    "newEmploye": "Mpiasa vaovao",
+    "fieldName": "Anarana",
+    "fieldNamePlaceholder": "Anarana feno",
+    "fieldRole": "Andraikitra",
+    "fieldRolePlaceholder": "Magasinier, mpamily…",
+    "fieldDepartment": "Departemanta / sampana",
+    "fieldDepartmentPlaceholder": "Logistika, varotra…",
+    "fieldMatricule": "Laharana UAZ",
+    "fieldStatus": "Sata",
+    "fieldClient": "Kaonty mpanjifa mifandray",
+    "fieldClientHint": "Ampiasaina hampifandraisana ny fividianany amin'ny fanalana amin'ny karamany.",
+    "noClient": "Tsy misy",
+    "statusActive": "Miasa",
+    "statusInactive": "Tsy miasa",
+    "statusSettled": "Voaloa",
+    "dialogTitleNew": "Mpiasa vaovao",
+    "dialogTitleEdit": "Hanova ny mpiasa",
+    "validationName": "Ilaina ny anarana",
+    "validationRole": "Ilaina ny andraikitra",
+    "validationDepartment": "Ilaina ny departemanta",
+    "emptyTitle": "Tsy misy mpiasa",
+    "emptyDescription": "Ampio ny mpiasa tafiditra amin'ny fizotran'ny entana.",
+    "toastCreated": "Voatahiry ny mpiasa",
+    "toastModified": "Novaina ny mpiasa",
+    "toastDeleted": "Voafafa ny mpiasa",
+    "statPending": "Fanalana miandry",
+    "statStaffConcerned": "Mpiasa voakasika",
+    "statLines": "Andalana miandry",
+    "byEmployeTitle": "Trosa sisa isaky ny mpiasa",
+    "colEmploye": "Mpiasa",
+    "colProduct": "Vokatra",
+    "retenuesEmptyTitle": "Tsy misy fanalana miandry",
+    "retenuesEmptyDescription": "Hiseho eto ny varotra naloa tamin'ny fanalana amin'ny karama."
   }
 }
