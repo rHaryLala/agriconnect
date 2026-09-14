@@ -88,7 +88,7 @@ model Production {
   stockItemId String?
   stockItem   StockItem?     @relation(fields: [stockItemId], references: [id])
 
-  variantId   String
+  variantId   String?
   variant   ProductVariant?   @relation(fields: [variantId],  references: [id])
 
   createdAt   DateTime       @default(now())
