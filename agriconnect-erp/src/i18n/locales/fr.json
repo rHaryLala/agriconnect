@@ -932,7 +932,9 @@
       "statusSuspended": "Suspendu",
       "statTotal": "Comptes",
       "statActive": "Comptes actifs",
-      "statAdmins": "Administrateurs"
+      "statAdmins": "Administrateurs",
+      "useRolePreset": "Suivre le préréglage du rôle",
+      "useRolePresetHint": "Désactive pour cocher les accès de ce compte un par un."
     },
     "language": {
       "sectionTitle": "Langue de l'interface",
@@ -1044,7 +1046,9 @@
       "actionDelete": "Supprimer",
       "grantedCount": "{{count}} accès accordés",
       "granted": "Accordé",
-      "notGranted": "Non accordé"
+      "notGranted": "Non accordé",
+      "customisedTitle": "Comptes avec des accès personnalisés",
+      "customisedHint": "Ces comptes ne suivent plus le préréglage de leur rôle."
     },
     "system": {
       "readOnlyHint": "Ces paramètres sont réservés aux administrateurs.",

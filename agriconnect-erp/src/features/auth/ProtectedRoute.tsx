@@ -1,7 +1,8 @@
 import { Navigate, Outlet } from "react-router"
 import { useAuthStore } from "./authStore"
 import { AuthSkeleton } from "@/components/shared/AuthSkeleton"
-import { getPermissionLevel, type ModuleKey } from "@/lib/permissions"
+import { useUserPermissionsStore } from "@/features/settings/userPermissionsStore"
+import { effectivePermissions, levelFromPermissions, type ModuleKey } from "@/lib/permissions"
 
 interface ProtectedRouteProps {
   module?: ModuleKey
@@ -9,11 +10,12 @@ interface ProtectedRouteProps {
 
 export function ProtectedRoute({ module }: ProtectedRouteProps) {
   const { isAuthenticated, user, hasHydrated } = useAuthStore()
+  const overrides = useUserPermissionsStore((s) => s.overrides)
 
   if (!hasHydrated) return <AuthSkeleton />
   if (!isAuthenticated || !user) return <Navigate to="/login" replace />
 
-  if (module && getPermissionLevel(user.role, module) === "none") {
+  if (module && levelFromPermissions(effectivePermissions(user.role, overrides[user.id]), module) === "none") {
     return <Navigate to="/app/dashboard" replace />
   }
 

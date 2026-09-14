@@ -5,12 +5,14 @@ import { AlertBanner } from "@/components/shared/AlertBanner"
 import {
   MODULE_KEYS,
   PERMISSION_ACTIONS,
+  effectivePermissions,
   hasPermission,
   permissionsForRole,
 } from "@/lib/permissions"
 import { ROLE_LABEL_KEYS, ROLE_ICONS, ROLE_ACCENTS } from "./roleLabels"
 import { ACTION_LABEL_KEYS, MODULE_LABEL_KEYS } from "./permissionLabels"
 import { useUsersStore } from "./usersStore"
+import { useUserPermissionsStore } from "./userPermissionsStore"
 import type { UserRole } from "@/types/user"
 
 const ROLES: UserRole[] = ["admin", "comptable", "ouvrier", "magasinier", "controleur_interne"]
@@ -18,7 +20,10 @@ const ROLES: UserRole[] = ["admin", "comptable", "ouvrier", "magasinier", "contr
 export function RolesPermissionsSection() {
   const { t } = useTranslation()
   const { users, fetchUsers } = useUsersStore()
+  const overrides = useUserPermissionsStore((s) => s.overrides)
   const [expanded, setExpanded] = useState<UserRole | null>("admin")
+
+  const customised = users.filter((u) => overrides[u.id])
 
   useEffect(() => {
     fetchUsers()
@@ -27,6 +32,29 @@ export function RolesPermissionsSection() {
   return (
     <div className="flex flex-col gap-4">
       <AlertBanner tone="info" icon={ShieldQuestion} title={t("settings.roles.infoBanner")} />
+
+      {customised.length > 0 && (
+        <div className="rounded-xl border border-border bg-surface p-4">
+          <p className="mb-1 text-sm font-semibold text-foreground">{t("settings.roles.customisedTitle")}</p>
+          <p className="mb-3 text-xs text-muted-foreground">{t("settings.roles.customisedHint")}</p>
+          <ul className="flex flex-col gap-2">
+            {customised.map((user) => {
+              const granted = effectivePermissions(user.role, overrides[user.id])
+              return (
+                <li key={user.id} className="flex flex-wrap items-center justify-between gap-2 text-sm">
+                  <span className="text-foreground">
+                    {user.name}
+                    <span className="ml-2 text-xs text-muted-foreground">{t(ROLE_LABEL_KEYS[user.role])}</span>
+                  </span>
+                  <span className="text-xs text-muted-foreground">
+                    {t("settings.roles.grantedCount", { count: granted.length })}
+                  </span>
+                </li>
+              )
+            })}
+          </ul>
+        </div>
+      )}
 
       {ROLES.map((role) => {
         const permissions = permissionsForRole(role)

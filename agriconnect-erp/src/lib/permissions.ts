@@ -53,6 +53,14 @@ export function permissionsForRole(role: UserRole | undefined): Permission[] {
   return role ? ROLE_PRESETS[role] : []
 }
 
+/**
+ * Rights actually granted to an account: its own checklist when one was set in
+ * the user management screen, the preset of its role otherwise.
+ */
+export function effectivePermissions(role: UserRole | undefined, override?: Permission[]): Permission[] {
+  return override ?? permissionsForRole(role)
+}
+
 export function hasPermission(permissions: Permission[], module: ModuleKey, action: PermissionAction): boolean {
   return permissions.includes(permission(module, action))
 }

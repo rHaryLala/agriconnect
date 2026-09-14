@@ -10,6 +10,8 @@ import { StatCard } from "@/components/shared/StatCard"
 import { Avatar } from "@/components/shared/Avatar"
 import { useUsersStore } from "./usersStore"
 import { UserFormDialog } from "./UserFormDialog"
+import { useUserPermissionsStore } from "./userPermissionsStore"
+import type { Permission } from "@/lib/permissions"
 import { ROLE_LABEL_KEYS, ROLE_TONES, STATUS_LABEL_KEYS, STATUS_TONES } from "./roleLabels"
 import type { User } from "@/types/user"
 import type { UserFormValues } from "./userFormSchema"
@@ -17,6 +19,7 @@ import type { UserFormValues } from "./userFormSchema"
 export function UsersManagement({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
   const { users, isLoading, fetchUsers, addUser, updateUser, deleteUser } = useUsersStore()
+  const { overrides, setOverride, clearOverride } = useUserPermissionsStore()
   const [formOpen, setFormOpen] = useState(false)
   const [editingUser, setEditingUser] = useState<User | null>(null)
   const [deletingUser, setDeletingUser] = useState<User | null>(null)
@@ -37,12 +40,20 @@ export function UsersManagement({ canEdit }: { canEdit: boolean }) {
     setFormOpen(true)
   }
 
-  async function handleSubmit(values: UserFormValues) {
+  function applyPermissions(userId: string, permissions: Permission[] | undefined) {
+    if (permissions) setOverride(userId, permissions)
+    else clearOverride(userId)
+  }
+
+  async function handleSubmit(values: UserFormValues, permissions: Permission[] | undefined) {
     if (editingUser) {
       await updateUser(editingUser.id, values)
+      applyPermissions(editingUser.id, permissions)
       toast.success(t("settings.users.toastModified"))
     } else {
       await addUser(values)
+      const created = useUsersStore.getState().users.find((u) => u.email === values.email)
+      if (created) applyPermissions(created.id, permissions)
       toast.success(t("settings.users.toastAdded"))
     }
   }
@@ -50,6 +61,7 @@ export function UsersManagement({ canEdit }: { canEdit: boolean }) {
   async function confirmDelete() {
     if (!deletingUser) return
     await deleteUser(deletingUser.id)
+    clearOverride(deletingUser.id)
     toast.success(t("settings.users.toastDeleted"))
     setDeletingUser(null)
   }
@@ -113,7 +125,13 @@ export function UsersManagement({ canEdit }: { canEdit: boolean }) {
 
       {canEdit && (
         <>
-          <UserFormDialog open={formOpen} onOpenChange={setFormOpen} editingUser={editingUser} onSubmit={handleSubmit} />
+          <UserFormDialog
+            open={formOpen}
+            onOpenChange={setFormOpen}
+            editingUser={editingUser}
+            permissionOverride={editingUser ? overrides[editingUser.id] : undefined}
+            onSubmit={handleSubmit}
+          />
           <AlertDialog open={!!deletingUser} onOpenChange={(open) => !open && setDeletingUser(null)}>
             <AlertDialogContent>
               <AlertDialogHeader>

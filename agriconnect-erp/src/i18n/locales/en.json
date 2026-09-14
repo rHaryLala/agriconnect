@@ -932,7 +932,9 @@
       "statusSuspended": "Suspended",
       "statTotal": "Accounts",
       "statActive": "Active accounts",
-      "statAdmins": "Administrators"
+      "statAdmins": "Administrators",
+      "useRolePreset": "Follow the role preset",
+      "useRolePresetHint": "Turn off to tick this account's rights one by one."
     },
   "language": {
       "sectionTitle": "Interface language",
@@ -1044,7 +1046,9 @@
       "actionDelete": "Delete",
       "grantedCount": "{{count}} rights granted",
       "granted": "Granted",
-      "notGranted": "Not granted"
+      "notGranted": "Not granted",
+      "customisedTitle": "Accounts with tailored rights",
+      "customisedHint": "These accounts no longer follow the preset of their role."
     },
     "system": {
       "readOnlyHint": "These settings are reserved for administrators.",

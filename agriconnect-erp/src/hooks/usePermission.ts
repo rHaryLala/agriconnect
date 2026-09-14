@@ -1,15 +1,22 @@
 import { useAuthStore } from "@/features/auth/authStore"
+import { useUserPermissionsStore } from "@/features/settings/userPermissionsStore"
 import {
+  effectivePermissions,
   hasPermission,
   levelFromPermissions,
-  permissionsForRole,
   type ModuleKey,
   type PermissionAction,
 } from "@/lib/permissions"
 
+/** Rights of the signed-in account, role preset adjusted by its own checklist. */
+export function useEffectivePermissions() {
+  const user = useAuthStore((s) => s.user)
+  const override = useUserPermissionsStore((s) => (user ? s.overrides[user.id] : undefined))
+  return effectivePermissions(user?.role, override)
+}
+
 export function usePermission(module: ModuleKey) {
-  const role = useAuthStore((s) => s.user?.role)
-  const permissions = permissionsForRole(role)
+  const permissions = useEffectivePermissions()
   const level = levelFromPermissions(permissions, module)
   return {
     level,

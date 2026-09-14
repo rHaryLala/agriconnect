@@ -1,5 +1,5 @@
-import { useEffect, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useEffect, useMemo, useState } from "react"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -8,6 +8,9 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { Switch } from "@/components/ui/switch"
+import { PermissionChecklist } from "./PermissionChecklist"
+import { permissionsForRole, type Permission } from "@/lib/permissions"
 import { ROLE_LABEL_KEYS, ROLE_ICONS, STATUS_LABEL_KEYS } from "./roleLabels"
 import type { User, UserRole, UserStatus } from "@/types/user"
 
@@ -29,10 +32,12 @@ interface UserFormDialogProps {
   open: boolean
   onOpenChange: (open: boolean) => void
   editingUser: User | null
-  onSubmit: (values: UserFormValues) => Promise<void>
+  /** Checklist already set for this account, if it does not follow its role preset. */
+  permissionOverride?: Permission[]
+  onSubmit: (values: UserFormValues, permissions: Permission[] | undefined) => Promise<void>
 }
 
-export function UserFormDialog({ open, onOpenChange, editingUser, onSubmit }: UserFormDialogProps) {
+export function UserFormDialog({ open, onOpenChange, editingUser, permissionOverride, onSubmit }: UserFormDialogProps) {
   const { t } = useTranslation()
   const isEditing = !!editingUser
     const schema = useMemo(() => buildSchema(t, isEditing), [t, isEditing])
@@ -42,6 +47,17 @@ export function UserFormDialog({ open, onOpenChange, editingUser, onSubmit }: Us
     formState: { errors, isSubmitting },
   } = useForm<UserFormValues>({ resolver: zodResolver(schema) })
 
+  const [useRolePreset, setUseRolePreset] = useState(true)
+  const [customPermissions, setCustomPermissions] = useState<Permission[]>([])
+  const role = useWatch({ control, name: "role" })
+  // Following the preset means mirroring whatever role is selected, live.
+  const permissions = useRolePreset ? permissionsForRole(role) : customPermissions
+
+  function handlePresetToggle(next: boolean) {
+    if (!next) setCustomPermissions(permissions)
+    setUseRolePreset(next)
+  }
+
   useEffect(() => {
     if (open) {
       reset(
@@ -49,8 +65,13 @@ export function UserFormDialog({ open, onOpenChange, editingUser, onSubmit }: Us
           ? { name: editingUser.name, email: editingUser.email, role: editingUser.role, status: editingUser.status ?? "actif", password: "" }
           : { name: "", email: "", role: undefined, status: "actif", password: "" }
       )
+      // The dialog stays mounted between openings, so its state is reset here
+      // alongside the form itself.
+      // eslint-disable-next-line react-hooks/set-state-in-effect
+      setUseRolePreset(!permissionOverride)
+      setCustomPermissions(permissionOverride ?? permissionsForRole(editingUser?.role))
     }
-  }, [open, editingUser, reset])
+  }, [open, editingUser, permissionOverride, reset])
 
   async function handleFormSubmit(values: UserFormValues) {
     const payload = { ...values }
@@ -58,7 +79,7 @@ export function UserFormDialog({ open, onOpenChange, editingUser, onSubmit }: Us
       delete payload.password
     }
     
-    await onSubmit(payload)
+    await onSubmit(payload, useRolePreset ? undefined : permissions)
     onOpenChange(false)
   }
 
@@ -151,6 +172,20 @@ export function UserFormDialog({ open, onOpenChange, editingUser, onSubmit }: Us
                 )}
               />
             </div>
+          </div>
+
+          <div className="flex flex-col gap-3 rounded-lg border border-border bg-background p-3">
+            <div className="flex items-center justify-between gap-3">
+              <div>
+                <Label htmlFor="useRolePreset" className="cursor-pointer">
+                  {t("settings.users.useRolePreset")}
+                </Label>
+                <p className="mt-0.5 text-xs text-muted-foreground">{t("settings.users.useRolePresetHint")}</p>
+              </div>
+              <Switch id="useRolePreset" checked={useRolePreset} onCheckedChange={handlePresetToggle} />
+            </div>
+
+            <PermissionChecklist permissions={permissions} disabled={useRolePreset} onChange={setCustomPermissions} />
           </div>
 
           <DialogFooter>

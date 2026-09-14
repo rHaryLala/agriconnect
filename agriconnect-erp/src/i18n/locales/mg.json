@@ -929,7 +929,9 @@
       "statusSuspended": "Naato",
       "statTotal": "Kaonty",
       "statActive": "Kaonty mavitrika",
-      "statAdmins": "Mpitantana"
+      "statAdmins": "Mpitantana",
+      "useRolePreset": "Manaraka ny fandrindrana mialoha",
+      "useRolePresetHint": "Vonoy raha te hifidy tsirairay ny fahazoan-dalan'ity kaonty ity."
     },
     "language": {
       "sectionTitle": "Ny fiteny asehon'ny rindrankaja",
@@ -1041,7 +1043,9 @@
       "actionDelete": "Mamafa",
       "grantedCount": "Fahazoan-dalana {{count}}",
       "granted": "Nomena",
-      "notGranted": "Tsy nomena"
+      "notGranted": "Tsy nomena",
+      "customisedTitle": "Kaonty manana fahazoan-dalana manokana",
+      "customisedHint": "Tsy manaraka ny fandrindrana mialohan'ny anjara asany intsony ireo kaonty ireo."
     },
     "system": {
       "readOnlyHint": "Ho an'ny mpitantana ihany ireto fandrindrana ireto.",

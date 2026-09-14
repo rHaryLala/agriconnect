@@ -3,8 +3,8 @@ import {
   type LucideIcon,
 } from "lucide-react"
 import type { ModuleKey } from "@/lib/permissions"
-import { useAuthStore } from "@/features/auth/authStore"
-import { getPermissionLevel } from "@/lib/permissions"
+import { useEffectivePermissions } from "@/hooks/usePermission"
+import { levelFromPermissions } from "@/lib/permissions"
 
 export type NavGroup = "principal" | "finances" | "commerce" | "analyse"
 export const NAV_GROUPS: NavGroup[] = ["principal", "finances", "commerce", "analyse"]
@@ -29,8 +29,8 @@ export const NAV_ITEMS: NavItem[] = [
 ]
 
 export function useVisibleNavItems(): NavItem[] {
-  const role = useAuthStore((s) => s.user?.role)
-  return NAV_ITEMS.filter((item) => !item.module || getPermissionLevel(role, item.module) !== "none")
+  const permissions = useEffectivePermissions()
+  return NAV_ITEMS.filter((item) => !item.module || levelFromPermissions(permissions, item.module) !== "none")
 }
 
 export interface GroupedNavItems {
