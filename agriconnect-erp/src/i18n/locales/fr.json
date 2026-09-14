@@ -670,7 +670,8 @@
       "toastModified": "Entrée modifiée",
       "toastDeleted": "Entrée supprimée",
       "subTabCultures": "Cultures",
-      "subTabLabour": "Main-d'œuvre"
+      "subTabLabour": "Main-d'œuvre",
+      "subTabFertilizer": "Engrais"
     },
     "customType": {
       "statTotal": "Total {{label}}",
@@ -755,6 +756,31 @@
       "toastCreated": "Saisie enregistrée",
       "toastModified": "Saisie modifiée",
       "toastDeleted": "Saisie supprimée"
+    },
+    "engrais": {
+      "statTotal": "Engrais épandu",
+      "statTotalHint": "Sur la période sélectionnée",
+      "statCultures": "Cultures traitées",
+      "statTypes": "Types d'engrais",
+      "newApplication": "Nouvel épandage",
+      "fieldCulture": "Culture",
+      "fieldType": "Type d'engrais",
+      "fieldQuantity": "Quantité",
+      "fieldPlot": "Parcelle",
+      "fieldPlotPlaceholder": "P03",
+      "manageTypes": "Types d'engrais",
+      "manageTypesTitle": "Gérer les types d'engrais",
+      "recapByCulture": "Récapitulatif par culture",
+      "recapByType": "Récapitulatif par type d'engrais",
+      "dialogTitleNew": "Nouvel épandage",
+      "dialogTitleEdit": "Modifier l'épandage",
+      "validationCulture": "Culture requise",
+      "validationType": "Type d'engrais requis",
+      "emptyTitle": "Aucun épandage",
+      "emptyDescription": "Enregistre la quantité d'engrais utilisée par culture.",
+      "toastCreated": "Épandage enregistré",
+      "toastModified": "Épandage modifié",
+      "toastDeleted": "Épandage supprimé"
     }
   },
   "finance": {

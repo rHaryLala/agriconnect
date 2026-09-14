@@ -1,4 +1,4 @@
-import type { PouleEntry, VacheEntry, KuroilerEntry, KuroilerPoule, KuroilerPouleSuivi, KuroilerOeufMouvement, MainOeuvreEntry, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
+import type { PouleEntry, VacheEntry, KuroilerEntry, KuroilerPoule, KuroilerPouleSuivi, KuroilerOeufMouvement, MainOeuvreEntry, EngraisApplication, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
 
 export const SEED_POULES: PouleEntry[] = [
   {
@@ -125,4 +125,11 @@ export const SEED_MAIN_OEUVRE: MainOeuvreEntry[] = [
   { id: "mo-3", date: "2026-09-08", activite: "Mihava", nbEmployes: 9, observation: "Parcelle P05" },
   { id: "mo-4", date: "2026-09-08", activite: "Manangona atody", nbEmployes: 3, observation: "RAS" },
   { id: "mo-5", date: "2026-09-09", activite: "Mikarakara maraîchère", nbEmployes: 6, observation: "Repiquage" },
+]
+
+export const SEED_ENGRAIS: EngraisApplication[] = [
+  { id: "eng-1", date: "2026-08-16", culture: "Maïs", typeEngrais: "NPK", quantiteKg: 120, parcelle: "P03", observation: "Épandage de fond" },
+  { id: "eng-2", date: "2026-08-22", culture: "Riz", typeEngrais: "Urée", quantiteKg: 200, parcelle: "P02", observation: "Couverture" },
+  { id: "eng-3", date: "2026-09-01", culture: "Haricot", typeEngrais: "Compost", quantiteKg: 90, parcelle: "P05", observation: "RAS" },
+  { id: "eng-4", date: "2026-09-05", culture: "Maraîchère", typeEngrais: "Fumier", quantiteKg: 150, parcelle: "P07", observation: "Planches de repiquage" },
 ]

@@ -670,7 +670,8 @@
       "toastModified": "Entry updated",
       "toastDeleted": "Entry deleted",
       "subTabCultures": "Crops",
-      "subTabLabour": "Labour"
+      "subTabLabour": "Labour",
+      "subTabFertilizer": "Fertilizer"
     },
     "customType": {
       "statTotal": "Total {{label}}",
@@ -755,6 +756,31 @@
       "toastCreated": "Record saved",
       "toastModified": "Record updated",
       "toastDeleted": "Record deleted"
+    },
+    "engrais": {
+      "statTotal": "Fertilizer spread",
+      "statTotalHint": "Over the selected period",
+      "statCultures": "Crops treated",
+      "statTypes": "Fertilizer types",
+      "newApplication": "New application",
+      "fieldCulture": "Crop",
+      "fieldType": "Fertilizer",
+      "fieldQuantity": "Quantity",
+      "fieldPlot": "Plot",
+      "fieldPlotPlaceholder": "P03",
+      "manageTypes": "Fertilizers",
+      "manageTypesTitle": "Manage fertilizers",
+      "recapByCulture": "Summary per crop",
+      "recapByType": "Summary per fertilizer",
+      "dialogTitleNew": "New application",
+      "dialogTitleEdit": "Edit application",
+      "validationCulture": "Crop required",
+      "validationType": "Fertilizer required",
+      "emptyTitle": "No application",
+      "emptyDescription": "Record how much fertilizer each crop receives.",
+      "toastCreated": "Application saved",
+      "toastModified": "Application updated",
+      "toastDeleted": "Application deleted"
     }
   },
   "finance": {

@@ -670,7 +670,8 @@
       "toastModified": "Novaina ny fidirana",
       "toastDeleted": "Voafafa ny fidirana",
       "subTabCultures": "Voly",
-      "subTabLabour": "Mpiasa"
+      "subTabLabour": "Mpiasa",
+      "subTabFertilizer": "Zezika"
     },
     "customType": {
       "statTotal": "Totaly {{label}}",
@@ -743,6 +744,31 @@
       "toastCreated": "Voatahiry ny fanoratana",
       "toastModified": "Novaina ny fanoratana",
       "toastDeleted": "Voafafa ny fanoratana"
+    },
+    "engrais": {
+      "statTotal": "Zezika nafafy",
+      "statTotalHint": "Amin'ny vanim-potoana voafidy",
+      "statCultures": "Voly voakarakara",
+      "statTypes": "Karazana zezika",
+      "newApplication": "Fafazana vaovao",
+      "fieldCulture": "Voly",
+      "fieldType": "Karazana zezika",
+      "fieldQuantity": "Habetsahana",
+      "fieldPlot": "Tanimboly",
+      "fieldPlotPlaceholder": "P03",
+      "manageTypes": "Karazana zezika",
+      "manageTypesTitle": "Hitantana ny karazana zezika",
+      "recapByCulture": "Famintinana isaky ny voly",
+      "recapByType": "Famintinana isaky ny karazana zezika",
+      "dialogTitleNew": "Fafazana vaovao",
+      "dialogTitleEdit": "Hanova ny fafazana",
+      "validationCulture": "Ilaina ny voly",
+      "validationType": "Ilaina ny karazana zezika",
+      "emptyTitle": "Tsy misy fafazana",
+      "emptyDescription": "Soraty ny habetsaky ny zezika ampiasaina isaky ny voly.",
+      "toastCreated": "Voatahiry ny fafazana",
+      "toastModified": "Novaina ny fafazana",
+      "toastDeleted": "Voafafa ny fafazana"
     }
   },
   "finance": {

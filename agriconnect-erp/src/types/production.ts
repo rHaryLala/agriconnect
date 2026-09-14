@@ -99,6 +99,17 @@ export interface MainOeuvreEntry {
   observation: string
 }
 
+/** Fertilizer spread on a crop, so consumption can be followed per culture. */
+export interface EngraisApplication {
+  id: string
+  date: string
+  culture: string
+  typeEngrais: string
+  quantiteKg: number
+  parcelle: string
+  observation: string
+}
+
 export type BovinGenre = "male" | "femelle"
 export type BovinEntreeType = "achat" | "naissance"
 export type BovinSortieType = "vente" | "deces"
