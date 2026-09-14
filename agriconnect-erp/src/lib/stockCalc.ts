@@ -91,6 +91,15 @@ export function computeLocationDebts(movements: StockMovement[]): LocationDebt[]
     .sort((a, b) => b.reste - a.reste)
 }
 
+/**
+ * Difference between the quantity weighed in and the quantity announced on a
+ * reception. Null when the reception was not double-checked.
+ */
+export function computeReceptionEcart(movement: StockMovement): number | null {
+  if (movement.type !== "entree" || movement.quantiteAnnoncee === undefined) return null
+  return movement.quantite - movement.quantiteAnnoncee
+}
+
 export function computeTransferDue(movement: StockMovement): number {
   return (movement.montant ?? 0) - (movement.montantRegle ?? 0)
 }

@@ -246,7 +246,13 @@
       "fieldLocation": "Toerana",
       "validationLocation": "Ilaina ny toerana",
       "insufficientStockAtLocation": "Tsy ampy ny tahiry : {{name}} — {{amount}} {{unit}} misy ao {{location}}",
-      "typeTransfer": "Famindrana"
+      "typeTransfer": "Famindrana",
+      "sectionReception": "Fanamarinana amin'ny fandraisana",
+      "fieldWeighedQuantity": "Habetsahana voalanja",
+      "fieldAnnouncedQuantity": "Habetsahana nambara",
+      "receptionGap": "Elanelana amin'ny fandanjana : {{gap}}",
+      "colGap": "Elanelana",
+      "gapNone": "Mifanaraka"
     },
     "alerts": {
       "statCritical": "Tahiry mafy",

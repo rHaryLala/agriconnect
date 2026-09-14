@@ -246,7 +246,13 @@
       "fieldLocation": "Emplacement",
       "validationLocation": "Emplacement requis",
       "insufficientStockAtLocation": "Stock insuffisant : {{name}} — {{amount}} {{unit}} disponibles à {{location}}",
-      "typeTransfer": "Transfert"
+      "typeTransfer": "Transfert",
+      "sectionReception": "Contrôle à la réception",
+      "fieldWeighedQuantity": "Quantité repesée",
+      "fieldAnnouncedQuantity": "Quantité annoncée",
+      "receptionGap": "Écart au repesage : {{gap}}",
+      "colGap": "Écart",
+      "gapNone": "Conforme"
     },
     "alerts": {
       "statCritical": "Stock critique",

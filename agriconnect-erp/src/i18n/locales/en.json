@@ -246,7 +246,13 @@
       "fieldLocation": "Location",
       "validationLocation": "Location required",
       "insufficientStockAtLocation": "Not enough stock: {{name}} — {{amount}} {{unit}} available at {{location}}",
-      "typeTransfer": "Transfer"
+      "typeTransfer": "Transfer",
+      "sectionReception": "Reception check",
+      "fieldWeighedQuantity": "Weighed quantity",
+      "fieldAnnouncedQuantity": "Announced quantity",
+      "receptionGap": "Weighing gap: {{gap}}",
+      "colGap": "Gap",
+      "gapNone": "Matches"
     },
     "alerts": {
       "statCritical": "Critical stock",

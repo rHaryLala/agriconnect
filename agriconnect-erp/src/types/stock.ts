@@ -24,6 +24,11 @@ export interface StockMovement {
   emplacement: StockLocation
   quantite: number
   date: string
+  /**
+   * Quantity announced by the supplier on a reception. `quantite` always holds
+   * the quantity actually weighed in, which is what moves the stock.
+   */
+  quantiteAnnoncee?: number
   /** Receiving location, required for a transfer. */
   emplacementDestination?: StockLocation
   destinataire?: string

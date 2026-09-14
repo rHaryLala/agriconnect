@@ -6,7 +6,7 @@ import { Button } from "@/components/ui/button"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { StockMovementDialog } from "./StockMovementDialog"
 import { useStockStore } from "./stockStore"
-import { computeCurrentStock, computeRunningBalances } from "@/lib/stockCalc"
+import { computeCurrentStock, computeReceptionEcart, computeRunningBalances } from "@/lib/stockCalc"
 import { formatDate, formatNumber } from "@/lib/format"
 import type { RowTone } from "@/lib/alerts"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -129,6 +129,16 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
       ),
     },
     { key: "quantite", label: t("stock.movements.colQuantity"), render: (m) => formatNumber(m.quantite) },
+    {
+      key: "ecart",
+      label: t("stock.movements.colGap"),
+      render: (m) => {
+        const ecart = computeReceptionEcart(m)
+        if (ecart === null) return <span className="text-muted-foreground">—</span>
+        if (ecart === 0) return <StatusBadge label={t("stock.movements.gapNone")} tone="success" />
+        return <StatusBadge label={ecart > 0 ? `+${formatNumber(ecart)}` : formatNumber(ecart)} tone="warning" />
+      },
+    },
     { key: "destinataire", label: t("stock.movements.colRecipient"), render: (m) => m.destinataire || <span className="text-muted-foreground">—</span> },
     {
       key: "reste",

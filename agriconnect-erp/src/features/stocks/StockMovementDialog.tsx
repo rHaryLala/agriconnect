@@ -19,6 +19,7 @@ function buildSchema(t: (key: string) => string) {
       emplacement: z.enum(STOCK_LOCATIONS as [StockLocation, ...StockLocation[]], { error: t("stock.movements.validationLocation") }),
       date: z.string().min(1, t("stock.movements.validationDate")),
       quantite: z.number({ error: t("stock.inventory.validationNumber") }).positive(t("stock.movements.validationQuantity")),
+      quantiteAnnoncee: z.number({ error: t("stock.inventory.validationNumber") }).min(0).optional(),
       destinataire: z.string().optional(),
       numeroBon: z.string().optional(),
       montant: z.number().optional(),
@@ -62,6 +63,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
         emplacement: editingEntry?.emplacement ?? DEFAULT_STOCK_LOCATION,
         date: editingEntry?.date ?? new Date().toISOString().slice(0, 10),
         quantite: editingEntry?.quantite ?? 0,
+        quantiteAnnoncee: editingEntry?.quantiteAnnoncee ?? 0,
         destinataire: editingEntry?.destinataire ?? "",
         numeroBon: editingEntry?.numeroBon ?? "",
         montant: editingEntry?.montant ?? 0,
@@ -71,6 +73,9 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
   }, [open, articles, editingEntry, reset])
 
   const type = useWatch({ control, name: "type" })
+  const quantite = useWatch({ control, name: "quantite" })
+  const quantiteAnnoncee = useWatch({ control, name: "quantiteAnnoncee" })
+  const ecart = (quantite ?? 0) - (quantiteAnnoncee ?? 0)
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit({
@@ -81,6 +86,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
       quantite: values.quantite,
       observation: values.observation,
       ...(values.type === "sortie" ? { destinataire: values.destinataire, numeroBon: values.numeroBon, montant: values.montant } : {}),
+      ...(values.type === "entree" && values.quantiteAnnoncee ? { quantiteAnnoncee: values.quantiteAnnoncee } : {}),
     })
     onOpenChange(false)
   }
@@ -164,11 +170,27 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
               {errors.date && <p className="mt-1 text-xs text-destructive">{errors.date.message}</p>}
             </div>
             <div>
-              <Label htmlFor="quantite">{t("stock.movements.fieldQuantity")}</Label>
+              <Label htmlFor="quantite">{type === "entree" ? t("stock.movements.fieldWeighedQuantity") : t("stock.movements.fieldQuantity")}</Label>
               <input id="quantite" type="number" {...register("quantite", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
               {errors.quantite && <p className="mt-1 text-xs text-destructive">{errors.quantite.message}</p>}
             </div>
           </div>
+
+          {type === "entree" && (
+            <div className="animate-content-in flex flex-col gap-2 rounded-lg border border-border bg-background p-3">
+              <p className="text-xs font-medium text-muted-foreground">{t("stock.movements.sectionReception")}</p>
+              <div>
+                <Label htmlFor="quantiteAnnoncee">{t("stock.movements.fieldAnnouncedQuantity")}</Label>
+                <input id="quantiteAnnoncee" type="number" {...register("quantiteAnnoncee", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-surface px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
+                {errors.quantiteAnnoncee && <p className="mt-1 text-xs text-destructive">{errors.quantiteAnnoncee.message}</p>}
+              </div>
+              {!!quantiteAnnoncee && (
+                <p className={`text-xs ${ecart === 0 ? "text-success" : "text-warning"}`}>
+                  {t("stock.movements.receptionGap", { gap: ecart > 0 ? `+${ecart}` : ecart })}
+                </p>
+              )}
+            </div>
+          )}
 
           {type === "sortie" && (
             <div className="animate-content-in flex flex-col gap-4 rounded-lg border border-border bg-background p-3">
