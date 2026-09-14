@@ -671,7 +671,8 @@
       "toastDeleted": "Entrée supprimée",
       "subTabCultures": "Cultures",
       "subTabLabour": "Main-d'œuvre",
-      "subTabFertilizer": "Engrais"
+      "subTabFertilizer": "Engrais",
+      "subTabFuel": "Carburant"
     },
     "customType": {
       "statTotal": "Total {{label}}",
@@ -781,6 +782,28 @@
       "toastCreated": "Épandage enregistré",
       "toastModified": "Épandage modifié",
       "toastDeleted": "Épandage supprimé"
+    },
+    "carburant": {
+      "statStock": "Stock en cuve",
+      "statEntries": "Approvisionnements",
+      "statExits": "Consommation",
+      "newMovement": "Nouveau mouvement",
+      "fieldQuantity": "Quantité",
+      "fieldMachine": "Engin",
+      "typeEntry": "Entrée",
+      "typeExit": "Sortie",
+      "manageMachines": "Engins",
+      "manageMachinesTitle": "Gérer les engins",
+      "breakdownTitle": "Consommation par engin",
+      "breakdownLine": "{{litres}} L sur {{count}} sortie(s)",
+      "dialogTitleNew": "Nouveau mouvement de carburant",
+      "dialogTitleEdit": "Modifier le mouvement",
+      "validationMachine": "Engin requis pour une sortie",
+      "emptyTitle": "Aucun mouvement",
+      "emptyDescription": "Enregistre les approvisionnements et les sorties de gasoil par engin.",
+      "toastCreated": "Mouvement enregistré",
+      "toastModified": "Mouvement modifié",
+      "toastDeleted": "Mouvement supprimé"
     }
   },
   "finance": {

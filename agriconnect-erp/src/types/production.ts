@@ -110,6 +110,20 @@ export interface EngraisApplication {
   observation: string
 }
 
+/** Fuel going into the farm tank, or drawn from it by a machine. */
+export type CarburantMouvementType = "entree" | "sortie"
+export const CARBURANT_MOUVEMENT_TYPES: CarburantMouvementType[] = ["entree", "sortie"]
+
+export interface CarburantMouvement {
+  id: string
+  date: string
+  type: CarburantMouvementType
+  quantiteLitres: number
+  /** Machine drawing the fuel; empty on a refill of the farm tank. */
+  engin: string
+  observation: string
+}
+
 export type BovinGenre = "male" | "femelle"
 export type BovinEntreeType = "achat" | "naissance"
 export type BovinSortieType = "vente" | "deces"

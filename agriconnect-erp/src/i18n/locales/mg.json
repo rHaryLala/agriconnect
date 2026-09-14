@@ -671,7 +671,8 @@
       "toastDeleted": "Voafafa ny fidirana",
       "subTabCultures": "Voly",
       "subTabLabour": "Mpiasa",
-      "subTabFertilizer": "Zezika"
+      "subTabFertilizer": "Zezika",
+      "subTabFuel": "Solika"
     },
     "customType": {
       "statTotal": "Totaly {{label}}",
@@ -769,6 +770,28 @@
       "toastCreated": "Voatahiry ny fafazana",
       "toastModified": "Novaina ny fafazana",
       "toastDeleted": "Voafafa ny fafazana"
+    },
+    "carburant": {
+      "statStock": "Tahiry an-tavy",
+      "statEntries": "Famenoana",
+      "statExits": "Fandaniana",
+      "newMovement": "Hetsika vaovao",
+      "fieldQuantity": "Habetsahana",
+      "fieldMachine": "Milina",
+      "typeEntry": "Fidirana",
+      "typeExit": "Fivoahana",
+      "manageMachines": "Milina",
+      "manageMachinesTitle": "Hitantana ny milina",
+      "breakdownTitle": "Fandaniana isaky ny milina",
+      "breakdownLine": "{{litres}} L tamin'ny fivoahana {{count}}",
+      "dialogTitleNew": "Hetsiky ny solika vaovao",
+      "dialogTitleEdit": "Hanova ny hetsika",
+      "validationMachine": "Ilaina ny milina rehefa mivoaka",
+      "emptyTitle": "Tsy misy hetsika",
+      "emptyDescription": "Soraty ny famenoana solika sy ny fivoahana isaky ny milina.",
+      "toastCreated": "Voatahiry ny hetsika",
+      "toastModified": "Novaina ny hetsika",
+      "toastDeleted": "Voafafa ny hetsika"
     }
   },
   "finance": {

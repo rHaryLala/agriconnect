@@ -1,4 +1,4 @@
-import type { PouleEntry, VacheEntry, KuroilerEntry, KuroilerPoule, KuroilerPouleSuivi, KuroilerOeufMouvement, MainOeuvreEntry, EngraisApplication, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
+import type { PouleEntry, VacheEntry, KuroilerEntry, KuroilerPoule, KuroilerPouleSuivi, KuroilerOeufMouvement, MainOeuvreEntry, EngraisApplication, CarburantMouvement, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
 
 export const SEED_POULES: PouleEntry[] = [
   {
@@ -132,4 +132,12 @@ export const SEED_ENGRAIS: EngraisApplication[] = [
   { id: "eng-2", date: "2026-08-22", culture: "Riz", typeEngrais: "Urée", quantiteKg: 200, parcelle: "P02", observation: "Couverture" },
   { id: "eng-3", date: "2026-09-01", culture: "Haricot", typeEngrais: "Compost", quantiteKg: 90, parcelle: "P05", observation: "RAS" },
   { id: "eng-4", date: "2026-09-05", culture: "Maraîchère", typeEngrais: "Fumier", quantiteKg: 150, parcelle: "P07", observation: "Planches de repiquage" },
+]
+
+export const SEED_CARBURANT: CarburantMouvement[] = [
+  { id: "carb-1", date: "2026-08-12", type: "entree", quantiteLitres: 200, engin: "", observation: "Approvisionnement cuve" },
+  { id: "carb-2", date: "2026-08-13", type: "sortie", quantiteLitres: 45, engin: "Tracteur", observation: "Labour parcelle riz" },
+  { id: "carb-3", date: "2026-08-27", type: "sortie", quantiteLitres: 18, engin: "Motoculteur", observation: "Préparation maraîchère" },
+  { id: "carb-4", date: "2026-09-03", type: "sortie", quantiteLitres: 60, engin: "Camion UAZ-01", observation: "Transport paddy" },
+  { id: "carb-5", date: "2026-09-06", type: "entree", quantiteLitres: 150, engin: "", observation: "Approvisionnement cuve" },
 ]

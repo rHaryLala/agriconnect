@@ -4,6 +4,7 @@ import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { CulturesTab } from "./CulturesTab"
 import { MainOeuvreTab } from "./MainOeuvreTab"
 import { EngraisTab } from "./EngraisTab"
+import { CarburantTab } from "./CarburantTab"
 
 export function AgricultureTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -13,6 +14,7 @@ export function AgricultureTab({ canEdit }: { canEdit: boolean }) {
     { id: "cultures", label: t("production.agriculture.subTabCultures") },
     { id: "mainOeuvre", label: t("production.agriculture.subTabLabour") },
     { id: "engrais", label: t("production.agriculture.subTabFertilizer") },
+    { id: "carburant", label: t("production.agriculture.subTabFuel") },
   ]
 
   return (
@@ -23,6 +25,7 @@ export function AgricultureTab({ canEdit }: { canEdit: boolean }) {
         {subTab === "cultures" && <CulturesTab canEdit={canEdit} />}
         {subTab === "mainOeuvre" && <MainOeuvreTab canEdit={canEdit} />}
         {subTab === "engrais" && <EngraisTab canEdit={canEdit} />}
+        {subTab === "carburant" && <CarburantTab canEdit={canEdit} />}
       </div>
     </div>
   )

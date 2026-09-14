@@ -671,7 +671,8 @@
       "toastDeleted": "Entry deleted",
       "subTabCultures": "Crops",
       "subTabLabour": "Labour",
-      "subTabFertilizer": "Fertilizer"
+      "subTabFertilizer": "Fertilizer",
+      "subTabFuel": "Fuel"
     },
     "customType": {
       "statTotal": "Total {{label}}",
@@ -781,6 +782,28 @@
       "toastCreated": "Application saved",
       "toastModified": "Application updated",
       "toastDeleted": "Application deleted"
+    },
+    "carburant": {
+      "statStock": "Fuel in tank",
+      "statEntries": "Refills",
+      "statExits": "Consumption",
+      "newMovement": "New movement",
+      "fieldQuantity": "Quantity",
+      "fieldMachine": "Machine",
+      "typeEntry": "Entry",
+      "typeExit": "Exit",
+      "manageMachines": "Machines",
+      "manageMachinesTitle": "Manage machines",
+      "breakdownTitle": "Consumption per machine",
+      "breakdownLine": "{{litres}} L over {{count}} withdrawal(s)",
+      "dialogTitleNew": "New fuel movement",
+      "dialogTitleEdit": "Edit movement",
+      "validationMachine": "Machine required for a withdrawal",
+      "emptyTitle": "No movement",
+      "emptyDescription": "Record fuel refills and the withdrawals of each machine.",
+      "toastCreated": "Movement saved",
+      "toastModified": "Movement updated",
+      "toastDeleted": "Movement deleted"
     }
   },
   "finance": {
