@@ -1,4 +1,4 @@
-import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
+import type { PouleEntry, VacheEntry, KuroilerEntry, KuroilerPoule, KuroilerPouleSuivi, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
 
 export const SEED_POULES: PouleEntry[] = [
   {
@@ -92,4 +92,19 @@ export const SEED_HARICOTS: HaricotMouvement[] = [
   { id: "hs-1", date: "2026-06-20", variante: "blanc", type: "entree", quantiteKg: 400, observation: "Récolte parcelle P05" },
   { id: "hs-2", date: "2026-06-20", variante: "rouge", type: "entree", quantiteKg: 250, observation: "Récolte parcelle P06" },
   { id: "hs-3", date: "2026-08-10", variante: "blanc", type: "vente", quantiteKg: 60, clientId: "cl-1", prixUnitaire: 4_500, paymentMethod: "comptant", observation: "RAS" },
+]
+
+export const SEED_KUROILER_POULES: KuroilerPoule[] = [
+  { id: "kp-1", bracelet: "KR-001", dateEntree: "2026-02-10", ageMois: 7, ponte: true, statut: "active", observation: "RAS" },
+  { id: "kp-2", bracelet: "KR-002", dateEntree: "2026-02-10", ageMois: 7, ponte: true, statut: "active", observation: "RAS" },
+  { id: "kp-3", bracelet: "KR-003", dateEntree: "2026-02-10", ageMois: 7, ponte: false, statut: "active", observation: "Reprise de poids en cours" },
+  { id: "kp-4", bracelet: "KR-004", dateEntree: "2026-03-05", ageMois: 6, ponte: false, statut: "morte", dateSortie: "2026-08-02", observation: "Mortalité — cause non identifiée" },
+  { id: "kp-5", bracelet: "KR-005", dateEntree: "2026-03-05", ageMois: 6, ponte: false, statut: "vendue", dateSortie: "2026-08-18", observation: "Vente sur place" },
+]
+
+export const SEED_KUROILER_SUIVIS: KuroilerPouleSuivi[] = [
+  { id: "ks-1", pouleId: "kp-1", date: "2026-09-07", poidsKg: 2.4, vaccin: "Newcastle", observation: "RAS" },
+  { id: "ks-2", pouleId: "kp-1", date: "2026-08-31", poidsKg: 2.3, vaccin: "", observation: "RAS" },
+  { id: "ks-3", pouleId: "kp-2", date: "2026-09-07", poidsKg: 2.6, vaccin: "Newcastle", observation: "RAS" },
+  { id: "ks-4", pouleId: "kp-3", date: "2026-09-07", poidsKg: 1.9, vaccin: "Newcastle", observation: "Poids sous la moyenne" },
 ]

@@ -47,6 +47,36 @@ export interface KuroilerEntry {
   observation: string
 }
 
+/** Outcome of an individually tracked Kuroiler hen. */
+export type KuroilerPouleStatut = "active" | "vendue" | "morte" | "perdue"
+export const KUROILER_POULE_STATUTS: KuroilerPouleStatut[] = ["active", "vendue", "morte", "perdue"]
+
+/**
+ * One hen or chick of the Kuroiler flock, identified by the numbered ring the
+ * farm puts on the animal.
+ */
+export interface KuroilerPoule {
+  id: string
+  bracelet: string
+  dateEntree: string
+  ageMois: number
+  /** Whether the hen is currently laying. */
+  ponte: boolean
+  statut: KuroilerPouleStatut
+  dateSortie?: string
+  observation: string
+}
+
+/** Weekly follow-up of a single hen: weight and vaccination. */
+export interface KuroilerPouleSuivi {
+  id: string
+  pouleId: string
+  date: string
+  poidsKg: number
+  vaccin: string
+  observation: string
+}
+
 export interface CultureEntry {
   id: string
   date: string
