@@ -87,6 +87,18 @@ export interface CultureEntry {
   intrants: string
 }
 
+/**
+ * Head count of day labourers engaged on a given farming activity for one day.
+ * Activities are named as on the field sheets (mihava, mamboly vary, ...).
+ */
+export interface MainOeuvreEntry {
+  id: string
+  date: string
+  activite: string
+  nbEmployes: number
+  observation: string
+}
+
 export type BovinGenre = "male" | "femelle"
 export type BovinEntreeType = "achat" | "naissance"
 export type BovinSortieType = "vente" | "deces"

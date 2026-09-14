@@ -668,7 +668,9 @@
       "validationInputs": "Enter the inputs used, even 'none'",
       "toastCreated": "Entry saved",
       "toastModified": "Entry updated",
-      "toastDeleted": "Entry deleted"
+      "toastDeleted": "Entry deleted",
+      "subTabCultures": "Crops",
+      "subTabLabour": "Labour"
     },
     "customType": {
       "statTotal": "Total {{label}}",
@@ -731,6 +733,28 @@
       "invoicedYes": "Yes",
       "invoicedNo": "No",
       "toastSaleCreated": "Sale recorded, invoice generated"
+    },
+    "mainOeuvre": {
+      "statManDays": "Man-days",
+      "statManDaysHint": "Over the selected period",
+      "statAverage": "Workers / day",
+      "statActivities": "Tracked activities",
+      "newEntry": "New record",
+      "fieldActivity": "Activity",
+      "fieldHeadcount": "Number of workers",
+      "manageActivities": "Activities",
+      "manageActivitiesTitle": "Manage activities",
+      "breakdownTitle": "Breakdown per activity",
+      "breakdownLine": "{{manDays}} man-days over {{days}} day(s)",
+      "dialogTitleNew": "New labour record",
+      "dialogTitleEdit": "Edit record",
+      "validationActivity": "Activity required",
+      "validationHeadcount": "Must be greater than zero",
+      "emptyTitle": "No record",
+      "emptyDescription": "Record how many workers are engaged on each activity, day by day.",
+      "toastCreated": "Record saved",
+      "toastModified": "Record updated",
+      "toastDeleted": "Record deleted"
     }
   },
   "finance": {

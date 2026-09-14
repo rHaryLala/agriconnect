@@ -1,4 +1,4 @@
-import type { PouleEntry, VacheEntry, KuroilerEntry, KuroilerPoule, KuroilerPouleSuivi, KuroilerOeufMouvement, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
+import type { PouleEntry, VacheEntry, KuroilerEntry, KuroilerPoule, KuroilerPouleSuivi, KuroilerOeufMouvement, MainOeuvreEntry, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
 
 export const SEED_POULES: PouleEntry[] = [
   {
@@ -117,4 +117,12 @@ export const SEED_KUROILER_OEUFS: KuroilerOeufMouvement[] = [
   { id: "ko-2", date: "2026-08-31", type: "entree", quantite: 445, observation: "Collecte hebdomadaire" },
   { id: "ko-3", date: "2026-09-01", type: "couveuse", quantite: 180, observation: "Mise en couveuse — lot 12" },
   { id: "ko-4", date: "2026-09-05", type: "vente", quantite: 240, clientId: "cl-1", prixUnitaire: 1_200, paymentMethod: "comptant", observation: "RAS" },
+]
+
+export const SEED_MAIN_OEUVRE: MainOeuvreEntry[] = [
+  { id: "mo-1", date: "2026-09-07", activite: "Mamboly vary", nbEmployes: 14, observation: "Parcelle P02" },
+  { id: "mo-2", date: "2026-09-07", activite: "Mitery ronono sy mitaona vilona", nbEmployes: 4, observation: "RAS" },
+  { id: "mo-3", date: "2026-09-08", activite: "Mihava", nbEmployes: 9, observation: "Parcelle P05" },
+  { id: "mo-4", date: "2026-09-08", activite: "Manangona atody", nbEmployes: 3, observation: "RAS" },
+  { id: "mo-5", date: "2026-09-09", activite: "Mikarakara maraîchère", nbEmployes: 6, observation: "Repiquage" },
 ]

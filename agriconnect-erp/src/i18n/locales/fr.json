@@ -668,7 +668,9 @@
       "validationInputs": "Renseigne les intrants utilisés, même 'aucun'",
       "toastCreated": "Entrée enregistrée",
       "toastModified": "Entrée modifiée",
-      "toastDeleted": "Entrée supprimée"
+      "toastDeleted": "Entrée supprimée",
+      "subTabCultures": "Cultures",
+      "subTabLabour": "Main-d'œuvre"
     },
     "customType": {
       "statTotal": "Total {{label}}",
@@ -731,6 +733,28 @@
       "invoicedYes": "Oui",
       "invoicedNo": "Non",
       "toastSaleCreated": "Vente enregistrée, facture générée"
+    },
+    "mainOeuvre": {
+      "statManDays": "Jours-homme",
+      "statManDaysHint": "Sur la période sélectionnée",
+      "statAverage": "Employés / jour",
+      "statActivities": "Activités suivies",
+      "newEntry": "Nouvelle saisie",
+      "fieldActivity": "Activité",
+      "fieldHeadcount": "Nombre d'employés",
+      "manageActivities": "Activités",
+      "manageActivitiesTitle": "Gérer les activités",
+      "breakdownTitle": "Répartition par activité",
+      "breakdownLine": "{{manDays}} jours-homme sur {{days}} jour(s)",
+      "dialogTitleNew": "Nouvelle saisie de main-d'œuvre",
+      "dialogTitleEdit": "Modifier la saisie",
+      "validationActivity": "Activité requise",
+      "validationHeadcount": "Doit être supérieur à zéro",
+      "emptyTitle": "Aucune saisie",
+      "emptyDescription": "Enregistre le nombre d'employés par activité et par jour.",
+      "toastCreated": "Saisie enregistrée",
+      "toastModified": "Saisie modifiée",
+      "toastDeleted": "Saisie supprimée"
     }
   },
   "finance": {

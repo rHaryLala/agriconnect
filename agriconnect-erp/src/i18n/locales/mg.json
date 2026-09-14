@@ -668,7 +668,9 @@
       "validationInputs": "Asio ny fitaovana nampiasaina, na dia 'tsy misy' aza",
       "toastCreated": "Voatahiry ny fidirana",
       "toastModified": "Novaina ny fidirana",
-      "toastDeleted": "Voafafa ny fidirana"
+      "toastDeleted": "Voafafa ny fidirana",
+      "subTabCultures": "Voly",
+      "subTabLabour": "Mpiasa"
     },
     "customType": {
       "statTotal": "Totaly {{label}}",
@@ -719,6 +721,28 @@
       "insufficientStock": "Tsy ampy ny tahiry ao amin'ny {{location}} ho an'ny {{category}} : {{available}} no misy, {{requested}} no angatahina.",
       "toastCreated": "Voatahiry ny famindrana",
       "toastDeleted": "Voafafa ny famindrana"
+    },
+    "mainOeuvre": {
+      "statManDays": "Andro-olona",
+      "statManDaysHint": "Amin'ny vanim-potoana voafidy",
+      "statAverage": "Mpiasa / andro",
+      "statActivities": "Asa arahi-maso",
+      "newEntry": "Fanoratana vaovao",
+      "fieldActivity": "Asa",
+      "fieldHeadcount": "Isan'ny mpiasa",
+      "manageActivities": "Asa",
+      "manageActivitiesTitle": "Hitantana ny asa",
+      "breakdownTitle": "Fizarana isaky ny asa",
+      "breakdownLine": "{{manDays}} andro-olona nandritra ny {{days}} andro",
+      "dialogTitleNew": "Fanoratana mpiasa vaovao",
+      "dialogTitleEdit": "Hanova ny fanoratana",
+      "validationActivity": "Ilaina ny asa",
+      "validationHeadcount": "Tsy maintsy mihoatra ny aotra",
+      "emptyTitle": "Tsy misy fanoratana",
+      "emptyDescription": "Soraty ny isan'ny mpiasa isaky ny asa sy isan'andro.",
+      "toastCreated": "Voatahiry ny fanoratana",
+      "toastModified": "Novaina ny fanoratana",
+      "toastDeleted": "Voafafa ny fanoratana"
     }
   },
   "finance": {
