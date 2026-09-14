@@ -1237,7 +1237,7 @@
     "exportExcel": "Exporter Excel",
     "emptyTitle": "Aucune donnée",
     "emptyDescription": "Aucune donnée pour la période sélectionnée.",
-    "tabs": { "financial": "Financier", "production": "Production", "stock": "Stock", "recap": "Récap mensuel" },
+    "tabs": { "financial": "Financier", "production": "Production", "stock": "Stock", "recap": "Récap mensuel", "payroll": "Retenues sur salaire" },
     "financial": {
       "title": "Rapport financier",
       "statRevenue": "Recettes totales",
@@ -1275,6 +1275,20 @@
       "colFiliere": "Filière",
       "colQuantitySold": "Quantité vendue",
       "colAmount": "Montant"
+    },
+    "payroll": {
+      "title": "Retenues sur salaire",
+      "statTotal": "Total à retenir",
+      "statStaff": "Employés concernés",
+      "statProducts": "Produits concernés",
+      "fieldClosingDate": "Date de clôture",
+      "closingHint": "Par défaut, la fin de la fenêtre de préparation des salaires.",
+      "closingSummary": "Retenues en attente au {{date}}",
+      "colAmount": "Montant à retenir",
+      "byProduct": "Par produit",
+      "byDepartment": "Par département / service",
+      "emptyTitle": "Aucune retenue à cette date",
+      "emptyDescription": "Aucune vente payée par retenue sur salaire n'est en attente à la date de clôture."
     }
   },
   "personnel": {

@@ -1237,7 +1237,7 @@
     "exportExcel": "Export Excel",
     "emptyTitle": "No data",
     "emptyDescription": "No data for the selected period.",
-    "tabs": { "financial": "Financial", "production": "Production", "stock": "Stock", "recap": "Monthly recap" },
+    "tabs": { "financial": "Financial", "production": "Production", "stock": "Stock", "recap": "Monthly recap", "payroll": "Payroll deductions" },
     "financial": {
       "title": "Financial report",
       "statRevenue": "Total revenue",
@@ -1275,6 +1275,20 @@
       "colFiliere": "Line",
       "colQuantitySold": "Quantity sold",
       "colAmount": "Amount"
+    },
+    "payroll": {
+      "title": "Payroll deductions",
+      "statTotal": "Total to deduct",
+      "statStaff": "Staff concerned",
+      "statProducts": "Products concerned",
+      "fieldClosingDate": "Closing date",
+      "closingHint": "Defaults to the end of the payroll preparation window.",
+      "closingSummary": "Deductions pending on {{date}}",
+      "colAmount": "Amount to deduct",
+      "byProduct": "Per product",
+      "byDepartment": "Per department",
+      "emptyTitle": "No deduction on that date",
+      "emptyDescription": "No sale paid by payroll deduction is pending on the closing date."
     }
   },
   "personnel": {

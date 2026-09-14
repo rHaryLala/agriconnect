@@ -1226,7 +1226,7 @@
     "exportExcel": "Avoahy Excel",
     "emptyTitle": "Tsy misy angona",
     "emptyDescription": "Tsy misy angona amin'ny vanim-potoana voafantina.",
-    "tabs": { "financial": "Ara-bola", "production": "Famokarana", "stock": "Tahiry", "recap": "Famintinana isam-bolana" },
+    "tabs": { "financial": "Ara-bola", "production": "Famokarana", "stock": "Tahiry", "recap": "Famintinana isam-bolana", "payroll": "Fanalana amin'ny karama" },
     "financial": {
       "title": "Tatitra ara-bola",
       "statRevenue": "Vola miditra rehetra",
@@ -1264,6 +1264,20 @@
       "colFiliere": "Sampana",
       "colQuantitySold": "Habe namidy",
       "colAmount": "Vola"
+    },
+    "payroll": {
+      "title": "Fanalana amin'ny karama",
+      "statTotal": "Totaly hesorina",
+      "statStaff": "Mpiasa voakasika",
+      "statProducts": "Vokatra voakasika",
+      "fieldClosingDate": "Daty famaranana",
+      "closingHint": "Ny faran'ny fe-potoana fanomanana karama no fenitra.",
+      "closingSummary": "Fanalana miandry tamin'ny {{date}}",
+      "colAmount": "Vola hesorina",
+      "byProduct": "Isaky ny vokatra",
+      "byDepartment": "Isaky ny departemanta",
+      "emptyTitle": "Tsy misy fanalana amin'io daty io",
+      "emptyDescription": "Tsy misy varotra naloa tamin'ny fanalana amin'ny karama miandry amin'ny daty famaranana."
     }
   },
   "personnel": {

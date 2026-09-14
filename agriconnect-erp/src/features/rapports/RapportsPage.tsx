@@ -5,6 +5,7 @@ import { FinancialReportTab } from "./FinancialReportTab"
 import { ProductionReportTab } from "./ProductionReportTab"
 import { StockReportTab } from "./StockReportTab"
 import { MonthlyRecapTab } from "./MonthlyRecapTab"
+import { PayrollDeductionReportTab } from "./PayrollDeductionReportTab"
 import { useFinanceStore } from "@/features/finance/financeStore"
 import { useStockStore } from "@/features/stocks/stockStore"
 import { useProductionStore } from "@/features/production/productionStore"
@@ -74,6 +75,7 @@ export default function RapportsPage() {
     { id: "production", label: t("rapports.tabs.production") },
     { id: "stock", label: t("rapports.tabs.stock") },
     { id: "recap", label: t("rapports.tabs.recap") },
+    { id: "retenues", label: t("rapports.tabs.payroll") },
   ]
 
   return (
@@ -156,6 +158,7 @@ export default function RapportsPage() {
           />
         )}
         {activeTab === "stock" && <StockReportTab articles={articles} movements={movements} period={period} periodLabel={periodLabel} />}
+        {activeTab === "retenues" && <PayrollDeductionReportTab invoices={invoices} articles={articles} />}
         {activeTab === "recap" && (
           <MonthlyRecapTab
             period={period}
