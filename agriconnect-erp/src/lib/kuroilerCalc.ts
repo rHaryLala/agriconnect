@@ -1,4 +1,4 @@
-import type { KuroilerPoule, KuroilerPouleStatut, KuroilerPouleSuivi } from "@/types/production"
+import type { KuroilerOeufMouvement, KuroilerPoule, KuroilerPouleStatut, KuroilerPouleSuivi } from "@/types/production"
 
 export function countPoulesActives(poules: KuroilerPoule[]): number {
   return poules.filter((p) => p.statut === "active").length
@@ -29,4 +29,24 @@ export function computePoidsMoyen(poules: KuroilerPoule[], suivis: KuroilerPoule
     .filter((v): v is number => v !== undefined)
   if (poids.length === 0) return 0
   return poids.reduce((sum, v) => sum + v, 0) / poids.length
+}
+
+export function sumOeufsSurPeriode(
+  mouvements: KuroilerOeufMouvement[],
+  type: KuroilerOeufMouvement["type"],
+  startIso: string,
+  endIso: string
+): number {
+  return mouvements
+    .filter((m) => m.type === type && m.date >= startIso && m.date <= endIso)
+    .reduce((sum, m) => sum + m.quantite, 0)
+}
+
+/** Kuroiler eggs on hand: what came in, less what was sold or set in the incubator. */
+export function computeStockOeufsKuroiler(mouvements: KuroilerOeufMouvement[]): number {
+  return mouvements.reduce((sum, m) => sum + (m.type === "entree" ? m.quantite : -m.quantite), 0)
+}
+
+export function countOeufsEnCouveuse(mouvements: KuroilerOeufMouvement[]): number {
+  return mouvements.filter((m) => m.type === "couveuse").reduce((sum, m) => sum + m.quantite, 0)
 }

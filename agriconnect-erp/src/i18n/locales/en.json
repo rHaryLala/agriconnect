@@ -532,6 +532,26 @@
         "toastDeleted": "Hen deleted",
         "toastSuiviCreated": "Record saved",
         "toastSortieRecorded": "Outcome recorded"
+      },
+      "subTabEggs": "Eggs",
+      "eggs": {
+        "statStock": "Eggs on hand",
+        "statEntries": "Entries this month",
+        "statSales": "Sales this month",
+        "statIncubated": "Set in incubator",
+        "statIncubatedHint": "Total since tracking started",
+        "newMovement": "New movement",
+        "dialogTitle": "Kuroiler egg movement",
+        "fieldType": "Type",
+        "fieldQuantity": "Egg count",
+        "typeEntry": "Entry",
+        "typeSale": "Sale",
+        "typeIncubator": "Set in incubator",
+        "insufficientStock": "Not enough eggs: {{available}} available for {{requested}} requested",
+        "emptyTitle": "No movement",
+        "emptyDescription": "Record the first Kuroiler egg collection.",
+        "toastCreated": "Movement recorded",
+        "toastDeleted": "Movement deleted"
       }
     },
     "poulard": {

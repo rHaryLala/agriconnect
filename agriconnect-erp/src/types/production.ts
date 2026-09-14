@@ -120,6 +120,25 @@ export interface BovinAnimal {
   observation: string
 }
 
+/**
+ * Kuroiler eggs are a product of their own, distinct from layer eggs: they come
+ * in, are sold, or are set in the incubator.
+ */
+export type KuroilerOeufMouvementType = "entree" | "vente" | "couveuse"
+export const KUROILER_OEUF_MOUVEMENT_TYPES: KuroilerOeufMouvementType[] = ["entree", "vente", "couveuse"]
+
+export interface KuroilerOeufMouvement {
+  id: string
+  date: string
+  type: KuroilerOeufMouvementType
+  quantite: number
+  clientId?: string
+  prixUnitaire?: number
+  paymentMethod?: ProductionPaymentMethod
+  invoiceId?: string
+  observation: string
+}
+
 export type PoulardMouvementType = "entree" | "vente" | "mortalite" | "ponte"
 export const POULARD_MOUVEMENT_TYPES: PoulardMouvementType[] = ["entree", "vente", "mortalite", "ponte"]
 

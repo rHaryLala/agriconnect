@@ -532,6 +532,26 @@
         "toastDeleted": "Voafafa ny akoho",
         "toastSuiviCreated": "Voasoratra ny fanisana",
         "toastSortieRecorded": "Voasoratra ny fivoahana"
+      },
+      "subTabEggs": "Atody",
+      "eggs": {
+        "statStock": "Tahiry atody",
+        "statEntries": "Fidirana amin'ity volana ity",
+        "statSales": "Varotra amin'ity volana ity",
+        "statIncubated": "Napetraka an-couveuse",
+        "statIncubatedHint": "Totaly hatramin'ny nanombohana",
+        "newMovement": "Hetsika vaovao",
+        "dialogTitle": "Hetsiky ny atody Kuroiler",
+        "fieldType": "Karazana",
+        "fieldQuantity": "Isan'ny atody",
+        "typeEntry": "Fidirana",
+        "typeSale": "Varotra",
+        "typeIncubator": "Fametrahana an-couveuse",
+        "insufficientStock": "Tsy ampy ny atody : {{available}} misy fa {{requested}} no angatahina",
+        "emptyTitle": "Tsy misy hetsika",
+        "emptyDescription": "Soraty ny fanangonana atody Kuroiler voalohany.",
+        "toastCreated": "Voasoratra ny hetsika",
+        "toastDeleted": "Voafafa ny hetsika"
       }
     },
     "poulard": {

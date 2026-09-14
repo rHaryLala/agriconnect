@@ -532,6 +532,26 @@
         "toastDeleted": "Poule supprimée",
         "toastSuiviCreated": "Relevé enregistré",
         "toastSortieRecorded": "Sortie enregistrée"
+      },
+      "subTabEggs": "Œufs",
+      "eggs": {
+        "statStock": "Stock d'œufs",
+        "statEntries": "Entrées du mois",
+        "statSales": "Ventes du mois",
+        "statIncubated": "Mis en couveuse",
+        "statIncubatedHint": "Cumul depuis le début du suivi",
+        "newMovement": "Nouveau mouvement",
+        "dialogTitle": "Mouvement d'œufs Kuroiler",
+        "fieldType": "Type",
+        "fieldQuantity": "Quantité d'œufs",
+        "typeEntry": "Entrée",
+        "typeSale": "Vente",
+        "typeIncubator": "Mise en couveuse",
+        "insufficientStock": "Stock insuffisant : {{available}} œufs disponibles pour {{requested}} demandés",
+        "emptyTitle": "Aucun mouvement",
+        "emptyDescription": "Enregistre la première collecte d'œufs Kuroiler.",
+        "toastCreated": "Mouvement enregistré",
+        "toastDeleted": "Mouvement supprimé"
       }
     },
     "poulard": {

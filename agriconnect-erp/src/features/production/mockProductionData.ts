@@ -1,4 +1,4 @@
-import type { PouleEntry, VacheEntry, KuroilerEntry, KuroilerPoule, KuroilerPouleSuivi, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
+import type { PouleEntry, VacheEntry, KuroilerEntry, KuroilerPoule, KuroilerPouleSuivi, KuroilerOeufMouvement, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizSechageEvent, RizDecorticage, RizVente, HaricotMouvement } from "@/types/production"
 
 export const SEED_POULES: PouleEntry[] = [
   {
@@ -110,4 +110,11 @@ export const SEED_KUROILER_SUIVIS: KuroilerPouleSuivi[] = [
   { id: "ks-2", pouleId: "kp-1", date: "2026-08-31", poidsKg: 2.3, vaccin: "", observation: "RAS" },
   { id: "ks-3", pouleId: "kp-2", date: "2026-09-07", poidsKg: 2.6, vaccin: "Newcastle", observation: "RAS" },
   { id: "ks-4", pouleId: "kp-3", date: "2026-09-07", poidsKg: 1.9, vaccin: "Newcastle", observation: "Poids sous la moyenne" },
+]
+
+export const SEED_KUROILER_OEUFS: KuroilerOeufMouvement[] = [
+  { id: "ko-1", date: "2026-08-24", type: "entree", quantite: 420, observation: "Collecte hebdomadaire" },
+  { id: "ko-2", date: "2026-08-31", type: "entree", quantite: 445, observation: "Collecte hebdomadaire" },
+  { id: "ko-3", date: "2026-09-01", type: "couveuse", quantite: 180, observation: "Mise en couveuse — lot 12" },
+  { id: "ko-4", date: "2026-09-05", type: "vente", quantite: 240, clientId: "cl-1", prixUnitaire: 1_200, paymentMethod: "comptant", observation: "RAS" },
 ]
