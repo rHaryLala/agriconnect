@@ -1253,7 +1253,15 @@
       "colFiliere": "Sampana",
       "colIndicator": "Fanamarihana",
       "colValue": "Sanda",
-      "colUnit": "Refy"
+      "colUnit": "Refy",
+      "sectionIndicators": "Mari-pamantarana isaky ny sokajy",
+      "sectionYield": "Vokatra azo",
+      "colArticle": "Vokatra",
+      "colHarvest": "Jinja",
+      "colSurface": "Velarana",
+      "colYield": "Vokatra isaky ny hektara",
+      "yieldEmptyTitle": "Tsy nisy jinja tamin'ny vanim-potoana",
+      "yieldEmptyDescription": "Hiseho eto ny vokatra rehefa voasoratra."
     },
     "stock": {
       "title": "Tatitra tahiry",

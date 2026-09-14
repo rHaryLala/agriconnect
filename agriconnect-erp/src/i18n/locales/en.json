@@ -1264,7 +1264,15 @@
       "colFiliere": "Line",
       "colIndicator": "Indicator",
       "colValue": "Value",
-      "colUnit": "Unit"
+      "colUnit": "Unit",
+      "sectionIndicators": "Indicators per line",
+      "sectionYield": "Crop yield",
+      "colArticle": "Article",
+      "colHarvest": "Harvest",
+      "colSurface": "Area",
+      "colYield": "Yield",
+      "yieldEmptyTitle": "No harvest over the period",
+      "yieldEmptyDescription": "Harvested articles show up here as soon as they are recorded."
     },
     "stock": {
       "title": "Stock report",

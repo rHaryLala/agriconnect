@@ -48,7 +48,11 @@ export function StockReportTab({ articles, movements, period, periodLabel }: Sto
   const movementColumns: DataTableColumn<StockMovement>[] = [
     { key: "date", label: t("rapports.colDate"), render: (m) => formatDate(m.date) },
     { key: "article", label: t("rapports.stock.colArticle"), render: (m) => articleName(m.articleId) },
-    { key: "type", label: t("stock.movements.fieldType"), render: (m) => t(m.type === "entree" ? "stock.movements.typeEntry" : "stock.movements.typeExit") },
+    {
+      key: "type",
+      label: t("stock.movements.fieldType"),
+      render: (m) => t(m.type === "entree" ? "stock.movements.typeEntry" : m.type === "sortie" ? "stock.movements.typeExit" : "stock.movements.typeTransfer"),
+    },
     { key: "quantite", label: t("stock.movements.fieldQuantity"), render: (m) => formatNumber(m.quantite) },
   ]
 

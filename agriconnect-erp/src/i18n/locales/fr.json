@@ -1264,7 +1264,15 @@
       "colFiliere": "Filière",
       "colIndicator": "Indicateur",
       "colValue": "Valeur",
-      "colUnit": "Unité"
+      "colUnit": "Unité",
+      "sectionIndicators": "Indicateurs par filière",
+      "sectionYield": "Rendement agricole",
+      "colArticle": "Article",
+      "colHarvest": "Récolte",
+      "colSurface": "Surface",
+      "colYield": "Rendement",
+      "yieldEmptyTitle": "Aucune récolte sur la période",
+      "yieldEmptyDescription": "Les articles récoltés apparaissent ici dès qu'ils sont saisis."
     },
     "stock": {
       "title": "Rapport de stock",

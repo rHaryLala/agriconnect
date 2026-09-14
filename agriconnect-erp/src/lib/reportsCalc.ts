@@ -56,7 +56,7 @@ export function buildProductionRows(
     const recolte = entries.reduce((s, c) => s + c.recolteQty, 0)
     const surface = entries.reduce((s, c) => s + c.surfaceHa, 0)
     rows.push({ filiere: `Agriculture — ${nom}`, indicateur: "Récolte", valeur: recolte, unite: "kg" })
-    if (surface > 0) rows.push({ filiere: `Agriculture — ${nom}`, indicateur: "Rendement", valeur: Math.round(recolte / surface), unite: "kg/ha" })
+    rows.push({ filiere: `Agriculture — ${nom}`, indicateur: "Surface", valeur: surface, unite: "ha" })
   }
 
   const bovinsVentes = data.bovins.filter((a) => a.typeSortie === "vente" && a.dateSortie && inRange(a.dateSortie, start, end))
@@ -85,6 +85,68 @@ export function buildProductionRows(
   }
 
   return rows
+}
+
+export interface RendementRow {
+  article: string
+  recolte: number
+  unite: string
+  surfaceHa: number
+  /** Harvest per hectare, null when no surface was recorded for the article. */
+  rendement: number | null
+}
+
+function pushRendement(rows: RendementRow[], article: string, recolte: number, unite: string, surfaceHa: number) {
+  if (recolte === 0 && surfaceHa === 0) return
+  rows.push({ article, recolte, unite, surfaceHa, rendement: surfaceHa > 0 ? recolte / surfaceHa : null })
+}
+
+/**
+ * Harvest and yield of every article actually recorded over the period: the
+ * crops entered in Agriculture, the rice and bean lines, and any custom
+ * production type the farm added. Nothing is hard-coded, so a new article shows
+ * up in the report as soon as it is recorded.
+ */
+export function buildRendementRows(
+  period: { start: string; end: string },
+  data: {
+    cultures: CultureEntry[]
+    rizRecoltes: RizRecolte[]
+    haricots: HaricotMouvement[]
+    customTypes: { label: string; entries: { date: string; quantite: number; unite: string }[] }[]
+  }
+): RendementRow[] {
+  const { start, end } = period
+  const rows: RendementRow[] = []
+
+  const cultureNames = [...new Set(data.cultures.map((c) => c.culture))]
+  for (const nom of cultureNames) {
+    const entries = data.cultures.filter((c) => c.culture === nom && inRange(c.date, start, end))
+    pushRendement(
+      rows,
+      nom,
+      entries.reduce((sum, c) => sum + c.recolteQty, 0),
+      "kg",
+      entries.reduce((sum, c) => sum + c.surfaceHa, 0)
+    )
+  }
+
+  const paddy = data.rizRecoltes.filter((r) => inRange(r.date, start, end))
+  pushRendement(rows, "Paddy", paddy.reduce((sum, r) => sum + r.quantiteKg, 0), "kg", 0)
+
+  const variantes = [...new Set(data.haricots.map((m) => m.variante))]
+  for (const variante of variantes) {
+    const recoltes = data.haricots.filter((m) => m.variante === variante && m.type === "entree" && inRange(m.date, start, end))
+    pushRendement(rows, `Haricot ${variante}`, recoltes.reduce((sum, m) => sum + m.quantiteKg, 0), "kg", 0)
+  }
+
+  for (const type of data.customTypes) {
+    const entries = type.entries.filter((e) => inRange(e.date, start, end))
+    if (entries.length === 0) continue
+    pushRendement(rows, type.label, entries.reduce((sum, e) => sum + e.quantite, 0), entries[0].unite, 0)
+  }
+
+  return rows.sort((a, b) => b.recolte - a.recolte)
 }
 
 export interface MonthlyRecapRow {
