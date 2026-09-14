@@ -5,6 +5,12 @@ import { SEED_ARTICLES, SEED_MOVEMENTS } from "./mockStockData"
 
 const FAKE_LATENCY_MS = 500
 
+/** Re-adds seed articles introduced after a user's inventory was first persisted. */
+function mergeSeedArticles(persisted: StockArticle[]): StockArticle[] {
+  const known = new Set(persisted.map((a) => a.id))
+  return [...persisted, ...SEED_ARTICLES.filter((a) => !known.has(a.id))]
+}
+
 interface StockState {
   articles: StockArticle[]
   movements: StockMovement[]
@@ -61,6 +67,14 @@ export const useStockStore = create<StockState>()(
     {
       name: "agriconnect-stock",
       storage: createJSONStorage(() => localStorage),
+      version: 1,
+      migrate: (persisted, version) => {
+        const state = persisted as StockState
+        if (version < 1 && state.hasFetched) {
+          return { ...state, articles: mergeSeedArticles(state.articles ?? []) }
+        }
+        return state
+      },
       partialize: (state) => ({
         articles: state.articles,
         movements: state.movements,
