@@ -63,72 +63,85 @@ export class ProductionService {
   }
 
   async create(dto: CreateProductionDto, userId: string, role: string, farmId: string) {
-    // Première étape : valider la date AVANT de toucher à la base —
-    // inutile de commencer une transaction si la date est de toute façon invalide
-    const date = this.validateDate(dto.date, role);
+  const date = this.validateDate(dto.date, role);
 
-    // stockItemId est optionnel (voir le DTO) : une production peut exister
-    // sans article de stock correspondant. Mais SI un id est fourni, on doit
-    // vérifier qu'il existe réellement et qu'il appartient bien à la ferme
-    // de l'utilisateur — sinon n'importe qui pourrait pointer vers l'article
-    // d'une autre ferme en devinant un UUID.(C'est un config pour une futur amélioration)
-    if (dto.stockItemId) {
-      const item = await this.prisma.stockItem.findFirst({
-        where: { id: dto.stockItemId, farmId },
-      });
-      if (!item) {
-        throw new NotFoundException('Article de stock introuvable');
-      }
+  if (dto.stockItemId) {
+    const item = await this.prisma.stockItem.findFirst({
+      where: { id: dto.stockItemId, farmId },
+    });
+    if (!item) {
+      throw new NotFoundException('Article de stock introuvable');
     }
+  }
 
-    // RG-05 (atomicité) + RG-12 (Production → entrée en stock automatique) :
-    // la production ET le mouvement de stock qui en découle doivent
-    // réussir ensemble, ou pas du tout — d'où la transaction Prisma.
-    // Tout ce qui suit utilise "tx" (et non "this.prisma") pour que chaque
-    // opération fasse partie de cette même transaction.
-    return this.prisma.$transaction(async (tx) => {
-      // Étape 1 : enregistrer la production elle-même
-      const production = await tx.production.create({
+  // Si une variante est ciblée, on vérifie qu'elle existe bien ET qu'elle
+  // appartient à l'article de stock indiqué — évite d'enregistrer une
+  // production "Oeufs GM Normal" reliée par erreur à l'article "Lait".
+  if (dto.variantId) {
+    const variant = await this.prisma.productVariant.findFirst({
+      where: { id: dto.variantId, stockItemId: dto.stockItemId },
+    });
+    if (!variant) {
+      throw new NotFoundException('Variante introuvable pour cet article');
+    }
+  }
+
+  return this.prisma.$transaction(async (tx) => {
+    const production = await tx.production.create({
+      data: {
+        type: dto.type,
+        quantity: dto.quantity,
+        unit: dto.unit,
+        notes: dto.notes,
+        date,
+        userId,
+        farmId,
+        stockItemId: dto.stockItemId,
+        variantId: dto.variantId, // ajouté
+      },
+    });
+
+    // Répercussion automatique en stock (RG-12), maintenant consciente
+    // des variantes : si une variante est ciblée, c'est ELLE qui reçoit
+    // l'entrée, jamais l'article parent en plus (pour ne pas compter
+    // la même production deux fois dans deux compteurs différents).
+    if (dto.variantId) {
+      await tx.stockMovement.create({
         data: {
-          type: dto.type,
+          itemId: dto.stockItemId!,
+          variantId: dto.variantId,
+          type: 'IN',
           quantity: dto.quantity,
-          unit: dto.unit,
-          notes: dto.notes,
-          date,       // la date validée plus haut, pas dto.date brut
-          userId,     // RG-04 : traçabilité — qui a saisi cette production
-          farmId,
-          stockItemId: dto.stockItemId,
+          reason: `Production du ${date.toLocaleDateString()}`,
+          userId,
         },
       });
 
-      // Étape 2, seulement si un article de stock est lié : répercuter
-      // automatiquement cette production en entrée de stock (RG-12).
-      if (dto.stockItemId) {
-        // On crée d'abord la trace du mouvement (pour l'historique et l'audit)...
-        await tx.stockMovement.create({
-          data: {
-            itemId: dto.stockItemId,
-            type: 'IN',
-            quantity: dto.quantity,
-            reason: `Production du ${date.toLocaleDateString()}`,
-            userId,
-          },
-        });
+      await tx.productVariant.update({
+        where: { id: dto.variantId },
+        data: { quantity: { increment: dto.quantity } },
+      });
+    } else if (dto.stockItemId) {
+      // Comportement inchangé pour un article sans variante (lait, maïs...)
+      await tx.stockMovement.create({
+        data: {
+          itemId: dto.stockItemId,
+          type: 'IN',
+          quantity: dto.quantity,
+          reason: `Production du ${date.toLocaleDateString()}`,
+          userId,
+        },
+      });
 
-        // ...puis on met à jour la quantité réelle en stock.
-        // "increment" plutôt que recalculer une valeur à la main : évite
-        // d'écraser une modification concurrente faite par quelqu'un d'autre
-        // au même moment (deux employés qui saisissent en même temps, par exemple).
-        await tx.stockItem.update({
-          where: { id: dto.stockItemId },
-          data: { quantity: { increment: dto.quantity } },
-        });
-      }
+      await tx.stockItem.update({
+        where: { id: dto.stockItemId },
+        data: { quantity: { increment: dto.quantity } },
+      });
+    }
 
-      // Ce qui est retourné ici devient la réponse HTTP renvoyée au client
-      return production;
-    });
-  }
+    return production;
+  });
+}
 
   async findAll(farmId: string, type?: string) {
     // farmId toujours présent dans le "where" : un utilisateur ne doit
