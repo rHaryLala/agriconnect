@@ -1217,7 +1217,11 @@
       "fieldPaymentAmount": "Amount received (Ar)",
       "remainingHint": "Amount due: {{amount}}",
       "validationPaymentAmount": "Must be positive",
-      "validationPaymentExceedsDue": "Cannot exceed the amount due ({{amount}})"
+      "validationPaymentExceedsDue": "Cannot exceed the amount due ({{amount}})",
+      "fieldAccountingNumber": "Receipt number (accounting)",
+      "fieldAccountingNumberPlaceholder": "CR-14502",
+      "accountingNumberHint": "The number is issued by the accounting software at the office. Leave empty for a provisional number.",
+      "receiptProvisional": "Provisional"
     },
     "filterAll": "All"
   },

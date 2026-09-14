@@ -18,6 +18,7 @@ function buildSchema(t: (key: string) => string) {
   return z.object({
     clientId: z.string().min(1, t("clients.invoices.validationClient")),
     date: z.string().min(1, "Date requise"),
+    numeroComptabilite: z.string().optional(),
     paymentMethod: z.enum(["comptant", "commande", "salaire"], { error: () => t("clients.invoices.validationMethod") }),
     items: z
       .array(
@@ -57,6 +58,7 @@ export function InvoiceFormDialog({ open, onOpenChange, clients, articles, onSub
       reset({
         clientId: clients[0]?.id ?? "",
         date: new Date().toISOString().slice(0, 10),
+        numeroComptabilite: "",
         paymentMethod: "comptant",
         items: [{ articleId: articles[0]?.id ?? "", quantite: 1, prixUnitaire: 0 }],
         montantInitial: 0,
@@ -78,6 +80,7 @@ export function InvoiceFormDialog({ open, onOpenChange, clients, articles, onSub
     await onSubmit({
       clientId: values.clientId,
       date: values.date,
+      numeroComptabilite: values.numeroComptabilite?.trim() || undefined,
       paymentMethod: values.paymentMethod,
       items: values.items,
       montantPaye: values.montantInitial,
@@ -117,6 +120,17 @@ export function InvoiceFormDialog({ open, onOpenChange, clients, articles, onSub
               <Label htmlFor="date">{t("clients.invoices.fieldDate")}</Label>
               <input id="date" type="date" {...register("date")} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
             </div>
+          </div>
+
+          <div>
+            <Label htmlFor="numeroComptabilite">{t("clients.invoices.fieldAccountingNumber")}</Label>
+            <input
+              id="numeroComptabilite"
+              {...register("numeroComptabilite")}
+              placeholder={t("clients.invoices.fieldAccountingNumberPlaceholder")}
+              className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+            />
+            <p className="mt-1 text-xs text-muted-foreground">{t("clients.invoices.accountingNumberHint")}</p>
           </div>
 
           <div>

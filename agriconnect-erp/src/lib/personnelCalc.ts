@@ -1,4 +1,4 @@
-import { computeInvoiceDue, computeInvoiceTotal, type Invoice } from "@/types/invoice"
+import { computeInvoiceDue, computeInvoiceTotal, invoiceReceiptNumber, type Invoice } from "@/types/invoice"
 import type { Employe } from "@/types/personnel"
 
 export type RetenueStatut = "en_attente" | "regularise"
@@ -43,7 +43,7 @@ export function buildRetenues(
     .filter((invoice) => invoice.paymentMethod === "salaire" && byClient.has(invoice.clientId))
     .map((invoice) => ({
       invoiceId: invoice.id,
-      numero: invoice.numero,
+      numero: invoiceReceiptNumber(invoice),
       employeId: (byClient.get(invoice.clientId) as Employe).id,
       date: invoice.date,
       produit: describeInvoice(invoice, articleName),

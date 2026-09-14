@@ -10,6 +10,7 @@ import { KuroilerOeufMovementDialog } from "./KuroilerOeufMovementDialog"
 import { useKuroilerOeufsStore } from "./kuroilerOeufsStore"
 import { KUROILER_OEUF_TYPE_LABEL_KEYS, KUROILER_OEUF_TYPE_TONES } from "./kuroilerOeufLabels"
 import { useInvoicesStore } from "@/features/clients/invoicesStore"
+import { invoiceReceiptNumber } from "@/types/invoice"
 import { useClientsStore } from "@/features/clients/clientsStore"
 import { computeStockOeufsKuroiler, countOeufsEnCouveuse, sumOeufsSurPeriode } from "@/lib/kuroilerCalc"
 import { formatCurrency, formatDate, formatNumber } from "@/lib/format"
@@ -42,7 +43,8 @@ export function KuroilerEggsTab({ canEdit }: { canEdit: boolean }) {
 
   function recuNumero(invoiceId?: string): string {
     if (!invoiceId) return "—"
-    return invoices.find((inv) => inv.id === invoiceId)?.numero ?? "—"
+    const invoice = invoices.find((inv) => inv.id === invoiceId)
+    return invoice ? invoiceReceiptNumber(invoice) : "—"
   }
 
   async function handleAddMouvement(data: Omit<KuroilerOeufMouvement, "id">) {

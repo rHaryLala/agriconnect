@@ -1206,7 +1206,11 @@
       "fieldPaymentAmount": "Vola noraisina (Ar)",
       "remainingHint": "Trosa sisa: {{amount}}",
       "validationPaymentAmount": "Tsy maintsy mihoatra ny aotra",
-      "validationPaymentExceedsDue": "Tsy azo mihoatra ny trosa sisa ({{amount}})"
+      "validationPaymentExceedsDue": "Tsy azo mihoatra ny trosa sisa ({{amount}})",
+      "fieldAccountingNumber": "Laharan'ny tapakila (kaonty)",
+      "fieldAccountingNumberPlaceholder": "CR-14502",
+      "accountingNumberHint": "Ny rindrambaikon'ny kaonty any amin'ny birao no manome ny laharana. Avelao foana raha laharana vonjimaika.",
+      "receiptProvisional": "Vonjimaika"
     },
     "filterAll": "Rehetra"
   },

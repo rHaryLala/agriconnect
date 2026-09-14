@@ -1217,7 +1217,11 @@
       "fieldPaymentAmount": "Montant reçu (Ar)",
       "remainingHint": "Reste dû : {{amount}}",
       "validationPaymentAmount": "Doit être positif",
-      "validationPaymentExceedsDue": "Ne peut pas dépasser le reste dû ({{amount}})"
+      "validationPaymentExceedsDue": "Ne peut pas dépasser le reste dû ({{amount}})",
+      "fieldAccountingNumber": "Numéro de reçu (comptabilité)",
+      "fieldAccountingNumberPlaceholder": "CR-14502",
+      "accountingNumberHint": "Le numéro est délivré par le logiciel de comptabilité du bureau. Laisse vide pour un numéro provisoire.",
+      "receiptProvisional": "Provisoire"
     },
     "filterAll": "Tous"
   },

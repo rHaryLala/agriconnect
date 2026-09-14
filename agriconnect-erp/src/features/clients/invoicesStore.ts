@@ -24,6 +24,7 @@ const SEED_INVOICES: Invoice[] = [
   },
 ]
 
+/** Local fallback, used until the accounting software issues the real number. */
 function nextNumero(existing: Invoice[]): string {
   const year = new Date().getFullYear()
   const count = existing.length + 1
@@ -62,7 +63,13 @@ export const useInvoicesStore = create<InvoicesState>()(
         new Promise((resolve) => {
           setTimeout(() => {
             const invoices = get().invoices
-            const invoice: Invoice = { ...data, id: `inv-${Date.now()}`, numero: nextNumero(invoices) }
+            const numeroComptabilite = data.numeroComptabilite?.trim()
+            const invoice: Invoice = {
+              ...data,
+              numeroComptabilite: numeroComptabilite || undefined,
+              id: `inv-${Date.now()}`,
+              numero: nextNumero(invoices),
+            }
             set({ invoices: [invoice, ...invoices], hasFetched: true })
             resolve(invoice)
           }, FAKE_LATENCY_MS)

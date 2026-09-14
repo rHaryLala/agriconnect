@@ -12,7 +12,7 @@ import { useInvoicesStore } from "./invoicesStore"
 import { useClientsStore } from "./clientsStore"
 import { useStockStore } from "@/features/stocks/stockStore"
 import { PAYMENT_METHOD_LABEL_KEYS, INVOICE_STATUS_LABEL_KEYS, INVOICE_STATUS_TONES } from "./invoiceLabels"
-import { computeInvoiceTotal, computeInvoiceDue, computeInvoiceStatus } from "@/types/invoice"
+import { computeInvoiceTotal, computeInvoiceDue, computeInvoiceStatus, invoiceReceiptNumber, hasAccountingReceipt } from "@/types/invoice"
 import { formatDate, formatCurrency } from "@/lib/format"
 import type { Invoice } from "@/types/invoice"
 
@@ -52,7 +52,16 @@ export function InvoicesTab({ canEdit }: { canEdit: boolean }) {
   }
 
   const columns: DataTableColumn<Invoice>[] = [
-    { key: "numero", label: t("clients.invoices.colNumber"), render: (inv) => <span className="font-medium text-primary">{inv.numero}</span> },
+    {
+      key: "numero",
+      label: t("clients.invoices.colNumber"),
+      render: (inv) => (
+        <span className="inline-flex items-center gap-1.5">
+          <span className="font-medium text-primary">{invoiceReceiptNumber(inv)}</span>
+          {!hasAccountingReceipt(inv) && <StatusBadge label={t("clients.invoices.receiptProvisional")} tone="muted" />}
+        </span>
+      ),
+    },
     { key: "client", label: t("clients.invoices.colClient"), render: (inv) => clientName(inv.clientId) },
     { key: "date", label: t("clients.invoices.colDate"), render: (inv) => formatDate(inv.date) },
     { key: "method", label: t("clients.invoices.colMethod"), render: (inv) => t(PAYMENT_METHOD_LABEL_KEYS[inv.paymentMethod]) },

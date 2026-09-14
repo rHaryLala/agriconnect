@@ -8,6 +8,7 @@ import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { HaricotMovementDialog } from "./HaricotMovementDialog"
 import { useHaricotsStore } from "./haricotsStore"
 import { useInvoicesStore } from "@/features/clients/invoicesStore"
+import { invoiceReceiptNumber } from "@/types/invoice"
 import { useClientsStore } from "@/features/clients/clientsStore"
 import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
 import { computeStock } from "@/lib/haricotsCalc"
@@ -35,7 +36,8 @@ export function HaricotsTab({ canEdit }: { canEdit: boolean }) {
 
   function recuNumero(invoiceId?: string): string {
     if (!invoiceId) return "—"
-    return invoices.find((inv) => inv.id === invoiceId)?.numero ?? "—"
+    const invoice = invoices.find((inv) => inv.id === invoiceId)
+    return invoice ? invoiceReceiptNumber(invoice) : "—"
   }
 
   async function handleAddMouvement(data: Omit<HaricotMouvement, "id">) {

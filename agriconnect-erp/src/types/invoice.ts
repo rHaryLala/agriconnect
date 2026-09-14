@@ -14,12 +14,27 @@ export interface InvoiceLineItem {
 
 export interface Invoice {
   id: string
+  /** Provisional number generated locally when no accounting number is known. */
   numero: string
+  /**
+   * Receipt number issued by the accounting software at the office. When it is
+   * filled in, it is the number that is shown and printed.
+   */
+  numeroComptabilite?: string
   clientId: string
   date: string
   paymentMethod: PaymentMethod
   items: InvoiceLineItem[]
   montantPaye: number
+}
+
+/** Receipt number to display: the accounting one when known, the local one otherwise. */
+export function invoiceReceiptNumber(invoice: Invoice): string {
+  return invoice.numeroComptabilite?.trim() || invoice.numero
+}
+
+export function hasAccountingReceipt(invoice: Invoice): boolean {
+  return !!invoice.numeroComptabilite?.trim()
 }
 
 export function computeInvoiceTotal(invoice: Invoice): number {

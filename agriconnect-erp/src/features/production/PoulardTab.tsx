@@ -8,6 +8,7 @@ import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { PoulardMovementDialog } from "./PoulardMovementDialog"
 import { usePoulardStore } from "./poulardStore"
 import { useInvoicesStore } from "@/features/clients/invoicesStore"
+import { invoiceReceiptNumber } from "@/types/invoice"
 import { useClientsStore } from "@/features/clients/clientsStore"
 import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
 import { computeEffectifActuel, computeEffectifAt, computeTauxPonteHebdomadaire, sumSurPeriode } from "@/lib/poulardCalc"
@@ -38,7 +39,8 @@ export function PoulardTab({ canEdit }: { canEdit: boolean }) {
 
   function recuNumero(invoiceId?: string): string {
     if (!invoiceId) return "—"
-    return invoices.find((inv) => inv.id === invoiceId)?.numero ?? "—"
+    const invoice = invoices.find((inv) => inv.id === invoiceId)
+    return invoice ? invoiceReceiptNumber(invoice) : "—"
   }
 
   const today = new Date().toISOString().slice(0, 10)

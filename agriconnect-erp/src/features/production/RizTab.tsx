@@ -12,6 +12,7 @@ import { RizDecorticageDialog } from "./RizDecorticageDialog"
 import { RizVenteDialog } from "./RizVenteDialog"
 import { useRizStore } from "./rizStore"
 import { useInvoicesStore } from "@/features/clients/invoicesStore"
+import { invoiceReceiptNumber } from "@/types/invoice"
 import { useClientsStore } from "@/features/clients/clientsStore"
 import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
 import { computeStockPaddyBrut, computeStockPaddySeche, computeStockRizDecortique } from "@/lib/rizCalc"
@@ -48,7 +49,8 @@ export function RizTab({ canEdit }: { canEdit: boolean }) {
 
   function recuNumero(invoiceId?: string): string {
     if (!invoiceId) return "—"
-    return invoices.find((inv) => inv.id === invoiceId)?.numero ?? "—"
+    const invoice = invoices.find((inv) => inv.id === invoiceId)
+    return invoice ? invoiceReceiptNumber(invoice) : "—"
   }
 
   async function handleAddVente(data: Omit<RizVente, "id">) {
