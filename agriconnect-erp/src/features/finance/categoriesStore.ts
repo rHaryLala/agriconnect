@@ -7,6 +7,31 @@ export interface CategoryProfile {
   nom: string
 }
 
+const DEFAULT_DEPENSES: CategoryProfile[] = [
+  { id: "dep-aliments", nom: "Aliments pour animaux" },
+  { id: "dep-gasoil", nom: "Gasoil et essences" },
+  { id: "dep-salaires", nom: "Salaires du personnel" },
+  { id: "dep-transport", nom: "Transport" },
+  { id: "dep-location-engins", nom: "Location de matériels, engins et tracteur" },
+  { id: "dep-entretien", nom: "Entretien du matériel et des installations" },
+  { id: "dep-charges-fixes", nom: "Charges fixes (eau, électricité)" },
+]
+
+const DEFAULT_RECETTES: CategoryProfile[] = [
+  { id: "rec-oeufs-pondeuses", nom: "Vente d'œufs — poules pondeuses" },
+  { id: "rec-oeufs-kuroiler", nom: "Vente d'œufs — Kuroiler" },
+  { id: "rec-lait", nom: "Vente de lait" },
+  { id: "rec-poulets", nom: "Vente de poulets" },
+  { id: "rec-bovins", nom: "Vente de bœufs et vaches" },
+  { id: "rec-recoltes", nom: "Vente de récoltes" },
+]
+
+/** Re-adds default categories introduced after a user's list was first persisted. */
+function mergeDefaults(persisted: CategoryProfile[], defaults: CategoryProfile[]): CategoryProfile[] {
+  const known = new Set(persisted.map((c) => c.id))
+  return [...persisted, ...defaults.filter((c) => !known.has(c.id))]
+}
+
 interface CategoriesState {
   depense: CategoryProfile[]
   recette: CategoryProfile[]
@@ -18,19 +43,8 @@ interface CategoriesState {
 export const useCategoriesStore = create<CategoriesState>()(
   persist(
     (set, get) => ({
-      depense: [
-        { id: "dep-aliments", nom: "Aliments pour animaux" },
-        { id: "dep-salaires", nom: "Salaires du personnel" },
-        { id: "dep-transport", nom: "Transport" },
-        { id: "dep-entretien", nom: "Entretien du matériel et des installations" },
-        { id: "dep-charges-fixes", nom: "Charges fixes (eau, électricité)" },
-      ],
-      recette: [
-        { id: "rec-oeufs", nom: "Vente d'œufs" },
-        { id: "rec-lait", nom: "Vente de lait" },
-        { id: "rec-poulets", nom: "Vente de poulets" },
-        { id: "rec-recoltes", nom: "Vente de récoltes" },
-      ],
+      depense: DEFAULT_DEPENSES,
+      recette: DEFAULT_RECETTES,
       addCategory: (type, nom) => {
         const trimmed = nom.trim()
         if (!trimmed) return
@@ -41,6 +55,20 @@ export const useCategoriesStore = create<CategoriesState>()(
       removeCategory: (type, id) =>
         set({ [type]: get()[type].filter((c) => c.id !== id) } as Partial<CategoriesState>),
     }),
-    { name: "agriconnect-finance-categories" }
+    {
+      name: "agriconnect-finance-categories",
+      version: 1,
+      migrate: (persisted, version) => {
+        const state = persisted as CategoriesState
+        if (version < 1) {
+          return {
+            ...state,
+            depense: mergeDefaults(state.depense ?? [], DEFAULT_DEPENSES),
+            recette: mergeDefaults(state.recette ?? [], DEFAULT_RECETTES),
+          }
+        }
+        return state
+      },
+    }
   )
 )
