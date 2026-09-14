@@ -78,6 +78,14 @@ export const useBovinsStore = create<BovinsState>()(
     }),
     {
       name: "agriconnect-bovins",
+      version: 1,
+      migrate: (persisted, version) => {
+        const state = persisted as BovinsState
+        if (version < 1) {
+          return { ...state, animaux: (state.animaux ?? []).map((a) => ({ ...a, race: a.race ?? "", type: a.type ?? "" })) }
+        }
+        return state
+      },
       storage: createJSONStorage(() => localStorage),
       partialize: (state) => ({ animaux: state.animaux, hasFetched: state.hasFetched }),
     }

@@ -62,10 +62,23 @@ export type BovinEntreeType = "achat" | "naissance"
 export type BovinSortieType = "vente" | "deces"
 export type BovinStatut = "present" | "vendu" | "mort"
 
+/** Whether a female is currently milked or dried off. */
+export type BovinProductivite = "productive" | "taris"
+export const BOVIN_PRODUCTIVITES: BovinProductivite[] = ["productive", "taris"]
+
+/** Reproductive and suckling state, using the wording in use on the farm. */
+export type BovinEtat = "gestante" | "mampinono" | "non_gestant" | "tsy_mampinono"
+export const BOVIN_ETATS: BovinEtat[] = ["gestante", "mampinono", "non_gestant", "tsy_mampinono"]
+
 export interface BovinAnimal {
   id: string
   identifiant: string
   genre: BovinGenre
+  /** Breed and herd category, both taken from editable referentials. */
+  race: string
+  type: string
+  productivite?: BovinProductivite
+  etat?: BovinEtat
   dateEntree: string
   typeEntree: BovinEntreeType
   statut: BovinStatut

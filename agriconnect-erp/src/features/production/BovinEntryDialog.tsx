@@ -1,5 +1,5 @@
 import { useEffect, useMemo } from "react"
-import { useForm, Controller } from "react-hook-form"
+import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
@@ -8,12 +8,18 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import type { BovinAnimal } from "@/types/production"
+import { BOVIN_ETATS, BOVIN_PRODUCTIVITES, type BovinAnimal, type BovinEtat, type BovinProductivite } from "@/types/production"
+import { useBovinRacesStore, useBovinTypesStore } from "./bovinReferentialsStore"
+import { BOVIN_ETAT_LABEL_KEYS, BOVIN_PRODUCTIVITE_LABEL_KEYS } from "./bovinLabels"
 
 function buildSchema(t: (key: string) => string) {
   return z.object({
     identifiant: z.string().min(1, t("production.bovins.validationIdentifiant")),
     genre: z.enum(["male", "femelle"]),
+    race: z.string().min(1, t("production.bovins.validationRace")),
+    type: z.string().min(1, t("production.bovins.validationType")),
+    productivite: z.enum(BOVIN_PRODUCTIVITES as [BovinProductivite, ...BovinProductivite[]]).optional(),
+    etat: z.enum(BOVIN_ETATS as [BovinEtat, ...BovinEtat[]]).optional(),
     dateEntree: z.string().min(1, t("stock.movements.validationDate")),
     typeEntree: z.enum(["achat", "naissance"]),
     observation: z.string(),
@@ -30,6 +36,8 @@ interface BovinEntryDialogProps {
 export function BovinEntryDialog({ open, onOpenChange, onSubmit }: BovinEntryDialogProps) {
   const { t } = useTranslation()
   const schema = useMemo(() => buildSchema(t), [t])
+  const races = useBovinRacesStore((s) => s.types)
+  const bovinTypes = useBovinTypesStore((s) => s.types)
 
   const {
     register, handleSubmit, control, reset,
@@ -37,11 +45,26 @@ export function BovinEntryDialog({ open, onOpenChange, onSubmit }: BovinEntryDia
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
   useEffect(() => {
-    if (open) reset({ identifiant: "", genre: "femelle", dateEntree: new Date().toISOString().slice(0, 10), typeEntree: "achat", observation: "" })
-  }, [open, reset])
+    if (open) {
+      reset({
+        identifiant: "",
+        genre: "femelle",
+        race: races[0]?.nom ?? "",
+        type: bovinTypes[0]?.nom ?? "",
+        productivite: "productive",
+        etat: "non_gestant",
+        dateEntree: new Date().toISOString().slice(0, 10),
+        typeEntree: "achat",
+        observation: "",
+      })
+    }
+  }, [open, reset, races, bovinTypes])
+
+  const genre = useWatch({ control, name: "genre" })
 
   async function handleFormSubmit(values: FormValues) {
-    await onSubmit(values)
+    // Productivity and reproductive state only make sense for females.
+    await onSubmit(values.genre === "femelle" ? values : { ...values, productivite: undefined, etat: undefined })
     onOpenChange(false)
   }
 
@@ -95,6 +118,88 @@ export function BovinEntryDialog({ open, onOpenChange, onSubmit }: BovinEntryDia
               />
             </div>
           </div>
+
+          <div className="grid grid-cols-2 gap-3">
+            <div>
+              <Label htmlFor="race">{t("production.bovins.fieldRace")}</Label>
+              <Controller
+                name="race" control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="race" className="mt-1.5">
+                      <SelectValue placeholder="..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {races.map((r) => (
+                        <SelectItem key={r.id} value={r.nom}>{r.nom}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.race && <p className="mt-1 text-xs text-destructive">{errors.race.message}</p>}
+            </div>
+            <div>
+              <Label htmlFor="type">{t("production.bovins.fieldType")}</Label>
+              <Controller
+                name="type" control={control}
+                render={({ field }) => (
+                  <Select value={field.value} onValueChange={field.onChange}>
+                    <SelectTrigger id="type" className="mt-1.5">
+                      <SelectValue placeholder="..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {bovinTypes.map((bt) => (
+                        <SelectItem key={bt.id} value={bt.nom}>{bt.nom}</SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+              {errors.type && <p className="mt-1 text-xs text-destructive">{errors.type.message}</p>}
+            </div>
+          </div>
+
+          {genre === "femelle" && (
+            <div className="animate-content-in grid grid-cols-2 gap-3">
+              <div>
+                <Label htmlFor="productivite">{t("production.bovins.fieldProductivite")}</Label>
+                <Controller
+                  name="productivite" control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger id="productivite" className="mt-1.5">
+                        <SelectValue placeholder="..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BOVIN_PRODUCTIVITES.map((p) => (
+                          <SelectItem key={p} value={p}>{t(BOVIN_PRODUCTIVITE_LABEL_KEYS[p])}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+              <div>
+                <Label htmlFor="etat">{t("production.bovins.fieldEtat")}</Label>
+                <Controller
+                  name="etat" control={control}
+                  render={({ field }) => (
+                    <Select value={field.value} onValueChange={field.onChange}>
+                      <SelectTrigger id="etat" className="mt-1.5">
+                        <SelectValue placeholder="..." />
+                      </SelectTrigger>
+                      <SelectContent>
+                        {BOVIN_ETATS.map((e) => (
+                          <SelectItem key={e} value={e}>{t(BOVIN_ETAT_LABEL_KEYS[e])}</SelectItem>
+                        ))}
+                      </SelectContent>
+                    </Select>
+                  )}
+                />
+              </div>
+            </div>
+          )}
 
           <div>
             <Label htmlFor="dateEntree">{t("production.bovins.fieldDateEntree")}</Label>

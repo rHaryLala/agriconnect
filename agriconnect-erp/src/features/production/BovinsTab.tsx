@@ -1,7 +1,7 @@
-import { useEffect, useState } from "react"
+import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Beef, Trash2, LogOut } from "lucide-react"
+import { Plus, Beef, Trash2, LogOut, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -19,7 +19,11 @@ import {
   countSortiesSurPeriode,
 } from "@/lib/bovinsCalc"
 import { endOfPreviousMonth, startOfMonth } from "@/lib/dateRange"
-import type { BovinAnimal, BovinSortieType } from "@/types/production"
+import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
+import { TypesManagerDialog } from "@/components/shared/TypesManagerDialog"
+import { useBovinRacesStore, useBovinTypesStore } from "./bovinReferentialsStore"
+import { BOVIN_ETAT_LABEL_KEYS, BOVIN_ETAT_TONES, BOVIN_PRODUCTIVITE_LABEL_KEYS, BOVIN_PRODUCTIVITE_TONES } from "./bovinLabels"
+import { BOVIN_ETATS, type BovinAnimal, type BovinEtat, type BovinSortieType, type BovinStatut } from "@/types/production"
 
 export function BovinsTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -28,6 +32,25 @@ export function BovinsTab({ canEdit }: { canEdit: boolean }) {
   const { clients, fetchAll: fetchClients } = useClientsStore()
   const [entryOpen, setEntryOpen] = useState(false)
   const [sortieAnimal, setSortieAnimal] = useState<BovinAnimal | null>(null)
+  const [statutFilter, setStatutFilter] = useState<BovinStatut | "tous">("tous")
+  const [typeFilter, setTypeFilter] = useState<string>("tous")
+  const [etatFilter, setEtatFilter] = useState<BovinEtat | "tous">("tous")
+  const [manageRacesOpen, setManageRacesOpen] = useState(false)
+  const [manageTypesOpen, setManageTypesOpen] = useState(false)
+
+  const races = useBovinRacesStore()
+  const bovinTypes = useBovinTypesStore()
+
+  const filtered = useMemo(
+    () =>
+      animaux.filter((a) => {
+        if (statutFilter !== "tous" && a.statut !== statutFilter) return false
+        if (typeFilter !== "tous" && a.type !== typeFilter) return false
+        if (etatFilter !== "tous" && a.etat !== etatFilter) return false
+        return true
+      }),
+    [animaux, statutFilter, typeFilter, etatFilter]
+  )
 
   useEffect(() => {
     fetchAll()
@@ -69,6 +92,28 @@ export function BovinsTab({ canEdit }: { canEdit: boolean }) {
   const columns: DataTableColumn<BovinAnimal>[] = [
     { key: "identifiant", label: t("production.bovins.colIdentifiant"), render: (a) => a.identifiant },
     { key: "genre", label: t("production.bovins.fieldGenre"), render: (a) => t(`production.bovins.genre${a.genre === "male" ? "Male" : "Femelle"}`) },
+    { key: "race", label: t("production.bovins.fieldRace"), render: (a) => a.race || <span className="text-muted-foreground">—</span> },
+    { key: "type", label: t("production.bovins.fieldType"), render: (a) => a.type || <span className="text-muted-foreground">—</span> },
+    {
+      key: "productivite",
+      label: t("production.bovins.fieldProductivite"),
+      render: (a) =>
+        a.productivite ? (
+          <StatusBadge label={t(BOVIN_PRODUCTIVITE_LABEL_KEYS[a.productivite])} tone={BOVIN_PRODUCTIVITE_TONES[a.productivite]} />
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        ),
+    },
+    {
+      key: "etat",
+      label: t("production.bovins.fieldEtat"),
+      render: (a) =>
+        a.etat ? (
+          <StatusBadge label={t(BOVIN_ETAT_LABEL_KEYS[a.etat])} tone={BOVIN_ETAT_TONES[a.etat]} />
+        ) : (
+          <span className="text-muted-foreground">—</span>
+        ),
+    },
     { key: "dateEntree", label: t("production.bovins.fieldDateEntree"), render: (a) => formatDate(a.dateEntree) },
     { key: "typeEntree", label: t("production.bovins.fieldTypeEntree"), render: (a) => t(`production.bovins.typeEntree${a.typeEntree === "achat" ? "Achat" : "Naissance"}`) },
     {
@@ -115,18 +160,96 @@ export function BovinsTab({ canEdit }: { canEdit: boolean }) {
         <StatCard icon={Beef} label={t("production.bovins.statEffectifReporte")} value={formatNumber(effectifReporte)} tone="warning" hint={t("production.bovins.statEffectifReporteHint")} />
       </div>
 
-      {canEdit && (
-        <div className="mb-3 flex justify-end">
-          <Button onClick={() => setEntryOpen(true)} className="gap-2">
-            <Plus className="h-4 w-4" />
-            {t("production.bovins.newAnimal")}
-          </Button>
-        </div>
-      )}
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap items-center gap-2">
+          <div className="flex flex-wrap gap-1 rounded-lg border border-border bg-surface p-1">
+            {(["tous", "present", "vendu", "mort"] as const).map((f) => (
+              <button
+                key={f}
+                type="button"
+                onClick={() => setStatutFilter(f)}
+                className={`rounded-md px-3 py-1.5 text-sm transition-colors duration-200 ${statutFilter === f ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+              >
+                {f === "tous" ? t("stock.locations.all") : t(`production.bovins.statut${f === "present" ? "Present" : f === "vendu" ? "Vendu" : "Mort"}`)}
+              </button>
+            ))}
+          </div>
 
-      <DataTable columns={columns} rows={animaux} rowKey={(a) => a.id} isLoading={isLoading} emptyIcon={Beef} emptyTitle={t("production.bovins.emptyTitle")} emptyDescription={t("production.bovins.emptyDescription")} />
+          <Select value={typeFilter} onValueChange={(v) => setTypeFilter(v ?? "tous")}>
+            <SelectTrigger className="w-40" aria-label={t("production.bovins.fieldType")}>
+              <SelectValue placeholder="..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tous">{t("production.bovins.filterAllTypes")}</SelectItem>
+              {bovinTypes.types.map((bt) => (
+                <SelectItem key={bt.id} value={bt.nom}>
+                  {bt.nom}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+
+          <Select value={etatFilter} onValueChange={(v) => setEtatFilter((v ?? "tous") as BovinEtat | "tous")}>
+            <SelectTrigger className="w-44" aria-label={t("production.bovins.fieldEtat")}>
+              <SelectValue placeholder="..." />
+            </SelectTrigger>
+            <SelectContent>
+              <SelectItem value="tous">{t("production.bovins.filterAllStates")}</SelectItem>
+              {BOVIN_ETATS.map((e) => (
+                <SelectItem key={e} value={e}>
+                  {t(BOVIN_ETAT_LABEL_KEYS[e])}
+                </SelectItem>
+              ))}
+            </SelectContent>
+          </Select>
+        </div>
+
+        {canEdit && (
+          <div className="flex flex-wrap items-center gap-2">
+            <Button variant="outline" onClick={() => setManageRacesOpen(true)} className="gap-2">
+              <Settings2 className="h-4 w-4" />
+              {t("production.bovins.manageRaces")}
+            </Button>
+            <Button variant="outline" onClick={() => setManageTypesOpen(true)} className="gap-2">
+              <Settings2 className="h-4 w-4" />
+              {t("production.bovins.manageTypes")}
+            </Button>
+            <Button onClick={() => setEntryOpen(true)} className="gap-2">
+              <Plus className="h-4 w-4" />
+              {t("production.bovins.newAnimal")}
+            </Button>
+          </div>
+        )}
+      </div>
+
+      <DataTable columns={columns} rows={filtered} rowKey={(a) => a.id} isLoading={isLoading} emptyIcon={Beef} emptyTitle={t("production.bovins.emptyTitle")} emptyDescription={t("production.bovins.emptyDescription")} />
 
       {canEdit && <BovinEntryDialog open={entryOpen} onOpenChange={setEntryOpen} onSubmit={handleAddAnimal} />}
+
+      {canEdit && (
+        <>
+          <TypesManagerDialog
+            open={manageRacesOpen}
+            onOpenChange={setManageRacesOpen}
+            title={t("production.bovins.manageRacesTitle")}
+            fields={[{ name: "nom", label: t("production.bovins.fieldRace"), type: "text" }]}
+            items={races.types}
+            onAdd={(v) => races.addType(v.nom as string)}
+            onUpdate={(id, v) => races.updateType(id, v.nom as string)}
+            onDelete={races.removeType}
+          />
+          <TypesManagerDialog
+            open={manageTypesOpen}
+            onOpenChange={setManageTypesOpen}
+            title={t("production.bovins.manageTypesTitle")}
+            fields={[{ name: "nom", label: t("production.bovins.fieldType"), type: "text" }]}
+            items={bovinTypes.types}
+            onAdd={(v) => bovinTypes.addType(v.nom as string)}
+            onUpdate={(id, v) => bovinTypes.updateType(id, v.nom as string)}
+            onDelete={bovinTypes.removeType}
+          />
+        </>
+      )}
 
       {canEdit && (
         <BovinSortieDialog

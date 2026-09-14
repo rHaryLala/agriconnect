@@ -42,12 +42,17 @@ export const SEED_CULTURES: CultureEntry[] = [
 ]
 
 export const SEED_BOVINS: BovinAnimal[] = [
-  { id: "b-1", identifiant: "Vero", genre: "femelle", dateEntree: "2024-02-10", typeEntree: "achat", statut: "present", observation: "RAS" },
-  { id: "b-2", identifiant: "Bruno", genre: "male", dateEntree: "2024-05-03", typeEntree: "naissance", statut: "present", observation: "RAS" },
+  { id: "b-1", identifiant: "Vero", genre: "femelle", race: "Pie rouge", type: "Vache", productivite: "productive", etat: "mampinono", dateEntree: "2024-02-10", typeEntree: "achat", statut: "present", observation: "RAS" },
+  { id: "b-2", identifiant: "Bruno", genre: "male", race: "Zébu", type: "Taureau", dateEntree: "2024-05-03", typeEntree: "naissance", statut: "present", observation: "RAS" },
+  { id: "b-4", identifiant: "Soa", genre: "femelle", race: "Rana", type: "Génisse", productivite: "taris", etat: "gestante", dateEntree: "2025-03-18", typeEntree: "naissance", statut: "present", observation: "RAS" },
   {
     id: "b-3",
     identifiant: "Tsara",
     genre: "femelle",
+    race: "Holstein",
+    type: "Vache",
+    productivite: "taris",
+    etat: "non_gestant",
     dateEntree: "2023-11-20",
     typeEntree: "achat",
     statut: "vendu",
