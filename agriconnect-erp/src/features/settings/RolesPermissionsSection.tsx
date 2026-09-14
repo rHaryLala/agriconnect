@@ -1,29 +1,19 @@
 import { useEffect, useState } from "react"
 import { useTranslation } from "react-i18next"
-import { ChevronDown, ShieldQuestion, Check, Eye, Minus } from "lucide-react"
+import { ChevronDown, ShieldQuestion, Check, Minus } from "lucide-react"
 import { AlertBanner } from "@/components/shared/AlertBanner"
-import { PERMISSIONS_MATRIX, type ModuleKey, type PermissionLevel } from "@/lib/permissions"
+import {
+  MODULE_KEYS,
+  PERMISSION_ACTIONS,
+  hasPermission,
+  permissionsForRole,
+} from "@/lib/permissions"
 import { ROLE_LABEL_KEYS, ROLE_ICONS, ROLE_ACCENTS } from "./roleLabels"
+import { ACTION_LABEL_KEYS, MODULE_LABEL_KEYS } from "./permissionLabels"
 import { useUsersStore } from "./usersStore"
 import type { UserRole } from "@/types/user"
 
 const ROLES: UserRole[] = ["admin", "comptable", "ouvrier", "magasinier", "controleur_interne"]
-const MODULES: ModuleKey[] = ["dashboard", "production", "stock", "finance", "clients", "personnel", "settings"]
-const MODULE_LABEL_KEYS: Record<ModuleKey, string> = {
-  dashboard: "nav.dashboard",
-  production: "nav.production",
-  stock: "nav.stocks",
-  finance: "nav.finance",
-  clients: "nav.clients",
-  personnel: "nav.personnel",
-  settings: "nav.settings",
-}
-
-const LEVEL_STYLES: Record<PermissionLevel, { chip: string; icon: typeof Check; labelKey: string }> = {
-  full: { chip: "bg-success/10 text-success ring-success/20", icon: Check, labelKey: "settings.roles.levelFull" },
-  readonly: { chip: "bg-warning/10 text-warning ring-warning/20", icon: Eye, labelKey: "settings.roles.levelReadonly" },
-  none: { chip: "bg-muted text-muted-foreground ring-border", icon: Minus, labelKey: "settings.roles.levelNone" },
-}
 
 export function RolesPermissionsSection() {
   const { t } = useTranslation()
@@ -39,10 +29,8 @@ export function RolesPermissionsSection() {
       <AlertBanner tone="info" icon={ShieldQuestion} title={t("settings.roles.infoBanner")} />
 
       {ROLES.map((role) => {
-        const matrix = PERMISSIONS_MATRIX[role]
+        const permissions = permissionsForRole(role)
         const memberCount = users.filter((u) => u.role === role).length
-        const fullCount = MODULES.filter((m) => matrix[m] === "full").length
-        const readonlyCount = MODULES.filter((m) => matrix[m] === "readonly").length
         const RoleIcon = ROLE_ICONS[role]
         const isOpen = expanded === role
 
@@ -64,11 +52,7 @@ export function RolesPermissionsSection() {
                   <span>{t("settings.roles.memberCount", { count: memberCount })}</span>
                   <span className="flex items-center gap-1 text-success">
                     <Check className="h-3 w-3" />
-                    {t("settings.roles.fullAccessCount", { count: fullCount })}
-                  </span>
-                  <span className="flex items-center gap-1 text-warning">
-                    <Eye className="h-3 w-3" />
-                    {t("settings.roles.readonlyAccessCount", { count: readonlyCount })}
+                    {t("settings.roles.grantedCount", { count: permissions.length })}
                   </span>
                 </span>
               </span>
@@ -78,22 +62,44 @@ export function RolesPermissionsSection() {
 
             <div className={`grid transition-[grid-template-rows] duration-300 ease-in-out ${isOpen ? "grid-rows-[1fr]" : "grid-rows-[0fr]"}`}>
               <div className="overflow-hidden">
-                <ul className="flex flex-col divide-y divide-border border-t border-border">
-                  {MODULES.map((mod) => {
-                    const level = matrix[mod]
-                    const style = LEVEL_STYLES[level]
-                    const LevelIcon = style.icon
-                    return (
-                      <li key={mod} className="flex items-center justify-between gap-4 px-4 py-2.5">
-                        <span className="text-sm text-foreground">{t(MODULE_LABEL_KEYS[mod])}</span>
-                        <span className={`inline-flex items-center gap-1.5 rounded-full px-2.5 py-1 text-xs font-medium ring-1 ${style.chip}`}>
-                          <LevelIcon className="h-3 w-3" />
-                          {t(style.labelKey)}
-                        </span>
-                      </li>
-                    )
-                  })}
-                </ul>
+                <div className="overflow-x-auto border-t border-border">
+                  <table className="w-full text-sm">
+                    <thead>
+                      <tr className="border-b border-border text-xs text-muted-foreground">
+                        <th scope="col" className="px-4 py-2 text-left font-medium">
+                          {t("settings.roles.colModule")}
+                        </th>
+                        {PERMISSION_ACTIONS.map((action) => (
+                          <th key={action} scope="col" className="px-3 py-2 text-center font-medium">
+                            {t(ACTION_LABEL_KEYS[action])}
+                          </th>
+                        ))}
+                      </tr>
+                    </thead>
+                    <tbody className="divide-y divide-border">
+                      {MODULE_KEYS.map((mod) => (
+                        <tr key={mod}>
+                          <th scope="row" className="px-4 py-2.5 text-left font-normal text-foreground">
+                            {t(MODULE_LABEL_KEYS[mod])}
+                          </th>
+                          {PERMISSION_ACTIONS.map((action) => {
+                            const granted = hasPermission(permissions, mod, action)
+                            return (
+                              <td key={action} className="px-3 py-2.5 text-center">
+                                <span
+                                  aria-label={granted ? t("settings.roles.granted") : t("settings.roles.notGranted")}
+                                  className={`inline-flex h-5 w-5 items-center justify-center rounded ${granted ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}
+                                >
+                                  {granted ? <Check className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
+                                </span>
+                              </td>
+                            )
+                          })}
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
               </div>
             </div>
           </div>

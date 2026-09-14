@@ -1035,13 +1035,16 @@
       "systemBackupDescription": "Statut des sauvegardes locales"
     },
     "roles": {
-      "infoBanner": "Cette matrice reflète les permissions réellement appliquées dans l'application, par rôle et par module.",
+      "infoBanner": "Les rôles sont des préréglages d'accès. Chaque accès se coche module par module et action par action.",
       "memberCount": "{{count}} membre(s)",
-      "fullAccessCount": "{{count}} accès complet(s)",
-      "readonlyAccessCount": "{{count}} en lecture seule",
-      "levelFull": "Accès complet",
-      "levelReadonly": "Lecture seule",
-      "levelNone": "Aucun accès"
+      "colModule": "Module",
+      "actionRead": "Consulter",
+      "actionCreate": "Créer",
+      "actionUpdate": "Modifier",
+      "actionDelete": "Supprimer",
+      "grantedCount": "{{count}} accès accordés",
+      "granted": "Accordé",
+      "notGranted": "Non accordé"
     },
     "system": {
       "readOnlyHint": "Ces paramètres sont réservés aux administrateurs.",

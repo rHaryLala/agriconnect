@@ -1032,13 +1032,16 @@
       "systemBackupDescription": "Satan'ny tahiry eo an-toerana"
     },
     "roles": {
-      "infoBanner": "Ity tabilao ity dia mampiseho ny fahazoan-dàlana marina ampiharina ao amin'ny rindrankaja, isaky ny anjara asa sy singa.",
+      "infoBanner": "Fandrindrana mialoha ny anjara asa. Tsirairay ny fahazoan-dalana, isaky ny modely sy isaky ny hetsika.",
       "memberCount": "Mpikambana {{count}}",
-      "fullAccessCount": "{{count}} fahazoan-dàlana feno",
-      "readonlyAccessCount": "{{count}} fanovana ihany",
-      "levelFull": "Fahazoan-dàlana feno",
-      "levelReadonly": "Famakiana ihany",
-      "levelNone": "Tsy misy fahazoan-dàlana"
+      "colModule": "Modely",
+      "actionRead": "Mijery",
+      "actionCreate": "Mamorona",
+      "actionUpdate": "Manova",
+      "actionDelete": "Mamafa",
+      "grantedCount": "Fahazoan-dalana {{count}}",
+      "granted": "Nomena",
+      "notGranted": "Tsy nomena"
     },
     "system": {
       "readOnlyHint": "Ho an'ny mpitantana ihany ireto fandrindrana ireto.",
