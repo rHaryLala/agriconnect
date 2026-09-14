@@ -1314,6 +1314,20 @@
     "colEmploye": "Staff member",
     "colProduct": "Product",
     "retenuesEmptyTitle": "No pending deduction",
-    "retenuesEmptyDescription": "Sales paid by payroll deduction will show up here."
+    "retenuesEmptyDescription": "Sales paid by payroll deduction will show up here.",
+    "payrollWindowTitle": "Payroll preparation window",
+    "payrollWindowValue": "From {{start}} to {{end}}",
+    "fieldWindowStart": "From",
+    "fieldWindowEnd": "To",
+    "filterPending": "Pending",
+    "filterSettled": "Settled",
+    "colSettledBy": "Settled by",
+    "settleAction": "Settle",
+    "settlementDialogTitle": "Settlement — {{numero}}",
+    "fieldSettlementDate": "Settlement date",
+    "fieldSettlementAmount": "Amount settled",
+    "validationSettlementAmount": "Must be positive",
+    "validationSettlementExceeds": "Cannot exceed the outstanding amount",
+    "toastSettlementRecorded": "Deduction settled"
   }
 }

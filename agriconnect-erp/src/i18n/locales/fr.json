@@ -1314,6 +1314,20 @@
     "colEmploye": "Employé",
     "colProduct": "Produit",
     "retenuesEmptyTitle": "Aucune retenue en attente",
-    "retenuesEmptyDescription": "Les ventes payées par retenue sur salaire apparaîtront ici."
+    "retenuesEmptyDescription": "Les ventes payées par retenue sur salaire apparaîtront ici.",
+    "payrollWindowTitle": "Fenêtre de préparation des salaires",
+    "payrollWindowValue": "Du {{start}} au {{end}}",
+    "fieldWindowStart": "Du",
+    "fieldWindowEnd": "Au",
+    "filterPending": "En attente",
+    "filterSettled": "Régularisées",
+    "colSettledBy": "Régularisé par",
+    "settleAction": "Régulariser",
+    "settlementDialogTitle": "Régularisation — {{numero}}",
+    "fieldSettlementDate": "Date de régularisation",
+    "fieldSettlementAmount": "Montant régularisé",
+    "validationSettlementAmount": "Doit être positif",
+    "validationSettlementExceeds": "Ne peut pas dépasser le reste dû",
+    "toastSettlementRecorded": "Retenue régularisée"
   }
 }

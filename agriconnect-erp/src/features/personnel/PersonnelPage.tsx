@@ -26,7 +26,7 @@ export default function PersonnelPage() {
 
       <div key={activeTab} className="animate-content-in mt-4">
         {activeTab === "employes" && <EmployesTab canEdit={canEdit} />}
-        {activeTab === "retenues" && <RetenuesTab />}
+        {activeTab === "retenues" && <RetenuesTab canEdit={canEdit} />}
       </div>
     </div>
   )

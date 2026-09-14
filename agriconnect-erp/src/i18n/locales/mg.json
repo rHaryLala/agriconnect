@@ -1303,6 +1303,20 @@
     "colEmploye": "Mpiasa",
     "colProduct": "Vokatra",
     "retenuesEmptyTitle": "Tsy misy fanalana miandry",
-    "retenuesEmptyDescription": "Hiseho eto ny varotra naloa tamin'ny fanalana amin'ny karama."
+    "retenuesEmptyDescription": "Hiseho eto ny varotra naloa tamin'ny fanalana amin'ny karama.",
+    "payrollWindowTitle": "Fe-potoana fanomanana karama",
+    "payrollWindowValue": "Ny {{start}} ka hatramin'ny {{end}}",
+    "fieldWindowStart": "Manomboka",
+    "fieldWindowEnd": "Hatramin'ny",
+    "filterPending": "Miandry",
+    "filterSettled": "Voaloa",
+    "colSettledBy": "Nohamarinin'i",
+    "settleAction": "Hanamarina",
+    "settlementDialogTitle": "Fanamarinana — {{numero}}",
+    "fieldSettlementDate": "Daty nanamarinana",
+    "fieldSettlementAmount": "Vola nohamarinina",
+    "validationSettlementAmount": "Tsy maintsy mihoatra ny aotra",
+    "validationSettlementExceeds": "Tsy azo mihoatra ny trosa sisa",
+    "toastSettlementRecorded": "Voahamarina ny fanalana"
   }
 }
