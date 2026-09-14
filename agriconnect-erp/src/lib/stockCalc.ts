@@ -1,7 +1,23 @@
 import { DEFAULT_STOCK_LOCATION, STOCK_LOCATIONS, type StockArticle, type StockLocation, type StockMovement } from "@/types/stock"
 
-function movementsFor(article: StockArticle, movements: StockMovement[], location?: StockLocation): StockMovement[] {
-  return movements.filter((m) => m.articleId === article.id && (!location || m.emplacement === location))
+/**
+ * Signed effect of a movement on a location's stock, or on the farm-wide total
+ * when no location is given. A transfer leaves its origin and enters its
+ * destination, so it nets to zero farm-wide.
+ */
+function movementDelta(movement: StockMovement, location?: StockLocation): number {
+  if (movement.type === "transfert") {
+    if (!location) return 0
+    if (movement.emplacement === location) return -movement.quantite
+    if (movement.emplacementDestination === location) return movement.quantite
+    return 0
+  }
+  if (location && movement.emplacement !== location) return 0
+  return movement.type === "entree" ? movement.quantite : -movement.quantite
+}
+
+function movementsFor(article: StockArticle, movements: StockMovement[]): StockMovement[] {
+  return movements.filter((m) => m.articleId === article.id)
 }
 
 /** Opening stock is held at the farm, so it only counts towards that location. */
@@ -11,10 +27,10 @@ function openingStock(article: StockArticle, location?: StockLocation): number {
 
 /** Stock held for an article, farm-wide by default or restricted to one location. */
 export function computeCurrentStock(article: StockArticle, movements: StockMovement[], location?: StockLocation): number {
-  const forArticle = movementsFor(article, movements, location)
-  const entrees = forArticle.filter((m) => m.type === "entree").reduce((sum, m) => sum + m.quantite, 0)
-  const sorties = forArticle.filter((m) => m.type === "sortie").reduce((sum, m) => sum + m.quantite, 0)
-  return openingStock(article, location) + entrees - sorties
+  return movementsFor(article, movements).reduce(
+    (total, m) => total + movementDelta(m, location),
+    openingStock(article, location)
+  )
 }
 
 export function computeStockByLocation(article: StockArticle, movements: StockMovement[]): Record<StockLocation, number> {
@@ -32,17 +48,51 @@ export function computeRunningBalances(
   movements: StockMovement[],
   location?: StockLocation
 ): Record<string, number> {
-  const forArticle = movementsFor(article, movements, location)
+  const forArticle = movementsFor(article, movements)
     .slice()
     .sort((a, b) => a.date.localeCompare(b.date) || a.id.localeCompare(b.id))
 
   let balance = openingStock(article, location)
   const result: Record<string, number> = {}
   for (const m of forArticle) {
-    balance += m.type === "entree" ? m.quantite : -m.quantite
-    result[m.id] = balance
+    const delta = movementDelta(m, location)
+    balance += delta
+    // A movement that does not touch this location keeps the previous balance
+    // but must not claim it as its own running total.
+    if (delta !== 0 || !location) result[m.id] = balance
   }
   return result
+}
+
+export interface LocationDebt {
+  from: StockLocation
+  to: StockLocation
+  montant: number
+  regle: number
+  reste: number
+}
+
+/**
+ * Outstanding amounts owed between locations: every transfer valued at a price
+ * creates a debt from the receiving location towards the sending one.
+ */
+export function computeLocationDebts(movements: StockMovement[]): LocationDebt[] {
+  const byPair = new Map<string, LocationDebt>()
+  for (const m of movements) {
+    if (m.type !== "transfert" || !m.emplacementDestination || !m.montant) continue
+    const key = `${m.emplacement}>${m.emplacementDestination}`
+    const debt = byPair.get(key) ?? { from: m.emplacement, to: m.emplacementDestination, montant: 0, regle: 0, reste: 0 }
+    debt.montant += m.montant
+    debt.regle += m.montantRegle ?? 0
+    byPair.set(key, debt)
+  }
+  return [...byPair.values()]
+    .map((d) => ({ ...d, reste: d.montant - d.regle }))
+    .sort((a, b) => b.reste - a.reste)
+}
+
+export function computeTransferDue(movement: StockMovement): number {
+  return (movement.montant ?? 0) - (movement.montantRegle ?? 0)
 }
 
 export type StockStatus = "ok" | "bas" | "critique"

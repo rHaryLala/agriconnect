@@ -178,7 +178,7 @@
   "stock": {
     "pageTitle": "Stock",
     "pageSubtitle": "Entries, exits and inventory",
-    "tabs": { "inventory": "Inventory", "movements": "Movements", "alerts": "Alerts" },
+    "tabs": { "inventory": "Inventory", "movements": "Movements", "alerts": "Alerts", "transfers": "Transfers" },
     "status": { "ok": "OK", "low": "Low stock", "critical": "Critical" },
     "inventory": {
       "statArticles": "Items tracked",
@@ -245,7 +245,8 @@
       "colLocation": "Location",
       "fieldLocation": "Location",
       "validationLocation": "Location required",
-      "insufficientStockAtLocation": "Not enough stock: {{name}} — {{amount}} {{unit}} available at {{location}}"
+      "insufficientStockAtLocation": "Not enough stock: {{name}} — {{amount}} {{unit}} available at {{location}}",
+      "typeTransfer": "Transfer"
     },
     "alerts": {
       "statCritical": "Critical stock",
@@ -267,6 +268,41 @@
       "ferme": "Farm",
       "magasinier": "Storekeeper",
       "store": "Store"
+    },
+    "transfers": {
+      "statCount": "Transfers",
+      "statTransferred": "Transferred value",
+      "statOutstanding": "Outstanding debt",
+      "debtsTitle": "Debt between locations",
+      "debtLine": "{{to}} owes {{from}}",
+      "newTransfer": "New transfer",
+      "colCircuit": "Route",
+      "colResponsible": "Responsible",
+      "colValue": "Value",
+      "colDebt": "Debt",
+      "debtNone": "No value",
+      "debtSettled": "Settled",
+      "recordSettlement": "Record a settlement",
+      "emptyTitle": "No transfer",
+      "emptyDescription": "Record the first movement between the Farm, the Storekeeper and the Store.",
+      "dialogTitleNew": "New transfer",
+      "dialogTitleEdit": "Edit transfer",
+      "fieldFrom": "From",
+      "fieldTo": "To",
+      "fieldValue": "Value of the goods",
+      "valueHint": "Creates a debt from the destination towards the origin.",
+      "fieldResponsible": "Responsible",
+      "fieldResponsiblePlaceholder": "Driver or storekeeper name",
+      "validationSameLocation": "Origin and destination must differ",
+      "validationResponsible": "Responsible required",
+      "settlementDialogTitle": "Settlement on the debt",
+      "fieldSettlementAmount": "Amount paid",
+      "validationSettlementAmount": "Must be positive",
+      "validationSettlementExceedsDue": "Cannot exceed the remaining debt",
+      "toastCreated": "Transfer recorded",
+      "toastModified": "Transfer updated",
+      "toastDeleted": "Transfer deleted",
+      "toastSettlementRecorded": "Settlement recorded"
     }
   },
   "production": {

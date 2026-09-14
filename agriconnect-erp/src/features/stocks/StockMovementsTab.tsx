@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, ArrowDownCircle, ArrowUpCircle, Pencil, Trash2, X } from "lucide-react"
+import { Plus, ArrowDownCircle, ArrowUpCircle, ArrowLeftRight, Pencil, Trash2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { StockMovementDialog } from "./StockMovementDialog"
@@ -10,8 +10,20 @@ import { computeCurrentStock, computeRunningBalances } from "@/lib/stockCalc"
 import { formatDate, formatNumber } from "@/lib/format"
 import type { RowTone } from "@/lib/alerts"
 import { StatusBadge } from "@/components/shared/StatusBadge"
-import { STOCK_LOCATIONS, type StockLocation, type StockMovement } from "@/types/stock"
+import { STOCK_LOCATIONS, type MovementType, type StockLocation, type StockMovement } from "@/types/stock"
 import { STOCK_LOCATION_LABEL_KEYS, STOCK_LOCATION_TONES } from "./stockLabels"
+
+const MOVEMENT_TYPE_LABEL_KEYS: Record<MovementType, string> = {
+  entree: "stock.movements.typeEntry",
+  sortie: "stock.movements.typeExit",
+  transfert: "stock.movements.typeTransfer",
+}
+
+const MOVEMENT_TYPE_CLASS: Record<MovementType, string> = {
+  entree: "text-success",
+  sortie: "text-destructive",
+  transfert: "text-info",
+}
 
 function isWithinLastDays(dateStr: string, days: number): boolean {
   const diff = (Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24)
@@ -95,13 +107,27 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
       key: "type",
       label: t("stock.movements.colType"),
       render: (m) => (
-        <span className={`inline-flex items-center gap-1.5 text-sm ${m.type === "entree" ? "text-success" : "text-destructive"}`}>
-          {m.type === "entree" ? <ArrowDownCircle className="h-4 w-4" /> : <ArrowUpCircle className="h-4 w-4" />}
-          {m.type === "entree" ? t("stock.movements.typeEntry") : t("stock.movements.typeExit")}
+        <span className={`inline-flex items-center gap-1.5 text-sm ${MOVEMENT_TYPE_CLASS[m.type]}`}>
+          {m.type === "entree" ? <ArrowDownCircle className="h-4 w-4" /> : m.type === "sortie" ? <ArrowUpCircle className="h-4 w-4" /> : <ArrowLeftRight className="h-4 w-4" />}
+          {t(MOVEMENT_TYPE_LABEL_KEYS[m.type])}
         </span>
       ),
     },
-    { key: "emplacement", label: t("stock.movements.colLocation"), render: (m) => <StatusBadge label={t(STOCK_LOCATION_LABEL_KEYS[m.emplacement])} tone={STOCK_LOCATION_TONES[m.emplacement]} /> },
+    {
+      key: "emplacement",
+      label: t("stock.movements.colLocation"),
+      render: (m) => (
+        <span className="inline-flex items-center gap-1.5">
+          <StatusBadge label={t(STOCK_LOCATION_LABEL_KEYS[m.emplacement])} tone={STOCK_LOCATION_TONES[m.emplacement]} />
+          {m.emplacementDestination && (
+            <>
+              <ArrowLeftRight className="h-3 w-3 text-muted-foreground" />
+              <StatusBadge label={t(STOCK_LOCATION_LABEL_KEYS[m.emplacementDestination])} tone={STOCK_LOCATION_TONES[m.emplacementDestination]} />
+            </>
+          )}
+        </span>
+      ),
+    },
     { key: "quantite", label: t("stock.movements.colQuantity"), render: (m) => formatNumber(m.quantite) },
     { key: "destinataire", label: t("stock.movements.colRecipient"), render: (m) => m.destinataire || <span className="text-muted-foreground">—</span> },
     {
@@ -121,9 +147,11 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
           sticky: true,
           render: (m: StockMovement) => (
             <div className="flex justify-end gap-1">
-              <Button variant="ghost" size="icon" onClick={() => openEdit(m)} aria-label={t("common.edit")}>
-                <Pencil className="h-4 w-4" />
-              </Button>
+              {m.type !== "transfert" && (
+                <Button variant="ghost" size="icon" onClick={() => openEdit(m)} aria-label={t("common.edit")}>
+                  <Pencil className="h-4 w-4" />
+                </Button>
+              )}
               <Button variant="ghost" size="icon" onClick={() => { deleteMovement(m.id); toast.success(t("stock.movements.toastDeleted")) }} aria-label={t("common.delete")}>
                 <Trash2 className="h-4 w-4 text-destructive" />
               </Button>

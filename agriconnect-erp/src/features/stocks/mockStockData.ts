@@ -13,9 +13,11 @@ export const SEED_ARTICLES: StockArticle[] = [
 ]
 
 export const SEED_MOVEMENTS: StockMovement[] = [
-  { id: "m-1", articleId: "a-oeufs", type: "sortie", emplacement: "ferme", quantite: 80, date: "2026-08-15", destinataire: "Restaurant Chez Lala", numeroBon: "CR-14502", montant: 96_000, observation: "Livraison hebdomadaire" },
+  { id: "m-1", articleId: "a-oeufs", type: "sortie", emplacement: "store", quantite: 80, date: "2026-08-15", destinataire: "Restaurant Chez Lala", numeroBon: "CR-14502", montant: 96_000, observation: "Livraison hebdomadaire" },
   { id: "m-2", articleId: "a-mais", type: "entree", emplacement: "ferme", quantite: 150, date: "2026-08-14", observation: "Réception commande fournisseur" },
   { id: "m-3", articleId: "a-gasoil", type: "entree", emplacement: "ferme", quantite: 200, date: "2026-08-12", observation: "Approvisionnement carburant" },
   { id: "m-4", articleId: "a-gasoil", type: "sortie", emplacement: "ferme", quantite: 45, date: "2026-08-13", destinataire: "Tracteur", observation: "Labour parcelle riz" },
   { id: "m-5", articleId: "a-engrais", type: "sortie", emplacement: "ferme", quantite: 120, date: "2026-08-16", destinataire: "Parcelle maïs", observation: "Épandage" },
+  { id: "m-6", articleId: "a-oeufs", type: "transfert", emplacement: "ferme", emplacementDestination: "magasinier", quantite: 200, date: "2026-08-13", montant: 240_000, montantRegle: 240_000, responsable: "Hary Lala", observation: "Livraison quotidienne au magasinier" },
+  { id: "m-7", articleId: "a-oeufs", type: "transfert", emplacement: "magasinier", emplacementDestination: "store", quantite: 120, date: "2026-08-14", montant: 156_000, montantRegle: 60_000, responsable: "Naina", observation: "Réapprovisionnement du Store" },
 ]

@@ -178,7 +178,7 @@
   "stock": {
     "pageTitle": "Stocks",
     "pageSubtitle": "Entrées, sorties et inventaire",
-    "tabs": { "inventory": "Inventaire", "movements": "Mouvements", "alerts": "Alertes" },
+    "tabs": { "inventory": "Inventaire", "movements": "Mouvements", "alerts": "Alertes", "transfers": "Transferts" },
     "status": { "ok": "OK", "low": "Stock bas", "critical": "Critique" },
     "inventory": {
       "statArticles": "Articles suivis",
@@ -245,7 +245,8 @@
       "colLocation": "Emplacement",
       "fieldLocation": "Emplacement",
       "validationLocation": "Emplacement requis",
-      "insufficientStockAtLocation": "Stock insuffisant : {{name}} — {{amount}} {{unit}} disponibles à {{location}}"
+      "insufficientStockAtLocation": "Stock insuffisant : {{name}} — {{amount}} {{unit}} disponibles à {{location}}",
+      "typeTransfer": "Transfert"
     },
     "alerts": {
       "statCritical": "Stock critique",
@@ -267,6 +268,41 @@
       "ferme": "Ferme",
       "magasinier": "Magasinier",
       "store": "Store"
+    },
+    "transfers": {
+      "statCount": "Transferts",
+      "statTransferred": "Valeur transférée",
+      "statOutstanding": "Créances en cours",
+      "debtsTitle": "Créances entre emplacements",
+      "debtLine": "{{to}} doit à {{from}}",
+      "newTransfer": "Nouveau transfert",
+      "colCircuit": "Circuit",
+      "colResponsible": "Responsable",
+      "colValue": "Valeur",
+      "colDebt": "Créance",
+      "debtNone": "Sans valeur",
+      "debtSettled": "Soldée",
+      "recordSettlement": "Enregistrer un versement",
+      "emptyTitle": "Aucun transfert",
+      "emptyDescription": "Enregistre le premier mouvement entre la Ferme, le Magasinier et le Store.",
+      "dialogTitleNew": "Nouveau transfert",
+      "dialogTitleEdit": "Modifier le transfert",
+      "fieldFrom": "Origine",
+      "fieldTo": "Destination",
+      "fieldValue": "Valeur de la marchandise",
+      "valueHint": "Génère une créance de la destination vers l'origine.",
+      "fieldResponsible": "Responsable",
+      "fieldResponsiblePlaceholder": "Nom du conducteur ou du magasinier",
+      "validationSameLocation": "L'origine et la destination doivent être différentes",
+      "validationResponsible": "Responsable requis",
+      "settlementDialogTitle": "Versement sur la créance",
+      "fieldSettlementAmount": "Montant versé",
+      "validationSettlementAmount": "Doit être positif",
+      "validationSettlementExceedsDue": "Ne peut pas dépasser la créance restante",
+      "toastCreated": "Transfert enregistré",
+      "toastModified": "Transfert modifié",
+      "toastDeleted": "Transfert supprimé",
+      "toastSettlementRecorded": "Versement enregistré"
     }
   },
   "production": {

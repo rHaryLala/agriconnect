@@ -14,7 +14,7 @@ export interface StockArticle {
   seuilCritique: number
 }
 
-export type MovementType = "entree" | "sortie"
+export type MovementType = "entree" | "sortie" | "transfert"
 
 export interface StockMovement {
   id: string
@@ -24,8 +24,18 @@ export interface StockMovement {
   emplacement: StockLocation
   quantite: number
   date: string
+  /** Receiving location, required for a transfer. */
+  emplacementDestination?: StockLocation
   destinataire?: string
   numeroBon?: string
+  /** Sale amount for an exit, value of the goods moved for a transfer. */
   montant?: number
+  /** Part of a transfer debt already settled by the receiving location. */
+  montantRegle?: number
+  responsable?: string
   observation: string
+}
+
+export function isTransfer(movement: StockMovement): boolean {
+  return movement.type === "transfert"
 }

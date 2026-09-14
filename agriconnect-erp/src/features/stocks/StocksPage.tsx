@@ -4,6 +4,7 @@ import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { useStockStore } from "./stockStore"
 import { StockInventoryTab } from "./StockInventoryTab"
 import { StockMovementsTab } from "./StockMovementsTab"
+import { StockTransfersTab } from "./StockTransfersTab"
 import { StockAlertsTab } from "./StockAlertsTab"
 import { usePermission } from "@/hooks/usePermission"
 import { ReadOnlyBanner } from "@/components/shared/ReadOnlyBanner";
@@ -21,6 +22,7 @@ export default function StocksPage() {
   const TABS = [
     { id: "inventaire", label: t("stock.tabs.inventory") },
     { id: "mouvements", label: t("stock.tabs.movements") },
+    { id: "transferts", label: t("stock.tabs.transfers") },
     { id: "alertes", label: t("stock.tabs.alerts") },
   ]
 
@@ -35,6 +37,7 @@ export default function StocksPage() {
       <div key={activeTab} className="animate-content-in mt-4">
         {activeTab === "inventaire" && <StockInventoryTab onGoToAlerts={() => setActiveTab("alertes")} canEdit={canEdit} />}
         {activeTab === "mouvements" && <StockMovementsTab canEdit={canEdit} />}
+        {activeTab === "transferts" && <StockTransfersTab canEdit={canEdit} />}
         {activeTab === "alertes" && <StockAlertsTab canEdit={canEdit} />}
       </div>
     </div>

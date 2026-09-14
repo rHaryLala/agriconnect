@@ -8,7 +8,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import { STOCK_LOCATIONS, DEFAULT_STOCK_LOCATION, type StockArticle, type StockMovement, type MovementType, type StockLocation } from "@/types/stock"
+import { STOCK_LOCATIONS, DEFAULT_STOCK_LOCATION, type StockArticle, type StockMovement, type StockLocation } from "@/types/stock"
 import { STOCK_LOCATION_LABEL_KEYS } from "./stockLabels"
 
 function buildSchema(t: (key: string) => string) {
@@ -58,7 +58,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
     if (open) {
       reset({
         articleId: editingEntry?.articleId ?? articles[0]?.id ?? "",
-        type: editingEntry?.type ?? ("entree" as MovementType),
+        type: editingEntry?.type === "sortie" ? "sortie" : "entree",
         emplacement: editingEntry?.emplacement ?? DEFAULT_STOCK_LOCATION,
         date: editingEntry?.date ?? new Date().toISOString().slice(0, 10),
         quantite: editingEntry?.quantite ?? 0,

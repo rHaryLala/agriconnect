@@ -178,7 +178,7 @@
   "stock": {
     "pageTitle": "Tahiry entana",
     "pageSubtitle": "Fidirana, fivoahana ary tahiry",
-    "tabs": { "inventory": "Tahiry", "movements": "Fihetsiketsehana", "alerts": "Fampitandremana" },
+    "tabs": { "inventory": "Tahiry", "movements": "Fihetsiketsehana", "alerts": "Fampitandremana", "transfers": "Famindrana" },
     "status": { "ok": "Tsara", "low": "Ambany", "critical": "Mafy" },
     "inventory": {
       "statArticles": "Entana araka",
@@ -245,7 +245,8 @@
       "colLocation": "Toerana",
       "fieldLocation": "Toerana",
       "validationLocation": "Ilaina ny toerana",
-      "insufficientStockAtLocation": "Tsy ampy ny tahiry : {{name}} — {{amount}} {{unit}} misy ao {{location}}"
+      "insufficientStockAtLocation": "Tsy ampy ny tahiry : {{name}} — {{amount}} {{unit}} misy ao {{location}}",
+      "typeTransfer": "Famindrana"
     },
     "alerts": {
       "statCritical": "Tahiry mafy",
@@ -267,6 +268,41 @@
       "ferme": "Toeram-piompiana",
       "magasinier": "Magasinier",
       "store": "Store"
+    },
+    "transfers": {
+      "statCount": "Famindrana",
+      "statTransferred": "Sanda nafindra",
+      "statOutstanding": "Trosa tsy voaloa",
+      "debtsTitle": "Trosa eo amin'ny toerana",
+      "debtLine": "{{to}} manan-trosa amin'ny {{from}}",
+      "newTransfer": "Famindrana vaovao",
+      "colCircuit": "Lalana",
+      "colResponsible": "Tompon'andraikitra",
+      "colValue": "Sanda",
+      "colDebt": "Trosa",
+      "debtNone": "Tsy misy sanda",
+      "debtSettled": "Voaloa",
+      "recordSettlement": "Hisoratra fandoavana",
+      "emptyTitle": "Tsy misy famindrana",
+      "emptyDescription": "Soraty ny famindrana voalohany eo amin'ny Toeram-piompiana, ny Magasinier ary ny Store.",
+      "dialogTitleNew": "Famindrana vaovao",
+      "dialogTitleEdit": "Hanova ny famindrana",
+      "fieldFrom": "Niaviana",
+      "fieldTo": "Haleha",
+      "fieldValue": "Sandan'ny entana",
+      "valueHint": "Miteraka trosa avy amin'ny toerana mandray mankany amin'ny niaviana.",
+      "fieldResponsible": "Tompon'andraikitra",
+      "fieldResponsiblePlaceholder": "Anaran'ny mpamily na magasinier",
+      "validationSameLocation": "Tsy maintsy samy hafa ny niaviana sy ny haleha",
+      "validationResponsible": "Ilaina ny tompon'andraikitra",
+      "settlementDialogTitle": "Fandoavana ny trosa",
+      "fieldSettlementAmount": "Vola naloa",
+      "validationSettlementAmount": "Tsy maintsy mihoatra ny aotra",
+      "validationSettlementExceedsDue": "Tsy azo mihoatra ny trosa sisa",
+      "toastCreated": "Voasoratra ny famindrana",
+      "toastModified": "Novaina ny famindrana",
+      "toastDeleted": "Voafafa ny famindrana",
+      "toastSettlementRecorded": "Voasoratra ny fandoavana"
     }
   },
   "production": {
