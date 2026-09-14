@@ -8,14 +8,17 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import type { PoulardMouvement, PoulardMouvementType } from "@/types/production"
+import { POULARD_MOUVEMENT_TYPES, type PoulardMouvement, type PoulardMouvementType } from "@/types/production"
+import { POULARD_TYPE_LABEL_KEYS } from "./poulardLabels"
+import { usePoulardRacesStore } from "./poulardRacesStore"
 import type { Client } from "@/types/client"
 
 function buildSchema(t: (key: string) => string) {
   return z
     .object({
       date: z.string().min(1, t("stock.movements.validationDate")),
-      type: z.enum(["entree", "vente", "mortalite"]),
+      type: z.enum(POULARD_MOUVEMENT_TYPES as [PoulardMouvementType, ...PoulardMouvementType[]]),
+      race: z.string().optional(),
       quantite: z.number({ error: t("stock.inventory.validationNumber") }).positive(t("stock.movements.validationQuantity")),
       clientId: z.string().optional(),
       prixUnitaire: z.number().min(0).optional(),
@@ -38,6 +41,7 @@ interface PoulardMovementDialogProps {
 export function PoulardMovementDialog({ open, onOpenChange, clients, onSubmit }: PoulardMovementDialogProps) {
   const { t } = useTranslation()
   const schema = useMemo(() => buildSchema(t), [t])
+  const races = usePoulardRacesStore((s) => s.types)
 
   const {
     register, handleSubmit, control, reset,
@@ -45,8 +49,18 @@ export function PoulardMovementDialog({ open, onOpenChange, clients, onSubmit }:
   } = useForm<FormValues>({ resolver: zodResolver(schema) })
 
   useEffect(() => {
-    if (open) reset({ date: new Date().toISOString().slice(0, 10), type: "entree", quantite: 0, clientId: clients[0]?.id ?? "", prixUnitaire: 0, observation: "" })
-  }, [open, clients, reset])
+    if (open) {
+      reset({
+        date: new Date().toISOString().slice(0, 10),
+        type: "entree",
+        quantite: 0,
+        race: races[0]?.nom ?? "",
+        clientId: clients[0]?.id ?? "",
+        prixUnitaire: 0,
+        observation: "",
+      })
+    }
+  }, [open, clients, races, reset])
 
   const type = useWatch({ control, name: "type" })
 
@@ -55,6 +69,7 @@ export function PoulardMovementDialog({ open, onOpenChange, clients, onSubmit }:
       date: values.date,
       type: values.type as PoulardMouvementType,
       quantite: values.quantite,
+      race: values.type === "entree" ? values.race : undefined,
       clientId: values.type === "vente" ? values.clientId : undefined,
       prixUnitaire: values.type === "vente" ? values.prixUnitaire : undefined,
       observation: values.observation,
@@ -77,12 +92,14 @@ export function PoulardMovementDialog({ open, onOpenChange, clients, onSubmit }:
               render={({ field }) => (
                 <Select value={field.value} onValueChange={field.onChange}>
                   <SelectTrigger id="type" className="mt-1.5">
-                    <SelectValue>{(v: string) => t(`production.poulard.type${v === "vente" ? "Vente" : v === "mortalite" ? "Mortalite" : "Entree"}`)}</SelectValue>
+                    <SelectValue>{(v: string) => t(POULARD_TYPE_LABEL_KEYS[v as PoulardMouvementType])}</SelectValue>
                   </SelectTrigger>
                   <SelectContent>
-                    <SelectItem value="entree">{t("production.poulard.typeEntree")}</SelectItem>
-                    <SelectItem value="vente">{t("production.poulard.typeVente")}</SelectItem>
-                    <SelectItem value="mortalite">{t("production.poulard.typeMortalite")}</SelectItem>
+                    {POULARD_MOUVEMENT_TYPES.map((value) => (
+                      <SelectItem key={value} value={value}>
+                        {t(POULARD_TYPE_LABEL_KEYS[value])}
+                      </SelectItem>
+                    ))}
                   </SelectContent>
                 </Select>
               )}
@@ -95,11 +112,35 @@ export function PoulardMovementDialog({ open, onOpenChange, clients, onSubmit }:
               <input id="date" type="date" {...register("date")} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
             </div>
             <div>
-              <Label htmlFor="quantite">{t("production.poulard.fieldQuantite")}</Label>
+              <Label htmlFor="quantite">{type === "ponte" ? t("production.poulard.fieldEggs") : t("production.poulard.fieldQuantite")}</Label>
               <input id="quantite" type="number" {...register("quantite", { valueAsNumber: true })} className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20" />
               {errors.quantite && <p className="mt-1 text-xs text-destructive">{errors.quantite.message}</p>}
             </div>
           </div>
+
+          {type === "entree" && (
+            <div className="animate-content-in">
+              <Label htmlFor="race">{t("production.poulard.fieldRace")}</Label>
+              <Controller
+                name="race"
+                control={control}
+                render={({ field }) => (
+                  <Select value={field.value ?? ""} onValueChange={field.onChange}>
+                    <SelectTrigger id="race" className="mt-1.5">
+                      <SelectValue placeholder="..." />
+                    </SelectTrigger>
+                    <SelectContent>
+                      {races.map((r) => (
+                        <SelectItem key={r.id} value={r.nom}>
+                          {r.nom}
+                        </SelectItem>
+                      ))}
+                    </SelectContent>
+                  </Select>
+                )}
+              />
+            </div>
+          )}
 
           {type === "vente" && (
             <div className="animate-content-in flex flex-col gap-4 rounded-lg border border-border bg-background p-3">

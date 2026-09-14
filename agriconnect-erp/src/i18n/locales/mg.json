@@ -554,7 +554,14 @@
       "emptyTitle": "Tsy misy fihetsiketsehana",
       "emptyDescription": "Soraty ny fihetsiketsehana voalohany amin'ny baotao eo ambony.",
       "toastCreated": "Voatahiry ny fihetsiketsehana",
-      "toastDeleted": "Voafafa ny fihetsiketsehana"
+      "toastDeleted": "Voafafa ny fihetsiketsehana",
+      "typePonte": "Fanatodizana",
+      "fieldRace": "Karazana razana",
+      "fieldEggs": "Atody voaangona",
+      "manageRaces": "Razana",
+      "manageRacesTitle": "Hitantana ny razana",
+      "statTauxPonteHebdo": "Tahan'ny atody isan-kerinandro",
+      "statTauxPonteHebdoHint": "Atodin'ny herinandro mifandraika amin'ny isan'ny akoho"
     },
     "riz": {
       "subTabRecolte": "Fijinjana & tahiry manta",

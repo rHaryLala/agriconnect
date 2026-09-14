@@ -66,9 +66,12 @@ export const SEED_BOVINS: BovinAnimal[] = [
 ]
 
 export const SEED_POULARD: PoulardMouvement[] = [
-  { id: "pl-1", date: "2026-07-05", type: "entree", quantite: 200, observation: "Mise en élevage — bande D" },
+  { id: "pl-1", date: "2026-07-05", type: "entree", quantite: 200, race: "Kuroilier", observation: "Mise en élevage — bande D" },
+  { id: "pl-6", date: "2026-07-20", type: "entree", quantite: 80, race: "Kombo", observation: "Mise en élevage — bande E" },
   { id: "pl-2", date: "2026-08-02", type: "mortalite", quantite: 6, observation: "RAS" },
   { id: "pl-3", date: "2026-08-20", type: "vente", quantite: 50, clientId: "cl-1", prixUnitaire: 12_000, observation: "RAS" },
+  { id: "pl-4", date: "2026-09-08", type: "ponte", quantite: 610, observation: "Collecte hebdomadaire — semaine 37" },
+  { id: "pl-5", date: "2026-09-01", type: "ponte", quantite: 585, observation: "Collecte hebdomadaire — semaine 36" },
 ]
 
 export const SEED_RIZ_RECOLTES: RizRecolte[] = [

@@ -120,13 +120,17 @@ export interface BovinAnimal {
   observation: string
 }
 
-export type PoulardMouvementType = "entree" | "vente" | "mortalite"
+export type PoulardMouvementType = "entree" | "vente" | "mortalite" | "ponte"
+export const POULARD_MOUVEMENT_TYPES: PoulardMouvementType[] = ["entree", "vente", "mortalite", "ponte"]
 
 export interface PoulardMouvement {
   id: string
   date: string
   type: PoulardMouvementType
+  /** Head count, or number of eggs collected for a laying record. */
   quantite: number
+  /** Breed of the batch, recorded when birds enter the flock. */
+  race?: string
   clientId?: string
   prixUnitaire?: number
   invoiceId?: string

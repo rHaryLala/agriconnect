@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Drumstick, Trash2 } from "lucide-react"
+import { Plus, Drumstick, Trash2, Egg, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
@@ -10,8 +10,11 @@ import { usePoulardStore } from "./poulardStore"
 import { useInvoicesStore } from "@/features/clients/invoicesStore"
 import { useClientsStore } from "@/features/clients/clientsStore"
 import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
-import { computeEffectifActuel, computeEffectifAt, sumSurPeriode } from "@/lib/poulardCalc"
-import { endOfPreviousMonth, startOfMonth } from "@/lib/dateRange"
+import { computeEffectifActuel, computeEffectifAt, computeTauxPonteHebdomadaire, sumSurPeriode } from "@/lib/poulardCalc"
+import { currentIsoDate, endOfPreviousMonth, periodBounds, startOfMonth } from "@/lib/dateRange"
+import { TypesManagerDialog } from "@/components/shared/TypesManagerDialog"
+import { POULARD_TYPE_LABEL_KEYS } from "./poulardLabels"
+import { usePoulardRacesStore } from "./poulardRacesStore"
 import type { PoulardMouvement } from "@/types/production"
 
 export function PoulardTab({ canEdit }: { canEdit: boolean }) {
@@ -20,6 +23,8 @@ export function PoulardTab({ canEdit }: { canEdit: boolean }) {
   const { invoices, addInvoice } = useInvoicesStore()
   const { clients, fetchAll: fetchClients } = useClientsStore()
   const [dialogOpen, setDialogOpen] = useState(false)
+  const [manageRacesOpen, setManageRacesOpen] = useState(false)
+  const races = usePoulardRacesStore()
 
   useEffect(() => {
     fetchAll()
@@ -43,6 +48,8 @@ export function PoulardTab({ canEdit }: { canEdit: boolean }) {
   const ventesMois = sumSurPeriode(mouvements, "vente", startMonth, today)
   const mortaliteMois = sumSurPeriode(mouvements, "mortalite", startMonth, today)
   const effectifReporte = computeEffectifAt(mouvements, endOfPreviousMonth(today))
+  const semaine = periodBounds("week", currentIsoDate())
+  const tauxPonteHebdo = computeTauxPonteHebdomadaire(mouvements, semaine.start, semaine.end)
 
   async function handleAddMouvement(data: Omit<PoulardMouvement, "id">) {
     const created = await addMouvement(data)
@@ -61,7 +68,8 @@ export function PoulardTab({ canEdit }: { canEdit: boolean }) {
 
   const columns: DataTableColumn<PoulardMouvement>[] = [
     { key: "date", label: t("production.poulard.fieldDate"), render: (m) => formatDate(m.date) },
-    { key: "type", label: t("production.poulard.fieldType"), render: (m) => t(`production.poulard.type${m.type === "vente" ? "Vente" : m.type === "mortalite" ? "Mortalite" : "Entree"}`) },
+    { key: "type", label: t("production.poulard.fieldType"), render: (m) => t(POULARD_TYPE_LABEL_KEYS[m.type]) },
+    { key: "race", label: t("production.poulard.fieldRace"), render: (m) => m.race || <span className="text-muted-foreground">—</span> },
     { key: "quantite", label: t("production.poulard.fieldQuantite"), render: (m) => formatNumber(m.quantite) },
     { key: "client", label: t("clients.invoices.colClient"), render: (m) => (m.type === "vente" ? clientName(m.clientId) : "—") },
     { key: "prixUnitaire", label: t("production.poulard.fieldPrixUnitaire"), render: (m) => (m.prixUnitaire ? formatCurrency(m.prixUnitaire) : "—") },
@@ -87,10 +95,21 @@ export function PoulardTab({ canEdit }: { canEdit: boolean }) {
         <StatCard icon={Drumstick} label={t("production.poulard.statVentesMois")} value={formatNumber(ventesMois)} tone="info" />
         <StatCard icon={Drumstick} label={t("production.poulard.statMortaliteMois")} value={formatNumber(mortaliteMois)} tone="destructive" />
         <StatCard icon={Drumstick} label={t("production.poulard.statEffectifReporte")} value={formatNumber(effectifReporte)} tone="warning" hint={t("production.poulard.statEffectifReporteHint")} />
+        <StatCard
+          icon={Egg}
+          label={t("production.poulard.statTauxPonteHebdo")}
+          value={`${tauxPonteHebdo.toFixed(0)} %`}
+          tone="info"
+          hint={t("production.poulard.statTauxPonteHebdoHint")}
+        />
       </div>
 
       {canEdit && (
-        <div className="mb-3 flex justify-end">
+        <div className="mb-3 flex flex-wrap justify-end gap-2">
+          <Button variant="outline" onClick={() => setManageRacesOpen(true)} className="gap-2">
+            <Settings2 className="h-4 w-4" />
+            {t("production.poulard.manageRaces")}
+          </Button>
           <Button onClick={() => setDialogOpen(true)} className="gap-2">
             <Plus className="h-4 w-4" />
             {t("production.poulard.newMovement")}
@@ -101,6 +120,19 @@ export function PoulardTab({ canEdit }: { canEdit: boolean }) {
       <DataTable columns={columns} rows={mouvements} rowKey={(m) => m.id} isLoading={isLoading} emptyIcon={Drumstick} emptyTitle={t("production.poulard.emptyTitle")} emptyDescription={t("production.poulard.emptyDescription")} />
 
       {canEdit && <PoulardMovementDialog open={dialogOpen} onOpenChange={setDialogOpen} clients={clients} onSubmit={handleAddMouvement} />}
+
+      {canEdit && (
+        <TypesManagerDialog
+          open={manageRacesOpen}
+          onOpenChange={setManageRacesOpen}
+          title={t("production.poulard.manageRacesTitle")}
+          fields={[{ name: "nom", label: t("production.poulard.fieldRace"), type: "text" }]}
+          items={races.types}
+          onAdd={(v) => races.addType(v.nom as string)}
+          onUpdate={(id, v) => races.updateType(id, v.nom as string)}
+          onDelete={races.removeType}
+        />
+      )}
     </div>
   )
 }
