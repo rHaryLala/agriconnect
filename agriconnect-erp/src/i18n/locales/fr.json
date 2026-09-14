@@ -923,7 +923,7 @@
     "pageTitle": "Clients",
     "pageSubtitle": "Cafétéria, Store, Magasinier, personnel et clients externes",
     "tabs": { "clients": "Clients", "invoices": "Factures" },
-    "types": { "cafeteria": "Cafétéria", "store": "Store", "magasinier": "Magasinier", "personnel": "Personnel", "externe": "Externe" },
+    "types": { "cafeteria": "Cafétéria", "store": "Store", "magasinier": "Magasinier", "personnel": "Personnel", "externe": "Externe", "production": "Production" },
     "newClient": "Nouveau client",
     "colName": "Nom",
     "colType": "Type",
@@ -1002,7 +1002,8 @@
       "remainingHint": "Reste dû : {{amount}}",
       "validationPaymentAmount": "Doit être positif",
       "validationPaymentExceedsDue": "Ne peut pas dépasser le reste dû ({{amount}})"
-    }
+    },
+    "filterAll": "Tous"
   },
   "rapports": {
     "pageTitle": "Export",

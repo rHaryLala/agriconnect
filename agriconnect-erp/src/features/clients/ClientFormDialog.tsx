@@ -9,12 +9,12 @@ import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
 import { CLIENT_TYPE_LABEL_KEYS } from "./clientLabels"
-import type { Client, ClientType } from "@/types/client"
+import { CLIENT_TYPES, type Client, type ClientType } from "@/types/client"
 
 function buildSchema(t: (key: string) => string) {
   return z.object({
     nom: z.string().min(2, t("clients.validationName")),
-    type: z.enum(["cafeteria", "store", "personnel", "externe"]).describe(t("clients.validationType")),
+    type: z.enum(CLIENT_TYPES as [ClientType, ...ClientType[]]).describe(t("clients.validationType")),
     telephone: z.string().optional(),
     matriculeUaz: z.string().optional(),
   })
@@ -86,8 +86,8 @@ export function ClientFormDialog({ open, onOpenChange, editingClient, onSubmit }
                     <SelectValue placeholder="..." />
                   </SelectTrigger>
                   <SelectContent>
-                    {Object.entries(CLIENT_TYPE_LABEL_KEYS).map(([value, labelKey]) => (
-                      <SelectItem key={value} value={value}>{t(labelKey)}</SelectItem>
+                    {CLIENT_TYPES.map((value) => (
+                      <SelectItem key={value} value={value}>{t(CLIENT_TYPE_LABEL_KEYS[value])}</SelectItem>
                     ))}
                   </SelectContent>
                 </Select>

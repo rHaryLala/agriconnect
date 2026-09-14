@@ -912,7 +912,7 @@
     "pageTitle": "Mpanjifa",
     "pageSubtitle": "Cafétéria, Store, mpiasa ary mpanjifa ivelany",
     "tabs": { "clients": "Mpanjifa", "invoices": "Fatorana" },
-    "types": { "cafeteria": "Cafétéria", "store": "Store", "magasinier": "Magasinier", "personnel": "Mpiasa", "externe": "Ivelany" },
+    "types": { "cafeteria": "Cafétéria", "store": "Store", "magasinier": "Magasinier", "personnel": "Mpiasa", "externe": "Ivelany", "production": "Famokarana" },
     "newClient": "Mpanjifa vaovao",
     "colName": "Anarana",
     "colType": "Karazana",
@@ -991,7 +991,8 @@
       "remainingHint": "Trosa sisa: {{amount}}",
       "validationPaymentAmount": "Tsy maintsy mihoatra ny aotra",
       "validationPaymentExceedsDue": "Tsy azo mihoatra ny trosa sisa ({{amount}})"
-    }
+    },
+    "filterAll": "Rehetra"
   },
   "rapports": {
     "pageTitle": "Export",
