@@ -24,6 +24,10 @@ export class CreateProductionDto {
   @IsUUID()
   stockItemId?: string;
 
+  @IsOptional()
+  @IsUUID()
+  variantId?: string;
+
    // Optionnel : permet la saisie rétroactive (RG-07). Validée dans le
   // service selon le rôle, pas ici — un DTO vérifie une FORME, jamais
   // une règle métier qui dépend de qui fait la requête.
