@@ -201,7 +201,8 @@
       "validationUnit": "Unité requise (ex: kg, litres, unités)",
       "validationNumber": "Nombre requis",
       "toastCreated": "Article créé",
-      "emptyTitle": "Aucun article"
+      "emptyTitle": "Aucun article",
+      "colByLocation": "Par emplacement"
     },
     "movements": {
       "pillTotal": "mouvements",
@@ -241,7 +242,10 @@
       "toastCreated": "Mouvement enregistré",
       "toastModified": "Mouvement modifié",
       "toastDeleted": "Mouvement supprimé",
-      "insufficientStock": "Stock insuffisant : {{name}} n'a que {{amount}} {{unit}} disponible(s)."
+      "colLocation": "Emplacement",
+      "fieldLocation": "Emplacement",
+      "validationLocation": "Emplacement requis",
+      "insufficientStockAtLocation": "Stock insuffisant : {{name}} — {{amount}} {{unit}} disponibles à {{location}}"
     },
     "alerts": {
       "statCritical": "Stock critique",
@@ -257,6 +261,12 @@
       "bannerDescription": "Actuel : {{current}} {{unit}} — Seuil : {{threshold}} {{unit}}",
       "orderButton": "Commander",
       "orderToast": "Commande à préparer pour \"{{name}}\" — module fournisseurs pas encore disponible."
+    },
+    "locations": {
+      "all": "Tous",
+      "ferme": "Ferme",
+      "magasinier": "Magasinier",
+      "store": "Store"
     }
   },
   "production": {

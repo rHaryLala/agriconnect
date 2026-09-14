@@ -9,7 +9,9 @@ import { useStockStore } from "./stockStore"
 import { computeCurrentStock, computeRunningBalances } from "@/lib/stockCalc"
 import { formatDate, formatNumber } from "@/lib/format"
 import type { RowTone } from "@/lib/alerts"
-import type { StockMovement } from "@/types/stock"
+import { StatusBadge } from "@/components/shared/StatusBadge"
+import { STOCK_LOCATIONS, type StockLocation, type StockMovement } from "@/types/stock"
+import { STOCK_LOCATION_LABEL_KEYS, STOCK_LOCATION_TONES } from "./stockLabels"
 
 function isWithinLastDays(dateStr: string, days: number): boolean {
   const diff = (Date.now() - new Date(dateStr).getTime()) / (1000 * 60 * 60 * 24)
@@ -27,10 +29,14 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
   const [editingMovement, setEditingMovement] = useState<StockMovement | null>(null)
   const [dateDebut, setDateDebut] = useState("")
   const [dateFin, setDateFin] = useState("")
+  const [locationFilter, setLocationFilter] = useState<StockLocation | "tous">("tous")
 
+  // Balances are followed per location, so a movement shows what is left where it happened.
   const runningBalances = useMemo(() => {
     const merged: Record<string, number> = {}
-    articles.forEach((a) => Object.assign(merged, computeRunningBalances(a, movements)))
+    articles.forEach((a) => {
+      STOCK_LOCATIONS.forEach((location) => Object.assign(merged, computeRunningBalances(a, movements, location)))
+    })
     return merged
   }, [articles, movements])
 
@@ -40,11 +46,12 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
   const filtered = useMemo(
     () =>
       movements.filter((m) => {
+        if (locationFilter !== "tous" && m.emplacement !== locationFilter) return false
         if (dateDebut && m.date < dateDebut) return false
         if (dateFin && m.date > dateFin) return false
         return true
       }),
-    [movements, dateDebut, dateFin]
+    [movements, dateDebut, dateFin, locationFilter]
   )
 
   function openCreate() {
@@ -60,9 +67,9 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
     if (values.type === "sortie") {
       const article = articles.find((a) => a.id === values.articleId)
       if (article) {
-        const current = computeCurrentStock(article, movements.filter((m) => m.id !== editingMovement?.id))
+        const current = computeCurrentStock(article, movements.filter((m) => m.id !== editingMovement?.id), values.emplacement)
         if (values.quantite > current) {
-          toast.error(t("stock.movements.insufficientStock", { name: article.nom, amount: current, unit: article.unite }))
+          toast.error(t("stock.movements.insufficientStockAtLocation", { name: article.nom, amount: current, unit: article.unite, location: t(STOCK_LOCATION_LABEL_KEYS[values.emplacement]) }))
           return
         }
       }
@@ -94,6 +101,7 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
         </span>
       ),
     },
+    { key: "emplacement", label: t("stock.movements.colLocation"), render: (m) => <StatusBadge label={t(STOCK_LOCATION_LABEL_KEYS[m.emplacement])} tone={STOCK_LOCATION_TONES[m.emplacement]} /> },
     { key: "quantite", label: t("stock.movements.colQuantity"), render: (m) => formatNumber(m.quantite) },
     { key: "destinataire", label: t("stock.movements.colRecipient"), render: (m) => m.destinataire || <span className="text-muted-foreground">—</span> },
     {
@@ -134,6 +142,17 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
       </div>
 
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-1 rounded-lg border border-border bg-surface p-1">
+          {(["tous", ...STOCK_LOCATIONS] as const).map((f) => (
+            <button
+              key={f} type="button" onClick={() => setLocationFilter(f)}
+              className={`rounded-md px-3 py-1.5 text-sm transition-colors duration-200 ${locationFilter === f ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              {f === "tous" ? t("stock.locations.all") : t(STOCK_LOCATION_LABEL_KEYS[f])}
+            </button>
+          ))}
+        </div>
+
         <div className="flex items-center gap-2 rounded-lg border border-border bg-surface px-3 py-1.5">
           <input type="date" value={dateDebut} onChange={(e) => setDateDebut(e.target.value)} className="bg-transparent text-sm text-foreground outline-none" />
           <span className="text-xs text-muted-foreground">→</span>

@@ -8,13 +8,15 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
-import type { StockArticle, StockMovement, MovementType } from "@/types/stock"
+import { STOCK_LOCATIONS, DEFAULT_STOCK_LOCATION, type StockArticle, type StockMovement, type MovementType, type StockLocation } from "@/types/stock"
+import { STOCK_LOCATION_LABEL_KEYS } from "./stockLabels"
 
 function buildSchema(t: (key: string) => string) {
   return z
     .object({
       articleId: z.string().min(1, t("stock.movements.validationArticle")),
       type: z.enum(["entree", "sortie"], { error: t("stock.movements.validationType") }),
+      emplacement: z.enum(STOCK_LOCATIONS as [StockLocation, ...StockLocation[]], { error: t("stock.movements.validationLocation") }),
       date: z.string().min(1, t("stock.movements.validationDate")),
       quantite: z.number({ error: t("stock.inventory.validationNumber") }).positive(t("stock.movements.validationQuantity")),
       destinataire: z.string().optional(),
@@ -57,6 +59,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
       reset({
         articleId: editingEntry?.articleId ?? articles[0]?.id ?? "",
         type: editingEntry?.type ?? ("entree" as MovementType),
+        emplacement: editingEntry?.emplacement ?? DEFAULT_STOCK_LOCATION,
         date: editingEntry?.date ?? new Date().toISOString().slice(0, 10),
         quantite: editingEntry?.quantite ?? 0,
         destinataire: editingEntry?.destinataire ?? "",
@@ -73,6 +76,7 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
     await onSubmit({
       articleId: values.articleId,
       type: values.type,
+      emplacement: values.emplacement,
       date: values.date,
       quantite: values.quantite,
       observation: values.observation,
@@ -130,6 +134,27 @@ export function StockMovementDialog({ open, onOpenChange, articles, editingEntry
               )}
             />
             {errors.type && <p className="mt-1 text-xs text-destructive">{errors.type.message}</p>}
+          </div>
+
+          <div>
+            <Label htmlFor="emplacement">{t("stock.movements.fieldLocation")}</Label>
+            <Controller
+              name="emplacement"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="emplacement" className="mt-1.5">
+                    <SelectValue placeholder="..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    {STOCK_LOCATIONS.map((location) => (
+                      <SelectItem key={location} value={location}>{t(STOCK_LOCATION_LABEL_KEYS[location])}</SelectItem>
+                    ))}
+                  </SelectContent>
+                </Select>
+              )}
+            />
+            {errors.emplacement && <p className="mt-1 text-xs text-destructive">{errors.emplacement.message}</p>}
           </div>
 
           <div className="grid grid-cols-2 gap-3">

@@ -9,8 +9,10 @@ import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { QuickAddDialog, type FieldConfig } from "@/components/shared/QuickAddDialog"
 import { StockStatusBadge } from "@/components/shared/StockStatusBadge"
 import { useStockStore } from "./stockStore"
-import { computeCurrentStock, getStockStatus, type StockStatus } from "@/lib/stockCalc"
+import { computeCurrentStock, computeStockByLocation, getStockStatus, type StockStatus } from "@/lib/stockCalc"
 import { formatNumber } from "@/lib/format"
+import { STOCK_LOCATIONS, type StockLocation } from "@/types/stock"
+import { STOCK_LOCATION_LABEL_KEYS } from "./stockLabels"
 
 type ArticleFormValues = { nom: string; unite: string; quantiteInitiale: number; seuilCritique: number }
 
@@ -34,6 +36,7 @@ export function StockInventoryTab({ onGoToAlerts, canEdit }: StockInventoryTabPr
   const { t } = useTranslation()
   const { articles, movements, isLoading, addArticle } = useStockStore()
   const [articleOpen, setArticleOpen] = useState(false)
+  const [locationFilter, setLocationFilter] = useState<StockLocation | "tous">("tous")
 
   const articleSchema = useMemo(() => buildArticleSchema(t), [t])
   const articleFields: FieldConfig<ArticleFormValues>[] = useMemo(
@@ -49,12 +52,13 @@ export function StockInventoryTab({ onGoToAlerts, canEdit }: StockInventoryTabPr
   const rows = useMemo(
     () =>
       articles.map((a) => {
-        const current = computeCurrentStock(a, movements)
+        const byLocation = computeStockByLocation(a, movements)
+        const current = locationFilter === "tous" ? computeCurrentStock(a, movements) : byLocation[locationFilter]
         const status = getStockStatus(current, a.seuilCritique)
         const progressPercent = Math.min((current / (a.seuilCritique * 3 || 1)) * 100, 100)
-        return { article: a, current, status, progressPercent }
+        return { article: a, current, byLocation, status, progressPercent }
       }),
-    [articles, movements]
+    [articles, movements, locationFilter]
   )
 
   const critiqueCount = rows.filter((r) => r.status === "critique").length
@@ -79,6 +83,19 @@ export function StockInventoryTab({ onGoToAlerts, canEdit }: StockInventoryTabPr
         </div>
       ),
     },
+    {
+      key: "emplacements",
+      label: t("stock.inventory.colByLocation"),
+      render: (row) => (
+        <div className="flex flex-wrap gap-1.5">
+          {STOCK_LOCATIONS.map((location) => (
+            <span key={location} className="rounded-full border border-border bg-background px-2 py-0.5 text-xs text-muted-foreground">
+              {t(STOCK_LOCATION_LABEL_KEYS[location])} {formatNumber(row.byLocation[location])}
+            </span>
+          ))}
+        </div>
+      ),
+    },
     { key: "statut", label: t("stock.inventory.colStatus"), render: (row) => <StockStatusBadge status={row.status} /> },
   ]
 
@@ -94,14 +111,25 @@ export function StockInventoryTab({ onGoToAlerts, canEdit }: StockInventoryTabPr
         </button>
       </div>
 
-      {canEdit && (
-        <div className="mb-3 flex justify-end">
+      <div className="mb-3 flex flex-wrap items-center justify-between gap-3">
+        <div className="flex flex-wrap gap-1 rounded-lg border border-border bg-surface p-1">
+          {(["tous", ...STOCK_LOCATIONS] as const).map((f) => (
+            <button
+              key={f} type="button" onClick={() => setLocationFilter(f)}
+              className={`rounded-md px-3 py-1.5 text-sm transition-colors duration-200 ${locationFilter === f ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
+            >
+              {f === "tous" ? t("stock.locations.all") : t(STOCK_LOCATION_LABEL_KEYS[f])}
+            </button>
+          ))}
+        </div>
+
+        {canEdit && (
           <Button variant="outline" onClick={() => setArticleOpen(true)} className="gap-2">
             <Plus className="h-4 w-4" />
             {t("stock.inventory.newArticle")}
           </Button>
-        </div>
-      )}
+        )}
+      </div>
 
       <DataTable columns={columns} rows={rows} rowKey={(row) => row.article.id} isLoading={isLoading} emptyIcon={Package} emptyTitle={t("stock.inventory.emptyTitle")} />
 

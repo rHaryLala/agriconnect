@@ -1,6 +1,6 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
-import type { StockArticle, StockMovement } from "@/types/stock"
+import { DEFAULT_STOCK_LOCATION, type StockArticle, type StockMovement } from "@/types/stock"
 import { SEED_ARTICLES, SEED_MOVEMENTS } from "./mockStockData"
 
 const FAKE_LATENCY_MS = 500
@@ -67,11 +67,17 @@ export const useStockStore = create<StockState>()(
     {
       name: "agriconnect-stock",
       storage: createJSONStorage(() => localStorage),
-      version: 1,
+      version: 2,
       migrate: (persisted, version) => {
-        const state = persisted as StockState
+        let state = persisted as StockState
         if (version < 1 && state.hasFetched) {
-          return { ...state, articles: mergeSeedArticles(state.articles ?? []) }
+          state = { ...state, articles: mergeSeedArticles(state.articles ?? []) }
+        }
+        if (version < 2) {
+          state = {
+            ...state,
+            movements: (state.movements ?? []).map((m) => ({ ...m, emplacement: m.emplacement ?? DEFAULT_STOCK_LOCATION })),
+          }
         }
         return state
       },

@@ -201,7 +201,8 @@
       "validationUnit": "Ilaina ny ohatra (oh: kg, litatra, sombiny)",
       "validationNumber": "Ilaina isa",
       "toastCreated": "Voaforona ny entana",
-      "emptyTitle": "Tsy misy entana"
+      "emptyTitle": "Tsy misy entana",
+      "colByLocation": "Isaky ny toerana"
     },
     "movements": {
       "pillTotal": "fihetsiketsehana",
@@ -241,7 +242,10 @@
       "toastCreated": "Voasoratra ny fihetsiketsehana",
       "toastModified": "Novaina ny fihetsiketsehana",
       "toastDeleted": "Voafafa ny fihetsiketsehana",
-      "insufficientStock": "Tsy ampy ny tahiry: {{name}} dia {{amount}} {{unit}} monja no misy."
+      "colLocation": "Toerana",
+      "fieldLocation": "Toerana",
+      "validationLocation": "Ilaina ny toerana",
+      "insufficientStockAtLocation": "Tsy ampy ny tahiry : {{name}} — {{amount}} {{unit}} misy ao {{location}}"
     },
     "alerts": {
       "statCritical": "Tahiry mafy",
@@ -257,6 +261,12 @@
       "bannerDescription": "Ankehitriny : {{current}} {{unit}} — Fetra : {{threshold}} {{unit}}",
       "orderButton": "Hanao baiko",
       "orderToast": "Baiko hokarakaraina ho an'ny \"{{name}}\" — mbola tsy misy ny sampana mpamatsy."
+    },
+    "locations": {
+      "all": "Rehetra",
+      "ferme": "Toeram-piompiana",
+      "magasinier": "Magasinier",
+      "store": "Store"
     }
   },
   "production": {
