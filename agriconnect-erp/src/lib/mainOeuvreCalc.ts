@@ -4,7 +4,6 @@ export function inPeriode(entry: MainOeuvreEntry, startIso: string, endIso: stri
   return entry.date >= startIso && entry.date <= endIso
 }
 
-/** Total man-days recorded over the period, all activities combined. */
 export function totalJoursHomme(entries: MainOeuvreEntry[], startIso: string, endIso: string): number {
   return entries.filter((e) => inPeriode(e, startIso, endIso)).reduce((sum, e) => sum + e.nbEmployes, 0)
 }
@@ -15,7 +14,6 @@ export interface ActiviteTotal {
   jours: number
 }
 
-/** Man-days per activity, heaviest first. */
 export function totauxParActivite(entries: MainOeuvreEntry[], startIso: string, endIso: string): ActiviteTotal[] {
   const byActivite = new Map<string, ActiviteTotal>()
   for (const entry of entries) {
@@ -28,7 +26,6 @@ export function totauxParActivite(entries: MainOeuvreEntry[], startIso: string, 
   return [...byActivite.values()].sort((a, b) => b.joursHomme - a.joursHomme)
 }
 
-/** Average head count per recorded day. */
 export function moyenneEmployesParJour(entries: MainOeuvreEntry[], startIso: string, endIso: string): number {
   const inRange = entries.filter((e) => inPeriode(e, startIso, endIso))
   const jours = new Set(inRange.map((e) => e.date)).size
