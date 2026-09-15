@@ -69,7 +69,6 @@ export const useClientsStore = create<ClientsState>()(
           state = { ...state, clients: [...(state.clients ?? []), ...SEED_CLIENTS.filter((c) => !known.has(c.id))] }
         }
         if (version < 2) {
-          // The storekeeper went back to being a role and a stock location.
           state = { ...state, clients: (state.clients ?? []).filter((c) => (c.type as string) !== "magasinier") }
         }
         return state
