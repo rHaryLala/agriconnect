@@ -25,7 +25,6 @@ export const ROLE_ICONS: Record<UserRole, LucideIcon> = {
   controleur_interne: Eye,
 }
 
-/** Tailwind classes for the role avatar tile in Rôles & permissions. */
 export const ROLE_ACCENTS: Record<UserRole, string> = {
   admin: "bg-primary/10 text-primary",
   comptable: "bg-info/10 text-info",
