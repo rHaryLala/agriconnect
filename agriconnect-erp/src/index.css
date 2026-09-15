@@ -105,7 +105,6 @@
     }
 
 @media (prefers-reduced-motion: reduce) {
-
     *,
     *::before,
     *::after {
@@ -115,8 +114,6 @@
     }
 }
 
-/* Appearance preferences (Paramètres → Apparence). Tailwind spacing is rem-based,
-   so shrinking the root font size tightens the whole interface at once. */
 html.compact {
     font-size: 14px;
 }
@@ -128,18 +125,8 @@ html.no-animations *::after {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
 }
-/* ==========================================================================
-   Motion design de la vitrine
-   Les effets liés au scroll consomment --p et --pc, publiés par
-   useScrollProgress ; --tilt-*, --mx et --my viennent de useTilt3D.
-   Tous ont une valeur de repli neutre, donc l'aspect reste correct
-   avant l'hydratation ou quand les effets sont désactivés.
-   ========================================================================== */
 
 @layer utilities {
-
-    /* Verre liquide : flou, saturation, et un liseré interne qui simule
-       l'épaisseur de la matière. */
     .glass-liquid {
         background-image: linear-gradient(135deg, rgb(255 255 255 / 0.18), rgb(255 255 255 / 0.05));
         backdrop-filter: blur(20px) saturate(180%);
@@ -161,8 +148,6 @@ html.no-animations *::after {
             0 10px 30px -14px hsl(var(--foreground) / 0.22);
     }
 
-    /* Reflet spéculaire qui suit le pointeur, allumé seulement pendant
-       l'inclinaison — donc jamais au doigt ni en mouvement réduit. */
     .specular::after {
         content: "";
         position: absolute;
@@ -186,36 +171,26 @@ html.no-animations *::after {
         transition: transform 550ms cubic-bezier(0.22, 1, 0.36, 1);
     }
 
-    /* La promotion en couche n'est demandée que pendant le survol, pour ne pas
-       garder en mémoire une couche par carte au repos. */
     .tilt-3d[data-tilting="true"] {
         --tilt-scale: 1.02;
         transition: transform 90ms linear;
         will-change: transform;
     }
 
-    /* Dérive plus lente que la page. */
     .parallax-y {
         transform: translate3d(0, calc(var(--pc, 0) * var(--parallax-range, 3rem)), 0);
     }
 
-    /* La section se redresse en approchant du centre de l'écran. */
     .scroll-tilt {
         transform: perspective(1400px) rotateX(calc(var(--pc, 0) * var(--scroll-tilt-deg, 5deg)));
     }
 
-    /* Le contenu du héros s'éloigne en profondeur quand la page défile. */
     .hero-depth {
         --hero-out: max(var(--pc, 0), 0);
         transform: translate3d(0, calc(var(--hero-out) * 3.5rem), 0) scale(calc(1 - var(--hero-out) * 0.05));
         opacity: calc(1 - var(--hero-out) * 1.1);
     }
 
-    /* Apparition en profondeur : la carte remonte depuis l'arriere-plan en se
-       redressant. La perspective est portee par la transformation elle-meme,
-       donc chaque carte pivote autour de son propre axe, independamment de ses
-       voisines. Seuls transform et opacity sont animes : tout reste au
-       compositeur, sans recalcul de mise en page. */
     .reveal-3d {
         transform:
             perspective(1200px)
@@ -235,22 +210,9 @@ html.no-animations *::after {
         opacity: 1;
     }
 
-    /* Balayage horizontal epingle.
-       La section se fige a l'ecran et le defilement vertical restant pilote la
-       translation de la piste, via --pin publie par useScrollProgress. Toute la
-       mesure tient dans le calc : 100% est la largeur de la piste, 100vw celle
-       de l'ecran, donc la course exacte est connue sans jamais lire la
-       geometrie en JavaScript.
-
-       Tout est conditionne a data-pinned, pose par usePinnedTrack : sans lui le
-       balisage reste la grille verticale, qui est le rendu par defaut. */
     .pin-section[data-pinned="true"] {
-        /* Un ecran pour la section, le reste pour la course horizontale.
-           `lvh` tient compte de la barre d'adresse mobile retractee ; la
-           declaration en `vh` sert de repli aux navigateurs qui l'ignorent. */
         height: calc(100vh + var(--pin-scroll, 150vh));
         height: calc(100lvh + var(--pin-scroll, 150vh));
-        /* La marge interne repousserait le bloc colle sous le haut de l'ecran. */
         padding-block: 0;
     }
 
@@ -277,10 +239,6 @@ html.no-animations *::after {
         flex: 0 0 22rem;
     }
 
-    /* Pendant le balayage, la carte entre aussi par la droite : elle suit la
-       piste puis se pose, au lieu d'apparaitre deja calee a sa place. Les deux
-       regles vont par paire, la seconde devant egaler la specificite de la
-       premiere pour pouvoir la remettre a zero. */
     .pin-section[data-pinned="true"] .reveal-3d {
         --reveal-x: 4rem;
         --reveal-y: 1.5rem;
@@ -292,18 +250,13 @@ html.no-animations *::after {
     }
 }
 
-/* Le flou d'arrière-plan est le poste le plus coûteux du rendu : on l'allège
-   sur petits écrans, où les surfaces se recouvrent davantage. */
 @media (max-width: 640px) {
-
     .glass-liquid,
     .glass-liquid-light {
         backdrop-filter: blur(12px) saturate(150%);
         -webkit-backdrop-filter: blur(12px) saturate(150%);
     }
 
-    /* La carte occupe presque toute la largeur : la meme profondeur d'entree
-       l'enverrait deborder du cadre avant qu'elle ne se pose. */
     .reveal-3d {
         --reveal-y: 2rem;
         --reveal-z: -5rem;
@@ -311,9 +264,7 @@ html.no-animations *::after {
     }
 }
 
-/* Neutralisation complète : préférence système ou réglage Apparence. */
 @media (prefers-reduced-motion: reduce) {
-
     .parallax-y,
     .scroll-tilt,
     .hero-depth,
