@@ -3,7 +3,6 @@ import { persist, createJSONStorage } from "zustand/middleware"
 
 export type AccentColor = "green" | "blue" | "purple" | "amber" | "red" | "pink" | "cyan" | "orange"
 
-/** HSL triplets matching the `--primary` / `--ring` custom properties in index.css. */
 export const ACCENT_COLORS: Record<AccentColor, { hsl: string; swatch: string }> = {
   green: { hsl: "156 78% 29%", swatch: "#0F8A5F" },
   blue: { hsl: "221 83% 53%", swatch: "#2563EB" },
