@@ -154,6 +154,12 @@ export default function LandingPage() {
           overlayClassName="bg-gradient-to-b from-[#06281B]/90 via-[#06281B]/75 to-[#06281B]/95"
         />
 
+        {/* Les deux extremites de la video sont fondues dans la couleur pleine de
+            la section : sans cela, son cadre tranche net sur les sections
+            voisines a l'instant ou elle entre et sort de l'ecran. */}
+        <div className="pointer-events-none absolute inset-x-0 top-0 z-[5] h-40 bg-gradient-to-b from-[#06281B] to-transparent" />
+        <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-40 bg-gradient-to-t from-[#06281B] to-transparent" />
+
         <div className="pin-stage relative z-10">
           <div className="mx-auto max-w-5xl px-6 text-center">
             <Reveal>
