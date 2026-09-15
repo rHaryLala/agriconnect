@@ -40,12 +40,8 @@ export default function SettingsPage() {
   const { canView, canEdit } = usePermission("settings")
   const { collapsed, toggle } = useSettingsPanelStore()
   const [activeTab, setActiveTab] = useState<string>("profil")
-  // Mobile follows the native phone-settings pattern: the list is the screen,
-  // picking an entry pushes its detail view over it.
   const [mobileDetailOpen, setMobileDetailOpen] = useState(false)
 
-  // "administration" and "data" both hold sensitive/technical sections, so both require
-  // settings access beyond "none" — only "account" stays open to every signed-in user.
   const groups = ALL_GROUPS.filter((g) => g === "account" || canView)
   const visibleTabs = TABS.filter((tab) => groups.includes(tab.group))
   const active = visibleTabs.find((tab) => tab.id === activeTab) ?? visibleTabs[0]
@@ -76,7 +72,6 @@ export default function SettingsPage() {
       {!canEdit && <ReadOnlyBanner />}
 
       <div className="flex flex-col gap-6 lg:flex-row lg:gap-8">
-        {/* Desktop: collapsible sidebar */}
         <aside className={`hidden shrink-0 lg:block ${collapsed ? "lg:w-16" : "lg:w-64"} transition-[width] duration-300`}>
           <div className={`mb-4 flex ${collapsed ? "justify-center" : "justify-end"}`}>
             <Button
@@ -117,7 +112,6 @@ export default function SettingsPage() {
           ))}
         </aside>
 
-        {/* Mobile / tablet: native-style master list, then detail with a back button */}
         <div className="lg:hidden">
           {!mobileDetailOpen ? (
             <div className="animate-content-in flex flex-col gap-5">
@@ -159,7 +153,6 @@ export default function SettingsPage() {
           )}
         </div>
 
-        {/* Desktop content */}
         <section key={active.id} className="animate-content-in hidden min-w-0 flex-1 lg:block">
           <h2 className="mb-6 text-2xl font-bold">{t(active.labelKey)}</h2>
           {renderSection()}
