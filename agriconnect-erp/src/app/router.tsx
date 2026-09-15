@@ -16,7 +16,6 @@ export const router = createBrowserRouter([
     errorElement: <RouteError />,
     children: [
       {
-        // Vitrine publique — page d'accueil, accessible à tout le monde
         path: "/",
         lazy: async () => {
           const { default: Component } = await import("@/features/marketing/LandingPage")
