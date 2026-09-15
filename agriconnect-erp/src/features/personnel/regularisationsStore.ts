@@ -1,7 +1,6 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 
-/** Settlement recorded by an accountant against a payroll deduction. */
 export interface Regularisation {
   id: string
   invoiceId: string
