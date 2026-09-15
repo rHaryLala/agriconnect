@@ -31,7 +31,6 @@ function buildStore(storageKey: string, idPrefix: string, seed: BovinReferential
   )
 }
 
-/** Animal categories within the herd — veau, génisse, and whatever the farm adds. */
 export const useBovinTypesStore = buildStore("agriconnect-bovin-types", "bovin-type", [
   { id: "bovin-type-veau", nom: "Veau" },
   { id: "bovin-type-genisse", nom: "Génisse" },
