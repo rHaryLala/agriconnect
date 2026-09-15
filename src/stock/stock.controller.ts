@@ -29,7 +29,7 @@ export class StockController {
   }
 
   @Get('items')
-  @Roles('ADMIN', 'OUVRIER', 'COMPTABLE') // lecture ouverte aux trois rôles
+  @Roles('ADMIN', 'OUVRIER', 'COMPTABLE', 'MAGASINIER', 'CONTROLEUR_INTERNE') // lecture ouverte aux trois rôles
   findAllItems(@CurrentUser() user: AuthUser) {
     return this.stockService.findAllItems(user.farmId);
   }
@@ -49,7 +49,7 @@ export class StockController {
   // ---------- Mouvements ----------
 
   @Post('items/:itemId/movements')
-  @Roles('ADMIN', 'OUVRIER')
+  @Roles('ADMIN', 'OUVRIER', 'MAGASINIER')
   registerMovement(
     @Param('itemId') itemId: string,
     @Body() dto: CreateStockMovementDto,
@@ -77,13 +77,13 @@ export class StockController {
   // ---------- Lecture agrégée ----------
 
   @Get('historique')
-  @Roles('ADMIN', 'OUVRIER', 'COMPTABLE')
+  @Roles('ADMIN', 'OUVRIER', 'COMPTABLE', 'MAGASINIER', 'CONTROLEUR_INTERNE')
   historique(@Query() filters: FilterHistoriqueDto, @CurrentUser() user: AuthUser) {
     return this.stockService.historique(user.farmId, filters);
   }
 
   @Get('alertes')
-  @Roles('ADMIN', 'COMPTABLE') // cohérent avec la matrice : Employé de terrain exclu des rapports
+  @Roles('ADMIN', 'COMPTABLE', 'CONTROLEUR_INTERNE') // cohérent avec la matrice : Employé de terrain exclu des rapports
   alertes(@CurrentUser() user: AuthUser) {
     return this.stockService.alertes(user.farmId);
   }
