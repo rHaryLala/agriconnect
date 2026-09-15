@@ -1,10 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 
-/**
- * Payroll is prepared on a date that moves from month to month — in practice
- * somewhere between the 17th and the 23rd — so the window is configurable.
- */
 interface PayrollSettingsState {
   jourDebut: number
   jourFin: number
