@@ -17,7 +17,7 @@ export function computeTotals(transactions: FinanceTransaction[]) {
 }
 
 export interface MonthlyPoint {
-  mois: string // "AAAA-MM"
+  mois: string
   recettes: number
   depenses: number
 }
