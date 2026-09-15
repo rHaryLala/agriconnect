@@ -63,7 +63,6 @@ export function BovinEntryDialog({ open, onOpenChange, onSubmit }: BovinEntryDia
   const genre = useWatch({ control, name: "genre" })
 
   async function handleFormSubmit(values: FormValues) {
-    // Productivity and reproductive state only make sense for females.
     await onSubmit(values.genre === "femelle" ? values : { ...values, productivite: undefined, etat: undefined })
     onOpenChange(false)
   }
