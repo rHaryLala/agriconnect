@@ -43,7 +43,6 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
   const [dateFin, setDateFin] = useState("")
   const [locationFilter, setLocationFilter] = useState<StockLocation | "tous">("tous")
 
-  // Balances are followed per location, so a movement shows what is left where it happened.
   const runningBalances = useMemo(() => {
     const merged: Record<string, number> = {}
     articles.forEach((a) => {
