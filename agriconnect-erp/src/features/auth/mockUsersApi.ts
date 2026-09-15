@@ -3,7 +3,6 @@ import { MOCK_USERS } from "@/features/auth/mockUsers"
 
 const STORAGE_KEY = "agriconnect-mock-users"
 const SEED_VERSION_KEY = "agriconnect-mock-users-seed"
-// Bump when MOCK_USERS changes so existing browsers pick up the new demo accounts.
 const SEED_VERSION = "2"
 const LATENCY_MS = 350
 
