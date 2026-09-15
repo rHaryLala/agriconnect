@@ -8,7 +8,6 @@ import {
   type PermissionAction,
 } from "@/lib/permissions"
 
-/** Rights of the signed-in account, role preset adjusted by its own checklist. */
 export function useEffectivePermissions() {
   const user = useAuthStore((s) => s.user)
   const override = useUserPermissionsStore((s) => (user ? s.overrides[user.id] : undefined))
