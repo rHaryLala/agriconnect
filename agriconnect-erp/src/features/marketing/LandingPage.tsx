@@ -164,13 +164,15 @@ export default function LandingPage() {
           </div>
 
           <div className="pin-track mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 px-6 text-left sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+            {/* Pendant le balayage, la piste fait deja arriver les cartes une par
+                une : un decalage supplementaire ne ferait que les retarder. */}
             {FEATURE_KEYS.map((key, i) => (
               <FeatureCard
                 key={key}
                 icon={FEATURE_ICONS[i]}
                 title={t(`landing.features.${key}.title`)}
                 description={t(`landing.features.${key}.description`)}
-                delayMs={(i % 3) * 110}
+                delayMs={pinned ? 0 : (i % 3) * 110}
               />
             ))}
           </div>

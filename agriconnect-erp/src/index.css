@@ -219,7 +219,7 @@ html.no-animations *::after {
     .reveal-3d {
         transform:
             perspective(1200px)
-            translate3d(0, var(--reveal-y, 3rem), var(--reveal-z, -11rem))
+            translate3d(var(--reveal-x, 0rem), var(--reveal-y, 3rem), var(--reveal-z, -11rem))
             rotateX(var(--reveal-rx, 14deg));
         opacity: 0;
         transition:
@@ -228,6 +228,7 @@ html.no-animations *::after {
     }
 
     .reveal-3d[data-visible="true"] {
+        --reveal-x: 0rem;
         --reveal-y: 0rem;
         --reveal-z: 0rem;
         --reveal-rx: 0deg;
@@ -274,6 +275,20 @@ html.no-animations *::after {
 
     .pin-section[data-pinned="true"] .pin-track > * {
         flex: 0 0 22rem;
+    }
+
+    /* Pendant le balayage, la carte entre aussi par la droite : elle suit la
+       piste puis se pose, au lieu d'apparaitre deja calee a sa place. Les deux
+       regles vont par paire, la seconde devant egaler la specificite de la
+       premiere pour pouvoir la remettre a zero. */
+    .pin-section[data-pinned="true"] .reveal-3d {
+        --reveal-x: 4rem;
+        --reveal-y: 1.5rem;
+    }
+
+    .pin-section[data-pinned="true"] .reveal-3d[data-visible="true"] {
+        --reveal-x: 0rem;
+        --reveal-y: 0rem;
     }
 }
 
