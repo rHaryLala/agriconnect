@@ -137,7 +137,7 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="relative overflow-clip bg-[#06281B] px-6 py-20 sm:py-28">
+      <section className="relative overflow-clip bg-[#06281B] px-6 py-20 sm:py-28 lg:py-36">
         <SectionVideoBackdrop
           videoSrc="/backgrounds/back.mp4"
           posterSrc="/backgrounds/back-poster.webp"
@@ -151,7 +151,7 @@ export default function LandingPage() {
             <p className="mx-auto mt-3 max-w-xl text-sm text-white/70">{t("landing.features.subtitle")}</p>
           </Reveal>
 
-          <div className="mt-12 grid grid-cols-1 gap-4 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+          <div className="mt-10 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {FEATURE_KEYS.map((key, i) => (
               <FeatureCard
                 key={key}

@@ -244,6 +244,14 @@ html.no-animations *::after {
         backdrop-filter: blur(12px) saturate(150%);
         -webkit-backdrop-filter: blur(12px) saturate(150%);
     }
+
+    /* La carte occupe presque toute la largeur : la meme profondeur d'entree
+       l'enverrait deborder du cadre avant qu'elle ne se pose. */
+    .reveal-3d {
+        --reveal-y: 2rem;
+        --reveal-z: -5rem;
+        --reveal-rx: 9deg;
+    }
 }
 
 /* Neutralisation complète : préférence système ou réglage Apparence. */
