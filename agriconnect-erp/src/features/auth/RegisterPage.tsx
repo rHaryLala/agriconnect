@@ -25,13 +25,7 @@ export default function RegisterPage() {
   const [confirmPassword, setConfirmPassword] = useState("")
   const [loading, setLoading] = useState(false)
 
-  const {
-  ref: cardTiltRef,
-  style: cardTiltStyle,
-  onMouseMove: cardTiltOnMouseMove,
-  onMouseEnter: cardTiltOnMouseEnter,
-  onMouseLeave: cardTiltOnMouseLeave,
-} = useTilt3D<HTMLDivElement>(3)
+  const { ref: cardTiltRef, handlers: cardTiltHandlers } = useTilt3D<HTMLDivElement>(3)
 
   const HIGHLIGHTS = [
     { icon: Sprout, text: t("auth.register.highlight1") },
@@ -88,13 +82,7 @@ export default function RegisterPage() {
         </div>
 
         <div className="relative flex flex-1 items-center justify-center px-4 pb-10 pt-4 sm:px-6 lg:flex-none lg:py-10">
-          <div
-            ref={cardTiltRef}
-            onMouseMove={cardTiltOnMouseMove}
-            onMouseEnter={cardTiltOnMouseEnter}
-            onMouseLeave={cardTiltOnMouseLeave}
-            style={cardTiltStyle}
-          >
+          <div ref={cardTiltRef} {...cardTiltHandlers} className="tilt-3d">
             <div className="mb-7 text-center lg:text-left">
               <p className="font-serif text-2xl">{t("auth.register.cardTitle")}</p>
               <p className="mt-1 text-sm text-white/70">{t("auth.register.cardSubtitle")}</p>
