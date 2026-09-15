@@ -8,7 +8,6 @@ interface PermissionChecklistProps {
   onChange: (permissions: Permission[]) => void
 }
 
-/** Module x action grid of checkboxes, used to tailor an account's rights. */
 export function PermissionChecklist({ permissions, disabled = false, onChange }: PermissionChecklistProps) {
   const { t } = useTranslation()
 
