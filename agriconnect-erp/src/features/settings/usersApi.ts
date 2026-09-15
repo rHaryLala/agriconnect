@@ -20,7 +20,6 @@ function toFrontendUser(u: BackendUser): User {
     email: u.email,
     role: toFrontendRole(u.role),
     avatarInitials: `${u.firstName[0] ?? ""}${u.lastName[0] ?? ""}`.toUpperCase(),
-    // The backend has no account-status field yet; every account it returns is active.
     status: "actif",
   }
 }
@@ -36,7 +35,7 @@ export async function fetchUsers(token: string): Promise<User[]> {
   return data.map(toFrontendUser)
 }
 
-const TEMP_INITIAL_PASSWORD = "1234qwerty" // TODO: Générer un mot de passe temporaire aléatoire et l'envoyer par email à l'utilisateur
+const TEMP_INITIAL_PASSWORD = "1234qwerty"
 
 export async function createUser(token: string, values: { name: string; email: string; role: UserRole; status?: UserStatus }): Promise<User> {
   if (USE_MOCK_API) return mockCreateUser(values)
