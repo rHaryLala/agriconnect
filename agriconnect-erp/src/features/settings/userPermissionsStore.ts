@@ -2,13 +2,6 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { Permission } from "@/lib/permissions"
 
-/**
- * Per-account permission checklists, keyed by user id. An account without an
- * entry here simply follows the preset of its role.
- *
- * Kept on the client for now: the backend user model has no permission field
- * yet, so overrides are not sent along with the account.
- */
 interface UserPermissionsState {
   overrides: Record<string, Permission[]>
   setOverride: (userId: string, permissions: Permission[]) => void
