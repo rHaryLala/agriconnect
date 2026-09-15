@@ -32,12 +32,10 @@ function groupBy(
   return [...totals.values()].sort((a, b) => b.quantiteKg - a.quantiteKg)
 }
 
-/** Fertilizer spread per crop, heaviest first. */
 export function totauxParCulture(applications: EngraisApplication[], startIso: string, endIso: string): EngraisTotal[] {
   return groupBy(applications, startIso, endIso, (a) => a.culture)
 }
 
-/** Fertilizer spread per product, heaviest first. */
 export function totauxParTypeEngrais(applications: EngraisApplication[], startIso: string, endIso: string): EngraisTotal[] {
   return groupBy(applications, startIso, endIso, (a) => a.typeEngrais)
 }
