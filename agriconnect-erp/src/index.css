@@ -128,3 +128,142 @@ html.no-animations *::after {
     animation-iteration-count: 1 !important;
     transition-duration: 0.01ms !important;
 }
+/* ==========================================================================
+   Motion design de la vitrine
+   Les effets liés au scroll consomment --p et --pc, publiés par
+   useScrollProgress ; --tilt-*, --mx et --my viennent de useTilt3D.
+   Tous ont une valeur de repli neutre, donc l'aspect reste correct
+   avant l'hydratation ou quand les effets sont désactivés.
+   ========================================================================== */
+
+@layer utilities {
+
+    /* Verre liquide : flou, saturation, et un liseré interne qui simule
+       l'épaisseur de la matière. */
+    .glass-liquid {
+        background-image: linear-gradient(135deg, rgb(255 255 255 / 0.18), rgb(255 255 255 / 0.05));
+        backdrop-filter: blur(20px) saturate(180%);
+        -webkit-backdrop-filter: blur(20px) saturate(180%);
+        border: 1px solid rgb(255 255 255 / 0.22);
+        box-shadow:
+            inset 0 1px 0 0 rgb(255 255 255 / 0.30),
+            inset 0 -1px 0 0 rgb(255 255 255 / 0.05),
+            0 10px 36px -12px rgb(0 0 0 / 0.35);
+    }
+
+    .glass-liquid-light {
+        background-image: linear-gradient(135deg, rgb(255 255 255 / 0.88), rgb(255 255 255 / 0.58));
+        backdrop-filter: blur(20px) saturate(160%);
+        -webkit-backdrop-filter: blur(20px) saturate(160%);
+        border: 1px solid rgb(255 255 255 / 0.75);
+        box-shadow:
+            inset 0 1px 0 0 rgb(255 255 255 / 0.9),
+            0 10px 30px -14px hsl(var(--foreground) / 0.22);
+    }
+
+    /* Reflet spéculaire qui suit le pointeur, allumé seulement pendant
+       l'inclinaison — donc jamais au doigt ni en mouvement réduit. */
+    .specular::after {
+        content: "";
+        position: absolute;
+        inset: 0;
+        border-radius: inherit;
+        background: radial-gradient(18rem circle at var(--mx, 50%) var(--my, 50%),
+                rgb(255 255 255 / 0.30), transparent 45%);
+        opacity: 0;
+        transition: opacity 350ms ease;
+        pointer-events: none;
+    }
+
+    .specular[data-tilting="true"]::after {
+        opacity: 1;
+    }
+
+    .tilt-3d {
+        --tilt-x: 0deg;
+        --tilt-y: 0deg;
+        transform: perspective(1000px) rotateX(var(--tilt-x)) rotateY(var(--tilt-y)) scale3d(var(--tilt-scale, 1), var(--tilt-scale, 1), 1);
+        transition: transform 550ms cubic-bezier(0.22, 1, 0.36, 1);
+    }
+
+    /* La promotion en couche n'est demandée que pendant le survol, pour ne pas
+       garder en mémoire une couche par carte au repos. */
+    .tilt-3d[data-tilting="true"] {
+        --tilt-scale: 1.02;
+        transition: transform 90ms linear;
+        will-change: transform;
+    }
+
+    /* Dérive plus lente que la page. */
+    .parallax-y {
+        transform: translate3d(0, calc(var(--pc, 0) * var(--parallax-range, 3rem)), 0);
+    }
+
+    /* La section se redresse en approchant du centre de l'écran. */
+    .scroll-tilt {
+        transform: perspective(1400px) rotateX(calc(var(--pc, 0) * var(--scroll-tilt-deg, 5deg)));
+    }
+
+    /* Le contenu du héros s'éloigne en profondeur quand la page défile. */
+    .hero-depth {
+        --hero-out: max(var(--pc, 0), 0);
+        transform: translate3d(0, calc(var(--hero-out) * 3.5rem), 0) scale(calc(1 - var(--hero-out) * 0.05));
+        opacity: calc(1 - var(--hero-out) * 1.1);
+    }
+
+    /* Apparition en profondeur : la carte remonte depuis l'arriere-plan en se
+       redressant. La perspective est portee par la transformation elle-meme,
+       donc chaque carte pivote autour de son propre axe, independamment de ses
+       voisines. Seuls transform et opacity sont animes : tout reste au
+       compositeur, sans recalcul de mise en page. */
+    .reveal-3d {
+        transform:
+            perspective(1200px)
+            translate3d(0, var(--reveal-y, 3rem), var(--reveal-z, -11rem))
+            rotateX(var(--reveal-rx, 14deg));
+        opacity: 0;
+        transition:
+            transform 900ms cubic-bezier(0.22, 1, 0.36, 1),
+            opacity 700ms ease-out;
+    }
+
+    .reveal-3d[data-visible="true"] {
+        --reveal-y: 0rem;
+        --reveal-z: 0rem;
+        --reveal-rx: 0deg;
+        opacity: 1;
+    }
+}
+
+/* Le flou d'arrière-plan est le poste le plus coûteux du rendu : on l'allège
+   sur petits écrans, où les surfaces se recouvrent davantage. */
+@media (max-width: 640px) {
+
+    .glass-liquid,
+    .glass-liquid-light {
+        backdrop-filter: blur(12px) saturate(150%);
+        -webkit-backdrop-filter: blur(12px) saturate(150%);
+    }
+}
+
+/* Neutralisation complète : préférence système ou réglage Apparence. */
+@media (prefers-reduced-motion: reduce) {
+
+    .parallax-y,
+    .scroll-tilt,
+    .hero-depth,
+    .reveal-3d,
+    .tilt-3d {
+        transform: none !important;
+        opacity: 1 !important;
+    }
+}
+
+html.no-animations .parallax-y,
+html.no-animations .scroll-tilt,
+html.no-animations .hero-depth,
+html.no-animations .reveal-3d,
+html.no-animations .tilt-3d {
+    transform: none !important;
+    opacity: 1 !important;
+}
