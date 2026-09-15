@@ -7,10 +7,6 @@ interface RevealProps {
   className?: string
 }
 
-/**
- * Apparition à l'entrée dans le viewport. L'observateur se déconnecte après le
- * premier passage : le contenu ne rejoue pas l'animation au défilement inverse.
- */
 export function Reveal({ children, delayMs = 0, className = "" }: RevealProps) {
   const { ref, visible } = useScrollReveal<HTMLDivElement>()
 
