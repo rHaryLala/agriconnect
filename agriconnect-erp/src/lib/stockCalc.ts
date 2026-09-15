@@ -1,10 +1,5 @@
 import { DEFAULT_STOCK_LOCATION, STOCK_LOCATIONS, type StockArticle, type StockLocation, type StockMovement } from "@/types/stock"
 
-/**
- * Signed effect of a movement on a location's stock, or on the farm-wide total
- * when no location is given. A transfer leaves its origin and enters its
- * destination, so it nets to zero farm-wide.
- */
 function movementDelta(movement: StockMovement, location?: StockLocation): number {
   if (movement.type === "transfert") {
     if (!location) return 0
@@ -20,12 +15,10 @@ function movementsFor(article: StockArticle, movements: StockMovement[]): StockM
   return movements.filter((m) => m.articleId === article.id)
 }
 
-/** Opening stock is held at the farm, so it only counts towards that location. */
 function openingStock(article: StockArticle, location?: StockLocation): number {
   return !location || location === DEFAULT_STOCK_LOCATION ? article.quantiteInitiale : 0
 }
 
-/** Stock held for an article, farm-wide by default or restricted to one location. */
 export function computeCurrentStock(article: StockArticle, movements: StockMovement[], location?: StockLocation): number {
   return movementsFor(article, movements).reduce(
     (total, m) => total + movementDelta(m, location),
@@ -57,8 +50,6 @@ export function computeRunningBalances(
   for (const m of forArticle) {
     const delta = movementDelta(m, location)
     balance += delta
-    // A movement that does not touch this location keeps the previous balance
-    // but must not claim it as its own running total.
     if (delta !== 0 || !location) result[m.id] = balance
   }
   return result
@@ -72,10 +63,6 @@ export interface LocationDebt {
   reste: number
 }
 
-/**
- * Outstanding amounts owed between locations: every transfer valued at a price
- * creates a debt from the receiving location towards the sending one.
- */
 export function computeLocationDebts(movements: StockMovement[]): LocationDebt[] {
   const byPair = new Map<string, LocationDebt>()
   for (const m of movements) {
@@ -91,10 +78,6 @@ export function computeLocationDebts(movements: StockMovement[]): LocationDebt[]
     .sort((a, b) => b.reste - a.reste)
 }
 
-/**
- * Difference between the quantity weighed in and the quantity announced on a
- * reception. Null when the reception was not double-checked.
- */
 export function computeReceptionEcart(movement: StockMovement): number | null {
   if (movement.type !== "entree" || movement.quantiteAnnoncee === undefined) return null
   return movement.quantite - movement.quantiteAnnoncee
