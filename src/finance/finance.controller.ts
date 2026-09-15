@@ -16,7 +16,7 @@ type AuthUser = {id: string, role:string, farmId: string};
 @ApiBearerAuth()
 @Controller()
 @UseGuards(JwtAuthGuard, RolesGuard)  // authentification obligatoire sur toutes les routes
-@Roles('ADMIN', 'COMPTABLE')
+@Roles('ADMIN', 'COMPTABLE', 'CONTROLEUR_INTERNE')
 export class FinanceController
 {
     constructor(private financeService: FinanceService) {}
