@@ -88,7 +88,6 @@ export function CarburantTab({ canEdit }: { canEdit: boolean }) {
       date: values.date,
       type: values.type as CarburantMouvementType,
       quantiteLitres: values.quantiteLitres,
-      // A refill goes into the shared tank, so it is not attached to a machine.
       engin: values.type === "sortie" ? values.engin : "",
       observation: values.observation,
     }
