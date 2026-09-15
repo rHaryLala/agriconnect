@@ -26,7 +26,6 @@ const DEFAULT_RECETTES: CategoryProfile[] = [
   { id: "rec-recoltes", nom: "Vente de récoltes" },
 ]
 
-/** Re-adds default categories introduced after a user's list was first persisted. */
 function mergeDefaults(persisted: CategoryProfile[], defaults: CategoryProfile[]): CategoryProfile[] {
   const known = new Set(persisted.map((c) => c.id))
   return [...persisted, ...defaults.filter((c) => !known.has(c.id))]
