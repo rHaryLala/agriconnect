@@ -14,7 +14,7 @@ type AuthUser = {id: string, role:string, farmId: string};
 
 @ApiTags('finance')
 @ApiBearerAuth()
-@Controller()
+@Controller('finance')
 @UseGuards(JwtAuthGuard, RolesGuard)  // authentification obligatoire sur toutes les routes
 @Roles('ADMIN', 'COMPTABLE', 'CONTROLEUR_INTERNE')
 export class FinanceController
@@ -22,6 +22,7 @@ export class FinanceController
     constructor(private financeService: FinanceService) {}
 
     @Post('transactions')
+    @Roles('ADMIN', 'COMPTABLE')
     create(@Body() dto: CreateTransactionDto, @CurrentUser() user: AuthUser)
     {
         return this.financeService.create(dto, user.id, user.farmId);
@@ -52,10 +53,10 @@ export class FinanceController
     }
 
     @Post('transactions/correction')
+    @Roles('ADMIN', 'COMPTABLE')
     correct(@Body() dto: CorrectTransactionDto, @CurrentUser() user: AuthUser)
     {
         return this.financeService.correct(dto, user.id, user.farmId)
     }
-
     
 }
