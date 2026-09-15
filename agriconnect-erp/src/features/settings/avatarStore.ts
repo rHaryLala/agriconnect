@@ -1,10 +1,6 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 
-/**
- * Profile photos are stored locally as data URLs: the backend user contract has no
- * avatar field, so uploading one server-side isn't possible yet.
- */
 interface AvatarState {
   avatars: Record<string, string>
   setAvatar: (userId: string, dataUrl: string) => void
