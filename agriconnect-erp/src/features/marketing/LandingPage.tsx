@@ -39,16 +39,10 @@ export default function LandingPage() {
   const { t } = useTranslation()
   const [scrolled, setScrolled] = useState(false)
 
-  // Le defilement mobile est pilote par le compositeur : un effet recalcule en
-  // JavaScript a chaque frame y accuse un retard visible. Les effets lies au
-  // scroll restent donc au pointeur fin ; les apparitions, elles, sont de
-  // simples transitions CSS et fonctionnent partout.
   const [scrollEffects] = useState(supportsHover)
   const heroRef = useScrollProgress<HTMLElement>(scrollEffects)
   const offlineRef = useScrollProgress<HTMLElement>(scrollEffects)
 
-  // Le balayage horizontal se coupe de lui-meme la ou il gene ; la section
-  // n'est suivie que quand il est reellement en service.
   const pinned = usePinnedTrack()
   const featuresRef = useScrollProgress<HTMLElement>(pinned)
 
@@ -62,9 +56,6 @@ export default function LandingPage() {
   }, [])
 
   return (
-    // `overflow-clip` et non `overflow-hidden` : le second ferait de la page un
-    // conteneur de defilement, ce qui neutraliserait le fond video colle de la
-    // section Fonctionnalites.
     <div className="min-h-screen overflow-x-clip bg-white">
       <header
         className={`sticky top-0 z-40 flex h-16 items-center justify-between border-b px-6 backdrop-blur-xl backdrop-saturate-150 transition-[background-color,border-color,box-shadow] duration-500 ${
@@ -107,9 +98,6 @@ export default function LandingPage() {
 
       <section ref={heroRef} className="relative overflow-hidden px-6 py-20 sm:py-28">
         <HeroSlideshow />
-        {/* L'animation d'entree et l'effet de profondeur pilotent tous deux
-            `transform` ; une animation l'emporte sur la propriete dans la
-            cascade, il leur faut donc chacune leur noeud. */}
         <div className="hero-depth relative z-10 mx-auto max-w-3xl">
           <div className="animate-content-in text-center">
             <span className="glass-liquid mb-6 inline-flex items-center gap-1.5 rounded-full px-3 py-1 text-xs text-white/90">
@@ -154,9 +142,6 @@ export default function LandingPage() {
           overlayClassName="bg-gradient-to-b from-[#06281B]/90 via-[#06281B]/75 to-[#06281B]/95"
         />
 
-        {/* Les deux extremites de la video sont fondues dans la couleur pleine de
-            la section : sans cela, son cadre tranche net sur les sections
-            voisines a l'instant ou elle entre et sort de l'ecran. */}
         <div className="pointer-events-none absolute inset-x-0 top-0 z-[5] h-40 bg-gradient-to-b from-[#06281B] to-transparent" />
         <div className="pointer-events-none absolute inset-x-0 bottom-0 z-[5] h-40 bg-gradient-to-t from-[#06281B] to-transparent" />
 
@@ -170,8 +155,6 @@ export default function LandingPage() {
           </div>
 
           <div className="pin-track mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 px-6 text-left sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
-            {/* Pendant le balayage, la piste fait deja arriver les cartes une par
-                une : un decalage supplementaire ne ferait que les retarder. */}
             {FEATURE_KEYS.map((key, i) => (
               <FeatureCard
                 key={key}
@@ -196,8 +179,6 @@ export default function LandingPage() {
             <p className="mx-auto mt-3 max-w-xl text-sm text-white/70">{t("landing.offline.subtitle")}</p>
           </Reveal>
 
-          {/* La grille bascule d'un leger angle vers sa position de repos quand
-              elle traverse le centre de l'ecran. */}
           <div className="scroll-tilt mt-10 grid grid-cols-1 gap-4 text-left [--scroll-tilt-deg:6deg] sm:grid-cols-2">
             <Reveal className="group">
               <div className="glass-liquid h-full rounded-xl p-6 transition-transform duration-500 ease-out group-hover:-translate-y-1.5">
