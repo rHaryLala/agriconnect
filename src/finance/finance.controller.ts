@@ -2,7 +2,6 @@ import { Controller, Get, Post, Body, Param, Query, UseGuards } from "@nestjs/co
 import { ApiTags, ApiBearerAuth } from "@nestjs/swagger";
 import { JwtAuthGuard } from "../auth/guards/jwt-auth.guard";
 import { RolesGuard } from "../auth/guards/roles.guard";
-import { Role } from "@prisma/client";
 import { CurrentUser } from "../auth/decorators/current-user.decorator";
 import { FinanceService } from "./finance.service";
 import { CreateTransactionDto } from "./dto/create-transaction.dto";
