@@ -92,7 +92,6 @@ export interface RendementRow {
   recolte: number
   unite: string
   surfaceHa: number
-  /** Harvest per hectare, null when no surface was recorded for the article. */
   rendement: number | null
 }
 
@@ -101,12 +100,6 @@ function pushRendement(rows: RendementRow[], article: string, recolte: number, u
   rows.push({ article, recolte, unite, surfaceHa, rendement: surfaceHa > 0 ? recolte / surfaceHa : null })
 }
 
-/**
- * Harvest and yield of every article actually recorded over the period: the
- * crops entered in Agriculture, the rice and bean lines, and any custom
- * production type the farm added. Nothing is hard-coded, so a new article shows
- * up in the report as soon as it is recorded.
- */
 export function buildRendementRows(
   period: { start: string; end: string },
   data: {
