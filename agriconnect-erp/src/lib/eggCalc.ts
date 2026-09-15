@@ -5,14 +5,6 @@ export function totalOeufs(production: Record<EggCategory, number>): number {
   return EGG_CATEGORIES.reduce((sum, cat) => sum + (production[cat] ?? 0), 0)
 }
 
-export function totalOeufsNormaux(production: Record<EggCategory, number>): number {
-  return production.gmNormal + production.pmNormal
-}
-
-export function totalOeufsCasses(production: Record<EggCategory, number>): number {
-  return production.gmCasse + production.pmCasse
-}
-
 export function totalPoules(entry: PouleEntry): number {
   return entry.cages.reduce((sum, c) => sum + c.nbPoules, 0)
 }
