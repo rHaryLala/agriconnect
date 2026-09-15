@@ -5,9 +5,12 @@ import { prefersReducedMotion, watchMotionPreference } from "@/lib/motion"
  * Publie l'avancée d'un élément dans le viewport sous forme de variables CSS,
  * que les feuilles de style consomment pour le parallaxe et les rotations 3D.
  *
- *   --p   0 quand le haut de l'élément touche le bas de l'écran, 1 quand son
- *         bas touche le haut de l'écran.
- *   --pc  le même signal recentré sur [-1, 1], 0 au milieu de la traversée.
+ *   --p    0 quand le haut de l'élément touche le bas de l'écran, 1 quand son
+ *          bas touche le haut de l'écran.
+ *   --pc   le même signal recentré sur [-1, 1], 0 au milieu de la traversée.
+ *   --pin  avancée de la phase épinglée d'un élément plus haut que l'écran :
+ *          0 tant que son haut n'a pas atteint le haut de l'écran, 1 quand son
+ *          bas atteint le bas. Adouci aux deux extrémités (voir pinCurve).
  *
  * Le coût est tenu par trois choix : un seul écouteur de scroll pour toute la
  * page, une seule frame d'animation qui met à jour tous les éléments suivis, et
@@ -33,6 +36,24 @@ function measure(item: Tracked) {
   item.height = rect.height
 }
 
+function clamp01(value: number) {
+  return value < 0 ? 0 : value > 1 ? 1 : value
+}
+
+// Part de la phase épinglée laissée immobile à chaque extrémité.
+const PIN_LEAD = 0.08
+
+/**
+ * Le balayage ne consomme pas toute la phase épinglée : un temps mort à chaque
+ * bout évite qu'il démarre ou s'arrête net à l'instant précis où la section
+ * s'accroche puis se décroche. Le lissage entre les deux est un ease-in-out à
+ * dérivée nulle aux extrémités, donc sans rupture de vitesse.
+ */
+function pinCurve(raw: number) {
+  const t = clamp01((raw - PIN_LEAD) / (1 - PIN_LEAD * 2))
+  return t * t * (3 - 2 * t)
+}
+
 function paint() {
   frame = 0
   const viewportHeight = window.innerHeight
@@ -42,9 +63,14 @@ function paint() {
     // La traversée complète couvre la hauteur de l'élément plus celle de l'écran.
     const span = item.height + viewportHeight
     const raw = span === 0 ? 1 : (scrollY + viewportHeight - item.top) / span
-    const p = raw < 0 ? 0 : raw > 1 ? 1 : raw
+    const p = clamp01(raw)
     item.el.style.setProperty("--p", p.toFixed(4))
     item.el.style.setProperty("--pc", (p * 2 - 1).toFixed(4))
+
+    // Un élément plus court que l'écran ne s'épingle jamais : sa phase reste à 0.
+    const pinSpan = item.height - viewportHeight
+    const pinRaw = pinSpan <= 0 ? 0 : (scrollY - item.top) / pinSpan
+    item.el.style.setProperty("--pin", pinCurve(clamp01(pinRaw)).toFixed(4))
   }
 }
 
@@ -129,6 +155,7 @@ export function useScrollProgress<T extends HTMLElement>(enabled = true) {
         // Position de repos : l'effet est neutralisé, jamais figé à mi-course.
         el!.style.setProperty("--p", "1")
         el!.style.setProperty("--pc", "0")
+        el!.style.setProperty("--pin", "0")
       }
     }
 
