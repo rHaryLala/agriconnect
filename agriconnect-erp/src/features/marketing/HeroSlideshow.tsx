@@ -60,6 +60,7 @@ export function HeroSlideshow() {
 
   return (
     <div className="absolute inset-0 overflow-hidden">
+      <div className="parallax-y absolute inset-x-0 -inset-y-[10%] [--parallax-range:3.5rem]">
       {IMAGE_NAMES.map((name, i) => {
         if (!loaded.has(i)) return null
         const active = i === index
@@ -82,6 +83,7 @@ export function HeroSlideshow() {
           </picture>
         )
       })}
+      </div>
 
       <div className="absolute inset-0 bg-gradient-to-b from-black/30 via-black/20 to-black/50" />
       <div className="absolute inset-0 bg-gradient-to-t from-black/40 via-transparent to-transparent" />
