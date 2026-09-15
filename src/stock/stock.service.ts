@@ -4,6 +4,8 @@ import { CreateStockDto } from './dto/create-stock.dto';
 import { UpdateStockDto } from './dto/update-stock.dto';
 import { CreateStockMovementDto } from './dto/create-stock-movement.dto';
 
+const SEUIL_ECART_REPESAGE_PERCENT = 5;
+
 @Injectable()
 export class StockService {
   constructor(private prisma: PrismaService) {}
@@ -39,60 +41,63 @@ export class StockService {
 
   // ---------- StockMovement (entrées / sorties / ajustements) ----------
 
-  async registerMovement(itemId: string, dto: CreateStockMovementDto, userId: string, farmId: string) {
-    const item = await this.findOneItem(itemId, farmId); // réutilise la vérification ci-dessus
 
-    // RG-02 : un OUT ne peut jamais rendre le stock négatif.
-    // AJUSTEMENT (RG-03) est volontairement exclu de cette règle — c'est
-    // justement fait pour corriger un écart, pas pour en créer un.
-    if (dto.type === 'OUT' && item.quantity < dto.quantity) {
-      throw new BadRequestException(
-        `Stock insuffisant : ${item.quantity} ${item.unit} disponible(s), ${dto.quantity} demandé(s)`,
-      );
-    }
 
-    const quantiteReelle = dto.repeseeQuantity ?? dto.quantity;
+async registerMovement(itemId: string, dto: CreateStockMovementDto, userId: string, farmId: string) {
+  const item = await this.findOneItem(itemId, farmId);
 
-    // Choix de conception sur AJUSTEMENT : "quantity"
-    // représente ici la NOUVELLE quantité absolue en stock (résultat d'un
-    // comptage physique), pas une quantité à ajouter — c'est la seule façon
-    // cohérente de gérer un écart qui peut aller dans les deux sens, alors
-    // que le DTO impose @Min(0.01) (donc jamais de valeur négative).
-    return this.prisma.$transaction(async (tx) => {
-  const movement = await tx.stockMovement.create({
-    data: {
-      itemId, type: dto.type, quantity: dto.quantity,
-      repeseeQuantity: dto.repeseeQuantity, reason: dto.reason,
-      variantId: dto.variantId, // ajouté — trace la variante précise si fournie
-      userId,
-    },
-  });
+  if (dto.type === 'OUT' && item.quantity < dto.quantity) {
+    throw new BadRequestException(
+      `Stock insuffisant : ${item.quantity} ${item.unit} disponible(s), ${dto.quantity} demandé(s)`,
+    );
+  }
 
   const quantiteReelle = dto.repeseeQuantity ?? dto.quantity;
 
-  if (dto.variantId) {
-    // Si une variante est ciblée, c'est ELLE qu'on met à jour, pas
-    // l'article parent — StockItem.quantity reste recalculé à la
-    // demande (getQuantiteTotale), jamais modifié directement ici.
-    await tx.productVariant.update({
-      where: { id: dto.variantId },
-      data: dto.type === 'AJUSTEMENT'
-        ? { quantity: quantiteReelle }
-        : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
-    });
-  } else {
-    // Comportement inchangé si pas de variante (article simple, sans GM/PM)
-    await tx.stockItem.update({
-      where: { id: itemId },
-      data: dto.type === 'AJUSTEMENT'
-        ? { quantity: quantiteReelle }
-        : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
-    });
+  // Calcul de l'écart, uniquement pertinent pour une réception (IN) avec
+  // repesage renseigné — pas pour une sortie ou un ajustement, qui n'ont
+  // pas de "quantité annoncée" à comparer.
+  let alerteEcart: { pourcentage: number; message: string } | null = null;
+  if (dto.type === 'IN' && dto.repeseeQuantity !== undefined && dto.quantity > 0) {
+    const ecartPercent = Math.abs(dto.quantity - dto.repeseeQuantity) / dto.quantity * 100;
+    if (ecartPercent > SEUIL_ECART_REPESAGE_PERCENT) {
+      alerteEcart = {
+        pourcentage: Math.round(ecartPercent * 10) / 10, // arrondi à 1 décimale
+        message: `Écart de ${Math.round(ecartPercent)}% entre la quantité annoncée (${dto.quantity}) et repesée (${dto.repeseeQuantity})`,
+      };
+    }
   }
 
-  return movement;
-});
-  }
+  const movement = await this.prisma.$transaction(async (tx) => {
+    const m = await tx.stockMovement.create({
+      data: {
+        itemId, type: dto.type, quantity: dto.quantity,
+        repeseeQuantity: dto.repeseeQuantity, reason: dto.reason,
+        variantId: dto.variantId, userId,
+      },
+    });
+
+    const target = dto.variantId
+      ? tx.productVariant.update({
+          where: { id: dto.variantId },
+          data: dto.type === 'AJUSTEMENT' ? { quantity: quantiteReelle }
+            : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
+        })
+      : tx.stockItem.update({
+          where: { id: itemId },
+          data: dto.type === 'AJUSTEMENT' ? { quantity: quantiteReelle }
+            : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
+        });
+    await target;
+
+    return m;
+  });
+
+  // L'alerte n'empêche jamais l'enregistrement — elle informe seulement,
+  // sur-le-champ, la personne qui réceptionne. Ne pas bloquer une vraie
+  // livraison pour un écart de pesée serait disproportionné.
+  return { ...movement, alerteEcart };
+}
 
   // RG-06 : corriger un mouvement déjà validé, jamais le supprimer.
   async correctMovement(movementId: string, reason: string, userId: string, farmId: string) {
