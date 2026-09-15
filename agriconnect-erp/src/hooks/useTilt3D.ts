@@ -1,39 +1,66 @@
-import { useCallback, useRef, useState, type MouseEvent } from "react"
+import { useCallback, useEffect, useRef } from "react"
+import type { PointerEvent as ReactPointerEvent } from "react"
+import { prefersReducedMotion, supportsHover, watchMotionPreference } from "@/lib/motion"
 
 export function useTilt3D<T extends HTMLElement = HTMLDivElement>(maxDeg = 8) {
   const ref = useRef<T>(null)
-  const [rotate, setRotate] = useState({ x: 0, y: 0 })
-  const [hovering, setHovering] = useState(false)
-  const [enabled] = useState(
-    () =>
-      typeof window !== "undefined" &&
-      window.matchMedia("(hover: hover)").matches &&
-      !window.matchMedia("(prefers-reduced-motion: reduce)").matches,
-  )
+  const rect = useRef<DOMRect | null>(null)
+  const frame = useRef(0)
+  const next = useRef({ px: 0.5, py: 0.5 })
+  const enabled = useRef(false)
 
-  const onMouseMove = useCallback(
-    (e: MouseEvent<T>) => {
-      if (!enabled || !ref.current) return
-      const rect = ref.current.getBoundingClientRect()
-      const px = (e.clientX - rect.left) / rect.width
-      const py = (e.clientY - rect.top) / rect.height
-      setRotate({ y: (px - 0.5) * maxDeg * 2, x: -(py - 0.5) * maxDeg * 2 })
-    },
-    [enabled, maxDeg],
-  )
-
-  const onMouseEnter = useCallback(() => setHovering(true), [])
-  const onMouseLeave = useCallback(() => {
-    setHovering(false)
-    setRotate({ x: 0, y: 0 })
+  useEffect(() => {
+    function sync() {
+      enabled.current = supportsHover() && !prefersReducedMotion()
+    }
+    sync()
+    const stopWatching = watchMotionPreference(sync)
+    return () => {
+      stopWatching()
+      if (frame.current) cancelAnimationFrame(frame.current)
+    }
   }, [])
 
-  const style = enabled
-    ? {
-        transform: `perspective(1000px) rotateX(${rotate.x}deg) rotateY(${rotate.y}deg) scale3d(${hovering ? 1.02 : 1}, ${hovering ? 1.02 : 1}, 1)`,
-        transition: hovering ? "transform 100ms ease-out" : "transform 500ms cubic-bezier(0.22,1,0.36,1)",
-      }
-    : undefined
+  const apply = useCallback(() => {
+    frame.current = 0
+    const el = ref.current
+    if (!el) return
+    const { px, py } = next.current
+    el.style.setProperty("--tilt-x", `${(-(py - 0.5) * maxDeg * 2).toFixed(2)}deg`)
+    el.style.setProperty("--tilt-y", `${((px - 0.5) * maxDeg * 2).toFixed(2)}deg`)
+    el.style.setProperty("--mx", `${(px * 100).toFixed(1)}%`)
+    el.style.setProperty("--my", `${(py * 100).toFixed(1)}%`)
+  }, [maxDeg])
 
-  return { ref, style, onMouseMove, onMouseEnter, onMouseLeave }
+  const onPointerEnter = useCallback(() => {
+    const el = ref.current
+    if (!el || !enabled.current) return
+    rect.current = el.getBoundingClientRect()
+    el.dataset.tilting = "true"
+  }, [])
+
+  const onPointerMove = useCallback(
+    (event: ReactPointerEvent<T>) => {
+      const el = ref.current
+      const bounds = rect.current
+      if (!el || !bounds || !enabled.current) return
+      next.current = {
+        px: (event.clientX - bounds.left) / bounds.width,
+        py: (event.clientY - bounds.top) / bounds.height,
+      }
+      if (!frame.current) frame.current = requestAnimationFrame(apply)
+    },
+    [apply],
+  )
+
+  const onPointerLeave = useCallback(() => {
+    const el = ref.current
+    if (!el) return
+    rect.current = null
+    delete el.dataset.tilting
+    el.style.setProperty("--tilt-x", "0deg")
+    el.style.setProperty("--tilt-y", "0deg")
+  }, [])
+
+  return { ref, handlers: { onPointerEnter, onPointerMove, onPointerLeave } }
 }
