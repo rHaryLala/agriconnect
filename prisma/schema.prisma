@@ -28,6 +28,7 @@ model Farm {
   stockLocation StockLocation[]
   cattle  Cattle[]
   paddyProcess PaddyProcess[]
+  poultryTrackings PoultryTracking[]//mise a jour
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -52,6 +53,8 @@ model User {
 
   sentTransfers     StockTransfer[] @relation("TransferSender")   
   receivedTransfers StockTransfer[] @relation("TransferReceiver")
+
+  poultryTrackings PoultryTracking[]//mise a jour
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -459,4 +462,53 @@ model StockTransferItem{
 
   variantId   String?
   variant     ProductVariant? @relation(fields: [variantId], references: [id])
+}
+
+
+////nouveau enum
+enum PoultryType{
+  PONDEUSE
+  KUROILER
+  POULARD
+}
+
+enum PoultryStatus{
+  EN_ELEVAGE
+  EN_COUVEUSE
+  VENDU
+  DECEDE
+}
+
+model PoultryTracking{
+  id  String  @id @default(uuid())
+  tagOrNumber   String? //numero d'identifiant, de bracelet, ou de lot
+  type    PoultryType  
+  status    PoultryStatus   @default(EN_ELEVAGE)
+
+  ageInWeeks    Int?  
+  weightKg    Float? // chaque semaine
+
+  vaccineName     String?       // Nom du vaccin
+  vaccineDate     DateTime?     // Date de vaccination
+
+  PonteRate   Int?  //taux de ponte
+  notes   String?
+
+  //tracabilité
+  entryDate   DateTime  @default(now())
+  exitDate    DateTime?
+  exitReason    String?   //la raison
+  salePrice   Float?
+
+  farmId    String
+  farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  userId    String
+  user    User    @relation(fields: [userId],references: [id])
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([farmId])
+  @@index([userId])
 }
