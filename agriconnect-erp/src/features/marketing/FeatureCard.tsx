@@ -13,8 +13,6 @@ export function FeatureCard({ icon: Icon, title, description, delayMs = 0 }: Fea
   const { ref: revealRef, visible } = useScrollReveal<HTMLDivElement>()
   const { ref: tiltRef, handlers } = useTilt3D<HTMLDivElement>(7)
 
-  // L'apparition et l'inclinaison animent toutes deux `transform` : les séparer
-  // sur deux nœuds évite qu'elles s'écrasent l'une l'autre.
   return (
     <div
       ref={revealRef}
