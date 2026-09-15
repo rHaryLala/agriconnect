@@ -39,10 +39,6 @@ export function currentRegion(): RegionDefinition {
   return REGIONS[useRegionStore.getState().region] ?? REGIONS.MG
 }
 
-/**
- * Front-only detection: the browser's own timezone is enough to map a region,
- * with geolocation coordinates used as a fallback signal. No network call.
- */
 export function detectRegionFromBrowser(): RegionCode | null {
   const timezone = Intl.DateTimeFormat().resolvedOptions().timeZone
   const match = (Object.values(REGIONS) as RegionDefinition[]).find((r) => r.timezone === timezone)
