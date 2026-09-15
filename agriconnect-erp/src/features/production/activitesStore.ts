@@ -13,7 +13,6 @@ interface ActivitesState {
   removeType: (id: string) => void
 }
 
-/** Field activities, named as the team names them on the paper sheets. */
 export const useActivitesStore = create<ActivitesState>()(
   persist(
     (set, get) => ({
