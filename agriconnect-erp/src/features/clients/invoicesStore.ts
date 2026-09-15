@@ -24,7 +24,6 @@ const SEED_INVOICES: Invoice[] = [
   },
 ]
 
-/** Local fallback, used until the accounting software issues the real number. */
 function nextNumero(existing: Invoice[]): string {
   const year = new Date().getFullYear()
   const count = existing.length + 1
