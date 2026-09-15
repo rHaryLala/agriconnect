@@ -68,7 +68,6 @@ export function PayrollDeductionReportTab({ invoices, articles }: PayrollDeducti
 
   const employeById = useMemo(() => new Map(employes.map((e) => [e.id, e])), [employes])
 
-  // Everything still owed on the closing date, whatever month the sale happened in.
   const lines = useMemo(
     () =>
       buildRetenues(invoices, employes, (id) => articles.find((a) => a.id === id)?.nom).filter(
