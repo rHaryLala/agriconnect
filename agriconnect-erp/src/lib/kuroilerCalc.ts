@@ -8,7 +8,6 @@ export function countPoulesByStatut(poules: KuroilerPoule[], statut: KuroilerPou
   return poules.filter((p) => p.statut === statut).length
 }
 
-/** Share of the live flock that is currently laying. */
 export function computeTauxPonte(poules: KuroilerPoule[]): number {
   const actives = poules.filter((p) => p.statut === "active")
   if (actives.length === 0) return 0
@@ -21,7 +20,6 @@ export function latestSuivi(suivis: KuroilerPouleSuivi[], pouleId: string): Kuro
     .reduce<KuroilerPouleSuivi | undefined>((latest, s) => (!latest || s.date > latest.date ? s : latest), undefined)
 }
 
-/** Average of the latest recorded weight across live hens, in kilograms. */
 export function computePoidsMoyen(poules: KuroilerPoule[], suivis: KuroilerPouleSuivi[]): number {
   const poids = poules
     .filter((p) => p.statut === "active")
@@ -42,7 +40,6 @@ export function sumOeufsSurPeriode(
     .reduce((sum, m) => sum + m.quantite, 0)
 }
 
-/** Kuroiler eggs on hand: what came in, less what was sold or set in the incubator. */
 export function computeStockOeufsKuroiler(mouvements: KuroilerOeufMouvement[]): number {
   return mouvements.reduce((sum, m) => sum + (m.type === "entree" ? m.quantite : -m.quantite), 0)
 }
