@@ -40,7 +40,7 @@ export class FinanceController
         return this.financeService.findOne(id, user.farmId);
     }
 
-    @Get('Journal-caisse')
+    @Get('journal-caisse')
     journalDeCaisse(@CurrentUser() user: AuthUser)
     {
         return this.financeService.journalDeCaisse(user.farmId);
@@ -58,5 +58,5 @@ export class FinanceController
     {
         return this.financeService.correct(dto, user.id, user.farmId)
     }
-    
+
 }
