@@ -10,11 +10,6 @@ export interface ActiveSession {
   current: boolean
 }
 
-/**
- * Session tracking is not implemented server-side yet, so the list is seeded
- * locally: the current entry is read from the real browser, the others are
- * demo rows that can be revoked to exercise the flow.
- */
 function detectCurrentSession(): ActiveSession {
   const ua = navigator.userAgent
   const browser = /Edg\//.test(ua) ? "Edge" : /Chrome\//.test(ua) ? "Chrome" : /Firefox\//.test(ua) ? "Firefox" : /Safari\//.test(ua) ? "Safari" : "Navigateur"
@@ -45,7 +40,6 @@ export const useSessionsStore = create<SessionsState>()(
       hasSeeded: false,
       ensureSeeded: () => {
         if (get().hasSeeded) {
-          // Keep the "current" row in sync with the browser actually being used.
           set({ sessions: get().sessions.map((s) => (s.current ? { ...detectCurrentSession(), id: s.id } : s)) })
           return
         }
