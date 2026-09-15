@@ -17,8 +17,6 @@ export function registerReplayer(domain: string, replayer: Replayer) {
   replayers.set(domain, replayer)
 }
 
-// Deux actions enregistrées dans la même milliseconde doivent rester ordonnées :
-// la file est rejouée en FIFO et un « update » ne doit jamais précéder son « add ».
 let lastTimestamp = 0
 function nextCreatedAt(): string {
   const now = Math.max(Date.now(), lastTimestamp + 1)
