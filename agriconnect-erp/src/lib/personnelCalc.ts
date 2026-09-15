@@ -15,24 +15,17 @@ export interface RetenueLine {
   statut: RetenueStatut
 }
 
-/** Payroll preparation window of the month containing `anchorIso`. */
 export function payrollWindow(anchorIso: string, jourDebut: number, jourFin: number): { start: string; end: string } {
   const mois = anchorIso.slice(0, 7)
   const pad = (day: number) => String(day).padStart(2, "0")
   return { start: `${mois}-${pad(jourDebut)}`, end: `${mois}-${pad(jourFin)}` }
 }
 
-/** Product bought, read from the invoice lines. */
 export function describeInvoice(invoice: Invoice, articleName: (id: string) => string | undefined): string {
   const labels = invoice.items.map((item) => item.libelle ?? (item.articleId ? articleName(item.articleId) : undefined)).filter(Boolean)
   return [...new Set(labels)].join(", ")
 }
 
-/**
- * Payroll deductions owed by staff, derived from the sales they paid with the
- * "retenue sur salaire" method. A deduction is outstanding until the invoice is
- * settled.
- */
 export function buildRetenues(
   invoices: Invoice[],
   employes: Employe[],
@@ -59,10 +52,6 @@ export function retenuesEnAttente(lines: RetenueLine[]): RetenueLine[] {
   return lines.filter((line) => line.statut === "en_attente")
 }
 
-export function retenuesRegularisees(lines: RetenueLine[]): RetenueLine[] {
-  return lines.filter((line) => line.statut === "regularise")
-}
-
 export function totalRestant(lines: RetenueLine[]): number {
   return lines.reduce((sum, line) => sum + line.reste, 0)
 }
@@ -73,7 +62,6 @@ export interface EmployeRetenues {
   reste: number
 }
 
-/** Outstanding deductions grouped per employee, largest balance first. */
 export function retenuesParEmploye(lines: RetenueLine[], employes: Employe[]): EmployeRetenues[] {
   return employes
     .map((employe) => {
