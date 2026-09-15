@@ -4,7 +4,6 @@ export function inPeriode(mouvement: CarburantMouvement, startIso: string, endIs
   return mouvement.date >= startIso && mouvement.date <= endIso
 }
 
-/** Fuel left in the farm tank: what was delivered, less what machines drew. */
 export function computeStockCarburant(mouvements: CarburantMouvement[]): number {
   return mouvements.reduce((sum, m) => sum + (m.type === "entree" ? m.quantiteLitres : -m.quantiteLitres), 0)
 }
@@ -26,7 +25,6 @@ export interface EnginConsommation {
   sorties: number
 }
 
-/** Fuel drawn per machine over the period, heaviest first. */
 export function consommationParEngin(mouvements: CarburantMouvement[], startIso: string, endIso: string): EnginConsommation[] {
   const byEngin = new Map<string, EnginConsommation>()
   for (const mouvement of mouvements) {
