@@ -1,9 +1,5 @@
 import type { PoulardMouvement } from "@/types/production"
 
-/**
- * Effect of a movement on the head count. Laying records count eggs, not
- * birds, so they leave the flock size untouched.
- */
 function effectifDelta(mouvement: PoulardMouvement): number {
   if (mouvement.type === "ponte") return 0
   return mouvement.type === "entree" ? mouvement.quantite : -mouvement.quantite
@@ -23,18 +19,6 @@ export function sumSurPeriode(mouvements: PoulardMouvement[], type: PoulardMouve
     .reduce((sum, m) => sum + m.quantite, 0)
 }
 
-/** Breeds present in the flock, in the order they were first recorded. */
-export function listRaces(mouvements: PoulardMouvement[]): string[] {
-  const races = mouvements
-    .filter((m) => m.type === "entree" && m.race)
-    .map((m) => m.race as string)
-  return [...new Set(races)]
-}
-
-/**
- * Weekly laying rate: eggs collected over the period, related to what the
- * flock could lay at one egg per bird per day. Returns a percentage.
- */
 export function computeTauxPonteHebdomadaire(mouvements: PoulardMouvement[], startIso: string, endIso: string): number {
   const oeufs = sumSurPeriode(mouvements, "ponte", startIso, endIso)
   const effectif = computeEffectifAt(mouvements, endIso)
