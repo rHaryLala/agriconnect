@@ -15,6 +15,7 @@ import { HeroSlideshow } from "./HeroSlideshow"
 import { FeatureCard } from "./FeatureCard"
 import { Reveal } from "./Reveal"
 import { SectionVideoBackdrop } from "./SectionVideoBackdrop"
+import { usePinnedTrack } from "./usePinnedTrack"
 
 const FEATURE_ICONS = [Sprout, Package, Wallet, Handshake, Receipt, BarChart3]
 const FEATURE_KEYS = ["production", "stock", "finance", "clients", "transactions", "reports"]
@@ -45,6 +46,11 @@ export default function LandingPage() {
   const [scrollEffects] = useState(supportsHover)
   const heroRef = useScrollProgress<HTMLElement>(scrollEffects)
   const offlineRef = useScrollProgress<HTMLElement>(scrollEffects)
+
+  // Le balayage horizontal se coupe de lui-meme la ou il gene ; la section
+  // n'est suivie que quand il est reellement en service.
+  const pinned = usePinnedTrack()
+  const featuresRef = useScrollProgress<HTMLElement>(pinned)
 
   useEffect(() => {
     function onScroll() {
@@ -137,21 +143,27 @@ export default function LandingPage() {
         </div>
       </section>
 
-      <section className="relative overflow-clip bg-[#06281B] px-6 py-20 sm:py-28 lg:py-36">
+      <section
+        ref={featuresRef}
+        data-pinned={pinned}
+        className="pin-section relative overflow-clip bg-[#06281B] py-20 sm:py-28 lg:py-36"
+      >
         <SectionVideoBackdrop
           videoSrc="/backgrounds/back.mp4"
           posterSrc="/backgrounds/back-poster.webp"
-          overlayClassName="bg-gradient-to-b from-[#06281B]/92 via-[#06281B]/72 to-[#06281B]/94"
+          overlayClassName="bg-gradient-to-b from-[#06281B]/90 via-[#06281B]/75 to-[#06281B]/95"
         />
 
-        <div className="relative z-10 mx-auto max-w-5xl text-center">
-          <Reveal>
-            <span className="glass-liquid mb-4 inline-block rounded-full px-3 py-1 text-xs font-medium text-white/90">{t("landing.features.badge")}</span>
-            <h2 className="text-3xl font-bold text-white text-shadow-sm">{t("landing.features.title")}</h2>
-            <p className="mx-auto mt-3 max-w-xl text-sm text-white/70">{t("landing.features.subtitle")}</p>
-          </Reveal>
+        <div className="pin-stage relative z-10">
+          <div className="mx-auto max-w-5xl px-6 text-center">
+            <Reveal>
+              <span className="glass-liquid mb-4 inline-block rounded-full px-3 py-1 text-xs font-medium text-white/90">{t("landing.features.badge")}</span>
+              <h2 className="text-3xl font-bold text-white text-shadow-sm">{t("landing.features.title")}</h2>
+              <p className="mx-auto mt-3 max-w-xl text-sm text-white/70">{t("landing.features.subtitle")}</p>
+            </Reveal>
+          </div>
 
-          <div className="mt-10 grid grid-cols-1 gap-4 sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
+          <div className="pin-track mx-auto mt-10 grid max-w-5xl grid-cols-1 gap-4 px-6 text-left sm:mt-12 sm:grid-cols-2 sm:gap-5 lg:grid-cols-3">
             {FEATURE_KEYS.map((key, i) => (
               <FeatureCard
                 key={key}

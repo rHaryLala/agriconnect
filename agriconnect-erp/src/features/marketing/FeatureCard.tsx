@@ -20,12 +20,12 @@ export function FeatureCard({ icon: Icon, title, description, delayMs = 0 }: Fea
       ref={revealRef}
       data-visible={visible}
       style={{ transitionDelay: visible ? `${delayMs}ms` : "0ms" }}
-      className="reveal-3d motion-reduce:transition-none"
+      className="reveal-3d h-full motion-reduce:transition-none"
     >
       <div
         ref={tiltRef}
         {...handlers}
-        className="tilt-3d specular group relative overflow-hidden rounded-2xl p-5 text-left glass-liquid-light transition-[box-shadow,border-color] duration-500 hover:border-[#0F8A5F]/30 hover:shadow-xl hover:shadow-[#0F8A5F]/10 sm:p-6"
+        className="tilt-3d specular group relative flex h-full flex-col overflow-hidden rounded-2xl p-5 text-left glass-liquid-light transition-[box-shadow,border-color] duration-500 hover:border-[#0F8A5F]/30 hover:shadow-xl hover:shadow-[#0F8A5F]/10 sm:p-6"
       >
         <div className="relative z-10">
           <div className="mb-4 flex h-11 w-11 items-center justify-center rounded-xl bg-[#0F8A5F]/10 transition-transform duration-500 ease-out group-hover:scale-110 group-hover:rotate-3">
