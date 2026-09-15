@@ -99,7 +99,7 @@ enum MouvementType {
   OUT
   AJUSTEMENT
   //mise a jour
-  TRANFERTS
+  TRANFERT
 }
 
 model StockItem {
@@ -302,9 +302,11 @@ enum EntryTypeBovin{
 model Cattle{
   id String @id @default(uuid())
   nameOrTag String //anarana na fiantsoana anazy
+  breed String? //race 
   gender String // male/female
   category    String?   @default("Vache laitière")// Veau, Vache laitière, etc.
   status StatusBovin @default(EN_ELEVAGE)
+  productiveStatus  String? // En traite, Repos, Non productive
 
   //Entrée------------------------
   entryType   EntryTypeBovin    @default(NAISSANCE)
