@@ -1,5 +1,5 @@
 {
-  "common": { "loading": "Chargement...", "save": "Enregistrer", "cancel": "Annuler", "search": "Rechercher...", "add": "Ajouter", "edit": "Modifier", "delete": "Supprimer", "close": "Fermer", "appName" : "AgriConnect", "readOnlyBanner": "Vous consultez ce module en lecture seule.", "yes": "Oui", "no": "Non" },
+  "common": { "loading": "Chargement...", "save": "Enregistrer", "cancel": "Annuler", "search": "Rechercher...", "add": "Ajouter", "edit": "Modifier", "delete": "Supprimer", "close": "Fermer", "appName" : "AgriConnect", "optional": "optionnel", "selectPlaceholder": "Sélectionner...", "saveError": "Enregistrement impossible", "readOnlyBanner": "Vous consultez ce module en lecture seule.", "yes": "Oui", "no": "Non" },
   "nav": { "dashboard": "Tableau de bord", "production": "Production", "stocks": "Stocks", "finance": "Finance", "clients": "Clients", "reports": "Export", "settings": "Paramètres", "collapse": "Réduire", "expand": "Déplier le menu", "menu": "Menu", "openMenu": "Ouvrir le menu", "logout": "Se déconnecter", "offline": "Mode hors ligne (bientôt disponible)", "more": "Plus","groups": {"principal": "Principal", "finances": "Finances","commerce": "Commerce", "analyse": "Analyse"}, "personnel": "Personnel" },
   "landing": {
     "header": { "login": "Se connecter", "register": "S'inscrire" },
@@ -933,6 +933,11 @@
       "statTotal": "Comptes",
       "statActive": "Comptes actifs",
       "statAdmins": "Administrateurs",
+      "toastError": "Enregistrement impossible",
+      "fieldPassword": "Mot de passe",
+      "fieldPasswordPlaceholder": "Minimum 8 caractères",
+      "fieldPasswordEdit": "Nouveau mot de passe (optionnel)",
+      "fieldPasswordEditPlaceholder": "Laisser vide pour ne pas changer",
       "useRolePreset": "Suivre le préréglage du rôle",
       "useRolePresetHint": "Désactive pour cocher les accès de ce compte un par un."
     },

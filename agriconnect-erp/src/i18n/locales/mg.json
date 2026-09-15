@@ -1,5 +1,5 @@
 {
-  "common": { "loading": "Eo am-panamboarana...", "save": "Tehirizo", "cancel": "Aoka", "search": "Karohy...", "add": "Ampio", "edit": "Ovay", "delete": "Fafao", "close": "Akatony", "appName" : "AgriConnect", "readOnlyBanner": "Fijerena fotsiny no azonao atao amin'ity sampana ity.", "yes": "Eny", "no": "Tsia" },
+  "common": { "loading": "Eo am-panamboarana...", "save": "Tehirizo", "cancel": "Aoka", "search": "Karohy...", "add": "Ampio", "edit": "Ovay", "delete": "Fafao", "close": "Akatony", "appName" : "AgriConnect", "optional": "tsy voatery", "selectPlaceholder": "Safidio...", "saveError": "Tsy voatahiry", "readOnlyBanner": "Fijerena fotsiny no azonao atao amin'ity sampana ity.", "yes": "Eny", "no": "Tsia" },
   "nav": { "dashboard": "Tabilao mpitantana", "production": "Vokatra", "stocks": "Tahiry entana", "finance": "Vola", "clients": "Mpanjifa", "reports": "Export", "settings": "Kirakira", "collapse": "Ahakelezo", "expand": "Ahalalaho ny lisitra", "menu": "Lisitra", "openMenu": "Sokafy ny lisitra", "logout": "Hivoaka", "offline": "Fomba tsy misy aterineto (ho avy)", "more": "Bebe kokoa", "groups": {"principal": "Lehibe", "finances": "Vola","commerce": "Varotra", "analyse": "Fandinihana"}, "personnel": "Mpiasa" },
   "landing": {
     "header": { "login": "Hiditra", "register": "Hisoratra anarana" },
@@ -930,6 +930,11 @@
       "statTotal": "Kaonty",
       "statActive": "Kaonty mavitrika",
       "statAdmins": "Mpitantana",
+      "toastError": "Tsy voatahiry",
+      "fieldPassword": "Teny miafina",
+      "fieldPasswordPlaceholder": "8 litera farafahakeliny",
+      "fieldPasswordEdit": "Teny miafina vaovao (tsy voatery)",
+      "fieldPasswordEditPlaceholder": "Avelao foana raha tsy ovaina",
       "useRolePreset": "Manaraka ny fandrindrana mialoha",
       "useRolePresetHint": "Vonoy raha te hifidy tsirairay ny fahazoan-dalan'ity kaonty ity."
     },
