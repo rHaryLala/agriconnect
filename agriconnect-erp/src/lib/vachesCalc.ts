@@ -8,7 +8,6 @@ export function totalSoir(entry: VacheEntry): number {
   return entry.traites.reduce((sum, t) => sum + t.soir, 0)
 }
 
-/** Herd output for one day, both milkings combined. */
 export function totalJour(entry: VacheEntry): number {
   return totalMatin(entry) + totalSoir(entry)
 }
@@ -24,7 +23,6 @@ export interface VacheTotals {
   total: number
 }
 
-/** Cumulated output of a single cow over the given entries. */
 export function totalsForVache(entries: VacheEntry[], vacheId: string): VacheTotals {
   return entries.reduce<VacheTotals>(
     (acc, entry) => {
