@@ -4,19 +4,16 @@ export type ModuleKey = "dashboard" | "production" | "stock" | "finance" | "clie
 
 export const MODULE_KEYS: ModuleKey[] = ["dashboard", "production", "stock", "finance", "clients", "personnel", "settings"]
 
-/** What an account may do inside a module. */
 export type PermissionAction = "read" | "create" | "update" | "delete"
 
 export const PERMISSION_ACTIONS: PermissionAction[] = ["read", "create", "update", "delete"]
 
-/** An atomic right, for example "finance:update". */
 export type Permission = `${ModuleKey}:${PermissionAction}`
 
 export function permission(module: ModuleKey, action: PermissionAction): Permission {
   return `${module}:${action}`
 }
 
-/** Every right on a module: read plus the three write actions. */
 function fullAccess(module: ModuleKey): Permission[] {
   return PERMISSION_ACTIONS.map((action) => permission(module, action))
 }
@@ -25,10 +22,6 @@ function readOnly(module: ModuleKey): Permission[] {
   return [permission(module, "read")]
 }
 
-/**
- * Roles are presets over the atomic rights, not access levels of their own: an
- * account starts from its role and can then be adjusted right by right.
- */
 export const ROLE_PRESETS: Record<UserRole, Permission[]> = {
   admin: MODULE_KEYS.flatMap(fullAccess),
   comptable: [
@@ -53,10 +46,6 @@ export function permissionsForRole(role: UserRole | undefined): Permission[] {
   return role ? ROLE_PRESETS[role] : []
 }
 
-/**
- * Rights actually granted to an account: its own checklist when one was set in
- * the user management screen, the preset of its role otherwise.
- */
 export function effectivePermissions(role: UserRole | undefined, override?: Permission[]): Permission[] {
   return override ?? permissionsForRole(role)
 }
@@ -67,13 +56,9 @@ export function hasPermission(permissions: Permission[], module: ModuleKey, acti
 
 export type PermissionLevel = "full" | "readonly" | "none"
 
-/** Coarse view of a module's rights, for the places that only need to know how much access there is. */
 export function levelFromPermissions(permissions: Permission[], module: ModuleKey): PermissionLevel {
   const canWrite = PERMISSION_ACTIONS.filter((a) => a !== "read").some((action) => hasPermission(permissions, module, action))
   if (canWrite) return "full"
   return hasPermission(permissions, module, "read") ? "readonly" : "none"
 }
 
-export function getPermissionLevel(role: UserRole | undefined, module: ModuleKey): PermissionLevel {
-  return levelFromPermissions(permissionsForRole(role), module)
-}
