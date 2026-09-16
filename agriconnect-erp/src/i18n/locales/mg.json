@@ -1267,6 +1267,11 @@
     "statusInactive": "Tsy miasa",
     "emptyTitle": "Tsy misy mpamatsy",
     "emptyDescription": "Ampio ny mpamatsy voalohany amin'ny bokotra eo ambony.",
+    "back": "Hiverina",
+    "resultCount": "mpamatsy {{count}}",
+    "resultCount_other": "mpamatsy {{count}}",
+    "pendingOrders": "baiko {{count}}",
+    "pendingOrders_other": "baiko {{count}}",
     "never": "Tsy mbola",
     "categories": {
       "aliments": "Sakafom-biby",

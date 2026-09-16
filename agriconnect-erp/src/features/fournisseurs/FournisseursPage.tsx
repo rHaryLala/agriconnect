@@ -216,6 +216,8 @@ export default function FournisseursPage() {
         }
       />
 
+      <p className="mb-3 text-xs text-muted-foreground">{t("fournisseurs.resultCount", { count: filtered.length })}</p>
+
       {view === "list" ? (
         <DataTable
           columns={columns}

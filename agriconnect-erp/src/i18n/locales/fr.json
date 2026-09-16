@@ -1278,6 +1278,11 @@
     "statusInactive": "Inactif",
     "emptyTitle": "Aucun fournisseur",
     "emptyDescription": "Ajoute le premier fournisseur avec le bouton ci-dessus.",
+    "back": "Retour",
+    "resultCount": "{{count}} fournisseur",
+    "resultCount_other": "{{count}} fournisseurs",
+    "pendingOrders": "{{count}} commande",
+    "pendingOrders_other": "{{count}} commandes",
     "never": "Jamais",
     "categories": {
       "aliments": "Aliments du bétail",

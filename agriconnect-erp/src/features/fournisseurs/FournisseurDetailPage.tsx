@@ -133,6 +133,7 @@ export default function FournisseurDetailPage() {
   const Icon = CATEGORIE_ICONS[fournisseur.categorie]
   const isActive = fournisseur.statut === "actif"
   const nextReference = `ACH-${new Date().getFullYear()}-${String(achats.length + 1).padStart(3, "0")}`
+  const pendingCount = ownAchats.filter((achat) => achatStatut(achat) === "en_attente").length
 
   async function handleEdit(values: Omit<Fournisseur, "id">) {
     if (!fournisseur) return
@@ -147,16 +148,17 @@ export default function FournisseurDetailPage() {
   }
 
   const TABS = [
-    { id: "achats", label: t("fournisseurs.tabsPurchases") },
-    { id: "paiements", label: t("fournisseurs.tabsPayments") },
+    { id: "achats", label: `${t("fournisseurs.tabsPurchases")} (${ownAchats.length})` },
+    { id: "paiements", label: `${t("fournisseurs.tabsPayments")} (${ownPaiements.length})` },
   ]
 
   return (
     <div>
       <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
         <div className="flex min-w-0 items-center gap-2">
-          <Button variant="ghost" size="icon" onClick={() => navigate("/app/fournisseurs")} aria-label={t("fournisseurs.backToList")}>
+          <Button variant="outline" onClick={() => navigate("/app/fournisseurs")} className="gap-2">
             <ArrowLeft className="h-4 w-4" />
+            <span className="hidden sm:inline">{t("fournisseurs.back")}</span>
           </Button>
           <nav aria-label="breadcrumb" className="flex min-w-0 items-center gap-1 text-sm">
             <Link to="/app/fournisseurs" className="text-muted-foreground transition-colors hover:text-foreground">
@@ -203,9 +205,11 @@ export default function FournisseurDetailPage() {
                   {" · "}
                   {t(CATEGORIE_LABEL_KEYS[fournisseur.categorie])}
                 </p>
+                <span className="mt-1 inline-flex">
+                  <Rating value={fournisseur.note} size="md" showValue={false} />
+                </span>
               </div>
             </div>
-            <Rating value={fournisseur.note} size="md" />
           </div>
 
           <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
@@ -242,7 +246,13 @@ export default function FournisseurDetailPage() {
         <div className="grid grid-cols-1 gap-3 sm:grid-cols-3 lg:grid-cols-1">
           <StatCard icon={ShoppingBag} tone="primary" label={t("fournisseurs.kpiTotalPurchases")} value={formatCurrency(summary.totalAchats)} hint={t("fournisseurs.statPurchasesYtdHint", { count: summary.nombreAchats })} />
           <StatCard icon={Wallet} tone="success" label={t("fournisseurs.kpiTotalPaid")} value={formatCurrency(summary.totalPaye)} />
-          <StatCard icon={Clock} tone="warning" label={t("fournisseurs.kpiPending")} value={formatCurrency(summary.enAttente)} />
+          <StatCard
+          icon={Clock}
+          tone="warning"
+          label={t("fournisseurs.kpiPending")}
+          value={t("fournisseurs.pendingOrders", { count: pendingCount })}
+          hint={pendingCount > 0 ? formatCurrency(summary.enAttente) : undefined}
+        />
         </div>
       </div>
 

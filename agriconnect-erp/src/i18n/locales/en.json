@@ -1278,6 +1278,11 @@
     "statusInactive": "Inactive",
     "emptyTitle": "No supplier",
     "emptyDescription": "Add the first supplier with the button above.",
+    "back": "Back",
+    "resultCount": "{{count}} supplier",
+    "resultCount_other": "{{count}} suppliers",
+    "pendingOrders": "{{count}} order",
+    "pendingOrders_other": "{{count}} orders",
     "never": "Never",
     "categories": {
       "aliments": "Animal feed",
