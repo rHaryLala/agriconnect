@@ -6,8 +6,8 @@ import type { ModuleKey } from "@/lib/permissions"
 import { useEffectivePermissions } from "@/hooks/usePermission"
 import { levelFromPermissions } from "@/lib/permissions"
 
-export type NavGroup = "principal" | "finances" | "commerce" | "analyse"
-export const NAV_GROUPS: NavGroup[] = ["principal", "finances", "commerce", "analyse"]
+export type NavGroup = "principal" | "finances" | "commerce" | "analyse" | "systeme"
+export const NAV_GROUPS: NavGroup[] = ["principal", "finances", "commerce", "analyse", "systeme"]
 
 export interface NavItem {
   to: string
@@ -26,7 +26,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: "/app/fournisseurs", labelKey: "nav.fournisseurs", icon: Truck, module: "finance", group: "commerce" },
   { to: "/app/personnel", labelKey: "nav.personnel", icon: IdCard, module: "personnel", group: "commerce" },
   { to: "/app/rapports", labelKey: "nav.reports", icon: BarChart3, group: "analyse" },
-  { to: "/app/settings", labelKey: "nav.settings", icon: Settings, module: "settings", group: "principal" },
+  { to: "/app/settings", labelKey: "nav.settings", icon: Settings, module: "settings", group: "systeme" },
 ]
 
 export function useVisibleNavItems(): NavItem[] {
