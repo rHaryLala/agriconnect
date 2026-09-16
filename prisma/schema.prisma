@@ -102,7 +102,7 @@ enum MouvementType {
   OUT
   AJUSTEMENT
   //mise a jour
-  TRANFERT
+  TRANSFERT
 }
 
 model StockItem {
