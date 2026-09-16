@@ -136,7 +136,6 @@ model StockMovement {
   quantity           Float
   reason             String?
   repeseeQuantity    Float? //mise a jour
-  announceQuantity    Float?
   date               DateTime       @default(now())
   userId             String
   user               User           @relation(fields: [userId], references: [id])
@@ -499,31 +498,51 @@ model PoultryTracking{
   tagOrNumber   String? //numero d'identifiant, de bracelet, ou de lot
   type    PoultryType  
   status    PoultryStatus   @default(EN_ELEVAGE)
+initialAge  Int           @default(0) // Âge initial en semaines à la création
+  notes       String?
 
-  ageInWeeks    Int?  
-  weightKg    Float? // chaque semaine
+  // Traçabilité & Sortie
+  entryDate  DateTime  @default(now()) // Utilisé pour calculer l'âge dynamique
+  exitDate   DateTime?
+  exitReason String?
+  salePrice  Float?
 
-  vaccineName     String?       // Nom du vaccin
-  vaccineDate     DateTime?     // Date de vaccination
+  // Relations principales
+  farmId String
+  farm   Farm   @relation(fields: [farmId], references: [id], onDelete: Cascade)
 
-  ponteRate   Float?  //taux de ponte
-  notes   String?
+  userId String
+  user   User   @relation(fields: [userId], references: [id])
 
-  //tracabilité
-  entryDate   DateTime  @default(now())
-  exitDate    DateTime?
-  exitReason    String?   //la raison
-  salePrice   Float?
+  // Historique des suivis hebdomadaires (1-N)
+  weeklyRecords PoultryWeeklyRecord[]
 
-  farmId    String
-  farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  userId    String
-  user    User    @relation(fields: [userId],references: [id])
-
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   @@index([farmId])
   @@index([userId])
+}
+
+model PoultryWeeklyRecord {
+  id                String          @id @default(uuid())
+  poultryTrackingId String
+  poultryTracking   PoultryTracking @relation(fields: [poultryTrackingId], references: [id], onDelete: Cascade)
+
+  weekNumber Int      // Semaine N° X
+  recordDate DateTime @default(now())
+
+  weightKg       Float?   // Poids moyen
+  ponteRate      Float?   // Taux de ponte (%)
+  mortalityCount Int      @default(0) // Pertes observées cette semaine
+
+  vaccineName String?   // Vaccin administré
+  vaccineDate DateTime? // Date d'administration
+
+  notes String?
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([poultryTrackingId])
 }
