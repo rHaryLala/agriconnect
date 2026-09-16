@@ -1,5 +1,5 @@
 import { TransactionType } from "@prisma/client";
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsPositive, IsDateString, isNumber } from "class-validator";
+import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsPositive, IsDateString, } from "class-validator";
 
 export enum transactionType {
     RECETTE = 'RECETTE',
@@ -33,7 +33,7 @@ export class CreateTransactionDto {
     userId!: string;
 
     @IsString()
-    @IsNotEmpty()
+    @IsOptional()
     clientId!: string;
 
     @IsString()

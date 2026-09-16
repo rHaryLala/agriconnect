@@ -23,7 +23,7 @@ export class TransactionsService {
     return this.prisma.transaction.findMany({
       where: farmId? { farmId } : {}, include: { client:true, invoice: true, user: true}, 
       orderBy: {createdAt: 'desc'},
-    });
+    }); 
 
   }
 
@@ -39,19 +39,42 @@ export class TransactionsService {
     return transaction;
   }
 
+  async getCashFlow(farmId: string) {
+    const aggregates = await this.prisma.transaction.groupBy({
+      by: ['type'],
+      where: { farmId },
+      _sum: { amount: true },
+    });
+
+    const recettes = aggregates.find((a) => a.type === 'RECETTE')?._sum.amount || 0;
+    const depenses = aggregates.find((a) => a.type === 'DEPENSE')?._sum.amount || 0;
+
+    return {
+      recettes,
+      depenses,
+      balance: recettes - depenses, // Solde net de la caisse
+    };
+  }
+
   async update (id: string, updateTransactionDto: UpdateTransactionDto){
     await this.findOne(id);
 
-    const {farmId, clientId, userId, invoiceId, ...data } = updateTransactionDto;
+    const {farmId, clientId, userId, invoiceId, date, ...data } = updateTransactionDto;
 
     return this.prisma.transaction.update({
       where: {id},
       data: {
-        ...data, ...(farmId && {farm: {connect: {id: farmId } } } ),
+        ...data,
+        ...(date && { date: new Date(date) }),
+        ...(farmId && { farm: { connect: { id: farmId } } }),
         ...(userId && { user: { connect: { id: userId } } }),
-        ...(clientId && {client: {connect: {id: clientId } } } ),
-        ...(invoiceId && {invoice: {connect: {id: invoiceId } } } ),
+        ...(clientId && { client: { connect: { id: clientId } } }),
+        ...(invoiceId && { invoice: { connect: { id: invoiceId } } }),
       },
+      include: {
+        client: true,
+        invoice: true,
+      }
     });
   }
 
