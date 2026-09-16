@@ -1,5 +1,5 @@
 import {
-  LayoutDashboard, Sprout, Package, Wallet, Handshake, BarChart3, Settings, IdCard,
+  LayoutDashboard, Sprout, Package, Wallet, Handshake, BarChart3, Settings, IdCard, Truck,
   type LucideIcon,
 } from "lucide-react"
 import type { ModuleKey } from "@/lib/permissions"
@@ -23,6 +23,7 @@ export const NAV_ITEMS: NavItem[] = [
   { to: "/app/stocks", labelKey: "nav.stocks", icon: Package, module: "stock", group: "principal" },
   { to: "/app/finance", labelKey: "nav.finance", icon: Wallet, module: "finance", group: "finances" },
   { to: "/app/clients", labelKey: "nav.clients", icon: Handshake, module: "clients", group: "commerce" },
+  { to: "/app/fournisseurs", labelKey: "nav.fournisseurs", icon: Truck, module: "finance", group: "commerce" },
   { to: "/app/personnel", labelKey: "nav.personnel", icon: IdCard, module: "personnel", group: "commerce" },
   { to: "/app/rapports", labelKey: "nav.reports", icon: BarChart3, group: "analyse" },
   { to: "/app/settings", labelKey: "nav.settings", icon: Settings, module: "settings", group: "principal" },
