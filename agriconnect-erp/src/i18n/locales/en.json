@@ -1466,6 +1466,8 @@
     "statDepartments": "Departments",
     "statDepartmentsHint": "represented",
     "noRole": "Role to be filled in",
+    "deleteConfirmTitle": "Delete {{name}}?",
+    "deleteConfirmDescription": "The record will be removed from the Staff module. A linked client, if any, is left untouched.",
     "tabsStaff": "Records",
     "fieldPhone": "Phone",
     "fromClient": "Created from Clients",

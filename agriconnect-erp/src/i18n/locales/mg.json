@@ -1455,6 +1455,8 @@
     "statDepartments": "Sampana",
     "statDepartmentsHint": "misolo tena",
     "noRole": "Andraikitra fenoina",
+    "deleteConfirmTitle": "Fafana {{name}} ?",
+    "deleteConfirmDescription": "Hesorina amin'ny sampana Mpiasa ny rakitra. Tsy voakasika ny mpanjifa mifandray aminy, raha misy.",
     "tabsStaff": "Antontan-taratasy",
     "fieldPhone": "Finday",
     "fromClient": "Noforonina avy amin'ny Mpanjifa",

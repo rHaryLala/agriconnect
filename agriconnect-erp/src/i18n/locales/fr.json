@@ -1466,6 +1466,8 @@
     "statDepartments": "Départements",
     "statDepartmentsHint": "services représentés",
     "noRole": "Fonction à compléter",
+    "deleteConfirmTitle": "Supprimer {{name}} ?",
+    "deleteConfirmDescription": "La fiche sera retirée du module Personnel. Le client lié, s'il existe, n'est pas supprimé.",
     "tabsStaff": "Fiches",
     "fieldPhone": "Téléphone",
     "fromClient": "Créé depuis Clients",
