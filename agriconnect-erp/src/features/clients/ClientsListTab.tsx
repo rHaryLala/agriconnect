@@ -1,37 +1,79 @@
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Pencil, Trash2, Users } from "lucide-react"
+import { Plus, Users, Pencil, Trash2, Handshake, Building2, IdCard, Store } from "lucide-react"
 import { Button } from "@/components/ui/button"
-import { AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle, AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction } from "@/components/ui/alert-dialog"
+import {
+  AlertDialog, AlertDialogContent, AlertDialogHeader, AlertDialogTitle,
+  AlertDialogDescription, AlertDialogFooter, AlertDialogCancel, AlertDialogAction,
+} from "@/components/ui/alert-dialog"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
+import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
+import { ListToolbar, type ToolbarFilter } from "@/components/shared/ListToolbar"
+import { EmptyState } from "@/components/shared/EmptyState"
+import type { ViewMode } from "@/components/shared/ViewToggle"
+import { ClientCard } from "./ClientCard"
 import { ClientFormDialog } from "./ClientFormDialog"
 import { useClientsStore } from "./clientsStore"
 import { CLIENT_TYPE_LABEL_KEYS, CLIENT_TYPE_TONES } from "./clientLabels"
-import { CLIENT_TYPES, type Client, type ClientType } from "@/types/client"
+import { CLIENT_TYPES, type Client } from "@/types/client"
+
+const ALL = "tous"
+const INTERNAL_TYPES = ["cafeteria", "store", "production"]
+
+function matches(client: Client, query: string): boolean {
+  const needle = query.trim().toLowerCase()
+  if (!needle) return true
+  return (
+    client.nom.toLowerCase().includes(needle) ||
+    !!client.telephone?.toLowerCase().includes(needle) ||
+    !!client.matriculeUaz?.toLowerCase().includes(needle)
+  )
+}
 
 export function ClientsListTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
   const { clients, isLoading, fetchAll, addClient, updateClient, deleteClient } = useClientsStore()
+
   const [formOpen, setFormOpen] = useState(false)
   const [editingClient, setEditingClient] = useState<Client | null>(null)
   const [deletingClient, setDeletingClient] = useState<Client | null>(null)
-  const [typeFilter, setTypeFilter] = useState<ClientType | "tous">("tous")
-
-  const filtered = useMemo(
-    () => (typeFilter === "tous" ? clients : clients.filter((c) => c.type === typeFilter)),
-    [clients, typeFilter]
-  )
+  const [search, setSearch] = useState("")
+  const [typeFilter, setTypeFilter] = useState(ALL)
+  const [view, setView] = useState<ViewMode>("list")
 
   useEffect(() => {
     fetchAll()
   }, [fetchAll])
 
+  const filtered = useMemo(
+    () => clients.filter((client) => matches(client, search) && (typeFilter === ALL || client.type === typeFilter)),
+    [clients, search, typeFilter],
+  )
+
+  const internalCount = clients.filter((client) => INTERNAL_TYPES.includes(client.type)).length
+  const staffCount = clients.filter((client) => client.type === "personnel").length
+  const externalCount = clients.filter((client) => client.type === "externe").length
+
+  const filters: ToolbarFilter[] = [
+    {
+      id: "type",
+      label: t("clients.filterType"),
+      value: typeFilter,
+      onChange: setTypeFilter,
+      options: [
+        { value: ALL, label: t("common.filterAll") },
+        ...CLIENT_TYPES.map((value) => ({ value, label: t(CLIENT_TYPE_LABEL_KEYS[value]) })),
+      ],
+    },
+  ]
+
   function openCreate() {
     setEditingClient(null)
     setFormOpen(true)
   }
+
   function openEdit(client: Client) {
     setEditingClient(client)
     setFormOpen(true)
@@ -47,7 +89,7 @@ export function ClientsListTab({ canEdit }: { canEdit: boolean }) {
     }
   }
 
-  async function confirmDelete() {
+  function confirmDelete() {
     if (!deletingClient) return
     deleteClient(deletingClient.id)
     toast.success(t("clients.toastDeleted"))
@@ -55,7 +97,7 @@ export function ClientsListTab({ canEdit }: { canEdit: boolean }) {
   }
 
   const columns: DataTableColumn<Client>[] = [
-    { key: "nom", label: t("clients.colName"), render: (c) => c.nom },
+    { key: "nom", label: t("clients.colName"), render: (c) => <span className="font-medium text-foreground">{c.nom}</span> },
     { key: "type", label: t("clients.colType"), render: (c) => <StatusBadge label={t(CLIENT_TYPE_LABEL_KEYS[c.type])} tone={CLIENT_TYPE_TONES[c.type]} /> },
     { key: "telephone", label: t("clients.colPhone"), render: (c) => c.telephone || <span className="text-muted-foreground">—</span> },
     { key: "matricule", label: t("clients.colMatricule"), render: (c) => c.matriculeUaz || <span className="text-muted-foreground">—</span> },
@@ -78,27 +120,48 @@ export function ClientsListTab({ canEdit }: { canEdit: boolean }) {
 
   return (
     <div>
-      <div className="mb-4 flex flex-wrap items-center justify-between gap-3">
-        <div className="flex flex-wrap gap-1 rounded-lg border border-border bg-surface p-1">
-          {(["tous", ...CLIENT_TYPES] as const).map((f) => (
-            <button
-              key={f} type="button" onClick={() => setTypeFilter(f)}
-              className={`rounded-md px-3 py-1.5 text-sm transition-colors duration-200 ${typeFilter === f ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"}`}
-            >
-              {f === "tous" ? t("clients.filterAll") : t(CLIENT_TYPE_LABEL_KEYS[f])}
-            </button>
-          ))}
-        </div>
-
-        {canEdit && (
-          <Button onClick={openCreate} className="gap-2">
-            <Plus className="h-4 w-4" />
-            {t("clients.newClient")}
-          </Button>
-        )}
+      <div className="mb-6 grid grid-cols-2 gap-3 lg:grid-cols-4">
+        <StatCard icon={Handshake} tone="primary" label={t("clients.statTotal")} value={String(clients.length)} hint={t("clients.statTotalHint")} />
+        <StatCard icon={Store} tone="info" label={t("clients.statInternal")} value={String(internalCount)} hint={t("clients.statInternalHint")} />
+        <StatCard icon={IdCard} tone="warning" label={t("clients.statStaff")} value={String(staffCount)} hint={t("clients.statStaffHint")} />
+        <StatCard icon={Building2} tone="success" label={t("clients.statExternal")} value={String(externalCount)} hint={t("clients.statExternalHint")} />
       </div>
 
-      <DataTable columns={columns} rows={filtered} rowKey={(c) => c.id} isLoading={isLoading} emptyIcon={Users} emptyTitle={t("clients.emptyTitle")} emptyDescription={t("clients.emptyDescription")} />
+      <ListToolbar
+        search={search}
+        onSearchChange={setSearch}
+        searchPlaceholder={t("clients.searchPlaceholder")}
+        filters={filters}
+        view={{ value: view, onChange: setView }}
+        actions={
+          canEdit && (
+            <Button onClick={openCreate} className="gap-2">
+              <Plus className="h-4 w-4" />
+              <span className="hidden sm:inline">{t("clients.newClient")}</span>
+            </Button>
+          )
+        }
+      />
+
+      {view === "list" ? (
+        <DataTable
+          columns={columns}
+          rows={filtered}
+          rowKey={(c) => c.id}
+          isLoading={isLoading}
+          emptyIcon={Users}
+          emptyTitle={t("clients.emptyTitle")}
+          emptyDescription={t("clients.emptyDescription")}
+        />
+      ) : filtered.length === 0 ? (
+        <EmptyState icon={Users} title={t("clients.emptyTitle")} description={t("clients.emptyDescription")} />
+      ) : (
+        <div className="grid grid-cols-1 gap-4 sm:grid-cols-2 xl:grid-cols-3">
+          {filtered.map((client) => (
+            <ClientCard key={client.id} client={client} canEdit={canEdit} onEdit={openEdit} onDelete={setDeletingClient} />
+          ))}
+        </div>
+      )}
 
       {canEdit && (
         <>
