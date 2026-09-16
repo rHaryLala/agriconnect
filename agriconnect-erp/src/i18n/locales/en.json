@@ -1347,6 +1347,22 @@
     "fieldPurchasePaid": "Amount paid",
     "toastPurchaseAdded": "Purchase recorded"
   },
+  "search": {
+    "placeholder": "Search everywhere...",
+    "openLabel": "Global search",
+    "hint": "Clients, suppliers, staff and stock items.",
+    "noResults": "No result for “{{query}}”",
+    "noResultsHint": "Try a name, a contact or a product.",
+    "groups": {
+      "clients": "Clients",
+      "fournisseurs": "Suppliers",
+      "personnel": "Staff",
+      "stock": "Items"
+    },
+    "resultCount": "{{count}} result",
+    "resultCount_other": "{{count}} results",
+    "close": "Close search"
+  },
   "rapports": {
     "pageTitle": "Export",
     "pageSubtitle": "Financial, production, stock — export to PDF and Excel in one click.",

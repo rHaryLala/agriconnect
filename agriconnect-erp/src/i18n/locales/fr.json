@@ -1347,6 +1347,22 @@
     "fieldPurchasePaid": "Montant payé",
     "toastPurchaseAdded": "Achat enregistré"
   },
+  "search": {
+    "placeholder": "Rechercher partout...",
+    "openLabel": "Recherche globale",
+    "hint": "Clients, fournisseurs, personnel et articles.",
+    "noResults": "Aucun résultat pour « {{query}} »",
+    "noResultsHint": "Essayez un nom, un contact ou un produit.",
+    "groups": {
+      "clients": "Clients",
+      "fournisseurs": "Fournisseurs",
+      "personnel": "Personnel",
+      "stock": "Articles"
+    },
+    "resultCount": "{{count}} résultat",
+    "resultCount_other": "{{count}} résultats",
+    "close": "Fermer la recherche"
+  },
   "rapports": {
     "pageTitle": "Export",
     "pageSubtitle": "Financier, production, stock — export PDF et Excel en un clic.",

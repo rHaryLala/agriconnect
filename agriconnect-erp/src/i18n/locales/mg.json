@@ -1336,6 +1336,22 @@
     "fieldPurchasePaid": "Vola naloa",
     "toastPurchaseAdded": "Voarakitra ny fividianana"
   },
+  "search": {
+    "placeholder": "Karohy hatraiza hatraiza...",
+    "openLabel": "Fikarohana ankapobeny",
+    "hint": "Mpanjifa, mpamatsy, mpiasa ary entana.",
+    "noResults": "Tsy misy valiny ho an'ny “{{query}}”",
+    "noResultsHint": "Andramo anarana, mpiandraikitra na vokatra.",
+    "groups": {
+      "clients": "Mpanjifa",
+      "fournisseurs": "Mpamatsy",
+      "personnel": "Mpiasa",
+      "stock": "Entana"
+    },
+    "resultCount": "valiny {{count}}",
+    "resultCount_other": "valiny {{count}}",
+    "close": "Akatony ny fikarohana"
+  },
   "rapports": {
     "pageTitle": "Export",
     "pageSubtitle": "Ara-bola, famokarana, tahiry — avoahy PDF na Excel amin'ny kitika iray.",

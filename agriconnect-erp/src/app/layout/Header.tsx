@@ -8,6 +8,7 @@ import { useOnlineStatus } from "@/hooks/useOnlineStatus"
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
 import { Avatar } from "@/components/shared/Avatar"
 import { useOfflineSyncStore } from "@/features/offline/offlineSyncStore"
+import { GlobalSearch } from "@/features/search/GlobalSearch"
 interface HeaderProps {
   onMenuClick: () => void
 }
@@ -40,13 +41,15 @@ export function Header({ onMenuClick }: HeaderProps) {
       </Button>
 
       {user && (
-        <div className="flex min-w-0 items-center gap-2">
+        <div className="flex shrink-0 items-center gap-2">
           <Avatar userId={user.id} initials={user.avatarInitials || getInitials(user.name)} />
-          <span className="hidden truncate text-sm font-medium text-foreground sm:inline">{user.name}</span>
+          <span className="hidden truncate text-sm font-medium text-foreground lg:inline">{user.name}</span>
         </div>
       )}
 
-      <div className="ml-auto flex items-center gap-1">
+      <GlobalSearch />
+
+      <div className="flex shrink-0 items-center gap-1">
         <LanguageSwitcher compact /> {pendingCount > 0 && (
           <span title={t("offline.pendingTooltip", { count: pendingCount })} className="flex items-center gap-1 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
         <CloudUpload className="h-3.5 w-3.5" />
