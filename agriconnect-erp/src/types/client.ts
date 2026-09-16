@@ -8,4 +8,6 @@ export interface Client {
   telephone?: string
   type: ClientType
   matriculeUaz?: string
+  fonction?: string
+  departement?: string
 }

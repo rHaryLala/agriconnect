@@ -10,6 +10,7 @@ interface PersonnelState {
   isLoading: boolean
   hasFetched: boolean
   fetchAll: () => Promise<void>
+  ensureSeeded: () => void
   addEmploye: (data: Omit<Employe, "id">) => Promise<void>
   updateEmploye: (id: string, data: Omit<Employe, "id">) => Promise<void>
   deleteEmploye: (id: string) => void
@@ -31,6 +32,11 @@ export const usePersonnelStore = create<PersonnelState>()(
             resolve()
           }, FAKE_LATENCY_MS)
         })
+      },
+
+      ensureSeeded: () => {
+        if (get().hasFetched) return
+        set({ employes: SEED_EMPLOYES, hasFetched: true })
       },
 
       addEmploye: (data) =>

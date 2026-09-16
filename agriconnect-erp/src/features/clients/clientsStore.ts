@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { Client } from "@/types/client"
+import { deactivateEmployeForClient, syncEmployeFromClient } from "@/features/personnel/clientSync"
 
 const FAKE_LATENCY_MS = 500
 
@@ -8,7 +9,7 @@ const SEED_CLIENTS: Client[] = [
   { id: "cl-2", nom: "Store", type: "store" },
   { id: "cl-1", nom: "Cafétéria", type: "cafeteria" },
   { id: "cl-6", nom: "Production", type: "production" },
-  { id: "cl-3", nom: "Hary Lala", type: "personnel", matriculeUaz: "UAZ-0231", telephone: "034 12 345 67" },
+  { id: "cl-3", nom: "Hary Lala", type: "personnel", matriculeUaz: "UAZ-0231", telephone: "034 12 345 67", fonction: "Magasinier de la Ferme", departement: "Logistique" },
   { id: "cl-4", nom: "Restaurant LESOA Hideout", type: "externe", telephone: "032 98 765 43" },
 ]
 
@@ -43,7 +44,9 @@ export const useClientsStore = create<ClientsState>()(
       addClient: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ clients: [{ ...data, id: `cl-${Date.now()}` }, ...get().clients] })
+            const client: Client = { ...data, id: `cl-${Date.now()}` }
+            set({ clients: [client, ...get().clients] })
+            if (client.type === "personnel") syncEmployeFromClient(client)
             resolve()
           }, FAKE_LATENCY_MS)
         }),
@@ -51,12 +54,18 @@ export const useClientsStore = create<ClientsState>()(
       updateClient: (id, data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ clients: get().clients.map((c) => (c.id === id ? { ...data, id } : c)) })
+            const client: Client = { ...data, id }
+            set({ clients: get().clients.map((c) => (c.id === id ? client : c)) })
+            if (client.type === "personnel") syncEmployeFromClient(client)
+            else deactivateEmployeForClient(id)
             resolve()
           }, FAKE_LATENCY_MS)
         }),
 
-      deleteClient: (id) => set({ clients: get().clients.filter((c) => c.id !== id) }),
+      deleteClient: (id) => {
+        set({ clients: get().clients.filter((c) => c.id !== id) })
+        deactivateEmployeForClient(id)
+      },
     }),
     {
       name: "agriconnect-clients",

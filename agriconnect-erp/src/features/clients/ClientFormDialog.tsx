@@ -3,11 +3,12 @@ import { useForm, useWatch, Controller } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
-import { Loader2 } from "lucide-react"
+import { Loader2, IdCard } from "lucide-react"
 import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogFooter } from "@/components/ui/dialog"
 import { Select, SelectTrigger, SelectValue, SelectContent, SelectItem } from "@/components/ui/select"
 import { Label } from "@/components/ui/label"
 import { Button } from "@/components/ui/button"
+import { AlertBanner } from "@/components/shared/AlertBanner"
 import { CLIENT_TYPE_LABEL_KEYS } from "./clientLabels"
 import { CLIENT_TYPES, type Client, type ClientType } from "@/types/client"
 
@@ -17,6 +18,8 @@ function buildSchema(t: (key: string) => string) {
     type: z.enum(CLIENT_TYPES as [ClientType, ...ClientType[]]).describe(t("clients.validationType")),
     telephone: z.string().optional(),
     matriculeUaz: z.string().optional(),
+    fonction: z.string().optional(),
+    departement: z.string().optional(),
   })
 }
 type FormValues = z.infer<ReturnType<typeof buildSchema>>
@@ -41,19 +44,30 @@ export function ClientFormDialog({ open, onOpenChange, editingClient, onSubmit }
     if (open) {
       reset(
         editingClient
-          ? { nom: editingClient.nom, type: editingClient.type, telephone: editingClient.telephone ?? "", matriculeUaz: editingClient.matriculeUaz ?? "" }
-          : { nom: "", type: "externe", telephone: "", matriculeUaz: "" }
+          ? {
+              nom: editingClient.nom,
+              type: editingClient.type,
+              telephone: editingClient.telephone ?? "",
+              matriculeUaz: editingClient.matriculeUaz ?? "",
+              fonction: editingClient.fonction ?? "",
+              departement: editingClient.departement ?? "",
+            }
+          : { nom: "", type: "externe", telephone: "", matriculeUaz: "", fonction: "", departement: "" }
       )
     }
   }, [open, editingClient, reset])
   const type: ClientType = useWatch({ control, name: "type" })
+
+  const isStaff = type === "personnel"
 
   async function handleFormSubmit(values: FormValues) {
     await onSubmit({
       nom: values.nom,
       type: values.type,
       telephone: values.telephone || undefined,
-      matriculeUaz: values.type === "personnel" ? values.matriculeUaz || undefined : undefined,
+      matriculeUaz: isStaff ? values.matriculeUaz || undefined : undefined,
+      fonction: isStaff ? values.fonction?.trim() || undefined : undefined,
+      departement: isStaff ? values.departement?.trim() || undefined : undefined,
     })
     onOpenChange(false)
   }
@@ -104,13 +118,34 @@ export function ClientFormDialog({ open, onOpenChange, editingClient, onSubmit }
             />
           </div>
 
-          {type === "personnel" && (
-            <div className="animate-content-in">
-              <Label htmlFor="matriculeUaz">{t("clients.fieldMatricule")}</Label>
-              <input
-                id="matriculeUaz" {...register("matriculeUaz")} placeholder={t("clients.fieldMatriculePlaceholder")}
-                className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
-              />
+          {isStaff && (
+            <div className="animate-content-in flex flex-col gap-4">
+              <div>
+                <Label htmlFor="matriculeUaz">{t("clients.fieldMatricule")}</Label>
+                <input
+                  id="matriculeUaz" {...register("matriculeUaz")} placeholder={t("clients.fieldMatriculePlaceholder")}
+                  className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                />
+              </div>
+
+              <div className="grid grid-cols-1 gap-4 sm:grid-cols-2">
+                <div>
+                  <Label htmlFor="fonction">{t("clients.fieldFonction")}</Label>
+                  <input
+                    id="fonction" {...register("fonction")} placeholder={t("clients.fieldFonctionPlaceholder")}
+                    className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+                <div>
+                  <Label htmlFor="departement">{t("clients.fieldDepartement")}</Label>
+                  <input
+                    id="departement" {...register("departement")} placeholder={t("clients.fieldDepartementPlaceholder")}
+                    className="mt-1.5 w-full rounded-lg border border-border bg-background px-3 py-2 text-sm text-foreground outline-none focus:border-primary focus:ring-2 focus:ring-primary/20"
+                  />
+                </div>
+              </div>
+
+              <AlertBanner tone="info" icon={IdCard} title={t("clients.personnelSyncHint")} />
             </div>
           )}
 

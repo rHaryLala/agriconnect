@@ -18,6 +18,7 @@ function buildSchema(t: (key: string) => string) {
     nom: z.string().min(2, t("personnel.validationName")),
     fonction: z.string().min(2, t("personnel.validationRole")),
     departement: z.string().min(2, t("personnel.validationDepartment")),
+    telephone: z.string().optional(),
     matriculeUaz: z.string().optional(),
     clientId: z.string().optional(),
     statut: z.enum(["actif", "inactif"]),
@@ -54,6 +55,7 @@ export function EmployeFormDialog({ open, onOpenChange, editingEmploye, clients,
         nom: editingEmploye?.nom ?? "",
         fonction: editingEmploye?.fonction ?? "",
         departement: editingEmploye?.departement ?? "",
+        telephone: editingEmploye?.telephone ?? "",
         matriculeUaz: editingEmploye?.matriculeUaz ?? "",
         clientId: editingEmploye?.clientId ?? NO_CLIENT,
         statut: editingEmploye?.statut ?? "actif",
@@ -66,6 +68,7 @@ export function EmployeFormDialog({ open, onOpenChange, editingEmploye, clients,
       nom: values.nom,
       fonction: values.fonction,
       departement: values.departement,
+      telephone: values.telephone || undefined,
       matriculeUaz: values.matriculeUaz || undefined,
       clientId: values.clientId && values.clientId !== NO_CLIENT ? values.clientId : undefined,
       statut: values.statut,
@@ -102,27 +105,32 @@ export function EmployeFormDialog({ open, onOpenChange, editingEmploye, clients,
 
           <div className="grid grid-cols-2 gap-3">
             <div>
+              <Label htmlFor="telephone">{t("personnel.fieldPhone")}</Label>
+              <input id="telephone" {...register("telephone")} placeholder="034 12 345 67" className={INPUT_CLASS} />
+            </div>
+            <div>
               <Label htmlFor="matriculeUaz">{t("personnel.fieldMatricule")}</Label>
               <input id="matriculeUaz" {...register("matriculeUaz")} placeholder="UAZ-0231" className={INPUT_CLASS} />
             </div>
-            <div>
-              <Label htmlFor="statut">{t("personnel.fieldStatus")}</Label>
-              <Controller
-                name="statut"
-                control={control}
-                render={({ field }) => (
-                  <Select value={field.value} onValueChange={field.onChange}>
-                    <SelectTrigger id="statut" className="mt-1.5">
-                      <SelectValue placeholder="..." />
-                    </SelectTrigger>
-                    <SelectContent>
-                      <SelectItem value="actif">{t("personnel.statusActive")}</SelectItem>
-                      <SelectItem value="inactif">{t("personnel.statusInactive")}</SelectItem>
-                    </SelectContent>
-                  </Select>
-                )}
-              />
-            </div>
+          </div>
+
+          <div>
+            <Label htmlFor="statut">{t("personnel.fieldStatus")}</Label>
+            <Controller
+              name="statut"
+              control={control}
+              render={({ field }) => (
+                <Select value={field.value} onValueChange={field.onChange}>
+                  <SelectTrigger id="statut" className="mt-1.5">
+                    <SelectValue placeholder="..." />
+                  </SelectTrigger>
+                  <SelectContent>
+                    <SelectItem value="actif">{t("personnel.statusActive")}</SelectItem>
+                    <SelectItem value="inactif">{t("personnel.statusInactive")}</SelectItem>
+                  </SelectContent>
+                </Select>
+              )}
+            />
           </div>
 
           <div>

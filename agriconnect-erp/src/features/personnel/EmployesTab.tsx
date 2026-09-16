@@ -34,13 +34,22 @@ export function EmployesTab({ canEdit }: { canEdit: boolean }) {
 
   const columns: DataTableColumn<Employe>[] = [
     { key: "nom", label: t("personnel.fieldName"), render: (e) => e.nom },
-    { key: "fonction", label: t("personnel.fieldRole"), render: (e) => e.fonction },
-    { key: "departement", label: t("personnel.fieldDepartment"), render: (e) => <StatusBadge label={e.departement} tone="info" /> },
+    { key: "fonction", label: t("personnel.fieldRole"), render: (e) => e.fonction || <span className="text-muted-foreground">—</span> },
+    {
+      key: "departement",
+      label: t("personnel.fieldDepartment"),
+      render: (e) => (e.departement ? <StatusBadge label={e.departement} tone="info" /> : <span className="text-muted-foreground">—</span>),
+    },
+    { key: "telephone", label: t("personnel.fieldPhone"), render: (e) => e.telephone || <span className="text-muted-foreground">—</span> },
     { key: "matricule", label: t("personnel.fieldMatricule"), render: (e) => e.matriculeUaz || <span className="text-muted-foreground">—</span> },
     {
       key: "client",
       label: t("personnel.fieldClient"),
-      render: (e) => clients.find((c) => c.id === e.clientId)?.nom ?? <span className="text-muted-foreground">—</span>,
+      render: (e) => {
+        const linked = clients.find((c) => c.id === e.clientId)
+        if (!linked) return <span className="text-muted-foreground">—</span>
+        return <StatusBadge label={t("personnel.fromClient")} tone="primary" />
+      },
     },
     {
       key: "statut",

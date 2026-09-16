@@ -5,6 +5,7 @@ export interface Employe {
   nom: string
   fonction: string
   departement: string
+  telephone?: string
   matriculeUaz?: string
   clientId?: string
   statut: EmployeStatut
