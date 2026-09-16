@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
+import { useTabParam } from "@/hooks/useTabParam"
 import { useTranslation } from "react-i18next"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { useStockStore } from "./stockStore"
@@ -12,7 +13,7 @@ import { ReadOnlyBanner } from "@/components/shared/ReadOnlyBanner";
 export default function StocksPage() {
   const { t } = useTranslation()
   const fetchAll = useStockStore((s) => s.fetchAll)
-  const [activeTab, setActiveTab] = useState("inventaire")
+  const [activeTab, setActiveTab] = useTabParam("inventaire")
   const { canEdit } = usePermission("stock")
 
   useEffect(() => {

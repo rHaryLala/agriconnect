@@ -1,4 +1,5 @@
-import { useEffect, useState } from "react"
+import { useEffect } from "react"
+import { useTabParam } from "@/hooks/useTabParam"
 import { useTranslation } from "react-i18next"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { ReadOnlyBanner } from "@/components/shared/ReadOnlyBanner"
@@ -12,7 +13,7 @@ export default function FinancePage() {
   const { t } = useTranslation()
   const { canEdit } = usePermission("finance")
   const { transactions, isLoading, fetchAll, addTransaction, updateTransaction, deleteTransaction } = useFinanceStore()
-  const [activeTab, setActiveTab] = useState("apercu")
+  const [activeTab, setActiveTab] = useTabParam("apercu")
 
   useEffect(() => {
     fetchAll()

@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useTabParam } from "@/hooks/useTabParam"
 import { useTranslation } from "react-i18next"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { ReadOnlyBanner } from "@/components/shared/ReadOnlyBanner"
@@ -12,7 +12,7 @@ export default function ClientsPage() {
   const { canEdit } = usePermission("clients")
   const role = useAuthStore((s) => s.user?.role)
   const canEditClientRecords = role === "admin" || role === "comptable"
-  const [activeTab, setActiveTab] = useState("clients")
+  const [activeTab, setActiveTab] = useTabParam("clients")
 
   const TABS = [
     { id: "clients", label: t("clients.tabs.clients") },

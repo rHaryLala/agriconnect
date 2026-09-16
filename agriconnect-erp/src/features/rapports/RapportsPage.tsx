@@ -1,4 +1,5 @@
 import { useEffect, useMemo, useState } from "react"
+import { useTabParam } from "@/hooks/useTabParam"
 import { useTranslation } from "react-i18next"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { FinancialReportTab } from "./FinancialReportTab"
@@ -30,7 +31,7 @@ const PERIODICITY_LABEL_KEYS: Record<Periodicity, string> = {
 
 export default function RapportsPage() {
   const { t } = useTranslation()
-  const [activeTab, setActiveTab] = useState("financier")
+  const [activeTab, setActiveTab] = useTabParam("financier")
   const [periodicity, setPeriodicity] = useState<Periodicity>("month")
   const [anchorDate, setAnchorDate] = useState(currentIsoDate())
 

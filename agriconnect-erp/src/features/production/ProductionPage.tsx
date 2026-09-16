@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useTabParam } from "@/hooks/useTabParam"
 import { useTranslation } from "react-i18next"
 import { Plus, Settings2 } from "lucide-react"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
@@ -24,7 +25,7 @@ export default function ProductionPage() {
   const addCustomType = useCustomTypesStore((s) => s.addType)
   const updateCustomType = useCustomTypesStore((s) => s.updateType)
   const removeCustomType = useCustomTypesStore((s) => s.removeType)
-  const [activeTab, setActiveTab] = useState("apercu")
+  const [activeTab, setActiveTab] = useTabParam("apercu")
   const [addTypeOpen, setAddTypeOpen] = useState(false)
   const [manageOpen, setManageOpen] = useState(false)
   const { canEdit } = usePermission("production")

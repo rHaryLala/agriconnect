@@ -1,4 +1,4 @@
-import { useState } from "react"
+import { useTabParam } from "@/hooks/useTabParam"
 import { useTranslation } from "react-i18next"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { ReadOnlyBanner } from "@/components/shared/ReadOnlyBanner"
@@ -8,7 +8,7 @@ import { usePermission } from "@/hooks/usePermission"
 
 export default function PersonnelPage() {
   const { t } = useTranslation()
-  const [activeTab, setActiveTab] = useState("employes")
+  const [activeTab, setActiveTab] = useTabParam("employes")
   const { canEdit } = usePermission("personnel")
 
   const TABS = [

@@ -5,7 +5,9 @@ import { useStockStore } from "@/features/stocks/stockStore"
 import { useInvoicesStore } from "@/features/clients/invoicesStore"
 import { useFournisseursStore } from "@/features/fournisseurs/fournisseursStore"
 
-export function useNavBadges(): Record<string, number> {
+export type BadgeKey = "stockAlerts" | "unpaidInvoices" | "pendingPurchases"
+
+export function useNavBadges(): Record<BadgeKey, number> {
   const { articles, movements, fetchAll: fetchStock } = useStockStore()
   const { invoices, fetchAll: fetchInvoices } = useInvoicesStore()
   const { achats, fetchAll: fetchFournisseurs } = useFournisseursStore()
@@ -16,16 +18,11 @@ export function useNavBadges(): Record<string, number> {
     fetchFournisseurs()
   }, [fetchStock, fetchInvoices, fetchFournisseurs])
 
-  const alerteStock = articles.filter(
-    (article) => getStockStatus(computeCurrentStock(article, movements), article.seuilCritique) === "critique",
-  ).length
-
-  const facturesImpayees = invoices.filter((invoice) => computeInvoiceDue(invoice) > 0).length
-  const achatsEnAttente = achats.filter((achat) => achat.montantPaye < achat.montant).length
-
   return {
-    "/app/stocks": alerteStock,
-    "/app/clients": facturesImpayees,
-    "/app/fournisseurs": achatsEnAttente,
+    stockAlerts: articles.filter(
+      (article) => getStockStatus(computeCurrentStock(article, movements), article.seuilCritique) === "critique",
+    ).length,
+    unpaidInvoices: invoices.filter((invoice) => computeInvoiceDue(invoice) > 0).length,
+    pendingPurchases: achats.filter((achat) => achat.montantPaye < achat.montant).length,
   }
 }

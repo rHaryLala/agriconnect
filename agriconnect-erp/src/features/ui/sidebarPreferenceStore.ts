@@ -1,31 +1,30 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
-import type { NavGroup } from "@/app/layout/navItems"
 
 interface SidebarPreferenceState {
   collapsed: boolean
-  closedGroups: NavGroup[]
+  closedItems: string[]
   toggle: () => void
-  toggleGroup: (group: NavGroup) => void
+  toggleItem: (to: string) => void
 }
 
 export const useSidebarPreferenceStore = create<SidebarPreferenceState>()(
   persist(
     (set, get) => ({
       collapsed: false,
-      closedGroups: [],
+      closedItems: [],
       toggle: () => set({ collapsed: !get().collapsed }),
-      toggleGroup: (group) => {
-        const closed = get().closedGroups
-        set({ closedGroups: closed.includes(group) ? closed.filter((g) => g !== group) : [...closed, group] })
+      toggleItem: (to) => {
+        const closed = get().closedItems
+        set({ closedItems: closed.includes(to) ? closed.filter((item) => item !== to) : [...closed, to] })
       },
     }),
     {
       name: "agriconnect-sidebar-collapsed",
-      version: 1,
+      version: 2,
       migrate: (persisted) => {
         const state = persisted as Partial<SidebarPreferenceState>
-        return { ...state, closedGroups: state.closedGroups ?? [] } as SidebarPreferenceState
+        return { ...state, closedItems: state.closedItems ?? [] } as SidebarPreferenceState
       },
     },
   ),
