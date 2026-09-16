@@ -297,9 +297,21 @@ enum StatusBovin{
   DECEDE
 }
 
-enum EntryTypeBovin{
+enum EntryTypeBovin {
   NAISSANCE
   ACHAT
+}
+
+enum ProductiviteBovin {
+  PRODUCTIVE
+  TARIE
+}
+
+enum ReproductionBovin {
+  GESTANTE
+  NON_GESTANTE
+  ALLAITANTE
+  NON_ALLAITANTE
 }
 
 model Cattle{
@@ -309,7 +321,8 @@ model Cattle{
   gender String // male/female
   category    String?   @default("Vache laitière")// Veau, Vache laitière, etc.
   status StatusBovin @default(EN_ELEVAGE)
-  productiveStatus  String? // En traite, Repos, Non productive
+  productivite     ProductiviteBovin?
+  reproduction     ReproductionBovin?
 
   //Entrée------------------------
   entryType   EntryTypeBovin    @default(NAISSANCE)
@@ -334,6 +347,8 @@ model Cattle{
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([farmId])
 }
 
 // mise a jour: table model paiment et Historique des règlements / versements
@@ -491,7 +506,7 @@ model PoultryTracking{
   vaccineName     String?       // Nom du vaccin
   vaccineDate     DateTime?     // Date de vaccination
 
-  PonteRate   Int?  //taux de ponte
+  ponteRate   Float?  //taux de ponte
   notes   String?
 
   //tracabilité
