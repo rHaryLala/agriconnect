@@ -51,8 +51,8 @@ model User {
 
   salaryDeductions SalaryDeduction[]
 
-  sentTransfers     StockTransfer[] @relation("TransferSender")   
-  receivedTransfers StockTransfer[] @relation("TransferReceiver")
+  sentTransfers     StockTransfert[] @relation("TransfertSender")   
+  receivedTransfers StockTransfert[] @relation("TransfertReceiver")
 
   poultryTrackings PoultryTracking[]//mise a jour
 
@@ -124,7 +124,7 @@ model StockItem {
   invoiceItem InvoiceItem[]
   variants     ProductVariant[]
   //lise a jour
-  items   StockTransferItem[]
+  items   StockTransfertItem[]
 
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -153,7 +153,7 @@ model StockMovement {
   //mise a jour
 
   transfertId   String?
-  transfert   StockTransfer?   @relation(fields: [transfertId], references: [id])  
+  transfert   StockTransfert?   @relation(fields: [transfertId], references: [id])  
 
   createdAt          DateTime       @default(now())
 }
@@ -282,8 +282,8 @@ model StockLocation {
 
   stockItem StockItem[]
   //mise a jour
-  fromTransfers StockTransfer[] @relation("FromLocation")
-  toTransfers   StockTransfer[] @relation("ToLocation")
+  fromTransfers StockTransfert[] @relation("FromLocation")
+  toTransfers   StockTransfert[] @relation("ToLocation")
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -424,7 +424,7 @@ model ProductVariant{
 
   invoiceItems    InvoiceItem[]
 
-  stockTranferItems StockTransferItem[]
+  stockTranferItems StockTransfertItem[]
 
   movements      StockMovement[]
 
@@ -435,7 +435,7 @@ model ProductVariant{
 }
 
 //model stockTransfer avec gestion des transfert inter-emplacement
-model StockTransfer {
+model StockTransfert {
   id String @id @default(uuid())
   transfertNumber String  @unique
   status    String    @default("PENDING")//PENDING,CANCELLED, COMPLETED
@@ -449,12 +449,12 @@ model StockTransfer {
   toLocation    StockLocation   @relation("ToLocation", fields: [toLocationId], references: [id])
 
   senderId    String?
-  sender    User?    @relation("TransferSender", fields: [senderId], references: [id])
+  sender    User?    @relation("TransfertSender", fields: [senderId], references: [id])
 
   receiverId    String?
-  receiver    User?   @relation("TransferReceiver", fields: [receiverId], references: [id])
+  receiver    User?   @relation("TransfertReceiver", fields: [receiverId], references: [id])
 
-  items   StockTransferItem[]
+  items   StockTransfertItem[]
 
   //mise a jour
   movements      StockMovement[] // Un transfert contient ses 2 mouvements (IN et OUT)
@@ -464,12 +464,12 @@ model StockTransfer {
 }
 
 //model StockTransferItem
-model StockTransferItem{
+model StockTransfertItem{
   id    String    @id @default(uuid())
   quantity    Float
 
   transfertId   String
-  transfert   StockTransfer   @relation(fields: [transfertId], references: [id])
+  transfert   StockTransfert   @relation(fields: [transfertId], references: [id])
 
   itemId    String
   item    StockItem   @relation(fields: [itemId], references: [id])
