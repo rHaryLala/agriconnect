@@ -1,9 +1,7 @@
-import { IsEnum, IsOptional, IsString } from 'class-validator';
+import { IsEnum, IsInt, IsOptional, IsString, Min } from 'class-validator';
 import { PoultryType } from '@prisma/client';
 
-// Pas de "ageInWeeks" ici volontairement — en attente de confirmation
-// (calculé depuis entryDate, ou saisi à la main ?). On ne le propose
-// pas tant que ce n'est pas tranché, plutôt que de deviner.
+// Pas de "ageInWeeks" ici - pour l'instant
 export class CreatePoultryDto {
   @IsOptional()
   @IsString()
@@ -11,6 +9,12 @@ export class CreatePoultryDto {
 
   @IsEnum(PoultryType) // PONDEUSE / KUROILER / POULARD
   type: PoultryType;
+
+  //Âge au moment de la création
+  @IsOptional()
+  @IsInt()
+  @Min(0)
+  initialAge?: number;
 
   @IsOptional()
   @IsString()
