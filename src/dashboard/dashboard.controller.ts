@@ -14,7 +14,7 @@ type AuthUser = {id:string, role:string, farmId: string};
 @ApiBearerAuth()
 @Controller('dashboard') // toutes les routes ci-dessous commencent par /dashboard
 @UseGuards(JwtAuthGuard, RolesGuard)
-@Roles('ADMIN, COMPTABLE')
+@Roles('ADMIN', 'COMPTABLE')
 export class DashboardController {
     constructor(private dashboardService: DashboardService) {}
 
@@ -26,4 +26,5 @@ export class DashboardController {
     // ValidationPipe global déjà configuré dans main.ts.
     return this.dashboardService.getSummary(user.farmId, query.date);
     }
+    
 }
