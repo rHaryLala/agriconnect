@@ -9,6 +9,7 @@ import { CreatePoultryDto } from './dto/create-poultry.dto';
 import { UpdatePoultryDto } from './dto/update-poultry.dto';
 import { SellPoultryDto } from './dto/sell-poultry.dto';
 import { RecordExitDto } from './dto/record-exit.dto';
+import { CreateWeeklyRecordDto } from './dto/create-weekly-record.dto';
 
 type AuthUser = { id: string; role: string; farmId: string };
 
@@ -54,4 +55,20 @@ export class PoultryController {
   recordExit(@Param('id') id: string, @Body() dto: RecordExitDto, @CurrentUser() user: AuthUser) {
     return this.service.recordExit(id, dto, user.farmId);
   }
+
+  @Post(':id/weekly-records')
+    @Roles('ADMIN', 'OUVRIER') // saisie terrain hebdomadaire, cohérent avec Production
+    addWeeklyRecord(
+    @Param('id') id: string,
+    @Body() dto: CreateWeeklyRecordDto,
+    @CurrentUser() user: AuthUser,
+) {
+  return this.service.addWeeklyRecord(id, dto, user.farmId);
+}
+
+@Get(':id/weekly-records')
+@Roles('ADMIN', 'OUVRIER', 'COMPTABLE', 'CONTROLEUR_INTERNE')
+getWeeklyRecords(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+  return this.service.getWeeklyRecords(id, user.farmId);
+}
 }
