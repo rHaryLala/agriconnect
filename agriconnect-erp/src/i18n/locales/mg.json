@@ -722,7 +722,19 @@
       "validationResponsible": "Ilaina ny tompon'andraikitra",
       "insufficientStock": "Tsy ampy ny tahiry ao amin'ny {{location}} ho an'ny {{category}} : {{available}} no misy, {{requested}} no angatahina.",
       "toastCreated": "Voatahiry ny famindrana",
-      "toastDeleted": "Voafafa ny famindrana"
+      "toastDeleted": "Voafafa ny famindrana",
+      "newSale": "Varotra vaovao",
+      "saleDialogTitle": "Varotra vaovao — mamorona fatorana",
+      "fieldDestinationType": "Toerana halefana",
+      "destinationInternal": "Toerana anatiny (Magasinier / Store)",
+      "destinationExternal": "Mpanjifa ivelany",
+      "fieldInternalLocation": "Toerana",
+      "fieldExternalClient": "Mpanjifa",
+      "fieldPaymentInitial": "Vola naloa tamin'ny famoronana (Ar)",
+      "colInvoiced": "Voafatorana",
+      "invoicedYes": "Eny",
+      "invoicedNo": "Tsia",
+      "toastSaleCreated": "Voatahiry ny varotra, voaforona ny fatorana"
     },
     "mainOeuvre": {
       "statManDays": "Andro-olona",
@@ -1090,7 +1102,6 @@
       "emptyTitle": "Tsy misy tahiry",
       "emptyDescription": "Manaova tahiry voalohany amin'ny baotao eo ambony.",
       "hint": "Satria 100% eo amin'ny mpampiasa ny rindrankaja, ny tahiry dia mamoaka ny angona voarakitra eo an-toerana (vokatra, tahiry, vola, mpanjifa) amin'ny endrika JSON. Ny fanaovana averina dia mamerina misokatra ny pejy rehefa avy nampidirina.",
-      "colKey": "Sombin-tahiry",
       "colSize": "Habe",
       "toastExported": "Voaomana ny tahiry",
       "toastRestored": "Naverina ny tahiry",
