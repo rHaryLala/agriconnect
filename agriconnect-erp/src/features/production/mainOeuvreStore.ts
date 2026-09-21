@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { MainOeuvreEntry } from "@/types/production"
 import { SEED_MAIN_OEUVRE } from "./mockProductionData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -36,7 +37,7 @@ export const useMainOeuvreStore = create<MainOeuvreState>()(
       addEntry: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ entries: [{ ...data, id: `mo-${Date.now()}` }, ...get().entries] })
+            set({ entries: [{ ...data, id: newId("mo") }, ...get().entries] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),

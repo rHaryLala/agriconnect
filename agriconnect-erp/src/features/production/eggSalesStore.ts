@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { EggSale } from "@/types/eggSale"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -39,7 +40,7 @@ export const useEggSalesStore = create<EggSalesState>()(
       addSale: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            const sale: EggSale = { ...data, id: `es-${Date.now()}` }
+            const sale: EggSale = { ...data, id: newId("es") }
             set({ sales: [sale, ...get().sales] })
             resolve(sale)
           }, FAKE_LATENCY_MS)

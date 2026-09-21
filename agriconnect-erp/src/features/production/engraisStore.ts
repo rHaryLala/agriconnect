@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { EngraisApplication } from "@/types/production"
 import { SEED_ENGRAIS } from "./mockProductionData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -36,7 +37,7 @@ export const useEngraisStore = create<EngraisState>()(
       addApplication: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ applications: [{ ...data, id: `eng-${Date.now()}` }, ...get().applications] })
+            set({ applications: [{ ...data, id: newId("eng") }, ...get().applications] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),

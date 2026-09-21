@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { Employe } from "@/types/personnel"
 import { SEED_EMPLOYES } from "./mockPersonnelData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -42,7 +43,7 @@ export const usePersonnelStore = create<PersonnelState>()(
       addEmploye: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ employes: [...get().employes, { ...data, id: `emp-${Date.now()}` }] })
+            set({ employes: [...get().employes, { ...data, id: newId("emp") }] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),

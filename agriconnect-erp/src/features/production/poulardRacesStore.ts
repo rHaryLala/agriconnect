@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { newId } from "@/lib/id"
 
 export interface PoulardRaceProfile {
   id: string
@@ -23,7 +24,7 @@ export const usePoulardRacesStore = create<PoulardRacesState>()(
       addType: (nom) => {
         const trimmed = nom.trim()
         if (!trimmed || get().types.some((r) => r.nom === trimmed)) return
-        set({ types: [...get().types, { id: `poulard-race-${Date.now()}`, nom: trimmed }] })
+        set({ types: [...get().types, { id: newId("poulard-race"), nom: trimmed }] })
       },
       updateType: (id, nom) => set({ types: get().types.map((r) => (r.id === id ? { ...r, nom } : r)) }),
       removeType: (id) => set({ types: get().types.filter((r) => r.id !== id) }),

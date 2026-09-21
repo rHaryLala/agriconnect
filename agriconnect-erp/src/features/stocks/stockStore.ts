@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import { DEFAULT_STOCK_LOCATION, type StockArticle, type StockMovement } from "@/types/stock"
 import { SEED_ARTICLES, SEED_MOVEMENTS } from "./mockStockData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -42,13 +43,13 @@ export const useStockStore = create<StockState>()(
       },
 
       addArticle: (data) => {
-        set({ articles: [...get().articles, { ...data, id: `article-${Date.now()}` }] })
+        set({ articles: [...get().articles, { ...data, id: newId("article") }] })
       },
 
       addMovement: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ movements: [{ ...data, id: `mvt-${Date.now()}` }, ...get().movements] })
+            set({ movements: [{ ...data, id: newId("mvt") }, ...get().movements] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),

@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { FinanceTransaction } from "@/types/finance"
 import { SEED_TRANSACTIONS } from "./mockFinanceData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -38,7 +39,7 @@ export const useFinanceStore = create<FinanceState>()(
       addTransaction: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ transactions: [{ ...data, id: `t-${Date.now()}` }, ...get().transactions] })
+            set({ transactions: [{ ...data, id: newId("t") }, ...get().transactions] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),

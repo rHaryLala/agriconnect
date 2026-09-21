@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { newId } from "@/lib/id"
 
 export interface CustomTypeEntry {
   id: string
@@ -34,7 +35,7 @@ export const useCustomTypesStore = create<CustomTypesState>()(
       addType: (label) => {
         const trimmed = label.trim()
         if (!trimmed) return
-        set({ types: [...get().types, { id: `custom-${Date.now()}`, label: trimmed, entries: [] }] })
+        set({ types: [...get().types, { id: newId("custom"), label: trimmed, entries: [] }] })
       },
       updateType: (id, label) => set({ types: get().types.map((t) => (t.id === id ? { ...t, label } : t)) }),
       removeType: (id) => set({ types: get().types.filter((t) => t.id !== id) }),
@@ -43,7 +44,7 @@ export const useCustomTypesStore = create<CustomTypesState>()(
           setTimeout(() => {
             set({
               types: get().types.map((t) =>
-                t.id === typeId ? { ...t, entries: [{ ...data, id: `entry-${Date.now()}` }, ...t.entries] } : t
+                t.id === typeId ? { ...t, entries: [{ ...data, id: newId("entry") }, ...t.entries] } : t
               ),
             })
             resolve()

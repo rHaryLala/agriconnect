@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
+import { newId } from "@/lib/id"
 
 export interface Regularisation {
   id: string
@@ -20,7 +21,7 @@ export const useRegularisationsStore = create<RegularisationsState>()(
     (set, get) => ({
       regularisations: [],
       addRegularisation: (data) =>
-        set({ regularisations: [{ ...data, id: `reg-${Date.now()}` }, ...get().regularisations] }),
+        set({ regularisations: [{ ...data, id: newId("reg") }, ...get().regularisations] }),
       deleteRegularisation: (id) => set({ regularisations: get().regularisations.filter((r) => r.id !== id) }),
     }),
     {

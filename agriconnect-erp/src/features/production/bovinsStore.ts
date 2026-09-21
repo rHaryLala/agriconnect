@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { BovinAnimal, BovinSortieType } from "@/types/production"
 import { SEED_BOVINS } from "./mockProductionData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -45,7 +46,7 @@ export const useBovinsStore = create<BovinsState>()(
       addAnimal: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            const animal: BovinAnimal = { ...data, id: `b-${Date.now()}`, statut: "present" }
+            const animal: BovinAnimal = { ...data, id: newId("b"), statut: "present" }
             set({ animaux: [animal, ...get().animaux] })
             resolve()
           }, FAKE_LATENCY_MS)

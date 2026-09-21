@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { Invoice } from "@/types/invoice"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 const SEED_INVOICES: Invoice[] = [
@@ -66,7 +67,7 @@ export const useInvoicesStore = create<InvoicesState>()(
             const invoice: Invoice = {
               ...data,
               numeroComptabilite: numeroComptabilite || undefined,
-              id: `inv-${Date.now()}`,
+              id: newId("inv"),
               numero: nextNumero(invoices),
             }
             set({ invoices: [invoice, ...invoices], hasFetched: true })

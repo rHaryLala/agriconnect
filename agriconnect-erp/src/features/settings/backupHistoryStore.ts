@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
+import { newId } from "@/lib/id"
 
 export type BackupType = "automatique" | "manuelle"
 export type BackupStatus = "succes" | "erreur"
@@ -50,7 +51,7 @@ export const useBackupHistoryStore = create<BackupHistoryState>()(
       recordBackup: (sizeKb, type, durationSeconds) =>
         set({
           entries: [
-            { id: `b-${Date.now()}`, dateIso: new Date().toISOString(), sizeKb, type, durationSeconds, status: "succes" },
+            { id: newId("b"), dateIso: new Date().toISOString(), sizeKb, type, durationSeconds, status: "succes" },
             ...get().entries,
           ],
         }),

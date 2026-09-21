@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { newId } from "@/lib/id"
 
 export interface CageProfile {
   id: string
@@ -26,7 +27,7 @@ export const useCagesStore = create<CagesState>()(
       addCage: (nom, capaciteMax) => {
         const trimmed = nom.trim()
         if (!trimmed) return
-        set({ cages: [...get().cages, { id: `cage-${Date.now()}`, nom: trimmed, capaciteMax }] })
+        set({ cages: [...get().cages, { id: newId("cage"), nom: trimmed, capaciteMax }] })
       },
       updateCage: (id, data) =>
         set({ cages: get().cages.map((c) => (c.id === id ? { ...c, nom: data.nom, capaciteMax: data.capaciteMax } : c)) }),

@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { newId } from "@/lib/id"
 
 export interface CycleEtapeProfile {
   id: string
@@ -24,7 +25,7 @@ export const useCycleEtapesStore = create<CycleEtapesState>()(
       addEtape: (nom) => {
         const trimmed = nom.trim()
         if (!trimmed || get().etapes.some((e) => e.nom === trimmed)) return
-        set({ etapes: [...get().etapes, { id: `etape-${Date.now()}`, nom: trimmed }] })
+        set({ etapes: [...get().etapes, { id: newId("etape"), nom: trimmed }] })
       },
       updateEtape: (id, nom) => set({ etapes: get().etapes.map((e) => (e.id === id ? { ...e, nom } : e)) }),
       removeEtape: (id) => set({ etapes: get().etapes.filter((e) => e.id !== id) }),

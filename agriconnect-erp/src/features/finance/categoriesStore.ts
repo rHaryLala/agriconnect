@@ -1,6 +1,7 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
 import type { TransactionType } from "@/types/finance"
+import { newId } from "@/lib/id"
 
 export interface CategoryProfile {
   id: string
@@ -47,7 +48,7 @@ export const useCategoriesStore = create<CategoriesState>()(
       addCategory: (type, nom) => {
         const trimmed = nom.trim()
         if (!trimmed) return
-        set({ [type]: [...get()[type], { id: `${type}-${Date.now()}`, nom: trimmed }] } as Partial<CategoriesState>)
+        set({ [type]: [...get()[type], { id: newId(type), nom: trimmed }] } as Partial<CategoriesState>)
       },
       updateCategory: (type, id, nom) =>
         set({ [type]: get()[type].map((c) => (c.id === id ? { ...c, nom } : c)) } as Partial<CategoriesState>),

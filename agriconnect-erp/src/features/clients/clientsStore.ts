@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { Client } from "@/types/client"
 import { deactivateEmployeForClient, syncEmployeFromClient } from "@/features/personnel/clientSync"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -44,7 +45,7 @@ export const useClientsStore = create<ClientsState>()(
       addClient: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            const client: Client = { ...data, id: `cl-${Date.now()}` }
+            const client: Client = { ...data, id: newId("cl") }
             set({ clients: [client, ...get().clients] })
             if (client.type === "personnel") syncEmployeFromClient(client)
             resolve()

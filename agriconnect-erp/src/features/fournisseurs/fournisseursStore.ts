@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { AchatFournisseur, Fournisseur, PaiementFournisseur } from "@/types/fournisseur"
 import { SEED_ACHATS, SEED_FOURNISSEURS, SEED_PAIEMENTS } from "./mockFournisseurData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -48,7 +49,7 @@ export const useFournisseursStore = create<FournisseursState>()(
       addFournisseur: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ fournisseurs: [{ ...data, id: `fr-${Date.now()}` }, ...get().fournisseurs] })
+            set({ fournisseurs: [{ ...data, id: newId("fr") }, ...get().fournisseurs] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),
@@ -71,7 +72,7 @@ export const useFournisseursStore = create<FournisseursState>()(
       addAchat: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            const achat: AchatFournisseur = { ...data, id: `ach-${Date.now()}` }
+            const achat: AchatFournisseur = { ...data, id: newId("ach") }
             const paiements = get().paiements
             set({
               achats: [achat, ...get().achats],
@@ -79,7 +80,7 @@ export const useFournisseursStore = create<FournisseursState>()(
                 achat.montantPaye > 0
                   ? [
                       {
-                        id: `pay-${Date.now()}`,
+                        id: newId("pay"),
                         fournisseurId: achat.fournisseurId,
                         achatId: achat.id,
                         date: achat.date,
@@ -98,7 +99,7 @@ export const useFournisseursStore = create<FournisseursState>()(
       addPaiement: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            const paiement: PaiementFournisseur = { ...data, id: `pay-${Date.now()}` }
+            const paiement: PaiementFournisseur = { ...data, id: newId("pay") }
             set({
               paiements: [paiement, ...get().paiements],
               achats: paiement.achatId

@@ -1,6 +1,7 @@
 import type { Client } from "@/types/client"
 import type { Employe } from "@/types/personnel"
 import { usePersonnelStore } from "./personnelStore"
+import { newId } from "@/lib/id"
 
 function matches(employe: Employe, client: Client): boolean {
   if (employe.clientId) return employe.clientId === client.id
@@ -37,7 +38,7 @@ export function syncEmployeFromClient(client: Client): void {
   }
 
   usePersonnelStore.setState({
-    employes: [...employes, { ...fieldsFrom(client), id: `emp-${Date.now()}` }],
+    employes: [...employes, { ...fieldsFrom(client), id: newId("emp") }],
   })
 }
 

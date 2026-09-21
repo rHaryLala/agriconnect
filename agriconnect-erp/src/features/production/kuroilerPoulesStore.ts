@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { KuroilerPoule, KuroilerPouleStatut, KuroilerPouleSuivi } from "@/types/production"
 import { SEED_KUROILER_POULES, SEED_KUROILER_SUIVIS } from "./mockProductionData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -47,7 +48,7 @@ export const useKuroilerPoulesStore = create<KuroilerPoulesState>()(
       addPoule: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ poules: [{ ...data, id: `kp-${Date.now()}`, statut: "active" }, ...get().poules] })
+            set({ poules: [{ ...data, id: newId("kp"), statut: "active" }, ...get().poules] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),
@@ -78,7 +79,7 @@ export const useKuroilerPoulesStore = create<KuroilerPoulesState>()(
       addSuivi: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ suivis: [{ ...data, id: `ks-${Date.now()}` }, ...get().suivis] })
+            set({ suivis: [{ ...data, id: newId("ks") }, ...get().suivis] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),

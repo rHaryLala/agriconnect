@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { newId } from "@/lib/id"
 
 export interface ActiviteProfile {
   id: string
@@ -27,7 +28,7 @@ export const useActivitesStore = create<ActivitesState>()(
       addType: (nom) => {
         const trimmed = nom.trim()
         if (!trimmed || get().types.some((a) => a.nom === trimmed)) return
-        set({ types: [...get().types, { id: `activite-${Date.now()}`, nom: trimmed }] })
+        set({ types: [...get().types, { id: newId("activite"), nom: trimmed }] })
       },
       updateType: (id, nom) => set({ types: get().types.map((a) => (a.id === id ? { ...a, nom } : a)) }),
       removeType: (id) => set({ types: get().types.filter((a) => a.id !== id) }),

@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { RizRecolte, RizSechageEvent, RizDecorticage, RizVente } from "@/types/production"
 import { SEED_RIZ_RECOLTES, SEED_RIZ_SECHAGE, SEED_RIZ_DECORTICAGE, SEED_RIZ_VENTES } from "./mockProductionData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -55,7 +56,7 @@ export const useRizStore = create<RizState>()(
       addRecolte: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ recoltes: [{ ...data, id: `rr-${Date.now()}` }, ...get().recoltes] })
+            set({ recoltes: [{ ...data, id: newId("rr") }, ...get().recoltes] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),
@@ -63,7 +64,7 @@ export const useRizStore = create<RizState>()(
       addSechageEvent: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ sechageEvents: [{ ...data, id: `rs-${Date.now()}` }, ...get().sechageEvents] })
+            set({ sechageEvents: [{ ...data, id: newId("rs") }, ...get().sechageEvents] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),
@@ -71,7 +72,7 @@ export const useRizStore = create<RizState>()(
       addDecorticage: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ decorticages: [{ ...data, id: `rd-${Date.now()}` }, ...get().decorticages] })
+            set({ decorticages: [{ ...data, id: newId("rd") }, ...get().decorticages] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),
@@ -79,7 +80,7 @@ export const useRizStore = create<RizState>()(
       addVente: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            const vente: RizVente = { ...data, id: `rv-${Date.now()}` }
+            const vente: RizVente = { ...data, id: newId("rv") }
             set({ ventes: [vente, ...get().ventes] })
             resolve(vente)
           }, FAKE_LATENCY_MS)

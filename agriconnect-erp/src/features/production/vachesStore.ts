@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { newId } from "@/lib/id"
 
 export interface VacheProfile {
   id: string
@@ -26,7 +27,7 @@ export const useVachesStore = create<VachesState>()(
       addVache: (nom) => {
         const trimmed = nom.trim()
         if (!trimmed) return
-        set({ vaches: [...get().vaches, { id: `vache-${Date.now()}`, nom: trimmed }] })
+        set({ vaches: [...get().vaches, { id: newId("vache"), nom: trimmed }] })
       },
       updateVache: (id, nom) => set({ vaches: get().vaches.map((v) => (v.id === id ? { ...v, nom } : v)) }),
       removeVache: (id) => set({ vaches: get().vaches.filter((v) => v.id !== id) }),

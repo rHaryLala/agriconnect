@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { PoulardMouvement } from "@/types/production"
 import { SEED_POULARD } from "./mockProductionData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -36,7 +37,7 @@ export const usePoulardStore = create<PoulardState>()(
       addMouvement: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            const mouvement: PoulardMouvement = { ...data, id: `pl-${Date.now()}` }
+            const mouvement: PoulardMouvement = { ...data, id: newId("pl") }
             set({ mouvements: [mouvement, ...get().mouvements] })
             resolve(mouvement)
           }, FAKE_LATENCY_MS)

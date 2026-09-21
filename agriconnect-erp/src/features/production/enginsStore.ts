@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { newId } from "@/lib/id"
 
 export interface EnginProfile {
   id: string
@@ -25,7 +26,7 @@ export const useEnginsStore = create<EnginsState>()(
       addType: (nom) => {
         const trimmed = nom.trim()
         if (!trimmed || get().types.some((e) => e.nom === trimmed)) return
-        set({ types: [...get().types, { id: `engin-${Date.now()}`, nom: trimmed }] })
+        set({ types: [...get().types, { id: newId("engin"), nom: trimmed }] })
       },
       updateType: (id, nom) => set({ types: get().types.map((e) => (e.id === id ? { ...e, nom } : e)) }),
       removeType: (id) => set({ types: get().types.filter((e) => e.id !== id) }),

@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { CarburantMouvement } from "@/types/production"
 import { SEED_CARBURANT } from "./mockProductionData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -36,7 +37,7 @@ export const useCarburantStore = create<CarburantState>()(
       addMouvement: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ mouvements: [{ ...data, id: `carb-${Date.now()}` }, ...get().mouvements] })
+            set({ mouvements: [{ ...data, id: newId("carb") }, ...get().mouvements] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),

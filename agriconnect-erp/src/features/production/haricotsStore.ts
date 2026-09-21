@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { HaricotMouvement } from "@/types/production"
 import { SEED_HARICOTS } from "./mockProductionData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -36,7 +37,7 @@ export const useHaricotsStore = create<HaricotsState>()(
       addMouvement: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            const mouvement: HaricotMouvement = { ...data, id: `hs-${Date.now()}` }
+            const mouvement: HaricotMouvement = { ...data, id: newId("hs") }
             set({ mouvements: [mouvement, ...get().mouvements] })
             resolve(mouvement)
           }, FAKE_LATENCY_MS)

@@ -3,6 +3,7 @@ import { persist, createJSONStorage } from "zustand/middleware"
 import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry } from "@/types/production"
 import { SEED_POULES, SEED_VACHES, SEED_KUROILER, SEED_CULTURES } from "./mockProductionData"
 import { enqueue, registerReplayer } from "@/lib/offlineQueue"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -51,14 +52,14 @@ export const useProductionStore = create<ProductionState>()(
 
       addPoule: async (data) => {
         if (!navigator.onLine) {
-          const optimisticEntry: PouleEntry = { ...data, id: `offline-${Date.now()}` }
+          const optimisticEntry: PouleEntry = { ...data, id: newId("offline") }
           set({ poules: [optimisticEntry, ...get().poules] })
           await enqueue("production.poules", "add", data)
           return
         }
         return new Promise((resolve) => {
           setTimeout(() => {
-            set({ poules: [{ ...data, id: `p-${Date.now()}` }, ...get().poules] })
+            set({ poules: [{ ...data, id: newId("p") }, ...get().poules] })
             resolve()
           }, FAKE_LATENCY_MS)
         })
@@ -75,7 +76,7 @@ export const useProductionStore = create<ProductionState>()(
       addVache: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ vaches: [{ ...data, id: `v-${Date.now()}` }, ...get().vaches] })
+            set({ vaches: [{ ...data, id: newId("v") }, ...get().vaches] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),
@@ -90,7 +91,7 @@ export const useProductionStore = create<ProductionState>()(
       addKuroiler: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ kuroiler: [{ ...data, id: `k-${Date.now()}` }, ...get().kuroiler] })
+            set({ kuroiler: [{ ...data, id: newId("k") }, ...get().kuroiler] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),
@@ -105,7 +106,7 @@ export const useProductionStore = create<ProductionState>()(
       addCulture: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            set({ cultures: [{ ...data, id: `c-${Date.now()}` }, ...get().cultures] })
+            set({ cultures: [{ ...data, id: newId("c") }, ...get().cultures] })
             resolve()
           }, FAKE_LATENCY_MS)
         }),

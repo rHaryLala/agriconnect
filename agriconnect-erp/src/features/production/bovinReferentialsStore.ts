@@ -1,5 +1,6 @@
 import { create } from "zustand"
 import { persist } from "zustand/middleware"
+import { newId } from "@/lib/id"
 
 export interface BovinReferentialProfile {
   id: string
@@ -21,7 +22,7 @@ function buildStore(storageKey: string, idPrefix: string, seed: BovinReferential
         addType: (nom) => {
           const trimmed = nom.trim()
           if (!trimmed || get().types.some((t) => t.nom === trimmed)) return
-          set({ types: [...get().types, { id: `${idPrefix}-${Date.now()}`, nom: trimmed }] })
+          set({ types: [...get().types, { id: newId(idPrefix), nom: trimmed }] })
         },
         updateType: (id, nom) => set({ types: get().types.map((t) => (t.id === id ? { ...t, nom } : t)) }),
         removeType: (id) => set({ types: get().types.filter((t) => t.id !== id) }),

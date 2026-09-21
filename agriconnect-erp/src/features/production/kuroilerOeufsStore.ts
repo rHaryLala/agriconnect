@@ -2,6 +2,7 @@ import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { KuroilerOeufMouvement } from "@/types/production"
 import { SEED_KUROILER_OEUFS } from "./mockProductionData"
+import { newId } from "@/lib/id"
 
 const FAKE_LATENCY_MS = 500
 
@@ -36,7 +37,7 @@ export const useKuroilerOeufsStore = create<KuroilerOeufsState>()(
       addMouvement: (data) =>
         new Promise((resolve) => {
           setTimeout(() => {
-            const mouvement: KuroilerOeufMouvement = { ...data, id: `ko-${Date.now()}` }
+            const mouvement: KuroilerOeufMouvement = { ...data, id: newId("ko") }
             set({ mouvements: [mouvement, ...get().mouvements] })
             resolve(mouvement)
           }, FAKE_LATENCY_MS)
