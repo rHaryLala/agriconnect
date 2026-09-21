@@ -29,6 +29,10 @@ model Farm {
   cattle  Cattle[]
   paddyProcess PaddyProcess[]
   poultryTrackings PoultryTracking[]//mise a jour
+
+  //Nouveau
+  employees   Employee[]
+  suppliers   Supplier[]
   
 
   createdAt   DateTime      @default(now())
@@ -83,6 +87,7 @@ model Employee {
   clientId    String? @unique
   client    Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
 
+  users       User[]
   salaryDeduction   SalaryDeduction[]
 
   createdAt   DateTime    @default(now())
