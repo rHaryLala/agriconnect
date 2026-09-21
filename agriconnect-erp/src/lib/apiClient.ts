@@ -34,6 +34,16 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
     // Le corps de réponse n'est jamais transmis à Sentry : il peut contenir des
     // données saisies par l'utilisateur (email, champs de formulaire, etc.).
     Sentry.captureException(error, { extra: { path, status: res.status } })
+
+    // Un 401 sur une requête authentifiée signifie un jeton expiré ou révoqué, pas
+    // des identifiants invalides (le login, lui, appelle apiFetch sans token) :
+    // on déconnecte au lieu de laisser l'appelant traiter ça comme une erreur ordinaire.
+    // Import dynamique pour éviter le cycle apiClient -> authStore -> api -> apiClient.
+    if (res.status === 401 && options.token) {
+      const { useAuthStore } = await import("@/features/auth/authStore")
+      useAuthStore.getState().logout("expired")
+    }
+
     throw error
   }
 
