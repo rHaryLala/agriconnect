@@ -6,7 +6,9 @@ import { newId } from "@/lib/id"
 function matches(employe: Employe, client: Client): boolean {
   if (employe.clientId) return employe.clientId === client.id
   if (client.matriculeUaz && employe.matriculeUaz) return employe.matriculeUaz === client.matriculeUaz
-  return employe.nom.trim().toLowerCase() === client.nom.trim().toLowerCase()
+  // Le nom n'est volontairement pas comparé : deux personnes homonymes fusionneraient
+  // silencieusement, écrasant la fiche personnel de l'une avec les données de l'autre.
+  return false
 }
 
 function fieldsFrom(client: Client, previous?: Employe): Omit<Employe, "id"> {
