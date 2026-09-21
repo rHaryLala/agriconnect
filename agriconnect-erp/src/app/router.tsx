@@ -3,6 +3,7 @@ import { AppLayout } from "./layout/AppLayout"
 import { ProtectedRoute } from "@/features/auth/ProtectedRoute"
 import { RouteError } from "./RouteError"
 import { AuthRedirectWatcher } from "@/features/auth/AuthRedirectWatcher"
+import { moduleForRoute } from "./layout/navItems"
 
 export const router = createBrowserRouter([
   {
@@ -52,28 +53,38 @@ export const router = createBrowserRouter([
                 },
               },
               {
-                element: <ProtectedRoute module="production" />,
+                element: <ProtectedRoute module={moduleForRoute("production")} />,
                 children: [
                   { path: "production", lazy: async () => ({ Component: (await import("@/features/production/ProductionPage")).default }) },
                 ],
               },
                {
-                element: <ProtectedRoute module="stock" />,
+                element: <ProtectedRoute module={moduleForRoute("stocks")} />,
                 children: [
                   { path: "stocks", lazy: async () => ({ Component: (await import("@/features/stocks/StocksPage")).default }) },
                 ],
               },
               {
-                element: <ProtectedRoute module="finance" />,
+                element: <ProtectedRoute module={moduleForRoute("finance")} />,
                 children: [
                   { path: "finance", lazy: async () => ({ Component: (await import("@/features/finance/FinancePage")).default }) },
+                ],
+              },
+              {
+                element: <ProtectedRoute module={moduleForRoute("clients")} />,
+                children: [
                   { path: "clients", lazy: async () => ({ Component: (await import("@/features/clients/ClientsPage")).default }) },
+                ],
+              },
+              {
+                element: <ProtectedRoute module={moduleForRoute("fournisseurs")} />,
+                children: [
                   { path: "fournisseurs", lazy: async () => ({ Component: (await import("@/features/fournisseurs/FournisseursPage")).default }) },
                   { path: "fournisseurs/:fournisseurId", lazy: async () => ({ Component: (await import("@/features/fournisseurs/FournisseurDetailPage")).default }) },
                 ],
               },
               {
-                element: <ProtectedRoute module="personnel" />,
+                element: <ProtectedRoute module={moduleForRoute("personnel")} />,
                 children: [
                   { path: "personnel", lazy: async () => ({ Component: (await import("@/features/personnel/PersonnelPage")).default }) },
                 ],

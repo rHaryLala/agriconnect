@@ -76,7 +76,7 @@ export const NAV_ITEMS: NavItem[] = [
       { to: "/app/clients?tab=factures", labelKey: "clients.tabs.invoices", badgeKey: "unpaidInvoices" },
     ],
   },
-  { to: "/app/fournisseurs", labelKey: "nav.fournisseurs", icon: Truck, module: "finance", group: "commerce" },
+  { to: "/app/fournisseurs", labelKey: "nav.fournisseurs", icon: Truck, module: "fournisseurs", group: "commerce" },
   {
     to: "/app/personnel",
     labelKey: "nav.personnel",
@@ -91,6 +91,11 @@ export const NAV_ITEMS: NavItem[] = [
   { to: "/app/rapports", labelKey: "nav.reports", icon: BarChart3, group: "analyse" },
   { to: "/app/settings", labelKey: "nav.settings", icon: Settings, module: "settings", group: "systeme" },
 ]
+
+/** Single source of truth for route guards: a route's required module always matches its nav entry's. */
+export function moduleForRoute(routePath: string): ModuleKey | undefined {
+  return NAV_ITEMS.find((item) => item.to === `/app/${routePath}`)?.module
+}
 
 export function useVisibleNavItems(): NavItem[] {
   const permissions = useEffectivePermissions()

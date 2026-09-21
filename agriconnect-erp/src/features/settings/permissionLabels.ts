@@ -6,6 +6,7 @@ export const MODULE_LABEL_KEYS: Record<ModuleKey, string> = {
   stock: "nav.stocks",
   finance: "nav.finance",
   clients: "nav.clients",
+  fournisseurs: "nav.fournisseurs",
   personnel: "nav.personnel",
   settings: "nav.settings",
 }

@@ -1,8 +1,8 @@
 import type { UserRole } from "@/types/user"
 
-export type ModuleKey = "dashboard" | "production" | "stock" | "finance" | "clients" | "personnel" | "settings"
+export type ModuleKey = "dashboard" | "production" | "stock" | "finance" | "clients" | "fournisseurs" | "personnel" | "settings"
 
-export const MODULE_KEYS: ModuleKey[] = ["dashboard", "production", "stock", "finance", "clients", "personnel", "settings"]
+export const MODULE_KEYS: ModuleKey[] = ["dashboard", "production", "stock", "finance", "clients", "fournisseurs", "personnel", "settings"]
 
 export type PermissionAction = "read" | "create" | "update" | "delete"
 
@@ -30,6 +30,7 @@ export const ROLE_PRESETS: Record<UserRole, Permission[]> = {
     ...readOnly("stock"),
     ...fullAccess("finance"),
     ...fullAccess("clients"),
+    ...fullAccess("fournisseurs"),
     ...fullAccess("personnel"),
   ],
   ouvrier: [...fullAccess("dashboard"), ...fullAccess("production"), ...fullAccess("stock")],
