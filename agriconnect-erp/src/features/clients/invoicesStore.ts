@@ -27,8 +27,13 @@ const SEED_INVOICES: Invoice[] = [
 
 function nextNumero(existing: Invoice[]): string {
   const year = new Date().getFullYear()
-  const count = existing.length + 1
-  return `FA-${year}-${String(count).padStart(4, "0")}`
+  const prefix = `FA-${year}-`
+  const lastSeq = existing.reduce((max, invoice) => {
+    if (!invoice.numero.startsWith(prefix)) return max
+    const seq = Number(invoice.numero.slice(prefix.length))
+    return Number.isFinite(seq) && seq > max ? seq : max
+  }, 0)
+  return `${prefix}${String(lastSeq + 1).padStart(4, "0")}`
 }
 
 interface InvoicesState {
