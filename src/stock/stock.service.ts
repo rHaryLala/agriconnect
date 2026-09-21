@@ -34,11 +34,21 @@ export class StockService {
   );
 }
 
-  async findOneItem(id: string, farmId: string) {
+  // Version "légère" — vérifie juste l'existence, ne recalcule rien.
+// C'est CELLE-CI que les autres méthodes du service doivent continuer
+// à utiliser en interne (updateItem, registerMovement, correctMovement).
+async findOneItem(id: string, farmId: string) {
   const item = await this.prisma.stockItem.findFirst({ where: { id, farmId } });
   if (!item) {
     throw new NotFoundException('Article introuvable');
   }
+  return item;
+}
+
+// pour un vrai affichage utilisateur uniquement
+// (l'endpoint GET /stock/items/:id du contrôleur, pas les usages internes).
+async findOneItemDetail(id: string, farmId: string) {
+  const item = await this.findOneItem(id, farmId);
   return { ...item, quantity: await this.quantiteReelleItem(id) };
 }
 
