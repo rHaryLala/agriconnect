@@ -29,6 +29,7 @@ model Farm {
   cattle  Cattle[]
   paddyProcess PaddyProcess[]
   poultryTrackings PoultryTracking[]//mise a jour
+  employees 
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -60,6 +61,31 @@ model User {
   updatedAt     DateTime        @updatedAt
 
   @@index([farmId])
+}
+
+model Employee {
+  id String   @id @default(uuid())
+  firstName   String
+  lastName    String
+  matricule   String?
+  departement   String?
+  position    String?
+  phone   String?
+
+  farmId    String
+  farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  user    User?
+  clientId    String? @unique
+  client    Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  salaryDeduction   SalaryDeduction[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([farmId])
+  @@unique([farmId, matricule])
 }
 
 enum ProductionType {
@@ -545,4 +571,10 @@ model PoultryWeeklyRecord {
   updatedAt DateTime @updatedAt
 
   @@index([poultryTrackingId])
+}
+//nouveau
+enum TransferStatus {
+  PENDING
+  COMPLETED
+  CANCELLED
 }
