@@ -44,6 +44,10 @@ model User {
   role          Role            @default(OUVRIER)
   farmId        String
   farm          Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  employeedId   String?   @unique
+  employee  Employee    @relation(fields: [employeedId], references: [id], onDelete: SetNull)
+
   production    Production[]
   stockMovment  StockMovement[]
   transactions Transaction[]
