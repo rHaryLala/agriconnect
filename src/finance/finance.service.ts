@@ -10,39 +10,32 @@ export class FinanceService {
     //Injection de PrismaService
     constructor(private prisma: PrismaService) {}
 
-    async create(dto: CreateTransactionDto, userId: string, farmId: string)
-    {
-    // Si un invoiceId est fourni, on vérifie qu'elle existe VRAIMENT et
-    // qu'elle appartient à la bonne ferme — sinon n'importe qui pourrait
-    // lier sa transaction à la facture d'une autre ferme en devinant un UUID.
-
-    if (dto.invoiceId)
-    {
-        const invoice = await this.prisma.invoice.findFirst({
-            where: {id: dto.invoiceId, farmId}
-        });
-
-        if (!invoice)
-        {
-            throw new NotFoundException('Facture introuvable !');
-        }
-    }
-
-
-    //Une seule écriture sans $transaction Prisma, car on en a pas besoin (pour l'instant)
-    return this.prisma.transaction.create({
-        data: {
-            type: dto.type,
-            amount: dto.amount,
-            reference: dto.reference,
-            notes: dto.notes,
-            invoiceId: dto.invoiceId,
-            userId, //Pour Tracabilité, qui a saisi cette transaction
-            farmId,
-        },
+    async create(dto: CreateTransactionDto, userId: string, farmId: string) {
+  if (dto.invoiceId) {
+    const invoice = await this.prisma.invoice.findFirst({
+      where: { id: dto.invoiceId, farmId },
     });
-
+    if (!invoice) {
+      throw new NotFoundException('Facture introuvable');
     }
+  }
+
+  return this.prisma.transaction.create({
+    data: {
+      type: dto.type,
+      amount: dto.amount,
+      reference: dto.reference,
+      notes: dto.notes,
+      invoiceId: dto.invoiceId,
+      // Si une date est fournie, on la convertit ; sinon "undefined"
+      // fait que Prisma applique la valeur par défaut du schéma
+      // (@default(now())) — comportement inchangé pour une saisie du jour.
+      date: dto.date ? new Date(dto.date) : undefined,
+      userId,
+      farmId,
+    },
+  });
+}
 
     async findAll (farmId: string, filters: FilterTransactionDto)
     {

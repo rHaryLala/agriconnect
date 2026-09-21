@@ -26,4 +26,8 @@ export class CreateTransactionDto {
   @IsOptional()
   @IsUUID()
   invoiceId?: string;
+
+  @IsOptional()
+  @IsDateString()
+  date?: string;
 }
