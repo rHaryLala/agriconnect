@@ -1,5 +1,6 @@
 import { useEffect, useMemo, useState } from "react"
 import { useTabParam } from "@/hooks/useTabParam"
+import { usePermission } from "@/hooks/usePermission"
 import { useTranslation } from "react-i18next"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
 import { FinancialReportTab } from "./FinancialReportTab"
@@ -31,7 +32,10 @@ const PERIODICITY_LABEL_KEYS: Record<Periodicity, string> = {
 
 export default function RapportsPage() {
   const { t } = useTranslation()
-  const [activeTab, setActiveTab] = useTabParam("financier")
+  const canViewFinance = usePermission("finance").canView
+  const canViewProduction = usePermission("production").canView
+  const canViewStock = usePermission("stock").canView
+  const canViewPersonnel = usePermission("personnel").canView
   const [periodicity, setPeriodicity] = useState<Periodicity>("month")
   const [anchorDate, setAnchorDate] = useState(currentIsoDate())
 
@@ -71,13 +75,17 @@ export default function RapportsPage() {
   const currentYear = new Date().getFullYear()
   const years = Array.from({ length: 8 }, (_, i) => String(currentYear - i))
 
-  const TABS = [
-    { id: "financier", label: t("rapports.tabs.financial") },
-    { id: "production", label: t("rapports.tabs.production") },
-    { id: "stock", label: t("rapports.tabs.stock") },
-    { id: "recap", label: t("rapports.tabs.recap") },
-    { id: "retenues", label: t("rapports.tabs.payroll") },
+  const TAB_DEFS = [
+    { id: "financier", labelKey: "rapports.tabs.financial", visible: canViewFinance },
+    { id: "production", labelKey: "rapports.tabs.production", visible: canViewProduction },
+    { id: "stock", labelKey: "rapports.tabs.stock", visible: canViewStock },
+    { id: "recap", labelKey: "rapports.tabs.recap", visible: canViewFinance },
+    { id: "retenues", labelKey: "rapports.tabs.payroll", visible: canViewPersonnel },
   ]
+  const visibleTabDefs = TAB_DEFS.filter((tab) => tab.visible)
+  const visibleTabIds = visibleTabDefs.map((tab) => tab.id)
+  const TABS = visibleTabDefs.map(({ id, labelKey }) => ({ id, label: t(labelKey) }))
+  const [activeTab, setActiveTab] = useTabParam(visibleTabIds[0] ?? "financier", visibleTabIds)
 
   return (
     <div>
