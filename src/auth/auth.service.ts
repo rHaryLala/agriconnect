@@ -12,6 +12,12 @@ export class AuthService {
     private jwtService: JwtService,
   ) {}
 
+  //Vérifie s'il existe au moins un user dans la base
+  async hasAnyUser(): Promise<Boolean> {
+    const count = await this.prisma.user.count();
+    return count > 0;
+  }
+  
   // Méthode privée : récupère l'unique ferme existante, 
   // ou la crée si c'est la toute première inscription de l'application.
 
