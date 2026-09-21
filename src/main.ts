@@ -6,34 +6,31 @@ import { ValidationPipe } from '@nestjs/common';
 async function bootstrap() {
   const app = await NestFactory.create(AppModule);
 
-  // configuration de la doc Swagger
+  // Toutes les routes seront désormais préfixées par /api/v1 — par
+  // exemple /auth/login devient /api/v1/auth/login. Posé tôt, avant
+  // la config Swagger, pour que la doc générée reflète les vraies URLs.
+  app.setGlobalPrefix('api/v1');
+
   const config = new DocumentBuilder()
     .setTitle('API Ferme')
     .setDescription('Documentation des endpoints backend')
     .setVersion('1.0')
-    .addBearerAuth() // permet de tester les routes protégées par JWT directement dans Swagger
+    .addBearerAuth()
     .build();
 
   const document = SwaggerModule.createDocument(app, config);
-  SwaggerModule.setup('api/docs', app, document); // accessible sur /api/docs
+  SwaggerModule.setup('api/docs', app, document); // Swagger reste accessible à /api/docs, hors du préfixe applicatif
 
-    app.enableCors({
-  origin: [
-    'http://localhost:5173', 
-    'http://192.168.0.232:5173',// http://192.168.0.232:5173 est pour le test du front en local si jamais
-     process.env.FRONTEND_URL,
-  ].filter(Boolean),  // enlève les valeurs undefined si FRONTEND_URL n'est pas défini
-  credentials: true,
-});
+  app.enableCors({
+    origin: process.env.FRONTEND_URL?.split(',') || ['http://localhost:5173'],
+    credentials: true,
+  });
 
-
-  // Applique cette validation à toutes les routes automatiquement.
-  // Doit être déclaré avant app.listen() pour être actif dès la première requête.
   app.useGlobalPipes(
     new ValidationPipe({
-      whitelist: true,           // supprime les champs non déclarés dans le DTO
-      forbidNonWhitelisted: true, // renvoie une erreur 400 si un champ inconnu est envoyé
-      transform: true,            // convertit automatiquement les types (ex: "123" → 123)
+      whitelist: true,
+      forbidNonWhitelisted: true,
+      transform: true,
     }),
   );
 
