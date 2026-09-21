@@ -3,6 +3,9 @@ import { persist, createJSONStorage } from "zustand/middleware"
 import type { User } from "@/types/user"
 import { login as loginRequest } from "./api"
 import { dynamicAuthStorage, setRememberPreference } from "@/lib/authStorage"
+import { clearSessionScopedStorage } from "@/lib/persistedStores"
+
+export const LOGOUT_REASON_FLAG = "agriconnect-logout-reason"
 
 export type LogoutReason = "manual" | "expired" | null
 
@@ -44,7 +47,16 @@ export const useAuthStore = create<AuthState>()(
         }
       },
 
-      logout: (reason = "manual") => set({ user: null, token: null, isAuthenticated: false, logoutReason: reason }),
+      logout: (reason = "manual") => {
+        clearSessionScopedStorage()
+        set({ user: null, token: null, isAuthenticated: false, logoutReason: reason })
+        // Une navigation React seule laisserait les stores métier déjà chargés en mémoire :
+        // la personne suivante sur ce poste les verrait encore le temps de la session JS.
+        // Un rechargement complet force chaque store à se réhydrater depuis un
+        // localStorage désormais vidé.
+        if (reason === "expired") sessionStorage.setItem(LOGOUT_REASON_FLAG, "expired")
+        window.location.assign("/")
+      },
 
       clearLogoutReason: () => set({ logoutReason: null }),
 
