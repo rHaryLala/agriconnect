@@ -29,7 +29,7 @@ model Farm {
   cattle  Cattle[]
   paddyProcess PaddyProcess[]
   poultryTrackings PoultryTracking[]//mise a jour
-  employees 
+  
 
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
@@ -581,4 +581,51 @@ enum TransferStatus {
   PENDING
   COMPLETED
   CANCELLED
+}
+
+model Supplier {
+  id    String    @id @default(uuid())
+  name    String
+  phone   String
+  email   String?
+  address   String?
+
+  farmId    String
+  farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  purchases   SupplierPurchase[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([farmId])
+}
+
+model SupplierPurchase {
+  id String   @id   @default(uuid())
+  reference   String
+  totalAmount   Decimal   @db.Decimal(14, 2)
+  paidAmount    Decimal   @default(0) @db.Decimal(14,2)
+  date    DateTime    @default(now())
+
+  supplierId    String
+  supplier    Supplier    @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+
+  payments    SupplierPayment[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+
+model SupplierPayment {
+  id    String  @id @default(uuid())
+  amount    Decimal   @db.Decimal(14,2)
+  method    PaymentMethod   @default(CAISSE)
+  date    DateTime    @default(now())
+
+  purchaseId    String
+  purchase    SupplierPurchase    @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
 }
