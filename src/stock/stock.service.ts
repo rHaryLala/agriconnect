@@ -10,20 +10,14 @@ const SEUIL_ECART_REPESAGE_PERCENT = 5;
 export class StockService {
   constructor(private prisma: PrismaService) {}
 
-  // ---------- StockItem (le "catalogue" des articles) ----------
+  // ---------- StockItem ----------
 
   async createItem(dto: CreateStockDto, farmId: string) {
-    return this.prisma.stockItem.create({
-      data: { ...dto, farmId },
-    });
+    return this.prisma.stockItem.create({ data: { ...dto, farmId } });
   }
 
   async findAllItems(farmId: string) {
-    // C'est ça, "l'inventaire" du roadmap : l'état actuel de chaque article
-    return this.prisma.stockItem.findMany({
-      where: { farmId },
-      orderBy: { name: 'asc' },
-    });
+    return this.prisma.stockItem.findMany({ where: { farmId }, orderBy: { name: 'asc' } });
   }
 
   async findOneItem(id: string, farmId: string) {
@@ -35,94 +29,103 @@ export class StockService {
   }
 
   async updateItem(id: string, dto: UpdateStockDto, farmId: string) {
-    await this.findOneItem(id, farmId); // vérifie existence + appartenance à la ferme
+    await this.findOneItem(id, farmId);
     return this.prisma.stockItem.update({ where: { id }, data: dto });
   }
 
-  // ---------- StockMovement (entrées / sorties / ajustements) ----------
-
-async registerMovement(itemId: string, dto: CreateStockMovementDto, userId: string, farmId: string) {
-  const item = await this.findOneItem(itemId, farmId);
-
-  // Si le mouvement cible une variante précise (ex: "Oeufs GM Normal"),
-  // on la charge et on vérifie DEUX choses distinctes : qu'elle existe
-  // vraiment, ET qu'elle appartient bien à CET article — sans ce second
-  // contrôle, n'importe quel variantId valide (même d'un autre article)
-  // serait accepté silencieusement.
-  let variant: { id: string; quantity: number } | null = null;
-  if (dto.variantId) {
-    variant = await this.prisma.productVariant.findFirst({
-      where: { id: dto.variantId, stockItemId: itemId },
-    });
-    if (!variant) {
-      throw new NotFoundException(
-        'Variante introuvable, ou elle n\'appartient pas à cet article',
-      );
+  // Nouvelle méthode utilitaire : la quantité "réelle" d'un article,
+  // en tenant compte de ses variantes s'il en a. Utilisée par alertes()
+  // ci-dessous, réutilisable partout ailleurs où la vraie quantité compte.
+  private async quantiteReelleItem(itemId: string): Promise<number> {
+    const variants = await this.prisma.productVariant.findMany({ where: { stockItemId: itemId } });
+    if (variants.length === 0) {
+      const item = await this.prisma.stockItem.findUnique({ where: { id: itemId } });
+      return item?.quantity ?? 0;
     }
+    // Un article à variantes : sa vraie quantité est la somme de ses
+    // variantes, jamais son propre champ "quantity" (qui n'est plus
+    // mis à jour dès qu'un mouvement cible une variante).
+    return variants.reduce((total, v) => total + v.quantity, 0);
   }
 
-  // Le contrôle de stock suffisant doit porter sur la BONNE quantité :
-  // celle de la variante si elle est ciblée, celle de l'article sinon.
-  // Les mélanger permettrait de vendre plus d'une variante qu'il n'en
-  // reste réellement, tant que l'article parent a un total suffisant.
-  if (dto.type === 'OUT') {
-    const quantiteDisponible = variant ? variant.quantity : item.quantity;
-    if (quantiteDisponible < dto.quantity) {
-      throw new BadRequestException(
-        `Stock insuffisant : ${quantiteDisponible} ${item.unit} disponible(s), ${dto.quantity} demandé(s)`,
-      );
-    }
-  }
+  // ---------- StockMovement ----------
 
-  const quantiteReelle = dto.repeseeQuantity ?? dto.quantity;
+  async registerMovement(itemId: string, dto: CreateStockMovementDto, userId: string, farmId: string) {
+    const item = await this.findOneItem(itemId, farmId);
 
-  return this.prisma.$transaction(async (tx) => {
-    const movement = await tx.stockMovement.create({
-      data: {
-        itemId,
-        type: dto.type,
-        quantity: dto.quantity,
-        repeseeQuantity: dto.repeseeQuantity,
-        reason: dto.reason,
-        variantId: dto.variantId,
-        userId,
-      },
-    });
-
+    let variant: { id: string; quantity: number } | null = null;
     if (dto.variantId) {
-      await tx.productVariant.update({
-        where: { id: dto.variantId },
-        data:
-          dto.type === 'AJUSTEMENT'
-            ? { quantity: quantiteReelle }
-            : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
+      variant = await this.prisma.productVariant.findFirst({
+        where: { id: dto.variantId, stockItemId: itemId },
       });
-    } else {
-      await tx.stockItem.update({
-        where: { id: itemId },
-        data:
-          dto.type === 'AJUSTEMENT'
-            ? { quantity: quantiteReelle }
-            : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
-      });
+      if (!variant) {
+        throw new NotFoundException('Variante introuvable, ou elle n\'appartient pas à cet article');
+      }
     }
 
-    return movement;
-  });
-}
+    if (dto.type === 'OUT') {
+      const quantiteDisponible = variant ? variant.quantity : item.quantity;
+      if (quantiteDisponible < dto.quantity) {
+        throw new BadRequestException(
+          `Stock insuffisant : ${quantiteDisponible} ${item.unit} disponible(s), ${dto.quantity} demandé(s)`,
+        );
+      }
+    }
+
+    const quantiteReelle = dto.repeseeQuantity ?? dto.quantity;
+
+    // Restauré : l'alerte d'écart au repesage (Semaine 1), qui avait
+    // disparu du fichier. Uniquement pertinente sur une réception (IN)
+    // avec repesage renseigné.
+    let alerteEcart: { pourcentage: number; message: string } | null = null;
+    if (dto.type === 'IN' && dto.repeseeQuantity !== undefined && dto.quantity > 0) {
+      const ecartPercent = Math.abs(dto.quantity - dto.repeseeQuantity) / dto.quantity * 100;
+      if (ecartPercent > SEUIL_ECART_REPESAGE_PERCENT) {
+        alerteEcart = {
+          pourcentage: Math.round(ecartPercent * 10) / 10,
+          message: `Écart de ${Math.round(ecartPercent)}% entre la quantité annoncée (${dto.quantity}) et repesée (${dto.repeseeQuantity})`,
+        };
+      }
+    }
+
+    const movement = await this.prisma.$transaction(async (tx) => {
+      const m = await tx.stockMovement.create({
+        data: {
+          itemId, type: dto.type, quantity: dto.quantity,
+          repeseeQuantity: dto.repeseeQuantity, reason: dto.reason,
+          variantId: dto.variantId, userId,
+        },
+      });
+
+      if (dto.variantId) {
+        await tx.productVariant.update({
+          where: { id: dto.variantId },
+          data: dto.type === 'AJUSTEMENT' ? { quantity: quantiteReelle }
+            : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
+        });
+      } else {
+        await tx.stockItem.update({
+          where: { id: itemId },
+          data: dto.type === 'AJUSTEMENT' ? { quantity: quantiteReelle }
+            : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
+        });
+      }
+
+      return m;
+    });
+
+    return { ...movement, alerteEcart };
+  }
 
   // RG-06 : corriger un mouvement déjà validé, jamais le supprimer.
   async correctMovement(movementId: string, reason: string, userId: string, farmId: string) {
     const original = await this.prisma.stockMovement.findFirst({
-      where: { id: movementId, item: { farmId } }, // passe par la relation, StockMovement n'a pas farmId
+      where: { id: movementId, item: { farmId } },
       include: { item: true },
     });
     if (!original) {
       throw new NotFoundException('Mouvement introuvable');
     }
-
-    // Le mouvement inverse : IN devient OUT et inversement. AJUSTEMENT ne
-    // se corrige pas de cette façon (on referait plutôt un nouvel AJUSTEMENT).
     if (original.type === 'AJUSTEMENT') {
       throw new BadRequestException('Un ajustement se corrige par un nouvel ajustement, pas par une correction directe');
     }
@@ -131,47 +134,67 @@ async registerMovement(itemId: string, dto: CreateStockMovementDto, userId: stri
       const correction = await tx.stockMovement.create({
         data: {
           itemId: original.itemId,
-          type: original.type === 'IN' ? 'OUT' : 'IN', // inverse exact
+          type: original.type === 'IN' ? 'OUT' : 'IN',
           quantity: original.quantity,
           reason,
           userId,
-          originalMovmentId: original.id, // lien explicite vers l'erreur corrigée
+          variantId: original.variantId, // ajouté : reporte la variante d'origine
+          originalMovmentId: original.id,
         },
       });
 
-      await tx.stockItem.update({
-        where: { id: original.itemId },
-        data:
-          correction.type === 'IN'
+      // Corrige la BONNE cible : la variante si le mouvement original
+      // en ciblait une, l'article générique sinon — même logique que
+      // dans registerMovement.
+      if (original.variantId) {
+        await tx.productVariant.update({
+          where: { id: original.variantId },
+          data: correction.type === 'IN'
             ? { quantity: { increment: original.quantity } }
             : { quantity: { decrement: original.quantity } },
-      });
+        });
+      } else {
+        await tx.stockItem.update({
+          where: { id: original.itemId },
+          data: correction.type === 'IN'
+            ? { quantity: { increment: original.quantity } }
+            : { quantity: { decrement: original.quantity } },
+        });
+      }
 
       return correction;
     });
   }
 
- async historique(farmId: string, filters: { itemId?: string; type?: string; dateDebut?: string; dateFin?: string }) {
-  return this.prisma.stockMovement.findMany({
-    where: {
-      item: { farmId },
-      itemId: filters.itemId,
-      type: filters.type as never,
-      date: {
-        gte: filters.dateDebut ? new Date(filters.dateDebut) : undefined,
-        lte: filters.dateFin ? new Date(filters.dateFin) : undefined,
+  async historique(farmId: string, filters: { itemId?: string; type?: string; dateDebut?: string; dateFin?: string }) {
+    return this.prisma.stockMovement.findMany({
+      where: {
+        item: { farmId },
+        itemId: filters.itemId,
+        type: filters.type as never,
+        date: {
+          gte: filters.dateDebut ? new Date(filters.dateDebut) : undefined,
+          lte: filters.dateFin ? new Date(filters.dateFin) : undefined,
+        },
       },
-    },
-    include: { item: true, user: true },
-    orderBy: { date: 'desc' },
-  });
-}
+      include: { item: true, user: true },
+      orderBy: { date: 'desc' },
+    });
+  }
 
   async alertes(farmId: string) {
     const items = await this.prisma.stockItem.findMany({ where: { farmId } });
-    // miniAlert a une valeur par défaut (10) dans le schéma, donc pas besoin
-    // de filtrer les null comme dans notre ancienne version — tous les
-    // articles ont un seuil, ce qui simplifie cette méthode.
-    return items.filter((item) => item.quantity <= item.miniAlert);
+
+    // Pour chaque article, on compare son SEUIL à sa quantité RÉELLE —
+    // recalculée depuis les variantes si l'article en a, plutôt que
+    // lue directement sur un champ qui peut être périmé.
+    const resultats = await Promise.all(
+      items.map(async (item) => {
+        const quantiteReelle = await this.quantiteReelleItem(item.id);
+        return { ...item, quantity: quantiteReelle };
+      }),
+    );
+
+    return resultats.filter((item) => item.quantity <= item.miniAlert);
   }
 }
