@@ -33,13 +33,13 @@ journaux avec `docker compose logs db`.
 | Couche | Technologie |
 |---|---|
 | Front | React + Vite + TypeScript |
-| Interface | Tailwind CSS + shadcn/ui |
-| Données serveur | TanStack Query |
+| Interface | Tailwind CSS + shadcn/ui (sur Base UI) |
+| Données serveur | Zustand (persist localStorage) — API réelle non encore branchée |
 | Formulaires | React Hook Form + Zod (schémas partagés avec l'API) |
 | Graphiques | Recharts |
 | Back | NestJS + Prisma |
 | Base | PostgreSQL 16 |
-| Hors-ligne | PWA (vite-plugin-pwa) + file d'attente Dexie.js |
+| Hors-ligne | PWA (vite-plugin-pwa) + file d'attente RxDB |
 | Rapports | jsPDF-autotable et ExcelJS, côté navigateur |
 
 ## Conventions
