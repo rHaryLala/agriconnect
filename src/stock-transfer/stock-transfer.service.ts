@@ -7,15 +7,18 @@ export class StockTransferService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateTransferDto, userId: string, farmId: string) {
-    // Vérifie que les deux emplacements existent et appartiennent à la ferme —
-    // jamais fait confiance à un UUID reçu sans vérification.
-    const [from, to] = await Promise.all([
-      this.prisma.stockLocation.findFirst({ where: { id: dto.fromLocationId, farmId } }),
-      this.prisma.stockLocation.findFirst({ where: { id: dto.toLocationId, farmId } }),
-    ]);
-    if (!from) throw new NotFoundException('Emplacement source introuvable');
-    if (!to) throw new NotFoundException('Emplacement destination introuvable');
-    if (from.id === to.id) throw new BadRequestException('Source et destination identiques');
+    // Ce "farmId" vient du paramètre de méthode, lui-même toujours passé
+  // depuis @CurrentUser() dans le contrôleur (jamais depuis dto) — donc
+  // déjà correct sur ce point (confirmé, pas de changement ici).
+  const [from, to] = await Promise.all([
+    this.prisma.stockLocation.findFirst({ where: { id: dto.fromLocationId, farmId } }),
+    this.prisma.stockLocation.findFirst({ where: { id: dto.toLocationId, farmId } }),
+  ]);
+  if (!from) throw new NotFoundException('Emplacement source introuvable');
+  if (!to) throw new NotFoundException('Emplacement destination introuvable');
+
+
+    if (from.id === to.id) throw new BadRequestException('Source et destination identiques !');
 
     // Numéro de reçu séquentiel — même principe que Payment.recuNumber,
     // basé sur le nombre de transferts déjà existants pour cette ferme.
