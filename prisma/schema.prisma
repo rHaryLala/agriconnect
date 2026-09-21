@@ -130,6 +130,8 @@ model Production {
   variant   ProductVariant?   @relation(fields: [variantId],  references: [id])
 
   createdAt   DateTime       @default(now())
+
+  @@index([farmId, date(sort: Desc)])
 }
 
 enum MouvementType {
@@ -163,6 +165,9 @@ model StockItem {
 
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+
+  @@index([farmId])
+  @@unique([farmId, name])
 }
 
 model StockMovement {
@@ -229,8 +234,8 @@ enum InvoiceStatus {
 model Invoice {
   id            String        @id @default(uuid())
   invoiceNumber String        @unique @map("numero_du_recu")
-  totalAmount   Float         @map("total_ttc")
-  paidAmount    Float         @default(0) @map("montant_regle")
+  totalAmount   Decimal   @map("total_ttc") @db.Decimal(14, 2)
+  paidAmount    Decimal   @default(0) @map("montant_regle") @db.Decimal(14, 2)
   dueAmount     Float         @map("reste_a_payer")
   status        InvoiceStatus @default(UNPAID) @map("statut_du_paiment")
 
@@ -248,14 +253,17 @@ model Invoice {
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+
+  @@index([farmId, status])
+  @@unique([farmId, invoiceNumber])
 }
 
 //details des articles vendus dans la facture
 model InvoiceItem {
   id String @id @default(uuid())
   quantity Float
-  unitPrice Float
-  total Float
+  unitPrice Decimal   @db.Decimal(14, 2)
+  total Decimal   @db.Decimal(14, 2)
 
   invoiceId String
   invoice Invoice   @relation(fields: [invoiceId], references: [id])
@@ -275,7 +283,7 @@ enum TransactionType{
 
 model Transaction{
   id String @id @default(uuid())
-  amount Float
+  amount Decimal    @db.Decimal(14, 2)
   type TransactionType @default(RECETTE)
   reference String? //numereau physique du recuu ou bordereau
   notes String? //remarque ou detail
@@ -296,6 +304,9 @@ model Transaction{
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([farmId, date(sort: Desc)])
+  @@index([farmId, type, date(sort: Desc)])
 }
 
 // Mise a jour
@@ -322,6 +333,8 @@ model StockLocation {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@unique([farmId, name])
 }
 
 //mise a jour: suivi des bovin
@@ -365,7 +378,7 @@ model Cattle{
 
   //SORTIE-------------------------
   saleDate    DateTime?
-  salePrice   Float? //prix unitaire
+  salePrice   Decimal?    @db.Decimal(14, 2) //prix unitaire
   signature   String?  // URL/path de la signature ou validation
   clientId    String?
   client    Client? @relation(fields: [clientId], references: [id])
@@ -383,6 +396,7 @@ model Cattle{
   updatedAt DateTime @updatedAt
 
   @@index([farmId])
+  @@unique([farmId, nameOrTag])
 }
 
 // mise a jour: table model paiment et Historique des règlements / versements
@@ -394,7 +408,7 @@ enum PaymentMethod{
 model Payment {
   id String @id @default(uuid())
   recuNumber String @unique //numero du recu
-  amount Float
+  amount Decimal    @db.Decimal(14, 2)
   method PaymentMethod @default(CAISSE)
   date DateTime @default(now())
 
@@ -413,7 +427,7 @@ model Payment {
 //mise a jour: deduction au salaire pour les personnel
 model SalaryDeduction {
   id String @id @default(uuid())
-  amount  Float
+  amount  Decimal   @db.Decimal(14, 2)
   status String @default("En_attente")//en attente na deduit
   period String //deduction du salaire sur le moi du paie ex: 
 
@@ -421,7 +435,7 @@ model SalaryDeduction {
   payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
 
   employeeId String 
-  employee User @relation(fields: [employeeId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -451,7 +465,7 @@ model ProductVariant{
   id String @id @default(uuid())
   name String //anaran'ilay varieté anle produit, ex: gros model cassé, petit model normal, haricot rouge
   sku String? @unique //Sac de 10 kg = SKU: AGR-BST-10KGSac de 50 kg = SKU: AGR-BST-50KG
-  unitPrice Float @default(0)
+  unitPrice Decimal @default(0)   @db.Decimal(14, 2)
   quantity  Float @default(0)
 
   stockItemId String
@@ -533,14 +547,14 @@ model PoultryTracking{
   tagOrNumber   String? //numero d'identifiant, de bracelet, ou de lot
   type    PoultryType  
   status    PoultryStatus   @default(EN_ELEVAGE)
-initialAge  Int           @default(0) // Âge initial en semaines à la création
+  initialAge  Int           @default(0) // Âge initial en semaines à la création
   notes       String?
 
   // Traçabilité & Sortie
   entryDate  DateTime  @default(now()) // Utilisé pour calculer l'âge dynamique
   exitDate   DateTime?
   exitReason String?
-  salePrice  Float?
+  salePrice  Decimal?   @db.Decimal(14, 2)
 
   // Relations principales
   farmId String
@@ -582,11 +596,6 @@ model PoultryWeeklyRecord {
   @@index([poultryTrackingId])
 }
 //nouveau
-enum TransferStatus {
-  PENDING
-  COMPLETED
-  CANCELLED
-}
 
 model Supplier {
   id    String    @id @default(uuid())
