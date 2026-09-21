@@ -35,12 +35,12 @@ export class StockService {
 }
 
   async findOneItem(id: string, farmId: string) {
-    const item = await this.prisma.stockItem.findFirst({ where: { id, farmId } });
-    if (!item) {
-      throw new NotFoundException('Article introuvable');
-    }
-    return item;
+  const item = await this.prisma.stockItem.findFirst({ where: { id, farmId } });
+  if (!item) {
+    throw new NotFoundException('Article introuvable');
   }
+  return { ...item, quantity: await this.quantiteReelleItem(id) };
+}
 
   async updateItem(id: string, dto: UpdateStockDto, farmId: string) {
     await this.findOneItem(id, farmId);
