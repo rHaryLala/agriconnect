@@ -41,62 +41,74 @@ export class StockService {
 
   // ---------- StockMovement (entrées / sorties / ajustements) ----------
 
-
-
 async registerMovement(itemId: string, dto: CreateStockMovementDto, userId: string, farmId: string) {
   const item = await this.findOneItem(itemId, farmId);
 
-  if (dto.type === 'OUT' && item.quantity < dto.quantity) {
-    throw new BadRequestException(
-      `Stock insuffisant : ${item.quantity} ${item.unit} disponible(s), ${dto.quantity} demandé(s)`,
-    );
+  // Si le mouvement cible une variante précise (ex: "Oeufs GM Normal"),
+  // on la charge et on vérifie DEUX choses distinctes : qu'elle existe
+  // vraiment, ET qu'elle appartient bien à CET article — sans ce second
+  // contrôle, n'importe quel variantId valide (même d'un autre article)
+  // serait accepté silencieusement.
+  let variant: { id: string; quantity: number } | null = null;
+  if (dto.variantId) {
+    variant = await this.prisma.productVariant.findFirst({
+      where: { id: dto.variantId, stockItemId: itemId },
+    });
+    if (!variant) {
+      throw new NotFoundException(
+        'Variante introuvable, ou elle n\'appartient pas à cet article',
+      );
+    }
+  }
+
+  // Le contrôle de stock suffisant doit porter sur la BONNE quantité :
+  // celle de la variante si elle est ciblée, celle de l'article sinon.
+  // Les mélanger permettrait de vendre plus d'une variante qu'il n'en
+  // reste réellement, tant que l'article parent a un total suffisant.
+  if (dto.type === 'OUT') {
+    const quantiteDisponible = variant ? variant.quantity : item.quantity;
+    if (quantiteDisponible < dto.quantity) {
+      throw new BadRequestException(
+        `Stock insuffisant : ${quantiteDisponible} ${item.unit} disponible(s), ${dto.quantity} demandé(s)`,
+      );
+    }
   }
 
   const quantiteReelle = dto.repeseeQuantity ?? dto.quantity;
 
-  // Calcul de l'écart, uniquement pertinent pour une réception (IN) avec
-  // repesage renseigné — pas pour une sortie ou un ajustement, qui n'ont
-  // pas de "quantité annoncée" à comparer.
-  let alerteEcart: { pourcentage: number; message: string } | null = null;
-  if (dto.type === 'IN' && dto.repeseeQuantity !== undefined && dto.quantity > 0) {
-    const ecartPercent = Math.abs(dto.quantity - dto.repeseeQuantity) / dto.quantity * 100;
-    if (ecartPercent > SEUIL_ECART_REPESAGE_PERCENT) {
-      alerteEcart = {
-        pourcentage: Math.round(ecartPercent * 10) / 10, // arrondi à 1 décimale
-        message: `Écart de ${Math.round(ecartPercent)}% entre la quantité annoncée (${dto.quantity}) et repesée (${dto.repeseeQuantity})`,
-      };
-    }
-  }
-
-  const movement = await this.prisma.$transaction(async (tx) => {
-    const m = await tx.stockMovement.create({
+  return this.prisma.$transaction(async (tx) => {
+    const movement = await tx.stockMovement.create({
       data: {
-        itemId, type: dto.type, quantity: dto.quantity,
-        repeseeQuantity: dto.repeseeQuantity, reason: dto.reason,
-        variantId: dto.variantId, userId,
+        itemId,
+        type: dto.type,
+        quantity: dto.quantity,
+        repeseeQuantity: dto.repeseeQuantity,
+        reason: dto.reason,
+        variantId: dto.variantId,
+        userId,
       },
     });
 
-    const target = dto.variantId
-      ? tx.productVariant.update({
-          where: { id: dto.variantId },
-          data: dto.type === 'AJUSTEMENT' ? { quantity: quantiteReelle }
+    if (dto.variantId) {
+      await tx.productVariant.update({
+        where: { id: dto.variantId },
+        data:
+          dto.type === 'AJUSTEMENT'
+            ? { quantity: quantiteReelle }
             : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
-        })
-      : tx.stockItem.update({
-          where: { id: itemId },
-          data: dto.type === 'AJUSTEMENT' ? { quantity: quantiteReelle }
+      });
+    } else {
+      await tx.stockItem.update({
+        where: { id: itemId },
+        data:
+          dto.type === 'AJUSTEMENT'
+            ? { quantity: quantiteReelle }
             : { quantity: dto.type === 'IN' ? { increment: quantiteReelle } : { decrement: quantiteReelle } },
-        });
-    await target;
+      });
+    }
 
-    return m;
+    return movement;
   });
-
-  // L'alerte n'empêche jamais l'enregistrement — elle informe seulement,
-  // sur-le-champ, la personne qui réceptionne. Ne pas bloquer une vraie
-  // livraison pour un écart de pesée serait disproportionné.
-  return { ...movement, alerteEcart };
 }
 
   // RG-06 : corriger un mouvement déjà validé, jamais le supprimer.
