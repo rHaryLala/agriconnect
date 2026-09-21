@@ -1,3 +1,5 @@
+import * as Sentry from "@sentry/react"
+
 const API_URL = import.meta.env.VITE_API_URL as string
 
 export class ApiError extends Error {
@@ -27,9 +29,12 @@ export async function apiFetch<T>(path: string, options: RequestOptions = {}): P
   if (!res.ok) {
     const errorBody = await res.json().catch(() => null)
     const rawMessage = errorBody?.message
-    console.error("DÉTAIL DE L'ERREUR BACKEND :", errorBody);
     const message = Array.isArray(rawMessage) ? rawMessage.join(", ") : (rawMessage ?? `Erreur ${res.status}`)
-    throw new ApiError(res.status, message)
+    const error = new ApiError(res.status, message)
+    // Le corps de réponse n'est jamais transmis à Sentry : il peut contenir des
+    // données saisies par l'utilisateur (email, champs de formulaire, etc.).
+    Sentry.captureException(error, { extra: { path, status: res.status } })
+    throw error
   }
 
   if (res.status === 204) return undefined as T
