@@ -42,5 +42,4 @@ export class ProductVariantController {
   update(@Param('id') id: string, @Body() dto: UpdateVariantDto, @CurrentUser() user: AuthUser) {
     return this.service.update(id, dto, user.farmId);
   }
-
 }

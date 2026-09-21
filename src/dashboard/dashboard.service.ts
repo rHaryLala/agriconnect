@@ -13,7 +13,7 @@ export class DashboardService {
     const date = dateStr ? new Date(dateStr): new Date();
 
     const startOfDay = new Date(date)
-    startOfDay.setHours(0, 0, 0 , 0) //Reset the time to midnight
+    startOfDay.setHours(0, 0, 0, 0) //Reset the time to midnight
 
     const endOfDay = new Date(date)
     endOfDay.setHours(23, 59, 59, 999)
@@ -76,7 +76,7 @@ export class DashboardService {
         nombreAlertesStock: stockCritique.length,
         nombreTypesProduitsAujourdhui: productions.length,
       },
-     }
+     };
   }
 }
 

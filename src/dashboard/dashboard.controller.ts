@@ -26,5 +26,4 @@ export class DashboardController {
     // ValidationPipe global déjà configuré dans main.ts.
     return this.dashboardService.getSummary(user.farmId, query.date);
     }
-    
 }
