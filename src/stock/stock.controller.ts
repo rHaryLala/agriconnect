@@ -37,7 +37,7 @@ export class StockController {
   @Get('items/:id')
   @Roles('ADMIN', 'OUVRIER', 'COMPTABLE')
   findOneItem(@Param('id') id: string, @CurrentUser() user: AuthUser) {
-    return this.stockService.findOneItem(id, user.farmId);
+    return this.stockService.findOneItemDetail(id, user.farmId);
   }
 
   @Patch('items/:id')
