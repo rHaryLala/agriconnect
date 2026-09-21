@@ -17,8 +17,22 @@ export class StockService {
   }
 
   async findAllItems(farmId: string) {
-    return this.prisma.stockItem.findMany({ where: { farmId }, orderBy: { name: 'asc' } });
-  }
+  const items = await this.prisma.stockItem.findMany({
+    where: { farmId },
+    orderBy: { name: 'asc' },
+  });
+
+  // Même correctif que dans alertes() : la quantité affichée doit
+  // toujours être la vraie, recalculée depuis les variantes pour les
+  // articles qui en ont — jamais le champ "quantity" brut, périmé
+  // dès qu'un mouvement cible une variante plutôt que l'article.
+  return Promise.all(
+    items.map(async (item) => ({
+      ...item,
+      quantity: await this.quantiteReelleItem(item.id),
+    })),
+  );
+}
 
   async findOneItem(id: string, farmId: string) {
     const item = await this.prisma.stockItem.findFirst({ where: { id, farmId } });
