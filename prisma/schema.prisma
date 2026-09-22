@@ -49,8 +49,8 @@ model User {
   farmId        String
   farm          Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
 
-  employeedId   String?   @unique
-  employee  Employee    @relation(fields: [employeedId], references: [id], onDelete: SetNull)
+  employeeId   String?   @unique
+  employee  Employee?    @relation(fields: [employeeId], references: [id], onDelete: SetNull)
 
   production    Production[]
   stockMovment  StockMovement[]
@@ -76,7 +76,7 @@ model Employee {
   firstName   String
   lastName    String
   matricule   String?
-  departement   String?
+  department   String?
   position    String?
   phone   String?
 
@@ -87,8 +87,7 @@ model Employee {
   clientId    String? @unique
   client    Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
 
-  users       User[]
-  salaryDeduction   SalaryDeduction[]
+  salaryDeductions   SalaryDeduction[]
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -187,8 +186,8 @@ model StockMovement {
   variantId   String?
   variant    ProductVariant?   @relation(fields: [variantId], references: [id])
 
-  originalMovmentId  String?
-  originalMovment    StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
+  originalMovementId  String?
+  originalMovment    StockMovement? @relation("MovmentCorrection", fields: [originalMovementId], references: [id])
   corrections        StockMovement[] @relation("MovmentCorrection")
   //mise a jour
 
@@ -219,6 +218,8 @@ model Client {
   transactions Transaction[]
 
   cattles   Cattle[]    
+
+  employee Employee?
 
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
@@ -600,7 +601,7 @@ model PoultryWeeklyRecord {
 model Supplier {
   id    String    @id @default(uuid())
   name    String
-  phone   String
+  phone   String? 
   email   String?
   address   String?
 
