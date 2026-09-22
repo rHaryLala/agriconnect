@@ -26,7 +26,7 @@ export function ViewToggle({ value, onChange }: ViewToggleProps) {
           aria-label={label}
           title={label}
           aria-pressed={value === id}
-          className={`flex h-8 w-9 items-center justify-center rounded-md transition-colors duration-200 ${
+          className={`flex h-8 w-9 items-center justify-center rounded-md outline-none transition-colors duration-200 focus-visible:ring-2 focus-visible:ring-primary/40 ${
             value === id ? "bg-primary text-primary-foreground" : "text-muted-foreground hover:text-foreground"
           }`}
         >

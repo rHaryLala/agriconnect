@@ -24,7 +24,7 @@ export function StatCard({ icon: Icon, label, value, hint, tone = "primary", ani
   const displayValue = animate ? animate.format(animatedValue) : value
 
   return (
-    <div className="glass-surface min-w-0 rounded-xl p-4 shadow-sm transition-shadow duration-200 hover:shadow-md sm:p-5">
+    <div className="glass-surface min-w-0 rounded-xl p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md sm:p-5">
       <div className="mb-3 flex items-center justify-between">
         <div className={`flex h-9 w-9 items-center justify-center rounded-lg ${toneClasses[tone]}`}>
           <Icon className="h-[18px] w-[18px]" strokeWidth={1.75} />
