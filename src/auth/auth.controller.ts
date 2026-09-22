@@ -27,7 +27,7 @@ export class AuthController {
     }
         // @Body() extrait et valide automatiquement le JSON reçu,
         // grâce au ValidationPipe global déjà configuré dans main.ts
-        return this.authService.register(dto);    
+        return this.authService.register(dto);
     }
 
     @Post('login')// POST /auth/login
@@ -35,5 +35,5 @@ export class AuthController {
     {
         return this.authService.login(dto);
     }
-    
+
 }

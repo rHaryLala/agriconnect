@@ -7,7 +7,7 @@ export class StockTransferService {
   constructor(private prisma: PrismaService) {}
 
   async create(dto: CreateTransferDto, userId: string, farmId: string) {
-    // Ce "farmId" vient du paramètre de méthode, lui-même toujours passé
+  // Ce "farmId" vient du paramètre de méthode, lui-même toujours passé
   // depuis @CurrentUser() dans le contrôleur (jamais depuis dto) — donc
   // déjà correct sur ce point (confirmé, pas de changement ici).
   const [from, to] = await Promise.all([
