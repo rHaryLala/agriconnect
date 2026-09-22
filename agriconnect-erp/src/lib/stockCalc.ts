@@ -89,8 +89,10 @@ export function computeTransferDue(movement: StockMovement): number {
 
 export type StockStatus = "ok" | "bas" | "critique"
 
+const LOW_STOCK_RATIO = 1.5
+
 export function getStockStatus(current: number, seuilCritique: number): StockStatus {
   if (current <= seuilCritique) return "critique"
-  if (current <= seuilCritique * 1.5) return "bas"
+  if (current < seuilCritique * LOW_STOCK_RATIO) return "bas"
   return "ok"
 }
