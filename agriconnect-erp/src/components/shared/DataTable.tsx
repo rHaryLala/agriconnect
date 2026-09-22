@@ -28,6 +28,8 @@ const TONE_BG: Record<NonNullable<RowTone>, string> = {
   warning: "bg-warning/5 hover:bg-warning/10",
 }
 
+const SKELETON_WIDTHS = ["w-28", "w-20", "w-32", "w-16", "w-24"]
+
 export function DataTable<T>({
   columns,
   rows,
@@ -60,9 +62,9 @@ export function DataTable<T>({
             {isLoading &&
               Array.from({ length: 4 }).map((_, i) => (
                 <tr key={i} className="border-b border-border last:border-0">
-                  {columns.map((col) => (
+                  {columns.map((col, colIndex) => (
                     <td key={col.key} className="px-4 py-3">
-                      <Skeleton className="h-4 w-24" />
+                      <Skeleton className={`h-4 ${SKELETON_WIDTHS[(i + colIndex) % SKELETON_WIDTHS.length]}`} />
                     </td>
                   ))}
                 </tr>
@@ -74,7 +76,7 @@ export function DataTable<T>({
                 const toneClass = tone ? TONE_BG[tone] : ""
                 const stickyBg = tone === "critical" ? "bg-destructive/5" : tone === "warning" ? "bg-warning/5" : "bg-surface"
                 return (
-                  <tr key={rowKey(row)} className={`group border-b border-border transition-colors last:border-0 hover:bg-background ${toneClass}`}>
+                  <tr key={rowKey(row)} className={`group animate-fade-in border-b border-border transition-colors last:border-0 hover:bg-background ${toneClass}`}>
                     {columns.map((col) => (
                       <td
                         key={col.key}

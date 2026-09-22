@@ -21,7 +21,7 @@ export function FournisseurCard({ fournisseur, summary }: FournisseurCardProps) 
   return (
     <Link
       to={`/app/fournisseurs/${fournisseur.id}`}
-      className="glass-surface flex h-full flex-col rounded-xl p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
+      className="glass-surface animate-fade-in flex h-full flex-col rounded-xl p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md focus:outline-none focus-visible:ring-2 focus-visible:ring-primary/40"
     >
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3">

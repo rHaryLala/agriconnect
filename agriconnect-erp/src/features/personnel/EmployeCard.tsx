@@ -17,7 +17,7 @@ export function EmployeCard({ employe, linkedToClient, canEdit, onEdit, onDelete
   const isActive = employe.statut === "actif"
 
   return (
-    <div className="glass-surface flex h-full flex-col rounded-xl p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
+    <div className="glass-surface animate-fade-in flex h-full flex-col rounded-xl p-4 shadow-sm transition-all duration-200 hover:-translate-y-0.5 hover:shadow-md">
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3">
           <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
