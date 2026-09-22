@@ -30,6 +30,11 @@ model Farm {
   paddyProcess PaddyProcess[]
   poultryTrackings PoultryTracking[]//mise a jour
 
+  //Nouveau
+  employees   Employee[]
+  suppliers   Supplier[]
+  
+
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
@@ -43,16 +48,18 @@ model User {
   role          Role            @default(OUVRIER)
   farmId        String
   farm          Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  employeeId   String?   @unique
+  employee  Employee?    @relation(fields: [employeeId], references: [id], onDelete: SetNull)
+
   production    Production[]
   stockMovment  StockMovement[]
   transactions Transaction[]
   
   payments    Payment[]
 
-  salaryDeductions SalaryDeduction[]
-
-  sentTransfers     StockTransfer[] @relation("TransferSender")   
-  receivedTransfers StockTransfer[] @relation("TransferReceiver")
+  sentTransfers     StockTransfer[] @relation("TransfertSender")   
+  receivedTransfers StockTransfer[] @relation("TransfertReceiver")
 
   poultryTrackings PoultryTracking[]//mise a jour
 
@@ -60,6 +67,31 @@ model User {
   updatedAt     DateTime        @updatedAt
 
   @@index([farmId])
+}
+
+model Employee {
+  id String   @id @default(uuid())
+  firstName   String
+  lastName    String
+  matricule   String?
+  department   String?
+  position    String?
+  phone   String?
+
+  farmId    String
+  farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  user    User?
+  clientId    String? @unique
+  client    Client?   @relation(fields: [clientId], references: [id], onDelete: SetNull)
+
+  salaryDeductions   SalaryDeduction[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([farmId])
+  @@unique([farmId, matricule])
 }
 
 enum ProductionType {
@@ -94,7 +126,18 @@ model Production {
   variantId   String?
   variant   ProductVariant?   @relation(fields: [variantId],  references: [id])
 
+  cattleId    String?
+  cattle      Cattle?         @relation(fields: [cattleId], references: [id], onDelete: SetNull)
+
+  poultryTrackingId String?
+  poultryTracking   PoultryTracking? @relation(fields: [poultryTrackingId], references: [id], onDelete: SetNull)
+  
+
   createdAt   DateTime       @default(now())
+
+  @@index([farmId, date(sort: Desc)])
+  @@index([poultryTrackingId])
+  @@index([cattleId])
 }
 
 enum MouvementType {
@@ -124,10 +167,13 @@ model StockItem {
   invoiceItem InvoiceItem[]
   variants     ProductVariant[]
   //lise a jour
-  items   StockTransferItem[]
+  transferItems   StockTransferItem[]
 
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
+
+  @@index([farmId])
+  @@unique([farmId, name])
 }
 
 model StockMovement {
@@ -147,8 +193,8 @@ model StockMovement {
   variantId   String?
   variant    ProductVariant?   @relation(fields: [variantId], references: [id])
 
-  originalMovmentId  String?
-  originalMovment    StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
+  originalMovementId  String?
+  originalMovement    StockMovement? @relation("MovmentCorrection", fields: [originalMovementId], references: [id])
   corrections        StockMovement[] @relation("MovmentCorrection")
   //mise a jour
 
@@ -180,6 +226,8 @@ model Client {
 
   cattles   Cattle[]    
 
+  employee Employee?
+
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
@@ -194,9 +242,9 @@ enum InvoiceStatus {
 model Invoice {
   id            String        @id @default(uuid())
   invoiceNumber String        @unique @map("numero_du_recu")
-  totalAmount   Float         @map("total_ttc")
-  paidAmount    Float         @default(0) @map("montant_regle")
-  dueAmount     Float         @map("reste_a_payer")
+  totalAmount   Decimal   @map("total_ttc") @db.Decimal(14, 2)
+  paidAmount    Decimal   @default(0) @map("montant_regle") @db.Decimal(14, 2)
+  dueAmount     Decimal         @map("reste_a_payer") @default(0) @db.Decimal(14, 2)
   status        InvoiceStatus @default(UNPAID) @map("statut_du_paiment")
 
   clientId      String
@@ -213,14 +261,17 @@ model Invoice {
 
   createdAt     DateTime      @default(now())
   updatedAt     DateTime      @updatedAt
+
+  @@index([farmId, status])
+  @@unique([farmId, invoiceNumber])
 }
 
 //details des articles vendus dans la facture
 model InvoiceItem {
   id String @id @default(uuid())
   quantity Float
-  unitPrice Float
-  total Float
+  unitPrice Decimal   @db.Decimal(14, 2)
+  total Decimal   @db.Decimal(14, 2)
 
   invoiceId String
   invoice Invoice   @relation(fields: [invoiceId], references: [id])
@@ -240,7 +291,7 @@ enum TransactionType{
 
 model Transaction{
   id String @id @default(uuid())
-  amount Float
+  amount Decimal    @db.Decimal(14, 2)
   type TransactionType @default(RECETTE)
   reference String? //numereau physique du recuu ou bordereau
   notes String? //remarque ou detail
@@ -261,6 +312,9 @@ model Transaction{
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@index([farmId, date(sort: Desc)])
+  @@index([farmId, type, date(sort: Desc)])
 }
 
 // Mise a jour
@@ -287,6 +341,8 @@ model StockLocation {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
+
+  @@unique([farmId, name])
 }
 
 //mise a jour: suivi des bovin
@@ -330,7 +386,7 @@ model Cattle{
 
   //SORTIE-------------------------
   saleDate    DateTime?
-  salePrice   Float? //prix unitaire
+  salePrice   Decimal?    @db.Decimal(14, 2) //prix unitaire
   signature   String?  // URL/path de la signature ou validation
   clientId    String?
   client    Client? @relation(fields: [clientId], references: [id])
@@ -344,10 +400,13 @@ model Cattle{
   farmId String
   farm Farm @relation(fields: [farmId], references: [id])
 
+  productions  Production[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([farmId])
+  @@unique([farmId, nameOrTag])
 }
 
 // mise a jour: table model paiment et Historique des règlements / versements
@@ -359,7 +418,7 @@ enum PaymentMethod{
 model Payment {
   id String @id @default(uuid())
   recuNumber String @unique //numero du recu
-  amount Float
+  amount Decimal    @db.Decimal(14, 2)
   method PaymentMethod @default(CAISSE)
   date DateTime @default(now())
 
@@ -375,21 +434,31 @@ model Payment {
 
 }
 
+enum  DeductionStatus{
+  PENDING
+  DEDUCTED
+}
+
 //mise a jour: deduction au salaire pour les personnel
 model SalaryDeduction {
   id String @id @default(uuid())
-  amount  Float
-  status String @default("En_attente")//en attente na deduit
+  amount  Decimal   @db.Decimal(14, 2)
+  status DeductionStatus @default(PENDING)//en attente na deduit
   period String //deduction du salaire sur le moi du paie ex: 
 
   paymentId String @unique
   payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
 
   employeeId String 
-  employee User @relation(fields: [employeeId], references: [id])
+  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+}
+
+enum ProcessStatus{
+  IN_PROGRESS
+  COMPLETED
 }
 
 //suivi du riziculture (paddy en riz decortiqué)
@@ -399,7 +468,7 @@ model PaddyProcess{
   paddyInputKg Float //quantité akotry engagée
   paddyInputLot Int //quantité akotry par gony engagée
   waveNumber Int @default(1) //vague de sechage
-  statu String @default("IN_PROGRESS") //in progress na completed
+  status ProcessStatus @default(IN_PROGRESS) //in progress na completed
 
   riceOutputKg Float? //riz obtenu au final
   note String? // affirmation a faire si il y a
@@ -416,7 +485,7 @@ model ProductVariant{
   id String @id @default(uuid())
   name String //anaran'ilay varieté anle produit, ex: gros model cassé, petit model normal, haricot rouge
   sku String? @unique //Sac de 10 kg = SKU: AGR-BST-10KGSac de 50 kg = SKU: AGR-BST-50KG
-  unitPrice Float @default(0)
+  unitPrice Decimal @default(0)   @db.Decimal(14, 2)
   quantity  Float @default(0)
 
   stockItemId String
@@ -438,7 +507,7 @@ model ProductVariant{
 model StockTransfer {
   id String @id @default(uuid())
   transfertNumber String  @unique
-  status    String    @default("PENDING")//PENDING,CANCELLED, COMPLETED
+  status    TransfertStatus @default(PENDING)
   date    DateTime    @default(now())
 
 
@@ -449,10 +518,10 @@ model StockTransfer {
   toLocation    StockLocation   @relation("ToLocation", fields: [toLocationId], references: [id])
 
   senderId    String?
-  sender    User?    @relation("TransferSender", fields: [senderId], references: [id])
+  sender    User?    @relation("TransfertSender", fields: [senderId], references: [id])
 
   receiverId    String?
-  receiver    User?   @relation("TransferReceiver", fields: [receiverId], references: [id])
+  receiver    User?   @relation("TransfertReceiver", fields: [receiverId], references: [id])
 
   items   StockTransferItem[]
 
@@ -498,14 +567,14 @@ model PoultryTracking{
   tagOrNumber   String? //numero d'identifiant, de bracelet, ou de lot
   type    PoultryType  
   status    PoultryStatus   @default(EN_ELEVAGE)
-initialAge  Int           @default(0) // Âge initial en semaines à la création
+  initialAge  Int           @default(0) // Âge initial en semaines à la création
   notes       String?
 
   // Traçabilité & Sortie
   entryDate  DateTime  @default(now()) // Utilisé pour calculer l'âge dynamique
   exitDate   DateTime?
   exitReason String?
-  salePrice  Float?
+  salePrice  Decimal?   @db.Decimal(14, 2)
 
   // Relations principales
   farmId String
@@ -516,6 +585,8 @@ initialAge  Int           @default(0) // Âge initial en semaines à la créatio
 
   // Historique des suivis hebdomadaires (1-N)
   weeklyRecords PoultryWeeklyRecord[]
+
+  productions   Production[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
@@ -545,4 +616,58 @@ model PoultryWeeklyRecord {
   updatedAt DateTime @updatedAt
 
   @@index([poultryTrackingId])
+}
+//nouveau
+
+enum TransfertStatus{
+ PENDING
+ CANCELLED
+ COMPLETED
+}
+
+model Supplier {
+  id    String    @id @default(uuid())
+  name    String
+  phone   String? 
+  email   String?
+  address   String?
+
+  farmId    String
+  farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  purchases   SupplierPurchase[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+
+  @@index([farmId])
+}
+
+model SupplierPurchase {
+  id String   @id   @default(uuid())
+  reference   String
+  totalAmount   Decimal   @db.Decimal(14, 2)
+  paidAmount    Decimal   @default(0) @db.Decimal(14,2)
+  date    DateTime    @default(now())
+
+  supplierId    String
+  supplier    Supplier    @relation(fields: [supplierId], references: [id], onDelete: Restrict)
+
+  payments    SupplierPayment[]
+
+  createdAt   DateTime    @default(now())
+  updatedAt   DateTime    @updatedAt
+}
+
+
+model SupplierPayment {
+  id    String  @id @default(uuid())
+  amount    Decimal   @db.Decimal(14,2)
+  method    PaymentMethod   @default(CAISSE)
+  date    DateTime    @default(now())
+
+  purchaseId    String
+  purchase    SupplierPurchase    @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  createdAt   DateTime    @default(now())
 }
