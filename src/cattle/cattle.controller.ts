@@ -67,17 +67,17 @@ export class CattleController {
   }
 
   @Get(':id/milk-records')
-@Roles('ADMIN', 'OUVRIER', 'COMPTABLE', 'CONTROLEUR_INTERNE')
-getMilkRecords(@Param('id') id: string, @CurrentUser() user: AuthUser) {
+  @Roles('ADMIN', 'OUVRIER', 'COMPTABLE', 'CONTROLEUR_INTERNE')
+  getMilkRecords(@Param('id') id: string, @CurrentUser() user: AuthUser) {
   return this.service.getMilkRecords(id, user.farmId);
 }
 
 // Route au niveau du troupeau entier, pas d'un animal précis —
 // placée avant ":id" dans les faits, mais comme elle a un chemin
 // différent ("troupeau" n'est pas un UUID), pas de conflit de route.
-@Get('troupeau/lait')
-@Roles('ADMIN', 'OUVRIER', 'COMPTABLE', 'CONTROLEUR_INTERNE')
-getTroupeauMilk(
+  @Get('troupeau/lait')
+  @Roles('ADMIN', 'OUVRIER', 'COMPTABLE', 'CONTROLEUR_INTERNE')
+  getTroupeauMilk(
   @Query('dateDebut') dateDebut: string,
   @Query('dateFin') dateFin: string,
   @CurrentUser() user: AuthUser,
