@@ -58,8 +58,6 @@ model User {
   
   payments    Payment[]
 
-  salaryDeductions SalaryDeduction[]
-
   sentTransfers     StockTransfert[] @relation("TransfertSender")   
   receivedTransfers StockTransfert[] @relation("TransfertReceiver")
 
