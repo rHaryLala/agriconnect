@@ -129,7 +129,72 @@ export class CattleService {
           stockItemId: dto.stockItemId,
           cattleId, // le lien qui rend l'agrégation par vache possible
         },
-      })
-    })
+      });
+
+      if (dto.stockItemId)
+      {
+        await tx.stockMovement.create({
+          data: {
+            itemId: dto.stockItemId,
+            type: 'IN',
+            quantity: dto.quantityL,
+            reason: `Traite du ${date.toLocaleDateString()} - ${cattle.nameOrTag}`,
+            userId,
+          },
+        });
+
+        await tx.stockItem.update({
+          where: {id: dto.stockItemId},
+          data: {quantity: {increment: dto.quantityL}},
+        });
+      }
+
+      return production;
+    });
+  }
+
+  //Historique de traite de vache / Par vache
+  async getMilkRecords(cattleId: string, farmId: string)
+  {
+    await this.findOne(cattleId, farmId) //Vérifie appartenance ferme + existence
+    return this.prisma.production.findMany({
+      where: {cattleId, type: 'LAIT'},
+      orderBy: {date: 'desc'},
+    });
+  }
+
+  // Agrégation troupeau — le "par troupeau" du besoin. Somme toute
+  // la production laitière de la ferme sur une période, tous animaux
+  // confondus, plus un détail par vache pour comparer les rendements.
+  async getTroupeauMilkSummary(farmId: string, dateDebut?: string, dateFin?: string)
+  {
+    const where = {
+      farmId,
+      type: 'LAIT' as const,
+      date: {
+        gte: dateDebut ? new Date(dateDebut) : undefined,
+        lte: dateFin ? new Date(dateFin) : undefined,
+      },
+    };
+
+    const total = await this.prisma.production.aggregate({
+      where,
+      _sum: {quantity: true},
+    });
+
+    //Voir quelle vache produit le plus
+    const parVache = await this.prisma.production.groupBy({
+      by: ['cattleId'],
+      where: {...where, cattleId: {not: null}},
+      _sum: {quantity: true},
+    });
+
+    return {
+      totalTroupeauLitres: total._sum.quantity ?? 0,
+      parVache: parVache.map((v) => ({
+        cattleId: v.cattleId,
+        totalLitres: v._sum.quantity ?? 0,
+      })),
+    };
   }
 }
