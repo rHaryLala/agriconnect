@@ -447,7 +447,7 @@ model PaddyProcess{
   paddyInputKg Float //quantité akotry engagée
   paddyInputLot Int //quantité akotry par gony engagée
   waveNumber Int @default(1) //vague de sechage
-  statu String @default("IN_PROGRESS") //in progress na completed
+  status String @default("IN_PROGRESS") //in progress na completed
 
   riceOutputKg Float? //riz obtenu au final
   note String? // affirmation a faire si il y a
@@ -486,7 +486,7 @@ model ProductVariant{
 model StockTransfert {
   id String @id @default(uuid())
   transfertNumber String  @unique
-  status    String    @default("PENDING")//PENDING,CANCELLED, COMPLETED
+  status    TransfertStatus @default(PENDING)
   date    DateTime    @default(now())
 
 
@@ -595,6 +595,12 @@ model PoultryWeeklyRecord {
   @@index([poultryTrackingId])
 }
 //nouveau
+
+enum TransfertStatus{
+ PENDING
+ CANCELLED
+ COMPLETED
+}
 
 model Supplier {
   id    String    @id @default(uuid())
