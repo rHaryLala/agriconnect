@@ -1393,6 +1393,8 @@
     "colDate": "Date",
     "exportPdf": "Export PDF",
     "exportExcel": "Export Excel",
+    "toastExported": "File exported: {{filename}}",
+    "toastExportError": "Export failed. Please try again.",
     "emptyTitle": "No data",
     "emptyDescription": "No data for the selected period.",
     "tabs": { "financial": "Financial", "production": "Production", "stock": "Stock", "recap": "Monthly recap", "payroll": "Payroll deductions" },

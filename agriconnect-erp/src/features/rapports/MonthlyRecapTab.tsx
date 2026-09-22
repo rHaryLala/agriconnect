@@ -7,7 +7,7 @@ import { buildMonthlyRecapRows, computeInvoiceRecap, inRange, type MonthlyRecapR
 import { totalOeufs } from "@/lib/eggCalc"
 import { computeInvoiceTotal } from "@/types/invoice"
 import { formatCurrency, formatNumber } from "@/lib/format"
-import { exportToPdf, exportToExcel } from "@/lib/reportExport"
+import { useReportExport } from "./useReportExport"
 import type { BovinAnimal, PoulardMouvement, RizVente, HaricotMouvement } from "@/types/production"
 import type { EggSale } from "@/types/eggSale"
 import type { Invoice } from "@/types/invoice"
@@ -26,6 +26,7 @@ interface MonthlyRecapTabProps {
 
 export function MonthlyRecapTab({ period, periodLabel, eggSales, eggPrices, bovins, poulard, rizVentes, haricots, invoices }: MonthlyRecapTabProps) {
   const { t } = useTranslation()
+  const { exportPdf, exportExcel } = useReportExport()
 
   const eggSalesInPeriod = eggSales.filter((s) => inRange(s.date, period.start, period.end))
   const eggQuantite = eggSalesInPeriod.reduce((sum, s) => sum + totalOeufs(s.quantities), 0)
@@ -48,7 +49,7 @@ export function MonthlyRecapTab({ period, periodLabel, eggSales, eggPrices, bovi
   ]
 
   function handleExportPdf() {
-    exportToPdf(
+    exportPdf(
       t("rapports.recap.title"),
       periodLabel,
       [t("rapports.recap.colFiliere"), t("rapports.recap.colQuantitySold"), t("rapports.recap.colAmount")],
@@ -58,7 +59,7 @@ export function MonthlyRecapTab({ period, periodLabel, eggSales, eggPrices, bovi
   }
 
   function handleExportExcel() {
-    exportToExcel(
+    exportExcel(
       t("rapports.recap.title"),
       [t("rapports.recap.colFiliere"), t("rapports.recap.colQuantitySold"), "Unité", t("rapports.recap.colAmount")],
       rows.map((r) => [r.filiere, r.quantiteVendue, r.unite, r.montant]),

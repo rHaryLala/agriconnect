@@ -11,7 +11,7 @@ import { usePayrollSettingsStore } from "@/features/personnel/payrollSettingsSto
 import { buildRetenues, payrollWindow, type RetenueLine } from "@/lib/personnelCalc"
 import { currentIsoDate } from "@/lib/dateRange"
 import { formatCurrency, formatDate } from "@/lib/format"
-import { exportToPdf, exportToExcel } from "@/lib/reportExport"
+import { useReportExport } from "./useReportExport"
 import type { Invoice } from "@/types/invoice"
 import type { StockArticle } from "@/types/stock"
 
@@ -57,6 +57,7 @@ function TotalsCard({ title, rows }: { title: string; rows: GroupTotal[] }) {
 
 export function PayrollDeductionReportTab({ invoices, articles }: PayrollDeductionReportTabProps) {
   const { t } = useTranslation()
+  const { exportPdf, exportExcel } = useReportExport()
   const { employes, fetchAll: fetchEmployes } = usePersonnelStore()
   const { jourDebut, jourFin } = usePayrollSettingsStore()
   const defaultClosing = payrollWindow(currentIsoDate(), jourDebut, jourFin).end
@@ -107,7 +108,7 @@ export function PayrollDeductionReportTab({ invoices, articles }: PayrollDeducti
   ]
 
   function handleExportPdf() {
-    exportToPdf(
+    exportPdf(
       t("rapports.payroll.title"),
       t("rapports.payroll.closingSummary", { date: formatDate(closingDate) }),
       exportColumns,
@@ -117,7 +118,7 @@ export function PayrollDeductionReportTab({ invoices, articles }: PayrollDeducti
   }
 
   function handleExportExcel() {
-    exportToExcel(
+    exportExcel(
       t("rapports.payroll.title"),
       exportColumns,
       lines.map((line) => [line.date, employeName(line.employeId), departement(line.employeId), line.produit, line.numero, line.reste]),

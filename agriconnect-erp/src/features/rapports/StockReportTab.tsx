@@ -7,7 +7,7 @@ import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { computeCurrentStock, getStockStatus } from "@/lib/stockCalc"
 import { inRange } from "@/lib/reportsCalc"
 import { formatDate, formatNumber } from "@/lib/format"
-import { exportToPdf, exportToExcel } from "@/lib/reportExport"
+import { useReportExport } from "./useReportExport"
 import type { StockArticle, StockMovement } from "@/types/stock"
 
 interface StockReportTabProps {
@@ -25,6 +25,7 @@ interface InventoryRow {
 
 export function StockReportTab({ articles, movements, period, periodLabel }: StockReportTabProps) {
   const { t } = useTranslation()
+  const { exportPdf, exportExcel } = useReportExport()
   const inventory: InventoryRow[] = articles.map((article) => {
     const current = computeCurrentStock(article, movements)
     return { article, current, status: getStockStatus(current, article.seuilCritique) }
@@ -57,7 +58,7 @@ export function StockReportTab({ articles, movements, period, periodLabel }: Sto
   ]
 
   function handleExportPdf() {
-    exportToPdf(
+    exportPdf(
       t("rapports.stock.title"),
       periodLabel,
       [t("rapports.stock.colArticle"), t("rapports.stock.colCurrentLevel"), t("rapports.stock.colThreshold"), t("rapports.stock.colStatus")],
@@ -67,7 +68,7 @@ export function StockReportTab({ articles, movements, period, periodLabel }: Sto
   }
 
   function handleExportExcel() {
-    exportToExcel(
+    exportExcel(
       t("rapports.stock.title"),
       [t("rapports.stock.colArticle"), t("rapports.stock.colCurrentLevel"), t("rapports.stock.colThreshold"), t("rapports.stock.colStatus")],
       inventory.map((r) => [r.article.nom, r.current, r.article.seuilCritique, statusLabel(r.status)]),

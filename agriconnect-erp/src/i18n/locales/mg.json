@@ -1393,6 +1393,8 @@
     "colDate": "Daty",
     "exportPdf": "Avoahy PDF",
     "exportExcel": "Avoahy Excel",
+    "toastExported": "Rakitra navoaka : {{filename}}",
+    "toastExportError": "Tsy vita ny famoahana. Andramo indray.",
     "emptyTitle": "Tsy misy angona",
     "emptyDescription": "Tsy misy angona amin'ny vanim-potoana voafantina.",
     "tabs": { "financial": "Ara-bola", "production": "Famokarana", "stock": "Tahiry", "recap": "Famintinana isam-bolana", "payroll": "Fanalana amin'ny karama" },

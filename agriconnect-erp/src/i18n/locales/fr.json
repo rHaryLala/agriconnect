@@ -1393,6 +1393,8 @@
     "colDate": "Date",
     "exportPdf": "Exporter PDF",
     "exportExcel": "Exporter Excel",
+    "toastExported": "Fichier exporté : {{filename}}",
+    "toastExportError": "Export impossible. Réessayez.",
     "emptyTitle": "Aucune donnée",
     "emptyDescription": "Aucune donnée pour la période sélectionnée.",
     "tabs": { "financial": "Financier", "production": "Production", "stock": "Stock", "recap": "Récap mensuel", "payroll": "Retenues sur salaire" },

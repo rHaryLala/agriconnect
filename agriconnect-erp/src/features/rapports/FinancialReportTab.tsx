@@ -6,7 +6,7 @@ import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { computeTotals } from "@/lib/financeCalc"
 import { inRange } from "@/lib/reportsCalc"
 import { formatCurrency, formatDate } from "@/lib/format"
-import { exportToPdf, exportToExcel } from "@/lib/reportExport"
+import { useReportExport } from "./useReportExport"
 import type { FinanceTransaction } from "@/types/finance"
 
 interface FinancialReportTabProps {
@@ -17,6 +17,7 @@ interface FinancialReportTabProps {
 
 export function FinancialReportTab({ transactions, period, periodLabel }: FinancialReportTabProps) {
   const { t } = useTranslation()
+  const { exportPdf, exportExcel } = useReportExport()
   const inPeriod = transactions.filter((tr) => inRange(tr.date, period.start, period.end))
   const { totalRecettes, totalDepenses, marge } = computeTotals(inPeriod)
 
@@ -29,7 +30,7 @@ export function FinancialReportTab({ transactions, period, periodLabel }: Financ
   ]
 
   function handleExportPdf() {
-    exportToPdf(
+    exportPdf(
       t("rapports.financial.title"),
       periodLabel,
       [t("rapports.colDate"), t("rapports.financial.colType"), t("rapports.financial.colCategory"), t("rapports.financial.colDescription"), t("rapports.financial.colAmount")],
@@ -39,7 +40,7 @@ export function FinancialReportTab({ transactions, period, periodLabel }: Financ
   }
 
   function handleExportExcel() {
-    exportToExcel(
+    exportExcel(
       t("rapports.financial.title"),
       [t("rapports.colDate"), t("rapports.financial.colType"), t("rapports.financial.colCategory"), t("rapports.financial.colDescription"), t("rapports.financial.colAmount")],
       inPeriod.map((tr) => [tr.date, tr.type, tr.categorie, tr.description, tr.montant]),

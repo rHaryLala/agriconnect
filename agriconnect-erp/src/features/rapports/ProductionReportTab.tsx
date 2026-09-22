@@ -5,7 +5,7 @@ import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { buildProductionRows, buildRendementRows, type ProductionRow, type RendementRow } from "@/lib/reportsCalc"
 import { useCustomTypesStore } from "@/features/production/customTypesStore"
 import { formatNumber } from "@/lib/format"
-import { exportToPdf, exportToExcel } from "@/lib/reportExport"
+import { useReportExport } from "./useReportExport"
 import type { PouleEntry, VacheEntry, KuroilerEntry, CultureEntry, BovinAnimal, PoulardMouvement, RizRecolte, RizVente, HaricotMouvement } from "@/types/production"
 
 interface ProductionReportTabProps {
@@ -24,6 +24,7 @@ interface ProductionReportTabProps {
 
 export function ProductionReportTab(props: ProductionReportTabProps) {
   const { t } = useTranslation()
+  const { exportPdf, exportExcel } = useReportExport()
   const customTypes = useCustomTypesStore((s) => s.types)
   const rows = buildProductionRows(props.period, props, t)
   const rendementRows = buildRendementRows(props.period, { ...props, customTypes })
@@ -46,7 +47,7 @@ export function ProductionReportTab(props: ProductionReportTabProps) {
   ]
 
   function handleExportPdf() {
-    exportToPdf(
+    exportPdf(
       t("rapports.production.title"),
       props.periodLabel,
       [t("rapports.production.colFiliere"), t("rapports.production.colIndicator"), t("rapports.production.colValue")],
@@ -59,7 +60,7 @@ export function ProductionReportTab(props: ProductionReportTabProps) {
   }
 
   function handleExportExcel() {
-    exportToExcel(
+    exportExcel(
       t("rapports.production.title"),
       [t("rapports.production.colFiliere"), t("rapports.production.colIndicator"), t("rapports.production.colValue"), t("rapports.production.colUnit")],
       [
