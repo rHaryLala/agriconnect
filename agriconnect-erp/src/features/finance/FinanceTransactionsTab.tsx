@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Wallet, Trash2, Pencil, Settings2, X } from "lucide-react"
+import { Plus, Wallet, Pencil, Settings2, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
@@ -11,6 +11,7 @@ import { useCategoriesStore } from "./categoriesStore"
 import { formatDate, formatCurrency } from "@/lib/format"
 import { hasAlertKeyword, type RowTone } from "@/lib/alerts"
 import type { FinanceTransaction } from "@/types/finance"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 interface FinanceTransactionsTabProps {
   transactions: FinanceTransaction[]
@@ -88,9 +89,7 @@ export function FinanceTransactionsTab({ transactions, isLoading, canEdit, onAdd
               <Button variant="ghost" size="icon" onClick={() => openEdit(tx)} aria-label={t("common.edit")}>
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => { onDelete(tx.id); toast.success(t("finance.transactions.toastDeleted")) }} aria-label={t("common.delete")}>
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              <ConfirmDeleteButton onConfirm={() => { onDelete(tx.id); toast.success(t("finance.transactions.toastDeleted")) }} />
             </div>
           ),
         } as DataTableColumn<FinanceTransaction>]

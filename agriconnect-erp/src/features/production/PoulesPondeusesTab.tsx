@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Egg, Trash2, Pencil, Settings2 } from "lucide-react"
+import { Plus, Egg, Pencil, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
@@ -16,6 +16,7 @@ import { totalPoules, totalOeufs, estimateValue } from "@/lib/eggCalc"
 import { hasAlertKeyword, type RowTone } from "@/lib/alerts"
 import { EGG_CATEGORIES, type PouleEntry } from "@/types/production"
 import { EggSalesSection } from "./EggSalesSection"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 export function PoulesPondeusesTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -85,9 +86,7 @@ export function PoulesPondeusesTab({ canEdit }: { canEdit: boolean }) {
               <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => { deletePoule(e.id); toast.success(t("production.poules.toastDeleted")) }} aria-label={t("common.delete")}>
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              <ConfirmDeleteButton onConfirm={() => { deletePoule(e.id); toast.success(t("production.poules.toastDeleted")) }} />
             </div>
           ),
         } as DataTableColumn<PouleEntry>]

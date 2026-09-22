@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Milk, Trash2, Pencil, Settings2 } from "lucide-react"
+import { Plus, Milk, Pencil, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
@@ -13,6 +13,7 @@ import { formatDate, formatNumber } from "@/lib/format"
 import { totalJour, totalMatin, totalSoir, totalTroupeau, totalsForVache } from "@/lib/vachesCalc"
 import { hasAlertKeyword, type RowTone } from "@/lib/alerts"
 import type { VacheEntry } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 type MilkView = "troupeau" | "vache"
 
@@ -83,9 +84,7 @@ export function VachesLaitieresTab({ canEdit }: { canEdit: boolean }) {
               <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => { deleteVache(e.id); toast.success(t("production.vaches.toastDeleted")) }} aria-label={t("common.delete")}>
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              <ConfirmDeleteButton onConfirm={() => { deleteVache(e.id); toast.success(t("production.vaches.toastDeleted")) }} />
             </div>
           ),
         } as DataTableColumn<VacheEntry>]

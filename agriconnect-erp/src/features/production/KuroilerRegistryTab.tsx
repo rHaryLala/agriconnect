@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
-import { Bird, Plus, Pencil, Trash2, LogOut, Scale, Egg } from "lucide-react"
+import { Bird, Plus, Pencil, LogOut, Scale, Egg } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -13,6 +13,7 @@ import { useKuroilerPoulesStore } from "./kuroilerPoulesStore"
 import { countPoulesActives, countPoulesByStatut, computePoidsMoyen, computeTauxPonte, latestSuivi } from "@/lib/kuroilerCalc"
 import { formatDate, formatNumber } from "@/lib/format"
 import { KUROILER_POULE_STATUTS, type KuroilerPoule, type KuroilerPouleStatut } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 const STATUT_LABEL_KEYS: Record<KuroilerPouleStatut, string> = {
   active: "production.kuroiler.registry.statutActive",
@@ -185,17 +186,12 @@ export function KuroilerRegistryTab({ canEdit }: { canEdit: boolean }) {
               >
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
+              <ConfirmDeleteButton
+                onConfirm={() => {
                   deletePoule(p.id)
                   toast.success(t("production.kuroiler.registry.toastDeleted"))
                 }}
-                aria-label={t("common.delete")}
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              />
             </div>
           ),
         } as DataTableColumn<KuroilerPoule>]

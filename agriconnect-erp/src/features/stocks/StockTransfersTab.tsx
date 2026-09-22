@@ -2,7 +2,7 @@ import { useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
-import { Plus, ArrowLeftRight, Pencil, Trash2, HandCoins } from "lucide-react"
+import { Plus, ArrowLeftRight, Pencil, HandCoins } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -14,6 +14,7 @@ import { STOCK_LOCATION_LABEL_KEYS } from "./stockLabels"
 import { computeCurrentStock, computeLocationDebts, computeTransferDue } from "@/lib/stockCalc"
 import { formatCurrency, formatDate, formatNumber } from "@/lib/format"
 import type { StockMovement } from "@/types/stock"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 type SettlementValues = { montant: number }
 
@@ -133,17 +134,12 @@ export function StockTransfersTab({ canEdit }: { canEdit: boolean }) {
               <Button variant="ghost" size="icon" onClick={() => openEdit(m)} aria-label={t("common.edit")}>
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
+              <ConfirmDeleteButton
+                onConfirm={() => {
                   deleteMovement(m.id)
                   toast.success(t("stock.transfers.toastDeleted"))
                 }}
-                aria-label={t("common.delete")}
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              />
             </div>
           ),
         } as DataTableColumn<StockMovement>]

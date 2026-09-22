@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Receipt, Warehouse, Trash2 } from "lucide-react"
+import { Receipt, Warehouse } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -15,6 +15,7 @@ import { computeFermeStock, totalOeufs } from "@/lib/eggCalc"
 import { formatDate, formatNumber } from "@/lib/format"
 import type { EggCategory, PouleEntry } from "@/types/production"
 import type { EggSale } from "@/types/eggSale"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 interface EggSalesSectionProps {
   pouleEntries: PouleEntry[]
@@ -63,9 +64,7 @@ export function EggSalesSection({ pouleEntries, canEdit }: EggSalesSectionProps)
       ? [{
           key: "actions", label: "", className: "text-right", sticky: true,
           render: (s: EggSale) => (
-            <Button variant="ghost" size="icon" onClick={() => { deleteSale(s.id); toast.success(t("production.circuit.toastDeleted")) }} aria-label={t("common.delete")}>
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
+            <ConfirmDeleteButton onConfirm={() => { deleteSale(s.id); toast.success(t("production.circuit.toastDeleted")) }} />
           ),
         } as DataTableColumn<EggSale>]
       : []),

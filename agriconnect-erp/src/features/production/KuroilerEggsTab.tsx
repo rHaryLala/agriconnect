@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Egg, Trash2 } from "lucide-react"
+import { Plus, Egg } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -16,6 +16,7 @@ import { computeStockOeufsKuroiler, countOeufsEnCouveuse, sumOeufsSurPeriode } f
 import { formatCurrency, formatDate, formatNumber } from "@/lib/format"
 import { startOfMonth } from "@/lib/dateRange"
 import type { KuroilerOeufMouvement } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 export function KuroilerEggsTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -86,17 +87,12 @@ export function KuroilerEggsTab({ canEdit }: { canEdit: boolean }) {
           className: "text-right",
           sticky: true,
           render: (m: KuroilerOeufMouvement) => (
-            <Button
-              variant="ghost"
-              size="icon"
-              onClick={() => {
+            <ConfirmDeleteButton
+              onConfirm={() => {
                 deleteMouvement(m.id)
                 toast.success(t("production.kuroiler.eggs.toastDeleted"))
               }}
-              aria-label={t("common.delete")}
-            >
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
+            />
           ),
         } as DataTableColumn<KuroilerOeufMouvement>]
       : []),

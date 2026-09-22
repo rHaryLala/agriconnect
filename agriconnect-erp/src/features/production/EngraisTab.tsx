@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
-import { Plus, Sprout, Trash2, Pencil, Settings2 } from "lucide-react"
+import { Plus, Sprout, Pencil, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -16,6 +16,7 @@ import { totalEngrais, totauxParCulture, totauxParTypeEngrais, type EngraisTotal
 import { currentIsoDate, periodBounds, type Periodicity } from "@/lib/dateRange"
 import { formatDate, formatNumber } from "@/lib/format"
 import type { EngraisApplication } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 const PERIODICITIES: Periodicity[] = ["month", "year"]
 const PERIODICITY_LABEL_KEYS: Record<Periodicity, string> = {
@@ -126,17 +127,12 @@ export function EngraisTab({ canEdit }: { canEdit: boolean }) {
               >
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
+              <ConfirmDeleteButton
+                onConfirm={() => {
                   deleteApplication(a.id)
                   toast.success(t("production.engrais.toastDeleted"))
                 }}
-                aria-label={t("common.delete")}
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              />
             </div>
           ),
         } as DataTableColumn<EngraisApplication>]

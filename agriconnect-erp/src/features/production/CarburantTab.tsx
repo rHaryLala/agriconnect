@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
-import { Plus, Fuel, Trash2, Pencil, Settings2 } from "lucide-react"
+import { Plus, Fuel, Pencil, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -15,6 +15,7 @@ import { computeStockCarburant, consommationParEngin, sumSurPeriode } from "@/li
 import { currentIsoDate, periodBounds, type Periodicity } from "@/lib/dateRange"
 import { formatDate, formatNumber } from "@/lib/format"
 import { CARBURANT_MOUVEMENT_TYPES, type CarburantMouvement, type CarburantMouvementType } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 const PERIODICITIES: Periodicity[] = ["month", "year"]
 const PERIODICITY_LABEL_KEYS: Record<Periodicity, string> = {
@@ -129,17 +130,12 @@ export function CarburantTab({ canEdit }: { canEdit: boolean }) {
               >
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
+              <ConfirmDeleteButton
+                onConfirm={() => {
                   deleteMouvement(m.id)
                   toast.success(t("production.carburant.toastDeleted"))
                 }}
-                aria-label={t("common.delete")}
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              />
             </div>
           ),
         } as DataTableColumn<CarburantMouvement>]

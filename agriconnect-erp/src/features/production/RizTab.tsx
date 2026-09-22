@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Wheat, Trash2 } from "lucide-react"
+import { Plus, Wheat } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { SimpleTabs } from "@/components/shared/SimpleTabs"
@@ -17,6 +17,7 @@ import { useClientsStore } from "@/features/clients/clientsStore"
 import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
 import { computeStockPaddyBrut, computeStockPaddySeche, computeStockRizDecortique } from "@/lib/rizCalc"
 import type { RizRecolte, RizSechageEvent, RizDecorticage, RizVente } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 export function RizTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -85,9 +86,7 @@ export function RizTab({ canEdit }: { canEdit: boolean }) {
       ? [{
           key: "actions", label: "", className: "text-right", sticky: true,
           render: (r: RizRecolte) => (
-            <Button variant="ghost" size="icon" onClick={() => { deleteRecolte(r.id); toast.success(t("production.riz.toastDeleted")) }} aria-label={t("common.delete")}>
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
+            <ConfirmDeleteButton onConfirm={() => { deleteRecolte(r.id); toast.success(t("production.riz.toastDeleted")) }} />
           ),
         } as DataTableColumn<RizRecolte>]
       : []),
@@ -105,9 +104,7 @@ export function RizTab({ canEdit }: { canEdit: boolean }) {
       ? [{
           key: "actions", label: "", className: "text-right", sticky: true,
           render: (e: RizSechageEvent) => (
-            <Button variant="ghost" size="icon" onClick={() => { deleteSechageEvent(e.id); toast.success(t("production.riz.toastDeleted")) }} aria-label={t("common.delete")}>
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
+            <ConfirmDeleteButton onConfirm={() => { deleteSechageEvent(e.id); toast.success(t("production.riz.toastDeleted")) }} />
           ),
         } as DataTableColumn<RizSechageEvent>]
       : []),
@@ -122,9 +119,7 @@ export function RizTab({ canEdit }: { canEdit: boolean }) {
       ? [{
           key: "actions", label: "", className: "text-right", sticky: true,
           render: (d: RizDecorticage) => (
-            <Button variant="ghost" size="icon" onClick={() => { deleteDecorticage(d.id); toast.success(t("production.riz.toastDeleted")) }} aria-label={t("common.delete")}>
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
+            <ConfirmDeleteButton onConfirm={() => { deleteDecorticage(d.id); toast.success(t("production.riz.toastDeleted")) }} />
           ),
         } as DataTableColumn<RizDecorticage>]
       : []),
@@ -142,9 +137,7 @@ export function RizTab({ canEdit }: { canEdit: boolean }) {
       ? [{
           key: "actions", label: "", className: "text-right", sticky: true,
           render: (v: RizVente) => (
-            <Button variant="ghost" size="icon" onClick={() => { deleteVente(v.id); toast.success(t("production.riz.toastDeleted")) }} aria-label={t("common.delete")}>
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
+            <ConfirmDeleteButton onConfirm={() => { deleteVente(v.id); toast.success(t("production.riz.toastDeleted")) }} />
           ),
         } as DataTableColumn<RizVente>]
       : []),

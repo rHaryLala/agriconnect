@@ -1,7 +1,7 @@
 import { useState } from "react"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
-import { Plus, Layers, Trash2 } from "lucide-react"
+import { Plus, Layers } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
@@ -10,6 +10,7 @@ import { useCustomTypesStore, type CustomTypeEntry, type CustomProductionType } 
 import { UNIT_OPTIONS } from "@/lib/units"
 import { formatDate, formatNumber } from "@/lib/format"
 import { toast } from "sonner"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 interface CustomTypeTabProps {
   type: CustomProductionType
@@ -86,14 +87,7 @@ export function CustomTypeTab({ type, canEdit }: CustomTypeTabProps) {
           className: "text-right", 
           sticky: true,
           render: (e: CustomTypeEntry) => (
-            <Button 
-              variant="ghost" 
-              size="icon" 
-              onClick={() => deleteEntry(type.id, e.id)} 
-              aria-label={t("common.delete")}
-            >
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
+            <ConfirmDeleteButton onConfirm={() => deleteEntry(type.id, e.id)} />
           ),
         } as DataTableColumn<CustomTypeEntry>]
       : []),

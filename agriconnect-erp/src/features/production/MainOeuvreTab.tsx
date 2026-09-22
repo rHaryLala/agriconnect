@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
-import { Plus, Users, Trash2, Pencil, Settings2 } from "lucide-react"
+import { Plus, Users, Pencil, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -15,6 +15,7 @@ import { moyenneEmployesParJour, totalJoursHomme, totauxParActivite } from "@/li
 import { currentIsoDate, periodBounds, type Periodicity } from "@/lib/dateRange"
 import { formatDate, formatNumber } from "@/lib/format"
 import type { MainOeuvreEntry } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 const PERIODICITIES: Periodicity[] = ["week", "month", "year"]
 const PERIODICITY_LABEL_KEYS: Record<Periodicity, string> = {
@@ -104,17 +105,12 @@ export function MainOeuvreTab({ canEdit }: { canEdit: boolean }) {
               >
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button
-                variant="ghost"
-                size="icon"
-                onClick={() => {
+              <ConfirmDeleteButton
+                onConfirm={() => {
                   deleteEntry(e.id)
                   toast.success(t("production.mainOeuvre.toastDeleted"))
                 }}
-                aria-label={t("common.delete")}
-              >
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              />
             </div>
           ),
         } as DataTableColumn<MainOeuvreEntry>]

@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Drumstick, Trash2, Egg, Settings2 } from "lucide-react"
+import { Plus, Drumstick, Egg, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
@@ -17,6 +17,7 @@ import { TypesManagerDialog } from "@/components/shared/TypesManagerDialog"
 import { POULARD_TYPE_LABEL_KEYS } from "./poulardLabels"
 import { usePoulardRacesStore } from "./poulardRacesStore"
 import type { PoulardMouvement } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 export function PoulardTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -81,9 +82,7 @@ export function PoulardTab({ canEdit }: { canEdit: boolean }) {
       ? [{
           key: "actions", label: "", className: "text-right", sticky: true,
           render: (m: PoulardMouvement) => (
-            <Button variant="ghost" size="icon" onClick={() => { deleteMouvement(m.id); toast.success(t("production.poulard.toastDeleted")) }} aria-label={t("common.delete")}>
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
+            <ConfirmDeleteButton onConfirm={() => { deleteMouvement(m.id); toast.success(t("production.poulard.toastDeleted")) }} />
           ),
         } as DataTableColumn<PoulardMouvement>]
       : []),

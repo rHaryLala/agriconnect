@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Wheat, Trash2, Pencil, Settings2 } from "lucide-react"
+import { Wheat, Pencil, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -13,6 +13,7 @@ import { useCultureTypesStore } from "./cultureTypesStore"
 import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
 import type { RowTone } from "@/lib/alerts"
 import type { CultureEntry } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 export function CulturesTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -73,9 +74,7 @@ export function CulturesTab({ canEdit }: { canEdit: boolean }) {
               <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => { deleteCulture(e.id); toast.success(t("production.agriculture.toastDeleted")) }} aria-label={t("common.delete")}>
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              <ConfirmDeleteButton onConfirm={() => { deleteCulture(e.id); toast.success(t("production.agriculture.toastDeleted")) }} />
             </div>
           ),
         } as DataTableColumn<CultureEntry>]

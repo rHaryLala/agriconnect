@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Receipt, TrendingUp, TrendingDown, Wallet, CreditCard, Trash2 } from "lucide-react"
+import { Plus, Receipt, TrendingUp, TrendingDown, Wallet, CreditCard } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -15,6 +15,7 @@ import { PAYMENT_METHOD_LABEL_KEYS, INVOICE_STATUS_LABEL_KEYS, INVOICE_STATUS_TO
 import { computeInvoiceTotal, computeInvoiceDue, computeInvoiceStatus, invoiceReceiptNumber, hasAccountingReceipt } from "@/types/invoice"
 import { formatDate, formatCurrency } from "@/lib/format"
 import type { Invoice } from "@/types/invoice"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 export function InvoicesTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -88,9 +89,7 @@ export function InvoicesTab({ canEdit }: { canEdit: boolean }) {
                     <CreditCard className="h-4 w-4" />
                   </Button>
                 )}
-                <Button variant="ghost" size="icon" onClick={() => { deleteInvoice(inv.id); toast.success(t("clients.invoices.toastDeleted")) }} aria-label={t("common.delete")}>
-                  <Trash2 className="h-4 w-4 text-destructive" />
-                </Button>
+                <ConfirmDeleteButton onConfirm={() => { deleteInvoice(inv.id); toast.success(t("clients.invoices.toastDeleted")) }} />
               </div>
             )
           },

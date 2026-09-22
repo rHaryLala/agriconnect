@@ -2,7 +2,7 @@ import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
 import { z } from "zod"
-import { Plus, Bird, Trash2, Pencil, Settings2 } from "lucide-react"
+import { Plus, Bird, Pencil, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -14,6 +14,7 @@ import { useCycleEtapesStore } from "./cycleEtapesStore"
 import { formatDate, formatNumber } from "@/lib/format"
 import { hasAlertKeyword, type RowTone } from "@/lib/alerts"
 import type { KuroilerEntry } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 export function KuroilerProductionTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -94,9 +95,7 @@ export function KuroilerProductionTab({ canEdit }: { canEdit: boolean }) {
               <Button variant="ghost" size="icon" onClick={() => openEdit(e)} aria-label={t("common.edit")}>
                 <Pencil className="h-4 w-4" />
               </Button>
-              <Button variant="ghost" size="icon" onClick={() => { deleteKuroiler(e.id); toast.success(t("production.kuroiler.toastDeleted")) }} aria-label={t("common.delete")}>
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              <ConfirmDeleteButton onConfirm={() => { deleteKuroiler(e.id); toast.success(t("production.kuroiler.toastDeleted")) }} />
             </div>
           ),
         } as DataTableColumn<KuroilerEntry>]

@@ -1,7 +1,7 @@
 import { useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, ArrowDownCircle, ArrowUpCircle, ArrowLeftRight, Pencil, Trash2, X } from "lucide-react"
+import { Plus, ArrowDownCircle, ArrowUpCircle, ArrowLeftRight, Pencil, X } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { StockMovementDialog } from "./StockMovementDialog"
@@ -12,6 +12,7 @@ import type { RowTone } from "@/lib/alerts"
 import { StatusBadge } from "@/components/shared/StatusBadge"
 import { STOCK_LOCATIONS, type MovementType, type StockLocation, type StockMovement } from "@/types/stock"
 import { STOCK_LOCATION_LABEL_KEYS, STOCK_LOCATION_TONES } from "./stockLabels"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 const MOVEMENT_TYPE_LABEL_KEYS: Record<MovementType, string> = {
   entree: "stock.movements.typeEntry",
@@ -161,9 +162,7 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
                   <Pencil className="h-4 w-4" />
                 </Button>
               )}
-              <Button variant="ghost" size="icon" onClick={() => { deleteMovement(m.id); toast.success(t("stock.movements.toastDeleted")) }} aria-label={t("common.delete")}>
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              <ConfirmDeleteButton onConfirm={() => { deleteMovement(m.id); toast.success(t("stock.movements.toastDeleted")) }} />
             </div>
           ),
         } as DataTableColumn<StockMovement>]

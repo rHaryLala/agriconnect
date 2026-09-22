@@ -1,7 +1,7 @@
 import { useEffect, useMemo, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Beef, Trash2, LogOut, Settings2 } from "lucide-react"
+import { Plus, Beef, LogOut, Settings2 } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { StatusBadge } from "@/components/shared/StatusBadge"
@@ -24,6 +24,7 @@ import { TypesManagerDialog } from "@/components/shared/TypesManagerDialog"
 import { useBovinRacesStore, useBovinTypesStore } from "./bovinReferentialsStore"
 import { BOVIN_ETAT_LABEL_KEYS, BOVIN_ETAT_TONES, BOVIN_PRODUCTIVITE_LABEL_KEYS, BOVIN_PRODUCTIVITE_TONES } from "./bovinLabels"
 import { BOVIN_ETATS, type BovinAnimal, type BovinEtat, type BovinSortieType, type BovinStatut } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 export function BovinsTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -141,9 +142,7 @@ export function BovinsTab({ canEdit }: { canEdit: boolean }) {
                   <LogOut className="h-4 w-4" />
                 </Button>
               )}
-              <Button variant="ghost" size="icon" onClick={() => { deleteAnimal(a.id); toast.success(t("production.bovins.toastDeleted")) }} aria-label={t("common.delete")}>
-                <Trash2 className="h-4 w-4 text-destructive" />
-              </Button>
+              <ConfirmDeleteButton onConfirm={() => { deleteAnimal(a.id); toast.success(t("production.bovins.toastDeleted")) }} />
             </div>
           ),
         } as DataTableColumn<BovinAnimal>]

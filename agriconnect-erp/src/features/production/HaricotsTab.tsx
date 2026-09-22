@@ -1,7 +1,7 @@
 import { useEffect, useState } from "react"
 import { toast } from "sonner"
 import { useTranslation } from "react-i18next"
-import { Plus, Bean, Trash2 } from "lucide-react"
+import { Plus, Bean } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
@@ -13,6 +13,7 @@ import { useClientsStore } from "@/features/clients/clientsStore"
 import { formatDate, formatNumber, formatCurrency } from "@/lib/format"
 import { computeStock } from "@/lib/haricotsCalc"
 import type { HaricotMouvement } from "@/types/production"
+import { ConfirmDeleteButton } from "@/components/shared/ConfirmDeleteButton"
 
 export function HaricotsTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
@@ -70,9 +71,7 @@ export function HaricotsTab({ canEdit }: { canEdit: boolean }) {
       ? [{
           key: "actions", label: "", className: "text-right", sticky: true,
           render: (m: HaricotMouvement) => (
-            <Button variant="ghost" size="icon" onClick={() => { deleteMouvement(m.id); toast.success(t("production.haricots.toastDeleted")) }} aria-label={t("common.delete")}>
-              <Trash2 className="h-4 w-4 text-destructive" />
-            </Button>
+            <ConfirmDeleteButton onConfirm={() => { deleteMouvement(m.id); toast.success(t("production.haricots.toastDeleted")) }} />
           ),
         } as DataTableColumn<HaricotMouvement>]
       : []),
