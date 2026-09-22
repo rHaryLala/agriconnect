@@ -126,9 +126,18 @@ model Production {
   variantId   String?
   variant   ProductVariant?   @relation(fields: [variantId],  references: [id])
 
+  cattleId    String?
+  cattle      Cattle?         @relation(fields: [cattleId], references: [id], onDelete: SetNull)
+
+  poultryTrackingId String?
+  poultryTracking   PoultryTracking? @relation(fields: [poultryTrackingId], references: [id], onDelete: SetNull)
+  
+
   createdAt   DateTime       @default(now())
 
   @@index([farmId, date(sort: Desc)])
+  @@index([poultryTrackingId])
+  @@index([cattleId])
 }
 
 enum MouvementType {
@@ -391,6 +400,8 @@ model Cattle{
   farmId String
   farm Farm @relation(fields: [farmId], references: [id])
 
+  productions  Production[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
@@ -574,6 +585,8 @@ model PoultryTracking{
 
   // Historique des suivis hebdomadaires (1-N)
   weeklyRecords PoultryWeeklyRecord[]
+
+  productions   Production[]
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
