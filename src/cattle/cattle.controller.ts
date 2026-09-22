@@ -9,7 +9,8 @@ import { CreateCattleDto } from './dto/create-cattle.dto';
 import { UpdateCattleDto } from './dto/update-cattle.dto';
 import { SellCattleDto } from './dto/sell-cattle.dto';
 import { RecordDeathDto } from './dto/record-death.dto';
-
+import { CreateMilkRecordDto } from './dto/create-milk-record.dto';
+import { Query } from '@nestjs/common';
 type AuthUser = { id: string; role: string; farmId: string };
 
 @ApiTags('cattle')
