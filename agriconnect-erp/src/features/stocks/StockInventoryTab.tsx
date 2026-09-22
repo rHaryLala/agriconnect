@@ -55,7 +55,7 @@ export function StockInventoryTab({ onGoToAlerts, canEdit }: StockInventoryTabPr
         const byLocation = computeStockByLocation(a, movements)
         const current = locationFilter === "tous" ? computeCurrentStock(a, movements) : byLocation[locationFilter]
         const status = getStockStatus(current, a.seuilCritique)
-        const progressPercent = Math.min((current / (a.seuilCritique * 3 || 1)) * 100, 100)
+        const progressPercent = Math.min((current / (a.seuilCritique || 1)) * 100, 100)
         return { article: a, current, byLocation, status, progressPercent }
       }),
     [articles, movements, locationFilter]
