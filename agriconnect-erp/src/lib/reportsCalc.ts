@@ -1,6 +1,7 @@
 import { EGG_CATEGORIES, type PouleEntry, type VacheEntry, type KuroilerEntry, type CultureEntry, type BovinAnimal, type PoulardMouvement, type RizRecolte, type RizVente, type HaricotMouvement } from "@/types/production"
-import type { Invoice } from "@/types/invoice"
+import { computeInvoiceTotal, type Invoice } from "@/types/invoice"
 import { totalOeufs } from "@/lib/eggCalc"
+import type { EggSale } from "@/types/eggSale"
 
 export function inRange(dateIso: string, start: string, end: string): boolean {
   return dateIso >= start && dateIso <= end
@@ -147,47 +148,95 @@ export interface MonthlyRecapRow {
   quantiteVendue: number
   unite: string
   montant: number
+  montantEncaisse: number
+}
+
+export function settledAmount(montant: number, invoiceId: string | undefined, invoiceById: Map<string, Invoice>): number {
+  if (!invoiceId) return montant
+  const invoice = invoiceById.get(invoiceId)
+  if (!invoice) return montant
+  const total = computeInvoiceTotal(invoice)
+  if (total <= 0) return montant
+  return montant * Math.min(invoice.montantPaye / total, 1)
 }
 
 export function buildMonthlyRecapRows(
   period: { start: string; end: string },
   data: {
-    eggSalesValue: { quantite: number; montant: number }
+    eggSales: EggSale[]
+    eggPrices: Record<string, number>
     bovins: BovinAnimal[]
     poulard: PoulardMouvement[]
     rizVentes: RizVente[]
     haricots: HaricotMouvement[]
+    invoices: Invoice[]
   }
 ): MonthlyRecapRow[] {
   const { start, end } = period
+  const invoiceById = new Map(data.invoices.map((invoice) => [invoice.id, invoice]))
   const rows: MonthlyRecapRow[] = []
 
-  rows.push({ filiere: "Œufs", quantiteVendue: data.eggSalesValue.quantite, unite: "unités", montant: data.eggSalesValue.montant })
+  const eggSales = data.eggSales.filter((s) => inRange(s.date, start, end))
+  const eggMontants = eggSales.map((s) => ({
+    sale: s,
+    montant: EGG_CATEGORIES.reduce((sum, cat) => sum + (s.quantities[cat] ?? 0) * (data.eggPrices[cat] ?? 0), 0),
+  }))
+  rows.push({
+    filiere: "Œufs",
+    quantiteVendue: eggSales.reduce((sum, s) => sum + totalOeufs(s.quantities), 0),
+    unite: "unités",
+    montant: eggMontants.reduce((sum, e) => sum + e.montant, 0),
+    montantEncaisse: eggMontants.reduce((sum, e) => sum + settledAmount(e.montant, e.sale.invoiceId, invoiceById), 0),
+  })
 
   const bovinsVentes = data.bovins.filter((a) => a.typeSortie === "vente" && a.dateSortie && inRange(a.dateSortie, start, end))
-  rows.push({ filiere: "Bovins", quantiteVendue: bovinsVentes.length, unite: "têtes", montant: bovinsVentes.reduce((s, a) => s + (a.prixVente ?? 0), 0) })
+  const bovinsMontant = bovinsVentes.reduce((s, a) => s + (a.prixVente ?? 0), 0)
+  rows.push({
+    filiere: "Bovins",
+    quantiteVendue: bovinsVentes.length,
+    unite: "têtes",
+    montant: bovinsMontant,
+    montantEncaisse: bovinsMontant,
+  })
 
   const poulardVentes = data.poulard.filter((m) => m.type === "vente" && inRange(m.date, start, end))
-  rows.push({ filiere: "Poulard", quantiteVendue: poulardVentes.reduce((s, m) => s + m.quantite, 0), unite: "têtes", montant: poulardVentes.reduce((s, m) => s + m.quantite * (m.prixUnitaire ?? 0), 0) })
+  rows.push({
+    filiere: "Poulard",
+    quantiteVendue: poulardVentes.reduce((s, m) => s + m.quantite, 0),
+    unite: "têtes",
+    montant: poulardVentes.reduce((s, m) => s + m.quantite * (m.prixUnitaire ?? 0), 0),
+    montantEncaisse: poulardVentes.reduce((s, m) => s + settledAmount(m.quantite * (m.prixUnitaire ?? 0), m.invoiceId, invoiceById), 0),
+  })
 
   const rizVentes = data.rizVentes.filter((v) => inRange(v.date, start, end))
-  rows.push({ filiere: "Riz décortiqué", quantiteVendue: rizVentes.reduce((s, v) => s + v.quantiteKg, 0), unite: "kg", montant: rizVentes.reduce((s, v) => s + v.quantiteKg * v.prixUnitaire, 0) })
+  rows.push({
+    filiere: "Riz décortiqué",
+    quantiteVendue: rizVentes.reduce((s, v) => s + v.quantiteKg, 0),
+    unite: "kg",
+    montant: rizVentes.reduce((s, v) => s + v.quantiteKg * v.prixUnitaire, 0),
+    montantEncaisse: rizVentes.reduce((s, v) => s + settledAmount(v.quantiteKg * v.prixUnitaire, v.invoiceId, invoiceById), 0),
+  })
 
   const haricotVentes = data.haricots.filter((m) => m.type === "vente" && inRange(m.date, start, end))
-  rows.push({ filiere: "Haricots secs", quantiteVendue: haricotVentes.reduce((s, m) => s + m.quantiteKg, 0), unite: "kg", montant: haricotVentes.reduce((s, m) => s + m.quantiteKg * (m.prixUnitaire ?? 0), 0) })
+  rows.push({
+    filiere: "Haricots secs",
+    quantiteVendue: haricotVentes.reduce((s, m) => s + m.quantiteKg, 0),
+    unite: "kg",
+    montant: haricotVentes.reduce((s, m) => s + m.quantiteKg * (m.prixUnitaire ?? 0), 0),
+    montantEncaisse: haricotVentes.reduce((s, m) => s + settledAmount(m.quantiteKg * (m.prixUnitaire ?? 0), m.invoiceId, invoiceById), 0),
+  })
 
   return rows
 }
 
-export interface InvoiceRecap {
+export interface MonthlyRecapSummary {
   facture: number
   encaisse: number
   restant: number
 }
 
-export function computeInvoiceRecap(invoices: Invoice[], start: string, end: string, computeTotal: (inv: Invoice) => number): InvoiceRecap {
-  const inRangeInvoices = invoices.filter((inv) => inRange(inv.date, start, end))
-  const facture = inRangeInvoices.reduce((s, inv) => s + computeTotal(inv), 0)
-  const encaisse = inRangeInvoices.reduce((s, inv) => s + inv.montantPaye, 0)
+export function summariseMonthlyRecap(rows: MonthlyRecapRow[]): MonthlyRecapSummary {
+  const facture = rows.reduce((sum, r) => sum + r.montant, 0)
+  const encaisse = rows.reduce((sum, r) => sum + r.montantEncaisse, 0)
   return { facture, encaisse, restant: facture - encaisse }
 }

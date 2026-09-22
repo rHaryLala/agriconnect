@@ -3,9 +3,7 @@ import { FileDown, Sheet, ClipboardList, Wallet } from "lucide-react"
 import { Button } from "@/components/ui/button"
 import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
-import { buildMonthlyRecapRows, computeInvoiceRecap, inRange, type MonthlyRecapRow } from "@/lib/reportsCalc"
-import { totalOeufs } from "@/lib/eggCalc"
-import { computeInvoiceTotal } from "@/types/invoice"
+import { buildMonthlyRecapRows, summariseMonthlyRecap, type MonthlyRecapRow } from "@/lib/reportsCalc"
 import { formatCurrency, formatNumber } from "@/lib/format"
 import { useReportExport } from "./useReportExport"
 import type { BovinAnimal, PoulardMouvement, RizVente, HaricotMouvement } from "@/types/production"
@@ -28,19 +26,8 @@ export function MonthlyRecapTab({ period, periodLabel, eggSales, eggPrices, bovi
   const { t } = useTranslation()
   const { exportPdf, exportExcel } = useReportExport()
 
-  const eggSalesInPeriod = eggSales.filter((s) => inRange(s.date, period.start, period.end))
-  const eggQuantite = eggSalesInPeriod.reduce((sum, s) => sum + totalOeufs(s.quantities), 0)
-  const eggMontant = eggSalesInPeriod.reduce((sum, s) => sum + Object.entries(s.quantities).reduce((sub, [cat, qty]) => sub + qty * (eggPrices[cat] ?? 0), 0), 0)
-
-  const rows = buildMonthlyRecapRows(period, {
-    eggSalesValue: { quantite: eggQuantite, montant: eggMontant },
-    bovins,
-    poulard,
-    rizVentes,
-    haricots,
-  })
-
-  const invoiceRecap = computeInvoiceRecap(invoices, period.start, period.end, computeInvoiceTotal)
+  const rows = buildMonthlyRecapRows(period, { eggSales, eggPrices, bovins, poulard, rizVentes, haricots, invoices })
+  const recap = summariseMonthlyRecap(rows)
 
   const columns: DataTableColumn<MonthlyRecapRow>[] = [
     { key: "filiere", label: t("rapports.recap.colFiliere"), render: (r) => r.filiere },
@@ -70,9 +57,9 @@ export function MonthlyRecapTab({ period, periodLabel, eggSales, eggPrices, bovi
   return (
     <div>
       <div className="mb-4 grid grid-cols-2 gap-4 md:grid-cols-3">
-        <StatCard icon={Wallet} label={t("rapports.recap.statInvoiced")} value={formatCurrency(invoiceRecap.facture)} tone="info" />
-        <StatCard icon={Wallet} label={t("rapports.recap.statCollected")} value={formatCurrency(invoiceRecap.encaisse)} tone="success" />
-        <StatCard icon={Wallet} label={t("rapports.recap.statOutstanding")} value={formatCurrency(invoiceRecap.restant)} tone="warning" />
+        <StatCard icon={Wallet} label={t("rapports.recap.statInvoiced")} value={formatCurrency(recap.facture)} tone="info" />
+        <StatCard icon={Wallet} label={t("rapports.recap.statCollected")} value={formatCurrency(recap.encaisse)} tone="success" />
+        <StatCard icon={Wallet} label={t("rapports.recap.statOutstanding")} value={formatCurrency(recap.restant)} tone="warning" />
       </div>
 
       <div className="mb-3 flex justify-end gap-2">
