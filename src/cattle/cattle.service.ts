@@ -4,7 +4,7 @@ import { CreateCattleDto } from './dto/create-cattle.dto';
 import { UpdateCattleDto } from './dto/update-cattle.dto';
 import { SellCattleDto } from './dto/sell-cattle.dto';
 import { RecordDeathDto } from './dto/record-death.dto';
-
+import { CreateMilkRecordDto } from './dto/create-milk-record.dto';
 @Injectable()
 export class CattleService {
   constructor(private prisma: PrismaService) {}
@@ -97,5 +97,39 @@ export class CattleService {
       where: { id },
       data: { status: 'DECEDE', deathDate: new Date(), deathReason: dto.deathReason },
     });
+  }
+
+  async recordMilk(cattleId: string, dto:CreateMilkRecordDto, userId: string, farmId: string)
+  {
+    const cattle = await this.findOne(cattleId, farmId);
+
+    if (dto.stockItemId)
+    {
+      const item = await this.prisma.stockItem.findFirst({
+        where: {id: dto.stockItemId, farmId}
+      });
+      if (!item)
+      {
+        throw new NotFoundException('Article de stock introuvable');
+      }
+    }
+
+    const date = dto.date ? new Date(dto.date) : new Date();
+
+    return this.prisma.$transaction(async (tx) => {
+      const production = await tx.production.create({
+        data: {
+          type: 'LAIT',
+          quantity: dto.quantityL,
+          unit: 'litre',
+          notes: dto.notes,
+          date,
+          userId,
+          farmId,
+          stockItemId: dto.stockItemId,
+          cattleId, // le lien qui rend l'agrégation par vache possible
+        },
+      })
+    })
   }
 }
