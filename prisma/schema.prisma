@@ -58,8 +58,8 @@ model User {
   
   payments    Payment[]
 
-  sentTransfers     StockTransfert[] @relation("TransfertSender")   
-  receivedTransfers StockTransfert[] @relation("TransfertReceiver")
+  sentTransfers     StockTransfer[] @relation("TransfertSender")   
+  receivedTransfers StockTransfer[] @relation("TransfertReceiver")
 
   poultryTrackings PoultryTracking[]//mise a jour
 
@@ -158,7 +158,7 @@ model StockItem {
   invoiceItem InvoiceItem[]
   variants     ProductVariant[]
   //lise a jour
-  transferItems   StockTransfertItem[]
+  transferItems   StockTransferItem[]
 
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -190,7 +190,7 @@ model StockMovement {
   //mise a jour
 
   transfertId   String?
-  transfert   StockTransfert?   @relation(fields: [transfertId], references: [id])  
+  transfert   StockTransfer?   @relation(fields: [transfertId], references: [id])  
 
   createdAt          DateTime       @default(now())
 }
@@ -327,8 +327,8 @@ model StockLocation {
 
   stockItem StockItem[]
   //mise a jour
-  fromTransfers StockTransfert[] @relation("FromLocation")
-  toTransfers   StockTransfert[] @relation("ToLocation")
+  fromTransfers StockTransfer[] @relation("FromLocation")
+  toTransfers   StockTransfer[] @relation("ToLocation")
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
@@ -423,11 +423,16 @@ model Payment {
 
 }
 
+enum  DeductionStatus{
+  PENDING
+  DEDUCTED
+}
+
 //mise a jour: deduction au salaire pour les personnel
 model SalaryDeduction {
   id String @id @default(uuid())
   amount  Decimal   @db.Decimal(14, 2)
-  status String @default("En_attente")//en attente na deduit
+  status DeductionStatus @default(PENDING)//en attente na deduit
   period String //deduction du salaire sur le moi du paie ex: 
 
   paymentId String @unique
@@ -440,6 +445,11 @@ model SalaryDeduction {
   updatedAt DateTime @updatedAt
 }
 
+enum ProcessStatus{
+  IN_PROGRESS
+  COMPLETED
+}
+
 //suivi du riziculture (paddy en riz decortiqué)
 model PaddyProcess{
   id String @id @default(uuid())
@@ -447,7 +457,7 @@ model PaddyProcess{
   paddyInputKg Float //quantité akotry engagée
   paddyInputLot Int //quantité akotry par gony engagée
   waveNumber Int @default(1) //vague de sechage
-  status String @default("IN_PROGRESS") //in progress na completed
+  status ProcessStatus @default(IN_PROGRESS) //in progress na completed
 
   riceOutputKg Float? //riz obtenu au final
   note String? // affirmation a faire si il y a
@@ -472,7 +482,7 @@ model ProductVariant{
 
   invoiceItems    InvoiceItem[]
 
-  stockTranferItems StockTransfertItem[]
+  stockTranferItems StockTransferItem[]
 
   movements      StockMovement[]
 
@@ -483,7 +493,7 @@ model ProductVariant{
 }
 
 //model stockTransfer avec gestion des transfert inter-emplacement
-model StockTransfert {
+model StockTransfer {
   id String @id @default(uuid())
   transfertNumber String  @unique
   status    TransfertStatus @default(PENDING)
@@ -502,7 +512,7 @@ model StockTransfert {
   receiverId    String?
   receiver    User?   @relation("TransfertReceiver", fields: [receiverId], references: [id])
 
-  items   StockTransfertItem[]
+  items   StockTransferItem[]
 
   //mise a jour
   movements      StockMovement[] // Un transfert contient ses 2 mouvements (IN et OUT)
@@ -512,12 +522,12 @@ model StockTransfert {
 }
 
 //model StockTransferItem
-model StockTransfertItem{
+model StockTransferItem{
   id    String    @id @default(uuid())
   quantity    Float
 
   transfertId   String
-  transfert   StockTransfert   @relation(fields: [transfertId], references: [id])
+  transfert   StockTransfer   @relation(fields: [transfertId], references: [id])
 
   itemId    String
   item    StockItem   @relation(fields: [itemId], references: [id])
