@@ -8,6 +8,10 @@ export interface CageProfile {
   capaciteMax: number
 }
 
+function normaliseCageName(nom: string): string {
+  return nom.trim().toUpperCase()
+}
+
 interface CagesState {
   cages: CageProfile[]
   addCage: (nom: string, capaciteMax: number) => void
@@ -25,14 +29,25 @@ export const useCagesStore = create<CagesState>()(
         { id: "cage-4", nom: "C4", capaciteMax: 5 },
       ],
       addCage: (nom, capaciteMax) => {
-        const trimmed = nom.trim()
-        if (!trimmed) return
-        set({ cages: [...get().cages, { id: newId("cage"), nom: trimmed, capaciteMax }] })
+        const normalised = normaliseCageName(nom)
+        if (!normalised) return
+        set({ cages: [...get().cages, { id: newId("cage"), nom: normalised, capaciteMax }] })
       },
       updateCage: (id, data) =>
-        set({ cages: get().cages.map((c) => (c.id === id ? { ...c, nom: data.nom, capaciteMax: data.capaciteMax } : c)) }),
+        set({
+          cages: get().cages.map((c) =>
+            c.id === id ? { ...c, nom: normaliseCageName(data.nom) || c.nom, capaciteMax: data.capaciteMax } : c,
+          ),
+        }),
       removeCage: (id) => set({ cages: get().cages.filter((c) => c.id !== id) }),
     }),
-    { name: "agriconnect-cages-profiles" }
+    {
+      name: "agriconnect-cages-profiles",
+      version: 1,
+      migrate: (persisted) => {
+        const state = persisted as CagesState
+        return { ...state, cages: (state.cages ?? []).map((c) => ({ ...c, nom: normaliseCageName(c.nom) })) }
+      },
+    }
   )
 )
