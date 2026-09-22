@@ -35,7 +35,7 @@ export const GROUP_ICONS: Record<SearchGroup, LucideIcon> = {
 export const SEARCH_GROUPS: SearchGroup[] = ["clients", "fournisseurs", "personnel", "stock"]
 
 const MAX_PER_GROUP = 5
-const MIN_QUERY_LENGTH = 2
+export const MIN_QUERY_LENGTH = 2
 
 function contains(haystack: string | undefined, needle: string): boolean {
   return !!haystack && haystack.toLowerCase().includes(needle)

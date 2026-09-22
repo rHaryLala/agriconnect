@@ -47,9 +47,9 @@ export function Header({ onMenuClick }: HeaderProps) {
         </div>
       )}
 
-      <GlobalSearch />
+      <div className="ml-auto flex shrink-0 items-center gap-1">
+        <GlobalSearch />
 
-      <div className="flex shrink-0 items-center gap-1">
         <LanguageSwitcher compact /> {pendingCount > 0 && (
           <span title={t("offline.pendingTooltip", { count: pendingCount })} className="flex items-center gap-1 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
         <CloudUpload className="h-3.5 w-3.5" />

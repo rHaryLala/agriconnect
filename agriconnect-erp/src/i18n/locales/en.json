@@ -1376,7 +1376,8 @@
     },
     "resultCount": "{{count}} result",
     "resultCount_other": "{{count}} results",
-    "close": "Close search"
+    "close": "Close search",
+    "back": "Back"
   },
   "rapports": {
     "pageTitle": "Export",

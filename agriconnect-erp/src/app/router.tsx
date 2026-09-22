@@ -53,6 +53,13 @@ export const router = createBrowserRouter([
                 },
               },
               {
+                path: "recherche",
+                lazy: async () => {
+                  const { default: Component } = await import("@/features/search/SearchPage")
+                  return { Component }
+                },
+              },
+              {
                 element: <ProtectedRoute module={moduleForRoute("production")} />,
                 children: [
                   { path: "production", lazy: async () => ({ Component: (await import("@/features/production/ProductionPage")).default }) },

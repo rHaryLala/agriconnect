@@ -1376,7 +1376,8 @@
     },
     "resultCount": "valiny {{count}}",
     "resultCount_other": "valiny {{count}}",
-    "close": "Akatony ny fikarohana"
+    "close": "Akatony ny fikarohana",
+    "back": "Hiverina"
   },
   "rapports": {
     "pageTitle": "Export",
