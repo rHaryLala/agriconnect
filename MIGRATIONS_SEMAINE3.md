@@ -11,15 +11,21 @@ qui n'a que `Farm` et `User` produirait une deuxième lignée incompatible.
 
 ## Ordre à suivre
 
-1. Rapatrier sur `feature/backend` le dossier `prisma/migrations/` de
-   `feature/database`, ainsi que `prisma/seed.ts`.
-   Attention au conflit : les deux branches ont modifié `package.json` et
-   `prisma.config.ts` (`feature/database` utilise `tsx watch src/index.ts`,
-   `feature/backend` est en NestJS). À arbitrer à la main.
-2. `npx prisma migrate deploy` — applique l'existant.
-3. `npx prisma migrate dev --name semaine3_paddy_labor_attribution` — génère la
+1. ~~Rapatrier la migration de `feature/database`~~ — **fait**
+   (`20260922133335_add_cattle_and_poultry_to_production`, commit `6a5b906`).
+   Lignée vérifiée compatible avant copie : même migration init et même
+   `migration_lock.toml` des deux côtés, donc simple ajout en fin d'historique.
+   `package.json` et `prisma.config.ts` n'ont pas été touchés, le conflit entre
+   les deux branches est évité.
+2. Créer un `.env` avec `DATABASE_URL` — il n'y en a pas dans le dépôt.
+3. `npx prisma migrate deploy` — applique l'existant.
+4. `npx prisma migrate dev --name semaine3_paddy_labor_attribution` — génère la
    migration des ajouts ci-dessous.
-4. `npx prisma db seed`.
+5. Seed : le `prisma/seed.ts` local ne crée qu'une ferme et trois utilisateurs,
+   avec des mots de passe en clair. Celui de `feature/database` couvre toutes
+   les tables et hache les mots de passe. Pour le récupérer :
+   `git checkout origin/feature/database -- prisma/seed.ts` — il faudra aussi
+   ajouter `seed: "npx tsx prisma/seed.ts"` dans `prisma.config.ts`.
 
 ## Ce que la migration doit créer
 
