@@ -1,8 +1,23 @@
-import { Injectable, NotFoundException } from "@nestjs/common";
+import { Injectable, NotFoundException, ConflictException } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
 import { CreateVariantDto } from "./dto/create-variant.dto";
 import { UpdateVariantDto } from "./dto/update-variant.dto";
 
+/**
+ * Stack : service NestJS, seul point d'accès Prisma du module.
+ *
+ * Métier : une variante est une déclinaison vendable d'un article de stock —
+ * même produit physique, prix et suivi de quantité distincts. Deux filières
+ * l'utilisent :
+ *  - les œufs (Semaine 1) : gros/petit modèle, normal/cassé ;
+ *  - les haricots secs (Semaine 3) : blanc et rouge.
+ *
+ * Le CDC 2.1.6 décrit les haricots comme un article décliné par couleur, et non
+ * comme deux articles séparés : c'est le même grenier, la même unité, seule la
+ * valorisation change. Une récolte de haricots est donc un mouvement d'entrée
+ * portant un variantId, exactement comme pour les œufs — aucun code spécifique
+ * aux haricots n'est nécessaire ici.
+ */
 @Injectable()
 export class ProductVariantService {
     constructor(private prisma: PrismaService) {}
@@ -19,10 +34,29 @@ export class ProductVariantService {
         {
             throw new NotFoundException('Article de stock introuvable');
         }
+
+        // Deux variantes de même nom sur un même article scinderaient le stock
+        // en silence : une partie des entrées irait sur l'une, une partie sur
+        // l'autre, et getQuantiteTotale() continuerait d'afficher un total juste
+        // tout en rendant chaque ligne fausse. Le schéma ne l'interdit pas
+        // (l'unicité y porte sur le sku, qui est facultatif), donc on le
+        // vérifie ici. Comparaison insensible à la casse : « Rouge » et
+        // « rouge » sont la même couleur de haricot pour le magasinier.
+        const doublon = await this.prisma.productVariant.findFirst({
+            where: {
+                stockItemId: dto.stockItemId,
+                name: { equals: dto.name.trim(), mode: 'insensitive' },
+            },
+        });
+        if (doublon)
+        {
+            throw new ConflictException(`La variante « ${dto.name.trim()} » existe déjà sur cet article`);
+        }
+
         return this.prisma.productVariant.create({
             data: {
                 stockItemId: dto.stockItemId,
-                name: dto.name,
+                name: dto.name.trim(),
                 sku: dto.sku,
                 unitPrice: dto.unitPrice,
                 quantity: dto.quantity ?? 0, //0 par défaut si non précisé

@@ -115,6 +115,16 @@ enum ProductionType {
   POULARD
   KUROILER
   PADDY
+  // A ARBITRER EN EQUIPE (Semaine 3) — HARICOT fait doublon.
+  //
+  // Le CDC 2.1.6 modelise les haricots secs comme UN article de stock decline
+  // en variantes de couleur (blanc, rouge), pas comme un type de production :
+  // c'est ce qu'implemente ProductVariant, et c'est ce qui permet un prix par
+  // couleur. Garder les deux voies signifie que la meme recolte peut etre
+  // saisie de deux facons differentes, et donc comptee deux fois.
+  //
+  // Rien n'est supprime ici : retirer une valeur d'enum casserait les lignes
+  // Production existantes. La decision revient a l'equipe.
   HARICOT
 }
 
