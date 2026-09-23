@@ -17,6 +17,7 @@ import { ProductVariantModule } from './product-variant/product-variant.module';
 import { CattleModule } from './cattle/cattle.module';
 import { PoultryModule } from './poultry/poultry.module';
 import { ReportsModule } from './reports/reports.module';
+import { PaddyModule } from './paddy/paddy.module'; // Semaine 3 - riziculture
 
 @Module({
   imports: [
@@ -33,6 +34,7 @@ import { ReportsModule } from './reports/reports.module';
     CattleModule,
     PoultryModule,
     ReportsModule,
+    PaddyModule,
   ],
   controllers: [AppController, ExempleController, DashboardController], // ExempleController ajouté ici
   providers: [AppService, DashboardService],
