@@ -118,6 +118,11 @@ async findOneItemDetail(id: string, farmId: string) {
           itemId, type: dto.type, quantity: dto.quantity,
           repeseeQuantity: dto.repeseeQuantity, reason: dto.reason,
           variantId: dto.variantId, userId,
+          // Semaine 3 : attribution du mouvement. Reprise telle quelle depuis
+          // le DTO — ce sont des annotations, elles n'entrent dans aucun calcul
+          // de solde, elles servent à ventiler le coût par culture ou par engin.
+          cultureType: dto.cultureType, parcel: dto.parcel,
+          equipment: dto.equipment, voucherNumber: dto.voucherNumber,
         },
       });
 
@@ -190,12 +195,19 @@ async findOneItemDetail(id: string, farmId: string) {
     });
   }
 
-  async historique(farmId: string, filters: { itemId?: string; type?: string; dateDebut?: string; dateFin?: string }) {
+  async historique(
+    farmId: string,
+    filters: { itemId?: string; type?: string; dateDebut?: string; dateFin?: string; cultureType?: string },
+  ) {
     return this.prisma.stockMovement.findMany({
       where: {
         item: { farmId },
         itemId: filters.itemId,
         type: filters.type as never,
+        // Semaine 3 : filtrer par culture est ce qui rend le suivi des engrais
+        // exploitable. Sans ce filtre, les champs d'attribution ne seraient
+        // qu'une annotation qu'on ne pourrait jamais relire par culture.
+        cultureType: filters.cultureType as never,
         date: {
           gte: filters.dateDebut ? new Date(filters.dateDebut) : undefined,
           lte: filters.dateFin ? new Date(filters.dateFin) : undefined,
@@ -204,6 +216,57 @@ async findOneItemDetail(id: string, farmId: string) {
       include: { item: true, user: true },
       orderBy: { date: 'desc' },
     });
+  }
+
+  /**
+   * Consommation d'intrants ventilée par culture sur une période.
+   *
+   * Métier : c'est la sortie attendue du suivi des engrais (CDC 2.1.4). On
+   * n'agrège que les sorties (OUT) : une entrée d'engrais en magasin n'est
+   * imputable à aucune culture, elle n'est qu'un achat en attente d'emploi.
+   *
+   * Le regroupement se fait par couple culture + article, parce que « 200 kg
+   * sur le riz » ne veut rien dire si on ignore s'il s'agit d'urée ou de
+   * compost — et que les unités diffèrent d'un article à l'autre.
+   */
+  async consommationParCulture(farmId: string, dateDebut?: string, dateFin?: string) {
+    const mouvements = await this.prisma.stockMovement.findMany({
+      where: {
+        item: { farmId },
+        type: 'OUT',
+        cultureType: { not: null },
+        date: {
+          gte: dateDebut ? new Date(dateDebut) : undefined,
+          lte: dateFin ? new Date(dateFin) : undefined,
+        },
+      },
+      include: { item: true },
+    });
+
+    const parCulture = new Map<
+      string,
+      { culture: string; article: string; unite: string; quantite: number; nombreSorties: number }
+    >();
+
+    for (const m of mouvements) {
+      const cle = `${m.cultureType}|${m.itemId}`;
+      const ligne = parCulture.get(cle) ?? {
+        culture: m.cultureType as string,
+        article: m.item.name,
+        unite: m.item.unit,
+        quantite: 0,
+        nombreSorties: 0,
+      };
+      // On somme la quantité repesée quand elle existe : c'est le poids réel
+      // sorti du magasin, la quantité annoncée n'étant qu'une déclaration.
+      ligne.quantite += m.repeseeQuantity ?? m.quantity;
+      ligne.nombreSorties += 1;
+      parCulture.set(cle, ligne);
+    }
+
+    return [...parCulture.values()].sort(
+      (a, b) => a.culture.localeCompare(b.culture) || b.quantite - a.quantite,
+    );
   }
 
   async alertes(farmId: string) {

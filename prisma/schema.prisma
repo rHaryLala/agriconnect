@@ -214,9 +214,40 @@ model StockMovement {
   //mise a jour
 
   transfertId   String?
-  transfert   StockTransfer?   @relation(fields: [transfertId], references: [id])  
+  transfert   StockTransfer?   @relation(fields: [transfertId], references: [id])
+
+  // ---- Semaine 3 : champs d'attribution (CDC 2.1.4) ----------------------
+  //
+  // Le plan demande le suivi des engrais par culture et celui du carburant
+  // tracteur « sans nouveau module, en étendant le mouvement de stock ». C'est
+  // exactement ce que font ces quatre champs : un sac d'urée et un litre de
+  // gasoil sont déjà des articles de stock ordinaires, il ne manquait que de
+  // quoi dire À QUOI ils ont servi. Sans eux, on sait qu'on a sorti 200 kg
+  // d'urée, mais pas sur quelle culture — donc aucun coût par culture possible.
+  //
+  // Tous optionnels : l'immense majorité des mouvements (œufs, lait, riz) n'a
+  // rien à attribuer, et les rendre obligatoires casserait le stock existant.
+
+  // Culture bénéficiaire, pour les intrants. Enum et non table, contrairement
+  // aux activités de main d'œuvre : la liste est fermée, fixée par le CDC, et
+  // en français — elle n'attend aucune validation de traduction.
+  cultureType   CultureType?
+  parcel        String?  // parcelle concernée (ex. « P03 »), libre : la ferme les nomme elle-même
+  equipment     String?  // engin servi, pour le carburant (tracteur, motoculteur, camion)
+  voucherNumber String?  // numéro de bon physique, pour rapprocher la saisie du papier
 
   createdAt          DateTime       @default(now())
+
+  @@index([cultureType])
+}
+
+// Cultures suivies par la ferme, telles que listées dans le plan Semaine 3.
+enum CultureType{
+  RIZ
+  HARICOT
+  MAIS
+  MIMOSA
+  MARAICHERE
 }
 
 enum ClientType {

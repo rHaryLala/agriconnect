@@ -1,5 +1,5 @@
 import { IsOptional, IsUUID, IsEnum, IsDateString } from 'class-validator';
-import { MouvementType } from '@prisma/client';
+import { MouvementType, CultureType } from '@prisma/client';
 
 export class FilterHistoriqueDto {
   @IsOptional()
@@ -17,4 +17,9 @@ export class FilterHistoriqueDto {
   @IsOptional()
   @IsDateString() // filtre : mouvements jusqu'à cette date
   dateFin?: string;
+
+  // Semaine 3 : ventiler l'historique par culture, pour le suivi des engrais.
+  @IsOptional()
+  @IsEnum(CultureType)
+  cultureType?: CultureType;
 }

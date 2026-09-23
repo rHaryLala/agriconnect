@@ -82,6 +82,19 @@ export class StockController {
     return this.stockService.historique(user.farmId, filters);
   }
 
+  // Semaine 3 : consommation d'intrants par culture sur une periode.
+  // Meme perimetre de lecture que les alertes : c'est un rapport, pas une
+  // saisie de terrain.
+  @Get('consommation-culture')
+  @Roles('ADMIN', 'COMPTABLE', 'CONTROLEUR_INTERNE')
+  consommationParCulture(
+    @Query('dateDebut') dateDebut: string,
+    @Query('dateFin') dateFin: string,
+    @CurrentUser() user: AuthUser,
+  ) {
+    return this.stockService.consommationParCulture(user.farmId, dateDebut, dateFin);
+  }
+
   @Get('alertes')
   @Roles('ADMIN', 'COMPTABLE', 'CONTROLEUR_INTERNE') // cohérent avec la matrice : Employé de terrain exclu des rapports
   alertes(@CurrentUser() user: AuthUser) {
