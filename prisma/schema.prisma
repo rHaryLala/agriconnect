@@ -63,6 +63,11 @@ model User {
 
   poultryTrackings PoultryTracking[]//mise a jour
 
+  //Semaine 3 — riziculture : chaque étape du lot garde son auteur
+  paddyProcesses PaddyProcess[]
+  paddyDryingWaves PaddyDryingWave[]
+  paddyMillings PaddyMilling[]
+
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
@@ -168,6 +173,9 @@ model StockItem {
   variants     ProductVariant[]
   //lise a jour
   transferItems   StockTransferItem[]
+
+  //Semaine 3 — article destinataire du riz sorti de décorticage
+  paddyMillings   PaddyMilling[]
 
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -461,23 +469,128 @@ enum ProcessStatus{
   COMPLETED
 }
 
-//suivi du riziculture (paddy en riz decortiqué)
+// Suivi de la riziculture : paddy récolté -> séché -> décortiqué -> vendu.
+//
+// Stack : modèles Prisma. Un PaddyProcess = un lot, et les deux modèles enfants
+// ci-dessous portent les événements successifs de ce lot.
+//
+// Métier : le front (rizCalc.ts) tient trois stocks distincts, et c'est cette
+// découpe qui dicte la modélisation ci-dessous.
+//   paddy brut    = récolté        - finalisations de séchage
+//   paddy sec     = finalisations  - paddy engagé au décorticage
+//   riz décortiqué= riz produit    - riz vendu
+// Un même kilo change donc trois fois de nature : impossible de le suivre avec
+// un seul compteur sur le lot, d'où l'historique par événement.
 model PaddyProcess{
   id String @id @default(uuid())
   lotNumber String
   paddyInputKg Float //quantité akotry engagée
   paddyInputLot Int //quantité akotry par gony engagée
+  // Numéro de la dernière vague de séchage atteinte par ce lot. C'est un
+  // raccourci de lecture, recalculé par le service à chaque vague ajoutée :
+  // l'historique réel des vagues vit dans PaddyDryingWave.
   waveNumber Int @default(1) //vague de sechage
   status ProcessStatus @default(IN_PROGRESS) //in progress na completed
 
+  // Cumuls entretenus par le service à chaque événement enfant. Ils ne sont
+  // jamais saisis à la main : ils évitent de ré-agréger tout l'historique pour
+  // afficher une liste de lots.
+  driedPaddyKg Float? // cumul des finalisations de séchage (paddy sec obtenu)
   riceOutputKg Float? //riz obtenu au final
+
+  // Traçabilité de la récolte, reprise telle quelle du formulaire front
+  // (RizRecolteDialog) : le transport et les deux signataires sont ce qui permet
+  // de retrouver un écart entre le champ et le magasin.
+  harvestDate DateTime @default(now())
+  transport String?
+  driverName String?      // conducteur
+  storekeeperName String? // magasinier qui réceptionne
+
   note String? // affirmation a faire si il y a
+
+  // Auteur de la saisie. Obligatoire partout ailleurs dans le schéma : une
+  // écriture de stock sans responsable n'est pas auditable.
+  userId String
+  user User @relation(fields: [userId], references: [id])
 
   farmId String
   farm Farm @relation(fields: [farmId], references: [id])
 
+  dryingWaves PaddyDryingWave[]
+  millings PaddyMilling[]
+
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  @@unique([farmId, lotNumber])
+  @@index([farmId, harvestDate(sort: Desc)])
+}
+
+// Deux événements différents partagent cette table, d'où l'enum plutôt que deux
+// modèles : ils appartiennent à la même séquence chronologique et le front les
+// affiche dans une seule liste.
+enum DryingEventType{
+  PASSAGE       // sortie vers l'aire de séchage puis retour le soir
+  FINALISATION  // le lot est déclaré sec : il quitte le stock brut
+}
+
+model PaddyDryingWave{
+  id String @id @default(uuid())
+  waveNumber Int
+  type DryingEventType
+  date DateTime @default(now())
+
+  // PASSAGE : l'écart entre sorti et retourné est la perte d'humidité de la
+  // journée. Les deux champs sont optionnels parce qu'une FINALISATION ne les
+  // renseigne pas — la contrainte est portée par le service, Prisma ne sachant
+  // pas exprimer « obligatoire si type = PASSAGE ».
+  quantityOutKg Float?
+  quantityReturnedKg Float?
+
+  // FINALISATION : le paddy est repesé et remis en gony. C'est cette quantité
+  // qui bascule du stock brut vers le stock sec.
+  bags Int?
+  dryPaddyKg Float?
+
+  note String?
+
+  processId String
+  process PaddyProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([processId, date(sort: Desc)])
+}
+
+// Décorticage : paddy sec consommé -> riz obtenu. Le rapport entre les deux est
+// le rendement de la décortiqueuse (~65 % dans les données de référence du
+// front) ; on stocke les deux quantités brutes et jamais le ratio, qui se
+// recalcule et n'a donc pas à être maintenu.
+model PaddyMilling{
+  id String @id @default(uuid())
+  date DateTime @default(now())
+  paddyUsedKg Float
+  riceOutputKg Float
+  note String?
+
+  processId String
+  process PaddyProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
+
+  // Article de stock qui reçoit le riz décortiqué. Optionnel : tant que
+  // l'article « Riz décortiqué » n'est pas créé sur une ferme, le décorticage
+  // reste enregistrable sans mouvement de stock.
+  riceStockItemId String?
+  riceStockItem StockItem? @relation(fields: [riceStockItemId], references: [id], onDelete: SetNull)
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([processId, date(sort: Desc)])
 }
 
 //model ProductVariant mbola tsisy
