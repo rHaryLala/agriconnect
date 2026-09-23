@@ -16,6 +16,7 @@ import { StockTransferModule } from './stock-transfer/stock-transfer.module';
 import { ProductVariantModule } from './product-variant/product-variant.module';
 import { CattleModule } from './cattle/cattle.module';
 import { PoultryModule } from './poultry/poultry.module';
+import { ReportsModule } from './reports/reports.module';
 
 @Module({
   imports: [
@@ -31,6 +32,7 @@ import { PoultryModule } from './poultry/poultry.module';
     ProductVariantModule,
     CattleModule,
     PoultryModule,
+    ReportsModule,
   ],
   controllers: [AppController, ExempleController, DashboardController], // ExempleController ajouté ici
   providers: [AppService, DashboardService],
