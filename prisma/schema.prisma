@@ -33,6 +33,10 @@ model Farm {
   //Nouveau
   employees   Employee[]
   suppliers   Supplier[]
+
+  //Semaine 3 — main d'œuvre journalière
+  laborActivities LaborActivity[]
+  laborLogs       LaborLog[]
   
 
   createdAt   DateTime      @default(now())
@@ -67,6 +71,9 @@ model User {
   paddyProcesses PaddyProcess[]
   paddyDryingWaves PaddyDryingWave[]
   paddyMillings PaddyMilling[]
+
+  //Semaine 3 — journal de main d'œuvre : auteur de la saisie
+  laborLogs LaborLog[]
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -783,4 +790,68 @@ model SupplierPayment {
   purchase    SupplierPurchase    @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime    @default(now())
+}
+
+// ===========================================================================
+// Semaine 3 — Journal de main d'oeuvre journaliere (CDC 2.1.4)
+// ===========================================================================
+
+// Les activites sont une TABLE et non un enum, volontairement.
+//
+// Le cahier des charges en liste six, ecrites en malgache (Mihava, Mamboly vary,
+// Mijinja, Mitery ronono sy mitaona vilona, Manangona atody, Mikarakara
+// maraichere). Le plan d'equipe demande explicitement que cette traduction soit
+// validee par un locuteur avant d'etre figee, et le front les traite deja comme
+// une liste editable par l'utilisateur (activitesStore). Un enum Prisma aurait
+// impose une migration a chaque correction de libelle, y compris pour une faute
+// d'orthographe. Une table les rend modifiables sans toucher au schema.
+model LaborActivity{
+  id String @id @default(uuid())
+  name String
+
+  // Chaque ferme gere sa propre liste : deux fermes n'ont pas les memes travaux.
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  logs LaborLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([farmId, name])
+}
+
+// Une ligne = un jour, une activite, un effectif.
+//
+// C'est la maille de saisie reelle sur le terrain : le chef d'equipe compte
+// combien de personnes ont travaille sur quoi, sans nommer chacune. On ne
+// rattache donc PAS ces lignes a Employee : la main d'oeuvre journaliere est
+// occasionnelle et non immatriculee, l'y forcer rendrait la saisie impossible.
+model LaborLog{
+  id String @id @default(uuid())
+  date DateTime @default(now())
+
+  // Effectif du jour sur cette activite. Cumule sur une periode, il donne le
+  // total de jours-homme que le front affiche (mainOeuvreCalc.ts).
+  workerCount Int
+
+  note String? // parcelle concernee, incident, etc.
+
+  activityId String
+  // Restrict : supprimer une activite deja utilisee effacerait l'historique de
+  // main d'oeuvre correspondant. On force a la renommer plutot qu'a la detruire.
+  activity LaborActivity @relation(fields: [activityId], references: [id], onDelete: Restrict)
+
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  // Auteur de la saisie, pas la personne qui a travaille.
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([farmId, date(sort: Desc)])
+  @@index([activityId])
 }
