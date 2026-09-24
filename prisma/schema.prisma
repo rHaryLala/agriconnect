@@ -662,6 +662,7 @@ model SupplierPurchase {
   totalAmount   Decimal   @db.Decimal(14, 2)
   paidAmount    Decimal   @default(0) @db.Decimal(14,2)
   date    DateTime    @default(now())
+  status PurchaseStatus @default(EN_ATTENTE)
 
   supplierId    String
   supplier    Supplier    @relation(fields: [supplierId], references: [id], onDelete: Restrict)
@@ -676,6 +677,12 @@ enum SupplierPaymentMethod {
   VIREMENT
   CHEQUE
   MOBILE_MONEY
+}
+
+enum PurchaseStatus {
+  EN_ATTENTE
+  PARTIEL
+  REGLE
 }
 
 
