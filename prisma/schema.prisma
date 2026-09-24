@@ -625,12 +625,24 @@ enum TransfertStatus{
  COMPLETED
 }
 
+enum SupplierStatus{
+  ACTIF
+  INACTIF
+}
+
 model Supplier {
   id    String    @id @default(uuid())
   name    String
   phone   String? 
   email   String?
   address   String?
+
+  category    String?
+  status    SupplierStatus    @default(ACTIF)
+  rating    Float? //io le note eee, hahaha
+  paymentTermDays   Int?  // délai de paiement en jours
+  products  String[]  // "Semences riz", "Semences maïs", ... (array Postgres natif)
+
 
   farmId    String
   farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
@@ -646,24 +658,31 @@ model Supplier {
 model SupplierPurchase {
   id String   @id   @default(uuid())
   reference   String
+  description   String?
   totalAmount   Decimal   @db.Decimal(14, 2)
   paidAmount    Decimal   @default(0) @db.Decimal(14,2)
   date    DateTime    @default(now())
 
   supplierId    String
   supplier    Supplier    @relation(fields: [supplierId], references: [id], onDelete: Restrict)
-
   payments    SupplierPayment[]
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
 
+enum SupplierPaymentMethod {
+  CAISSE
+  VIREMENT
+  CHEQUE
+  MOBILE_MONEY
+}
+
 
 model SupplierPayment {
   id    String  @id @default(uuid())
   amount    Decimal   @db.Decimal(14,2)
-  method    PaymentMethod   @default(CAISSE)
+  method    SupplierPaymentMethod   @default(CAISSE)
   date    DateTime    @default(now())
 
   purchaseId    String
