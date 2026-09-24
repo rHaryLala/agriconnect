@@ -168,7 +168,7 @@ async findOneItemDetail(id: string, farmId: string) {
           reason,
           userId,
           variantId: original.variantId, // ajouté : reporte la variante d'origine
-          originalMovmentId: original.id,
+          originalMovementId: original.id,
         },
       });
 
