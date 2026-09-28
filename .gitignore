@@ -117,3 +117,4 @@ coverage/
 Thumbs.db
 desktop.ini
 >>>>>>> feature/database
+.neon
