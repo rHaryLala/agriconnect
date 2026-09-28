@@ -33,10 +33,6 @@ model Farm {
   //Nouveau
   employees   Employee[]
   suppliers   Supplier[]
-
-  //Semaine 3 — main d'œuvre journalière
-  laborActivities LaborActivity[]
-  laborLogs       LaborLog[]
   
 
   createdAt   DateTime      @default(now())
@@ -66,14 +62,6 @@ model User {
   receivedTransfers StockTransfer[] @relation("TransfertReceiver")
 
   poultryTrackings PoultryTracking[]//mise a jour
-
-  //Semaine 3 — riziculture : chaque étape du lot garde son auteur
-  paddyProcesses PaddyProcess[]
-  paddyDryingWaves PaddyDryingWave[]
-  paddyMillings PaddyMilling[]
-
-  //Semaine 3 — journal de main d'œuvre : auteur de la saisie
-  laborLogs LaborLog[]
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -115,16 +103,6 @@ enum ProductionType {
   POULARD
   KUROILER
   PADDY
-  // A ARBITRER EN EQUIPE (Semaine 3) — HARICOT fait doublon.
-  //
-  // Le CDC 2.1.6 modelise les haricots secs comme UN article de stock decline
-  // en variantes de couleur (blanc, rouge), pas comme un type de production :
-  // c'est ce qu'implemente ProductVariant, et c'est ce qui permet un prix par
-  // couleur. Garder les deux voies signifie que la meme recolte peut etre
-  // saisie de deux facons differentes, et donc comptee deux fois.
-  //
-  // Rien n'est supprime ici : retirer une valeur d'enum casserait les lignes
-  // Production existantes. La decision revient a l'equipe.
   HARICOT
 }
 
@@ -191,9 +169,6 @@ model StockItem {
   //lise a jour
   transferItems   StockTransferItem[]
 
-  //Semaine 3 — article destinataire du riz sorti de décorticage
-  paddyMillings   PaddyMilling[]
-
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
 
@@ -224,40 +199,9 @@ model StockMovement {
   //mise a jour
 
   transfertId   String?
-  transfert   StockTransfer?   @relation(fields: [transfertId], references: [id])
-
-  // ---- Semaine 3 : champs d'attribution (CDC 2.1.4) ----------------------
-  //
-  // Le plan demande le suivi des engrais par culture et celui du carburant
-  // tracteur « sans nouveau module, en étendant le mouvement de stock ». C'est
-  // exactement ce que font ces quatre champs : un sac d'urée et un litre de
-  // gasoil sont déjà des articles de stock ordinaires, il ne manquait que de
-  // quoi dire À QUOI ils ont servi. Sans eux, on sait qu'on a sorti 200 kg
-  // d'urée, mais pas sur quelle culture — donc aucun coût par culture possible.
-  //
-  // Tous optionnels : l'immense majorité des mouvements (œufs, lait, riz) n'a
-  // rien à attribuer, et les rendre obligatoires casserait le stock existant.
-
-  // Culture bénéficiaire, pour les intrants. Enum et non table, contrairement
-  // aux activités de main d'œuvre : la liste est fermée, fixée par le CDC, et
-  // en français — elle n'attend aucune validation de traduction.
-  cultureType   CultureType?
-  parcel        String?  // parcelle concernée (ex. « P03 »), libre : la ferme les nomme elle-même
-  equipment     String?  // engin servi, pour le carburant (tracteur, motoculteur, camion)
-  voucherNumber String?  // numéro de bon physique, pour rapprocher la saisie du papier
+  transfert   StockTransfer?   @relation(fields: [transfertId], references: [id])  
 
   createdAt          DateTime       @default(now())
-
-  @@index([cultureType])
-}
-
-// Cultures suivies par la ferme, telles que listées dans le plan Semaine 3.
-enum CultureType{
-  RIZ
-  HARICOT
-  MAIS
-  MIMOSA
-  MARAICHERE
 }
 
 enum ClientType {
@@ -517,128 +461,23 @@ enum ProcessStatus{
   COMPLETED
 }
 
-// Suivi de la riziculture : paddy récolté -> séché -> décortiqué -> vendu.
-//
-// Stack : modèles Prisma. Un PaddyProcess = un lot, et les deux modèles enfants
-// ci-dessous portent les événements successifs de ce lot.
-//
-// Métier : le front (rizCalc.ts) tient trois stocks distincts, et c'est cette
-// découpe qui dicte la modélisation ci-dessous.
-//   paddy brut    = récolté        - finalisations de séchage
-//   paddy sec     = finalisations  - paddy engagé au décorticage
-//   riz décortiqué= riz produit    - riz vendu
-// Un même kilo change donc trois fois de nature : impossible de le suivre avec
-// un seul compteur sur le lot, d'où l'historique par événement.
+//suivi du riziculture (paddy en riz decortiqué)
 model PaddyProcess{
   id String @id @default(uuid())
   lotNumber String
   paddyInputKg Float //quantité akotry engagée
   paddyInputLot Int //quantité akotry par gony engagée
-  // Numéro de la dernière vague de séchage atteinte par ce lot. C'est un
-  // raccourci de lecture, recalculé par le service à chaque vague ajoutée :
-  // l'historique réel des vagues vit dans PaddyDryingWave.
   waveNumber Int @default(1) //vague de sechage
   status ProcessStatus @default(IN_PROGRESS) //in progress na completed
 
-  // Cumuls entretenus par le service à chaque événement enfant. Ils ne sont
-  // jamais saisis à la main : ils évitent de ré-agréger tout l'historique pour
-  // afficher une liste de lots.
-  driedPaddyKg Float? // cumul des finalisations de séchage (paddy sec obtenu)
   riceOutputKg Float? //riz obtenu au final
-
-  // Traçabilité de la récolte, reprise telle quelle du formulaire front
-  // (RizRecolteDialog) : le transport et les deux signataires sont ce qui permet
-  // de retrouver un écart entre le champ et le magasin.
-  harvestDate DateTime @default(now())
-  transport String?
-  driverName String?      // conducteur
-  storekeeperName String? // magasinier qui réceptionne
-
   note String? // affirmation a faire si il y a
-
-  // Auteur de la saisie. Obligatoire partout ailleurs dans le schéma : une
-  // écriture de stock sans responsable n'est pas auditable.
-  userId String
-  user User @relation(fields: [userId], references: [id])
 
   farmId String
   farm Farm @relation(fields: [farmId], references: [id])
 
-  dryingWaves PaddyDryingWave[]
-  millings PaddyMilling[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@unique([farmId, lotNumber])
-  @@index([farmId, harvestDate(sort: Desc)])
-}
-
-// Deux événements différents partagent cette table, d'où l'enum plutôt que deux
-// modèles : ils appartiennent à la même séquence chronologique et le front les
-// affiche dans une seule liste.
-enum DryingEventType{
-  PASSAGE       // sortie vers l'aire de séchage puis retour le soir
-  FINALISATION  // le lot est déclaré sec : il quitte le stock brut
-}
-
-model PaddyDryingWave{
-  id String @id @default(uuid())
-  waveNumber Int
-  type DryingEventType
-  date DateTime @default(now())
-
-  // PASSAGE : l'écart entre sorti et retourné est la perte d'humidité de la
-  // journée. Les deux champs sont optionnels parce qu'une FINALISATION ne les
-  // renseigne pas — la contrainte est portée par le service, Prisma ne sachant
-  // pas exprimer « obligatoire si type = PASSAGE ».
-  quantityOutKg Float?
-  quantityReturnedKg Float?
-
-  // FINALISATION : le paddy est repesé et remis en gony. C'est cette quantité
-  // qui bascule du stock brut vers le stock sec.
-  bags Int?
-  dryPaddyKg Float?
-
-  note String?
-
-  processId String
-  process PaddyProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
-
-  userId String
-  user User @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-
-  @@index([processId, date(sort: Desc)])
-}
-
-// Décorticage : paddy sec consommé -> riz obtenu. Le rapport entre les deux est
-// le rendement de la décortiqueuse (~65 % dans les données de référence du
-// front) ; on stocke les deux quantités brutes et jamais le ratio, qui se
-// recalcule et n'a donc pas à être maintenu.
-model PaddyMilling{
-  id String @id @default(uuid())
-  date DateTime @default(now())
-  paddyUsedKg Float
-  riceOutputKg Float
-  note String?
-
-  processId String
-  process PaddyProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
-
-  // Article de stock qui reçoit le riz décortiqué. Optionnel : tant que
-  // l'article « Riz décortiqué » n'est pas créé sur une ferme, le décorticage
-  // reste enregistrable sans mouvement de stock.
-  riceStockItemId String?
-  riceStockItem StockItem? @relation(fields: [riceStockItemId], references: [id], onDelete: SetNull)
-
-  userId String
-  user User @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-
-  @@index([processId, date(sort: Desc)])
 }
 
 //model ProductVariant mbola tsisy
@@ -786,12 +625,24 @@ enum TransfertStatus{
  COMPLETED
 }
 
+enum SupplierStatus{
+  ACTIF
+  INACTIF
+}
+
 model Supplier {
   id    String    @id @default(uuid())
   name    String
   phone   String? 
   email   String?
   address   String?
+
+  category    String?
+  status    SupplierStatus    @default(ACTIF)
+  rating    Float? //io le note eee, hahaha
+  paymentTermDays   Int?  // délai de paiement en jours
+  products  String[]  // "Semences riz", "Semences maïs", ... (array Postgres natif)
+
 
   farmId    String
   farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
@@ -807,92 +658,42 @@ model Supplier {
 model SupplierPurchase {
   id String   @id   @default(uuid())
   reference   String
+  description   String?
   totalAmount   Decimal   @db.Decimal(14, 2)
   paidAmount    Decimal   @default(0) @db.Decimal(14,2)
   date    DateTime    @default(now())
+  status PurchaseStatus @default(EN_ATTENTE)
 
   supplierId    String
   supplier    Supplier    @relation(fields: [supplierId], references: [id], onDelete: Restrict)
-
   payments    SupplierPayment[]
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 }
 
+enum SupplierPaymentMethod {
+  CAISSE
+  VIREMENT
+  CHEQUE
+  MOBILE_MONEY
+}
+
+enum PurchaseStatus {
+  EN_ATTENTE
+  PARTIEL
+  REGLE
+}
+
 
 model SupplierPayment {
   id    String  @id @default(uuid())
   amount    Decimal   @db.Decimal(14,2)
-  method    PaymentMethod   @default(CAISSE)
+  method    SupplierPaymentMethod   @default(CAISSE)
   date    DateTime    @default(now())
 
   purchaseId    String
   purchase    SupplierPurchase    @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime    @default(now())
-}
-
-// ===========================================================================
-// Semaine 3 — Journal de main d'oeuvre journaliere (CDC 2.1.4)
-// ===========================================================================
-
-// Les activites sont une TABLE et non un enum, volontairement.
-//
-// Le cahier des charges en liste six, ecrites en malgache (Mihava, Mamboly vary,
-// Mijinja, Mitery ronono sy mitaona vilona, Manangona atody, Mikarakara
-// maraichere). Le plan d'equipe demande explicitement que cette traduction soit
-// validee par un locuteur avant d'etre figee, et le front les traite deja comme
-// une liste editable par l'utilisateur (activitesStore). Un enum Prisma aurait
-// impose une migration a chaque correction de libelle, y compris pour une faute
-// d'orthographe. Une table les rend modifiables sans toucher au schema.
-model LaborActivity{
-  id String @id @default(uuid())
-  name String
-
-  // Chaque ferme gere sa propre liste : deux fermes n'ont pas les memes travaux.
-  farmId String
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  logs LaborLog[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([farmId, name])
-}
-
-// Une ligne = un jour, une activite, un effectif.
-//
-// C'est la maille de saisie reelle sur le terrain : le chef d'equipe compte
-// combien de personnes ont travaille sur quoi, sans nommer chacune. On ne
-// rattache donc PAS ces lignes a Employee : la main d'oeuvre journaliere est
-// occasionnelle et non immatriculee, l'y forcer rendrait la saisie impossible.
-model LaborLog{
-  id String @id @default(uuid())
-  date DateTime @default(now())
-
-  // Effectif du jour sur cette activite. Cumule sur une periode, il donne le
-  // total de jours-homme que le front affiche (mainOeuvreCalc.ts).
-  workerCount Int
-
-  note String? // parcelle concernee, incident, etc.
-
-  activityId String
-  // Restrict : supprimer une activite deja utilisee effacerait l'historique de
-  // main d'oeuvre correspondant. On force a la renommer plutot qu'a la detruire.
-  activity LaborActivity @relation(fields: [activityId], references: [id], onDelete: Restrict)
-
-  farmId String
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  // Auteur de la saisie, pas la personne qui a travaille.
-  userId String
-  user User @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([farmId, date(sort: Desc)])
-  @@index([activityId])
 }
