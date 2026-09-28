@@ -10,9 +10,18 @@ import { UpdateVariantDto } from "./dto/update-variant.dto";
 
 type AuthUser = {id: string, role: string, farmId: string};
 
-@ApiTags()
+// Stack : contrôleur NestJS. Il ne porte aucune logique métier — il déclare les
+// routes HTTP, applique les gardes, et délègue tout le reste au service.
+// Métier : c'est ce contrôleur qui porte les haricots secs de la Semaine 3. Le
+// cahier des charges §2.1.6 les décrit comme un seul article de stock
+// (« Haricot sec ») décliné en variantes de couleur — blanc et rouge — et non
+// comme deux articles distincts : le stock physique est commun, seule la
+// valorisation diffère. Une variante = une ligne ProductVariant.
+@ApiTags('product-variants')
 @ApiBearerAuth()
-@Controller('product-variant')
+@Controller('product-variants')
+// JwtAuthGuard établit l'identité (req.user), RolesGuard lit ensuite les @Roles
+// de chaque route. L'ordre compte : sans identité, il n'y a pas de rôle à vérifier.
 @UseGuards(JwtAuthGuard, RolesGuard)
 export class ProductVariantController {
     constructor(private service: ProductVariantService) {}
