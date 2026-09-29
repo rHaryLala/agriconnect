@@ -91,8 +91,58 @@ export class UsersService {
     return this.excludePassword(user);
   }
 
-  async remove(id: string, farmId: string) {
-    await this.findOne(id, farmId);
+  async remove(id: string, farmId: string, currentUserId: string) {
+    const cible = await this.findOne(id, farmId);
+
+    // Même raisonnement que dans update() : se supprimer soi-même, ou
+    // supprimer le dernier Administrateur, laisse la ferme sans personne pour
+    // gérer les comptes.
+    if (id === currentUserId) {
+      throw new BadRequestException('Vous ne pouvez pas supprimer votre propre compte');
+    }
+
+    if (cible.role === 'ADMIN') {
+      const nombreAdmins = await this.prisma.user.count({
+        where: { farmId, role: 'ADMIN' },
+      });
+      if (nombreAdmins <= 1) {
+        throw new BadRequestException(
+          'Impossible de supprimer le dernier Administrateur de la ferme : nommez-en un autre d\'abord',
+        );
+      }
+    }
+
+    // Un utilisateur est référencé par Production, StockMovement, Transaction,
+    // Payment et StockTransfer, tous en onDelete par défaut, c'est-à-dire
+    // RESTRICT. Supprimer un compte ayant saisi quoi que ce soit déclenchait
+    // donc une violation de contrainte remontée en 500 : l'appelant voyait une
+    // panne serveur là où il y a une règle métier parfaitement légitime — on
+    // ne détruit pas l'auteur d'écritures comptables.
+    //
+    // On compte les références AVANT de supprimer, pour répondre 409 avec la
+    // raison exacte. Ce n'est pas une correction de fond : elle exige
+    // User.status pour désactiver au lieu de détruire (voir
+    // ROLES_DEMANDE_DBA.md). En attendant, l'erreur devient au moins honnête.
+    const [productions, mouvements, transactions, paiements, transfertsEnvoyes, transfertsRecus] =
+      await Promise.all([
+        this.prisma.production.count({ where: { userId: id } }),
+        this.prisma.stockMovement.count({ where: { userId: id } }),
+        this.prisma.transaction.count({ where: { userId: id } }),
+        this.prisma.payment.count({ where: { userId: id } }),
+        this.prisma.stockTransfer.count({ where: { senderId: id } }),
+        this.prisma.stockTransfer.count({ where: { receiverId: id } }),
+      ]);
+
+    const references =
+      productions + mouvements + transactions + paiements + transfertsEnvoyes + transfertsRecus;
+
+    if (references > 0) {
+      throw new ConflictException(
+        `Ce compte est l'auteur de ${references} écriture(s) et ne peut pas être supprimé sans détruire leur traçabilité. ` +
+          'La désactivation de compte n\'est pas encore disponible : elle attend le champ User.status côté base.',
+      );
+    }
+
     await this.prisma.user.delete({ where: { id } });
     return { message: 'Utilisateur supprimé' };
   }

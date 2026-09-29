@@ -43,7 +43,7 @@ export class UsersController {
   }
 
   @Delete(':id')
-  remove(@Param('id') id: string, @CurrentUser() currentUser: { farmId: string }) {
-    return this.usersService.remove(id, currentUser.farmId);
+  remove(@Param('id') id: string, @CurrentUser() currentUser: { id: string; farmId: string }) {
+    return this.usersService.remove(id, currentUser.farmId, currentUser.id);
   }
 }
