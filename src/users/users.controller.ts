@@ -31,13 +31,15 @@ export class UsersController {
     return this.usersService.findOne(id, currentUser.farmId);
   }
 
+  // L'identifiant de l'appelant est transmis au service en plus de sa ferme :
+  // il lui faut savoir si un Gerant tente de se retrograder lui-meme.
   @Patch(':id')
   update(
     @Param('id') id: string,
     @Body() dto: UpdateUserDto,
-    @CurrentUser() currentUser: { farmId: string },
+    @CurrentUser() currentUser: { id: string; farmId: string },
   ) {
-    return this.usersService.update(id, dto, currentUser.farmId);
+    return this.usersService.update(id, dto, currentUser.farmId, currentUser.id);
   }
 
   @Delete(':id')
