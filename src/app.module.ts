@@ -9,8 +9,12 @@ import { UsersModule } from './users/users.module';
 import { StockModule } from './stock/stock.module';
 import { ProductionModule } from './production/production.module';
 import { FinanceModule } from './finance/finance.module';
-import { ClientsModule } from './modules/clients/clients.module';
-import { TransactionsModule } from './modules/transactions/transactions.module';
+import { DashboardModule } from './dashboard/dashboard.module';
+import { DashboardController } from './dashboard/dashboard.controller';
+import { DashboardService } from './dashboard/dashboard.service';
+import { StockTransferModule } from './stock-transfer/stock-transfer.module';
+import { ProductVariantModule } from './product-variant/product-variant.module';
+import { CattleModule } from './cattle/cattle.module';
 
 @Module({
   imports: [
@@ -21,10 +25,12 @@ import { TransactionsModule } from './modules/transactions/transactions.module';
     StockModule,
     ProductionModule,
     FinanceModule,
-    ClientsModule,
-    TransactionsModule,
+    DashboardModule,
+    StockTransferModule,
+    ProductVariantModule,
+    CattleModule,
   ],
-  controllers: [AppController, ExempleController], // ExempleController ajouté ici
-  providers: [AppService],
+  controllers: [AppController, ExempleController, DashboardController], // ExempleController ajouté ici
+  providers: [AppService, DashboardService],
 })
 export class AppModule {}

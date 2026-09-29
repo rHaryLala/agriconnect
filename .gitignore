@@ -1,64 +1,56 @@
-# compiled output
-/dist
-/node_modules
-/build
+# --- Dépendances ---
+node_modules/
+.pnp/
+.pnp.js
 
-# Logs
-logs
+# --- Build ---
+dist/
+build/
+out/
+*.tsbuildinfo
+
+# --- Variables d'environnement ---
+# Aucun secret ne doit être versionné. Seul .env.example l'est.
+.env
+.env.local
+.env.*.local
+!.env.example
+
+# --- Prisma (bases locales) ---
+prisma/*.db
+prisma/*.db-journal
+
+# --- Fichiers produits par l'application ---
+# Les rapports PDF et Excel générés se régénèrent : ils n'ont rien à faire ici.
+exports/
+uploads/
+
+# --- Logs ---
+logs/
 *.log
 npm-debug.log*
-pnpm-debug.log*
 yarn-debug.log*
-yarn-error.log*
-lerna-debug.log*
+pnpm-debug.log*
 
-# OS
-.DS_Store
+# --- Tests ---
+coverage/
+.nyc_output/
 
-# Tests
-/coverage
-/.nyc_output
+# --- Caches d'outils ---
+.eslintcache
+.vite/
+.turbo/
 
-# IDEs and editors
-/.idea
-.project
-.classpath
-.c9/
-*.launch
-.settings/
-*.sublime-workspace
-
-# IDE - VSCode
+# --- Éditeurs ---
 .vscode/*
-!.vscode/settings.json
-!.vscode/tasks.json
-!.vscode/launch.json
 !.vscode/extensions.json
+.idea/
+*.swp
 
-# dotenv environment variable files
-.env
-.env.development.local
-.env.test.local
-.env.production.local
-.env.local
+# --- Système ---
+.DS_Store
+Thumbs.db
+desktop.ini
 
-# temp directory
-.temp
-.tmp
-
-# Runtime data
-pids
-*.pid
-*.seed
-*.pid.lock
-
-# Diagnostic reports (https://nodejs.org/api/report.html)
-report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
-
-/generated/prisma
-
-.agents/
-.claude/
-
-# Données test
+# --- Données fictifs ---
 seed.ts
