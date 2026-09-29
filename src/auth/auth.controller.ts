@@ -1,8 +1,10 @@
-import { Body, Controller, ForbiddenException, Post } from '@nestjs/common';
-import { ApiTags } from '@nestjs/swagger';
+import { Body, Controller, ForbiddenException, Get, Post, UseGuards } from '@nestjs/common';
+import { ApiTags, ApiBearerAuth } from '@nestjs/swagger';
 import { AuthService } from './auth.service';
 import { RegisterDTO } from './dto/register.dto';
 import { LoginDTO } from './dto/login.dto';
+import { JwtAuthGuard } from './guards/jwt-auth.guard';
+import { CurrentUser } from './decorators/current-user.decorator';
 
 @ApiTags('auth') // regroupe ces routes sous "auth" dans Swagger (/api/docs)
 @Controller('auth')
@@ -34,6 +36,28 @@ export class AuthController {
     login(@Body() dto:LoginDTO)
     {
         return this.authService.login(dto);
+    }
+
+    /**
+     * GET /auth/me — profil et droits de l'utilisateur connecté.
+     *
+     * Stack : seule route authentifiée de ce contrôleur, d'où le @UseGuards
+     * posé ici et non sur la classe — register et login doivent rester
+     * joignables sans jeton. Pas de @Roles : tout utilisateur authentifié a le
+     * droit de savoir qui il est, et RolesGuard laisse de toute façon passer
+     * les routes dépourvues du décorateur.
+     *
+     * Métier : c'est ce que le front doit appeler au démarrage, plutôt que de
+     * se fier à la réponse de login gardée en mémoire. Un rôle modifié par un
+     * Gérant devient ainsi visible dans l'interface, et pas seulement appliqué
+     * en silence par l'API.
+     */
+    @Get('me')
+    @ApiBearerAuth()
+    @UseGuards(JwtAuthGuard)
+    me(@CurrentUser() user: { id: string })
+    {
+        return this.authService.me(user.id);
     }
 
 }

@@ -4,6 +4,7 @@ import * as bcrypt from 'bcrypt';
 import { PrismaService } from '../prisma/prisma.service';
 import { RegisterDTO } from './dto/register.dto';
 import { LoginDTO } from './dto/login.dto';
+import { permissionsForRole } from './permissions';
 
 @Injectable()
 export class AuthService {
@@ -79,6 +80,47 @@ export class AuthService {
       firstName: user.firstName,
       lastName: user.lastName,
       role: user.role,
+    };
+  }
+
+  /**
+   * Profil de l'utilisateur connecté, avec ses droits effectifs.
+   *
+   * Métier : sans cette route, le front n'a que ce qu'il a reçu au login. Un
+   * changement de rôle n'y apparaît donc jamais — il continue d'afficher les
+   * écrans de l'ancien rôle, même si l'API refuse désormais les appels
+   * correspondants. C'est le pendant de la relecture en base faite dans
+   * jwt.strategy : le serveur applique le bon rôle, encore faut-il que le
+   * client puisse l'apprendre.
+   *
+   * On renvoie les permissions calculées plutôt que le seul rôle : laisser le
+   * front dériver ses droits de son côté ferait exister la matrice en deux
+   * exemplaires, qui divergeraient au premier ajustement.
+   *
+   * L'utilisateur est relu ici aussi : `userId` vient de request.user, lui-même
+   * déjà relu à chaque requête, mais on a besoin du nom et du prénom que
+   * validate() ne charge pas.
+   */
+  async me(userId: string) {
+    const user = await this.prisma.user.findUnique({
+      where: { id: userId },
+      select: {
+        id: true,
+        email: true,
+        firstName: true,
+        lastName: true,
+        role: true,
+        farmId: true,
+      },
+    });
+
+    if (!user) {
+      throw new UnauthorizedException('Ce compte n\'existe plus');
+    }
+
+    return {
+      ...user,
+      permissions: permissionsForRole(user.role),
     };
   }
 
