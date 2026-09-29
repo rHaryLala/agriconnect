@@ -48,12 +48,26 @@ export class AuthService {
     const passwordHash = await bcrypt.hash(dto.password, 10);
 
     // Étape 4 : créer l'utilisateur en base
+    //
+    // Métier : ce compte est forcément le tout premier de l'application —
+    // auth.controller refuse cette route dès qu'un utilisateur existe. Il doit
+    // donc être ADMIN, et le rôle est imposé ici plutôt que laissé au DTO.
+    //
+    // Sans cela, le schéma appliquait @default(OUVRIER) : le premier compte ne
+    // pouvait pas atteindre POST /users, réservé à ADMIN, et plus aucun compte
+    // ne pouvait être créé. L'installation se bloquait elle-même, et il fallait
+    // passer par la base pour s'en sortir.
+    //
+    // Le rôle n'est volontairement PAS exposé dans RegisterDTO : la route est
+    // publique tant qu'aucun compte n'existe, un rôle choisi par l'appelant y
+    // serait un choix offert à n'importe qui.
     const user = await this.prisma.user.create({
       data: {
         email: dto.email,
         password: passwordHash,
         firstName: dto.firstName,
         lastName: dto.lastName,
+        role: 'ADMIN',
         farmId,
       },
     });
