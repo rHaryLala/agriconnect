@@ -530,6 +530,62 @@ model PaddyProcess{
   @@index([farmId, harvestDate(sort: Desc)])
 }
 
+//Lesoa
+enum DryingEventType{
+  PASSAGE       // sortie vers l'aire de séchage puis retour le soir
+  FINALISATION  // le lot est déclaré sec : il quitte le stock brut
+}
+
+model PaddyDryingWave{
+  id String @id @default(uuid())
+  waveNumber Int
+  type DryingEventType
+  date DateTime @default(now())
+
+  quantityOutKg Float?
+  quantityReturnedKg Float?
+
+  bags Int?
+  dryPaddyKg Float?
+
+  note String?
+
+  processId String
+  process PaddyProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([processId, date(sort: Desc)])
+}
+
+// Décorticage : paddy sec consommé -> riz obtenu. Le rapport entre les deux est
+// le rendement de la décortiqueuse (~65 % dans les données de référence du
+// front) ; on stocke les deux quantités brutes et jamais le ratio, qui se
+// recalcule et n'a donc pas à être maintenu.
+model PaddyMilling{
+  id String @id @default(uuid())
+  date DateTime @default(now())
+  paddyUsedKg Float
+  riceOutputKg Float
+  note String?
+
+  processId String
+  process PaddyProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
+
+  riceStockItemId String?
+  riceStockItem StockItem? @relation(fields: [riceStockItemId], references: [id], onDelete: SetNull)
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+
+  @@index([processId, date(sort: Desc)])
+}
+
 //model ProductVariant mbola tsisy
 model ProductVariant{
   id String @id @default(uuid())
@@ -758,4 +814,51 @@ model SupplierPayment {
   user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime    @default(now())
+}
+
+// ===========================================================================
+// Semaine 3 — Journal de main d'oeuvre journaliere (CDC 2.1.4)(Lesoa)
+// ===========================================================================
+model LaborActivity{
+  id String @id @default(uuid())
+  name String
+
+  // Chaque ferme gere sa propre liste : deux fermes n'ont pas les memes travaux.
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  logs LaborLog[]
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@unique([farmId, name])
+}
+
+// Une ligne = un jour, une activite, un effectif.
+//
+// C'est la maille de saisie reelle sur le terrain : le chef d'equipe compte
+// combien de personnes ont travaille sur quoi, sans nommer chacune. 
+model LaborLog{
+  id String @id @default(uuid())
+  date DateTime @default(now())
+
+  workerCount Int
+
+  note String? // parcelle concernee, incident, etc.
+
+  activityId String
+  activity LaborActivity @relation(fields: [activityId], references: [id], onDelete: Restrict)
+
+  farmId String
+  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  userId String
+  user User @relation(fields: [userId], references: [id])
+
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+
+  @@index([farmId, date(sort: Desc)])
+  @@index([activityId])
 }
