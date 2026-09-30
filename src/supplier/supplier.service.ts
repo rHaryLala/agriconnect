@@ -92,7 +92,7 @@ export class SupplierService {
     await this.findOne(supplierId, farmId);
     return this.prisma.supplierPurchase.findMany({
       where: { supplierId },
-      include: { payments: true },
+      include: { supplierPayments: true },
       orderBy: { date: 'desc' },
     });
   }
@@ -129,6 +129,7 @@ export class SupplierService {
           method: dto.method,
           date: dto.date ? new Date(dto.date) : undefined,
           purchaseId,
+          userId,
         },
       });
 
@@ -155,5 +156,5 @@ export class SupplierService {
       where: { purchaseId },
       orderBy: { date: 'desc' },
     });
-  }
-    }
+  } 
+}
