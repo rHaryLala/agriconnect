@@ -60,7 +60,6 @@ async function main() {
     data: { name: "Agriconnect Test1", location: "Sambaina" },
   });
   console.log(`Ferme créée : ${farm.name}`);
- 
   // ---------- CLIENTS ----------
   const clientExterne = await prisma.client.create({
     data: { name: "Épicerie Faravohitra", phone: "0341234567", type: "EXTERNE", farmId: farm.id },
@@ -78,22 +77,6 @@ async function main() {
   });
   console.log("Clients créés");
  
-  // ---------- SUPPLIER ----------
-  const supplier = await prisma.supplier.create({
-    data: { name: "Fournisseur Intrants Sambaina", phone: "0331112233", farmId: farm.id },
-  });
-  const supplierPurchase = await prisma.supplierPurchase.create({
-    data: {
-      reference: "ACH-2026-001",
-      totalAmount: 450000,
-      paidAmount: 200000,
-      supplierId: supplier.id,
-    },
-  });
-  await prisma.supplierPayment.create({
-    data: { amount: 200000, method: "CAISSE", purchaseId: supplierPurchase.id },
-  });
-  console.log("Fournisseur + achat + paiement créés");
  
   // ---------- STOCK LOCATIONS ----------
   const locFerme = await prisma.stockLocation.create({
@@ -187,6 +170,25 @@ async function main() {
     },
   });
   console.log("5 utilisateurs créés (un par rôle)");
+
+   // ---------- SUPPLIER ----------
+  const supplier = await prisma.supplier.create({
+    data: { name: "Fournisseur Intrants Sambaina", phone: "0331112233", farmId: farm.id },
+  });
+  const supplierPurchase = await prisma.supplierPurchase.create({
+    data: {
+      reference: "ACH-2026-001",
+      totalAmount: 450000,
+      paidAmount: 200000,
+      supplierId: supplier.id,
+      farmId: farm.id,
+    },
+  });
+  await prisma.supplierPayment.create({
+    data: { amount: 200000, method: "CAISSE", purchaseId: supplierPurchase.id , userId: comptable.id },
+  });
+  console.log("Fournisseur + achat + paiement créés");
+ 
  
   // ---------- STOCK ITEMS + VARIANTS ----------
   const stockOeufs = await prisma.stockItem.create({
