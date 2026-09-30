@@ -19,6 +19,7 @@ import { PoultryModule } from './poultry/poultry.module';
 import { ReportsModule } from './reports/reports.module';
 import { PaddyModule } from './paddy/paddy.module'; // Semaine 3 - riziculture
 import { LaborModule } from './labor/labor.module'; // Semaine 3 - main d'oeuvre journaliere
+import { SupplierModule } from './supplier/supplier.module';
 
 @Module({
   imports: [
@@ -37,6 +38,7 @@ import { LaborModule } from './labor/labor.module'; // Semaine 3 - main d'oeuvre
     ReportsModule,
     PaddyModule,
     LaborModule,
+    SupplierModule,
   ],
   controllers: [AppController, ExempleController, DashboardController], // ExempleController ajouté ici
   providers: [AppService, DashboardService],
