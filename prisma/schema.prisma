@@ -707,3 +707,4 @@ model SupplierPayment {
 
   createdAt   DateTime    @default(now())
 }
+
