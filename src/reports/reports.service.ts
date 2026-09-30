@@ -1,5 +1,7 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
+import * as PDFDocument from 'pdfkit';
+import * as ExcelJS from 'exceljs';
 
 // Décalage horaire Madagascar — même principe que dashboard.service.ts,
 // pour que "le mois de septembre" corresponde au calendrier réel de la
@@ -51,6 +53,7 @@ export class ReportsService {
       poultry,
     };
     }
+
 
     private async getProductionSection(farmId: string, debut: Date, fin: Date)
     {
