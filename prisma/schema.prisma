@@ -65,6 +65,8 @@ model User {
 
   poultryTrackings PoultryTracking[]//mise a jour
 
+  supplierPayments    SupplierPayment[]
+
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
 
@@ -671,7 +673,7 @@ model SupplierPurchase {
 
   supplierId    String
   supplier    Supplier    @relation(fields: [supplierId], references: [id], onDelete: Restrict)
-  payments    SupplierPayment[]
+  supplierPayments    SupplierPayment[]
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
@@ -704,6 +706,10 @@ model SupplierPayment {
 
   purchaseId    String
   purchase    SupplierPurchase    @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
+
+  //Tracabilité
+  userId    String
+  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
 
   createdAt   DateTime    @default(now())
 }
