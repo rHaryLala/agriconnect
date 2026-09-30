@@ -33,6 +33,8 @@ model Farm {
   //Nouveau
   employees   Employee[]
   suppliers   Supplier[]
+
+  supplierPurchases SupplierPurchase[]
   
 
   createdAt   DateTime      @default(now())
@@ -664,12 +666,20 @@ model SupplierPurchase {
   date    DateTime    @default(now())
   status PurchaseStatus @default(EN_ATTENTE)
 
+  farmId  String
+  farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
   supplierId    String
   supplier    Supplier    @relation(fields: [supplierId], references: [id], onDelete: Restrict)
   payments    SupplierPayment[]
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
+
+  @@unique([farmId, reference])
+  @@index([farmId, status])
+  @@index([supplierId])
+
 }
 
 enum SupplierPaymentMethod {
@@ -684,6 +694,8 @@ enum PurchaseStatus {
   PARTIEL
   REGLE
 }
+
+
 model SupplierPayment {
   id    String  @id @default(uuid())
   amount    Decimal   @db.Decimal(14,2)
