@@ -66,7 +66,7 @@ export class SupplierController {
     @Body() dto: CreateSupplierPaymentDto,
     @CurrentUser() user: AuthUser,
   ) {
-    return this.service.recordPayment(purchaseId, dto, user.farmId);
+    return this.service.recordPayment(purchaseId, dto, user.farmId, user.id);
   }
 
   @Get('purchases/:purchaseId/payments')
