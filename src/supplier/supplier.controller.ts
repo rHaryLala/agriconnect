@@ -10,9 +10,6 @@ import { UpdateSupplierDto } from './dto/update-supplier.dto';
 import { CreatePurchaseDto } from './dto/create-purchase.dto';
 import { CreateSupplierPaymentDto } from './dto/create-supplier-payment.dto';
 
-// IMPORTANT : nommé explicitement 'suppliers' — le bug repéré par
-// l'audit sur ProductVariantController (@Controller() vide, routes
-// tombant à la racine) ne doit pas se reproduire ici.
 type AuthUser = { id: string; role: string; farmId: string };
 
 @ApiTags('suppliers')
