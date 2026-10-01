@@ -26,9 +26,9 @@ export class ReportsController {
     
         @Get('monthly/pdf')
     async downloadPdf(
-  @Query() query: MonthlyReportQueryDto,
-  @CurrentUser() user: AuthUser,
-  @Res({ passthrough: true }) res: Response,
+    @Query() query: MonthlyReportQueryDto,
+    @CurrentUser() user: AuthUser,
+    @Res({ passthrough: true }) res: Response,
 ) {
   const buffer = await this.reportsService.generateMonthlyReportPdf(user.farmId, query.month);
 
