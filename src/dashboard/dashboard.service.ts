@@ -46,7 +46,7 @@ export class DashboardService {
 
     const totalRecettes = recettes._sum.amount ?? 0;
     const totalDepenses = depenses._sum.amount ?? 0;
-    const soldeCaisse = totalRecettes - totalDepenses;
+    const soldeCaisse = Number(totalRecettes - totalDepenses);
 
     return {
       date: startOfDay,
