@@ -1,7 +1,9 @@
 import { Injectable } from "@nestjs/common";
 import { PrismaService } from "../prisma/prisma.service";
-import * as PDFDocument from 'pdfkit';
+import PDFDocument from 'pdfkit';
 import * as ExcelJS from 'exceljs';
+import { resolve } from "path";
+import { rejects } from "assert";
 
 // Décalage horaire Madagascar — même principe que dashboard.service.ts,
 // pour que "le mois de septembre" corresponde au calendrier réel de la
@@ -52,6 +54,82 @@ export class ReportsService {
       cattle,
       poultry,
     };
+    }
+
+    // Génère le PDF en mémoire (un Buffer), sans jamais écrire de fichier
+    // sur le disque du serveur — plus simple à nettoyer, rien à supprimer après coup.
+    async generateMonthlyReportPdf(farmId: string, month: string): Promise<Buffer> {
+      const report = await this.getMonthlyReport(farmId, month);
+
+      return new Promise((resolve, reject) => {
+        const doc = new PDFDocument({margin: 50});
+        const chunks: Buffer[] = [];
+
+          // pdfkit construit le document de façon événementielle : chaque
+          // morceau généré arrive via "data", on les accumule pour les
+          // recoller en un seul Buffer à la fin ("end").
+          doc.on('data', (chunk) => chunks.push(chunk))
+          doc.on('end', () => resolve(Buffer.concat(chunks)));
+          doc.on('error', reject);
+
+          //--En-tête--
+          doc.fontSize(20).text('Rapport mensuel consolidé', { align: 'center' });
+    doc.fontSize(12).fillColor('gray').text(`Période : ${month}`, { align: 'center' });
+    doc.moveDown(2);
+    doc.fillColor('black');
+
+    // --- Section Production ---
+    doc.fontSize(16).text('Production');
+    doc.moveDown(0.5);
+    if (report.production.length === 0) {
+      doc.fontSize(11).fillColor('gray').text('Aucune production ce mois-ci.');
+      doc.fillColor('black');
+    } else {
+      report.production.forEach((p) => {
+        doc.fontSize(11).text(`${p.type} : ${p.quantiteTotale} (${p.nombreSaisies} saisie(s))`);
+      });
+    }
+    doc.moveDown(1.5);
+
+    // --- Section Finance ---
+    doc.fontSize(16).text('Finance');
+    doc.moveDown(0.5);
+    doc.fontSize(11).text(`Recettes : ${report.finance.totalRecettes.toLocaleString('fr-FR')} Ar`);
+    doc.text(`Dépenses : ${report.finance.totalDepenses.toLocaleString('fr-FR')} Ar`);
+    doc.fontSize(12).fillColor(report.finance.benefice >= 0 ? 'green' : 'red')
+      .text(`Bénéfice : ${report.finance.benefice.toLocaleString('fr-FR')} Ar`);
+    doc.fillColor('black');
+    doc.moveDown(1.5);
+
+    // --- Section Stock ---
+    doc.fontSize(16).text('Stock');
+    doc.moveDown(0.5);
+    report.stock.mouvementParType.forEach((m) => {
+      doc.fontSize(11).text(`${m.type} : ${m.quantiteTotale} (${m.nombreMouvements} mouvement(s))`);
+    });
+    doc.fontSize(11).fillColor(report.stock.nombreArticlesEnAlerte > 0 ? 'red' : 'black')
+      .text(`Articles en alerte : ${report.stock.nombreArticlesEnAlerte}`);
+    doc.fillColor('black');
+    doc.moveDown(1.5);
+
+    // --- Section Bovins ---
+    doc.fontSize(16).text('Bovins');
+    doc.moveDown(0.5);
+    doc.fontSize(11).text(`Ventes : ${report.cattle.nombreVentes} (${report.cattle.montantVentes.toLocaleString('fr-FR')} Ar)`);
+    doc.text(`Décès : ${report.cattle.nombreDeces}`);
+    doc.text(`Lait produit : ${report.cattle.laitTotalLitres} L`);
+    doc.moveDown(1.5);
+
+    // --- Section Volailles ---
+    doc.fontSize(16).text('Volailles');
+    doc.moveDown(0.5);
+    doc.fontSize(11).text(`Ventes : ${report.poultry.nombreVentes} (${report.poultry.montantVentes.toLocaleString('fr-FR')} Ar)`);
+    doc.text(`Décès directs : ${report.poultry.nombreDecesDirects}`);
+    doc.text(`Mortalité hebdomadaire cumulée : ${report.poultry.mortaliteHebdomadaireCumulee}`);
+
+    // Termine le document — déclenche l'événement "end" plus haut
+    doc.end();
+  });
     }
 
 
