@@ -132,6 +132,77 @@ export class ReportsService {
   });
     }
 
+    // Génère le classeur Excel en mémoire, une feuille par section pour
+// rester lisible — plus pratique à consulter qu'un unique tableau
+// géant mélangeant des colonnes de nature différente.
+async generateMonthlyReportExcel(farmId: string, month: string): Promise<Buffer> {
+  const report = await this.getMonthlyReport(farmId, month);
+  const workbook = new ExcelJS.Workbook();
+  workbook.creator = 'AgriConnect';
+  workbook.created = new Date();
+
+  // --- Feuille Résumé ---
+  const resume = workbook.addWorksheet('Résumé');
+  resume.columns = [
+    { header: 'Indicateur', key: 'label', width: 35 },
+    { header: 'Valeur', key: 'value', width: 20 },
+  ];
+  resume.addRows([
+    { label: 'Période', value: month },
+    { label: 'Total recettes (Ar)', value: report.finance.totalRecettes },
+    { label: 'Total dépenses (Ar)', value: report.finance.totalDepenses },
+    { label: 'Bénéfice (Ar)', value: report.finance.benefice },
+    { label: 'Articles en alerte de stock', value: report.stock.nombreArticlesEnAlerte },
+  ]);
+  resume.getRow(1).font = { bold: true }; // met les en-têtes en gras
+
+  // --- Feuille Production ---
+  const production = workbook.addWorksheet('Production');
+  production.columns = [
+    { header: 'Type', key: 'type', width: 20 },
+    { header: 'Quantité totale', key: 'quantiteTotale', width: 20 },
+    { header: 'Nombre de saisies', key: 'nombreSaisies', width: 20 },
+  ];
+  production.addRows(report.production);
+  production.getRow(1).font = { bold: true };
+
+  // --- Feuille Stock ---
+  const stock = workbook.addWorksheet('Stock');
+  stock.columns = [
+    { header: 'Type de mouvement', key: 'type', width: 20 },
+    { header: 'Quantité totale', key: 'quantiteTotale', width: 20 },
+    { header: 'Nombre de mouvements', key: 'nombreMouvements', width: 22 },
+  ];
+  stock.addRows(report.stock.mouvementParType);
+  stock.getRow(1).font = { bold: true };
+
+  // --- Feuille Bovins & Volailles ---
+  const elevage = workbook.addWorksheet('Élevage');
+  elevage.columns = [
+    { header: 'Filière', key: 'filiere', width: 15 },
+    { header: 'Ventes (nombre)', key: 'ventesNb', width: 18 },
+    { header: 'Ventes (Ar)', key: 'ventesMontant', width: 18 },
+    { header: 'Décès', key: 'deces', width: 12 },
+  ];
+  elevage.addRows([
+    {
+      filiere: 'Bovins', ventesNb: report.cattle.nombreVentes,
+      ventesMontant: report.cattle.montantVentes, deces: report.cattle.nombreDeces,
+    },
+    {
+      filiere: 'Volailles', ventesNb: report.poultry.nombreVentes,
+      ventesMontant: report.poultry.montantVentes, deces: report.poultry.nombreDecesDirects,
+    },
+  ]);
+  elevage.getRow(1).font = { bold: true };
+
+  // ExcelJS écrit directement dans un buffer, comme pdfkit — le type
+  // exact renvoyé par la lib est un ArrayBuffer, converti explicitement
+  // en Buffer Node pour rester cohérent avec la méthode PDF ci-dessus.
+  const buffer = await workbook.xlsx.writeBuffer();
+  return Buffer.from(buffer);
+}
+
 
     private async getProductionSection(farmId: string, debut: Date, fin: Date)
     {
