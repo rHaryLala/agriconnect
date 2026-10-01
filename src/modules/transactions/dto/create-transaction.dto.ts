@@ -1,44 +1,50 @@
 import { TransactionType } from "@prisma/client";
-import { IsEnum, IsNotEmpty, IsNumber, IsOptional, IsString, IsPositive, IsDateString, } from "class-validator";
-
-export enum transactionType {
-    RECETTE = 'RECETTE',
-    DEPENSE = 'DEPENSE',
-}
+import {
+  IsEnum,
+  IsNotEmpty,
+  IsNumber,
+  IsOptional,
+  IsString,
+  IsPositive,
+  IsDateString,
+  isString,
+} from "class-validator";
 
 export class CreateTransactionDto {
-    @IsNumber()
-    @IsPositive()
-    @IsNotEmpty()
-    amount!: number;
+  @IsNumber()
+  @IsPositive()
+  @IsNotEmpty()
+  amount!: number;
 
-    @IsEnum(TransactionType)
-    @IsNotEmpty()
-    type!: TransactionType;
+  @IsEnum(TransactionType)
+  @IsNotEmpty()
+  type!: TransactionType;
 
-    @IsString()
-    @IsOptional()
-    description?: string;
+  @IsString()
+  @IsOptional()
+  reference?: string;
 
-    @IsDateString()
-    @IsOptional()
-    date?: string;
+  @IsString()
+  @IsOptional()
+  notes?: string
 
-    @IsString()
-    @IsNotEmpty()
-    farmId!: string;
+  @IsDateString()
+  @IsOptional()
+  date?: string;
 
-    @IsString()
-    @IsNotEmpty()
-    userId!: string;
+  @IsString()
+  @IsNotEmpty()
+  farmId!: string;
 
-    @IsString()
-    @IsOptional()
-    clientId!: string;
+  @IsString()
+  @IsNotEmpty()
+  userId!: string;
 
-    @IsString()
-    @IsOptional()
-    invoiceId?: string;
+  @IsString()
+  @IsOptional()
+  clientId?: string;
 
+  @IsString()
+  @IsOptional()
+  invoiceId?: string;
 }
-
