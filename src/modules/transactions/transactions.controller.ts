@@ -21,6 +21,12 @@ export class TransactionsController {
     return this.transactionsService.findAll(farmId);
   }
 
+  @Get('cash-flow')
+  @ApiOperation({summary: 'Solde recettes/dépenses pour une ferme'})
+  getCashFlow(@ Query('farmId') farmId: string) {
+    return this.transactionsService.getCashFlow(farmId);
+  }
+
   @Get(':id')
   @ApiOperation({ summary: 'Récupérer une transaction par son ID' })
   findOne(@Param('id') id: string) {
@@ -29,11 +35,8 @@ export class TransactionsController {
 
   @Patch(':id')
   @ApiOperation({ summary: 'Mettre à jour une transaction' })
-  update(
-    @Param('id') id: string, 
-    @Body() updateTransactionDto: UpdateTransactionDto,
-  ) {
-    return this.transactionsService.update(id, updateTransactionDto); 
+  update(@Param('id') id: string, @Body() updateTransactionDto: UpdateTransactionDto) {
+    return this.transactionsService.update(id, updateTransactionDto);
   }
 
   @Delete(':id')
