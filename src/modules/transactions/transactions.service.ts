@@ -10,13 +10,15 @@ export class TransactionsService {
   async create(createTransactionDto: CreateTransactionDto) {
     const {farmId, clientId, userId, invoiceId, ...data} = createTransactionDto;
 
-    return this.prisma.transaction.create({data: {
-      ...data, farm: { connect: {id: farmId } }, 
-      user: { connect: { id: userId } },
-      ...(clientId && {client: {connect: {id: clientId } } } ), 
-      ...(invoiceId && {invoice: {connect: {id: invoiceId } } } ),
-    }
-    })
+    return this.prisma.transaction.create({
+      data: {
+        ...data,
+        farm: { connect: { id: farmId } },
+        user: { connect: { id: userId } },
+        ...(clientId && { client: { connect: { id: clientId } } }),
+        ...(invoiceId && { invoice: { connect: { id: invoiceId } } }),
+      },
+    });
   }
 
   async findAll(farmId?: string ){
@@ -46,9 +48,9 @@ export class TransactionsService {
       _sum: { amount: true },
     });
 
-    const recettes = aggregates.find((a) => a.type === 'RECETTE')?._sum.amount || 0;
-    const depenses = aggregates.find((a) => a.type === 'DEPENSE')?._sum.amount || 0;
-
+    const recettes = aggregates.find((a) => a.type === 'RECETTE')?._sum.amount?.toNumber() ?? 0;
+    const depenses = aggregates.find((a) => a.type === 'DEPENSE')?._sum.amount?.toNumber() ?? 0;
+ 
     return {
       recettes,
       depenses,
