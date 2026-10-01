@@ -6,7 +6,9 @@
     "esModuleInterop": true,
     "strict": false,
     "skipLibCheck": true,
-    "types": ["node"]
+    "types": ["node"],
+    "experimentalDecorators": true,
+    "emitDecoratorMetadata": true
   },
-  "include": ["prisma/**/*"]
+  "include": ["src/**/*", "prisma/**/*"]
 }
