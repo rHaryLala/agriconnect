@@ -1,32 +1,11 @@
-# --- Dépendances ---
-node_modules/
-.pnp/
-.pnp.js
+<<<<<<< HEAD
+# compiled output
+/dist
+/node_modules
+/build
 
-# --- Build ---
-dist/
-build/
-out/
-*.tsbuildinfo
-
-# --- Variables d'environnement ---
-# Aucun secret ne doit être versionné. Seul .env.example l'est.
-.env
-.env.local
-.env.*.local
-!.env.example
-
-# --- Prisma (bases locales) ---
-prisma/*.db
-prisma/*.db-journal
-
-# --- Fichiers produits par l'application ---
-# Les rapports PDF et Excel générés se régénèrent : ils n'ont rien à faire ici.
-exports/
-uploads/
-
-# --- Logs ---
-logs/
+# Logs
+logs
 *.log
 npm-debug.log*
 yarn-debug.log*
@@ -44,13 +23,28 @@ coverage/
 # --- Éditeurs ---
 .vscode/*
 !.vscode/extensions.json
-.idea/
-*.swp
 
-# --- Système ---
-.DS_Store
-Thumbs.db
-desktop.ini
+# dotenv environment variable files
+.env
+.env.development.local
+.env.test.local
+.env.production.local
+.env.local
 
-# --- Données fictifs ---
-seed.ts
+# temp directory
+.temp
+.tmp
+
+# Runtime data
+pids
+*.pid
+*.seed
+*.pid.lock
+
+# Diagnostic reports (https://nodejs.org/api/report.html)
+report.[0-9]*.[0-9]*.[0-9]*.[0-9]*.json
+
+/generated/prisma
+
+.agents/
+.claude/

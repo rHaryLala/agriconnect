@@ -30,17 +30,6 @@ model Farm {
   paddyProcess PaddyProcess[]
   poultryTrackings PoultryTracking[]//mise a jour
 
-  //Nouveau
-  employees   Employee[]
-  suppliers   Supplier[]
-
-  supplierPurchases SupplierPurchase[]
-
-  //Semaine 3 — main d'œuvre journalière(Lesoa)
-  laborActivities LaborActivity[]
-  laborLogs       LaborLog[]
-  
-
   createdAt   DateTime      @default(now())
   updatedAt   DateTime      @updatedAt
 }
@@ -64,20 +53,12 @@ model User {
   
   payments    Payment[]
 
-  sentTransfers     StockTransfer[] @relation("TransfertSender")   
-  receivedTransfers StockTransfer[] @relation("TransfertReceiver")
+  salaryDeductions SalaryDeduction[]
+
+  sentTransfers     StockTransfer[] @relation("TransferSender")   
+  receivedTransfers StockTransfer[] @relation("TransferReceiver")
 
   poultryTrackings PoultryTracking[]//mise a jour
-
-   //Semaine 3 — riziculture : chaque étape du lot garde son auteur(Lesoa)
-  paddyProcesses PaddyProcess[]
-  paddyDryingWaves PaddyDryingWave[]
-  paddyMillings PaddyMilling[]
-
-  //Semaine 3 — journal de main d'œuvre : auteur de la saisie(Lesoa)
-  laborLogs LaborLog[]
-
-  supplierPayments    SupplierPayment[]
 
   createdAt     DateTime        @default(now())
   updatedAt     DateTime        @updatedAt
@@ -142,13 +123,6 @@ model Production {
   variantId   String?
   variant   ProductVariant?   @relation(fields: [variantId],  references: [id])
 
-  cattleId    String?
-  cattle      Cattle?         @relation(fields: [cattleId], references: [id], onDelete: SetNull)
-
-  poultryTrackingId String?
-  poultryTracking   PoultryTracking? @relation(fields: [poultryTrackingId], references: [id], onDelete: SetNull)
-  
-
   createdAt   DateTime       @default(now())
 
   @@index([farmId, date(sort: Desc)])
@@ -161,7 +135,7 @@ enum MouvementType {
   OUT
   AJUSTEMENT
   //mise a jour
-  TRANSFERT 
+  TRANSFERT //io le izy
 }
 
 model StockItem {
@@ -183,10 +157,7 @@ model StockItem {
   invoiceItem InvoiceItem[]
   variants     ProductVariant[]
   //lise a jour
-  transferItems   StockTransferItem[]
-
-  //Semaine 3 — article destinataire du riz sorti de décorticage(Lesoa)
-  paddyMillings   PaddyMilling[]
+  items   StockTransferItem[]
 
   createdAt   DateTime        @default(now())
   updatedAt   DateTime        @updatedAt
@@ -201,6 +172,7 @@ model StockMovement {
   quantity           Float
   reason             String?
   repeseeQuantity    Float? //mise a jour
+  announceQuantity    Float?
   date               DateTime       @default(now())
   userId             String
   user               User           @relation(fields: [userId], references: [id])
@@ -212,16 +184,12 @@ model StockMovement {
   variantId   String?
   variant    ProductVariant?   @relation(fields: [variantId], references: [id])
 
-  originalMovementId  String?
-  originalMovement    StockMovement? @relation("MovmentCorrection", fields: [originalMovementId], references: [id])
+  originalMovmentId  String?
+  originalMovment    StockMovement? @relation("MovmentCorrection", fields: [originalMovmentId], references: [id])
   corrections        StockMovement[] @relation("MovmentCorrection")
   //mise a jour
 
   transfertId   String?
-  cultureType   CultureType?
-  parcel        String?  //(Lesoa) parcelle concernée (ex. « P03 »), libre : la ferme les nomme elle-même
-  equipment     String?  //(Lesoa) engin servi, pour le carburant (tracteur, motoculteur, camion)
-  voucherNumber String?  //(Lesoa) numéro de bon physique, pour rapprocher la saisie du papier
   transfert   StockTransfer?   @relation(fields: [transfertId], references: [id])  
 
   createdAt          DateTime       @default(now())
@@ -260,8 +228,6 @@ model Client {
 
   cattles   Cattle[]    
 
-  employee Employee?
-
   createdAt    DateTime   @default(now())
   updatedAt    DateTime   @updatedAt
 }
@@ -276,9 +242,9 @@ enum InvoiceStatus {
 model Invoice {
   id            String        @id @default(uuid())
   invoiceNumber String        @unique @map("numero_du_recu")
-  totalAmount   Decimal   @map("total_ttc") @db.Decimal(14, 2)
-  paidAmount    Decimal   @default(0) @map("montant_regle") @db.Decimal(14, 2)
-  dueAmount     Decimal         @map("reste_a_payer") @default(0) @db.Decimal(14, 2)
+  totalAmount   Float         @map("total_ttc")
+  paidAmount    Float         @default(0) @map("montant_regle")
+  dueAmount     Float         @map("reste_a_payer")
   status        InvoiceStatus @default(UNPAID) @map("statut_du_paiment")
 
   clientId      String
@@ -346,9 +312,6 @@ model Transaction{
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  @@index([farmId, date(sort: Desc)])
-  @@index([farmId, type, date(sort: Desc)])
 }
 
 // Mise a jour
@@ -375,8 +338,6 @@ model StockLocation {
 
   createdAt DateTime  @default(now())
   updatedAt DateTime  @updatedAt
-
-  @@unique([farmId, name])
 }
 
 //mise a jour: suivi des bovin
@@ -420,7 +381,7 @@ model Cattle{
 
   //SORTIE-------------------------
   saleDate    DateTime?
-  salePrice   Decimal?    @db.Decimal(14, 2) //prix unitaire
+  salePrice   Float? //prix unitaire
   signature   String?  // URL/path de la signature ou validation
   clientId    String?
   client    Client? @relation(fields: [clientId], references: [id])
@@ -434,13 +395,10 @@ model Cattle{
   farmId String
   farm Farm @relation(fields: [farmId], references: [id])
 
-  productions  Production[]
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
   @@index([farmId])
-  @@unique([farmId, nameOrTag])
 }
 
 // mise a jour: table model paiment et Historique des règlements / versements
@@ -452,7 +410,7 @@ enum PaymentMethod{
 model Payment {
   id String @id @default(uuid())
   recuNumber String @unique //numero du recu
-  amount Decimal    @db.Decimal(14, 2)
+  amount Float
   method PaymentMethod @default(CAISSE)
   date DateTime @default(now())
 
@@ -468,31 +426,21 @@ model Payment {
 
 }
 
-enum  DeductionStatus{
-  PENDING
-  DEDUCTED
-}
-
 //mise a jour: deduction au salaire pour les personnel
 model SalaryDeduction {
   id String @id @default(uuid())
-  amount  Decimal   @db.Decimal(14, 2)
-  status DeductionStatus @default(PENDING)//en attente na deduit
+  amount  Float
+  status String @default("En_attente")//en attente na deduit
   period String //deduction du salaire sur le moi du paie ex: 
 
   paymentId String @unique
   payment Payment @relation(fields: [paymentId], references: [id], onDelete: Cascade)
 
   employeeId String 
-  employee Employee @relation(fields: [employeeId], references: [id], onDelete: Cascade)
+  employee User @relation(fields: [employeeId], references: [id])
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-}
-
-enum ProcessStatus{
-  IN_PROGRESS
-  COMPLETED
 }
 
 //suivi du riziculture (paddy en riz decortiqué)
@@ -502,88 +450,16 @@ model PaddyProcess{
   paddyInputKg Float //quantité akotry engagée
   paddyInputLot Int //quantité akotry par gony engagée
   waveNumber Int @default(1) //vague de sechage
-  status ProcessStatus @default(IN_PROGRESS) //in progress na completed
+  statu String @default("IN_PROGRESS") //in progress na completed
 
-  driedPaddyKg Float? // cumul des finalisations de séchage (paddy sec obtenu)(Lesoa)
   riceOutputKg Float? //riz obtenu au final
-  harvestDate DateTime @default(now())//(Lesoa)
-  transport String?//(Lesoa)
-  driverName String?      // conducteur(Lesoa)
-  storekeeperName String? // magasinier qui réceptionne(Lesoa)
-  
   note String? // affirmation a faire si il y a
-
-  userId String//(Lesoa)
-  user User @relation(fields: [userId], references: [id])//(Lesoa)
 
   farmId String
   farm Farm @relation(fields: [farmId], references: [id])
 
-  dryingWaves PaddyDryingWave[]//(Lesoa)
-  millings PaddyMilling[]//(Lesoa)
-
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
-
-  //Lesoa
-  @@unique([farmId, lotNumber])
-  @@index([farmId, harvestDate(sort: Desc)])
-}
-
-//Lesoa
-enum DryingEventType{
-  PASSAGE       // sortie vers l'aire de séchage puis retour le soir
-  FINALISATION  // le lot est déclaré sec : il quitte le stock brut
-}
-
-model PaddyDryingWave{
-  id String @id @default(uuid())
-  waveNumber Int
-  type DryingEventType
-  date DateTime @default(now())
-
-  quantityOutKg Float?
-  quantityReturnedKg Float?
-
-  bags Int?
-  dryPaddyKg Float?
-
-  note String?
-
-  processId String
-  process PaddyProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
-
-  userId String
-  user User @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-
-  @@index([processId, date(sort: Desc)])
-}
-
-// Décorticage : paddy sec consommé -> riz obtenu. Le rapport entre les deux est
-// le rendement de la décortiqueuse (~65 % dans les données de référence du
-// front) ; on stocke les deux quantités brutes et jamais le ratio, qui se
-// recalcule et n'a donc pas à être maintenu.
-model PaddyMilling{
-  id String @id @default(uuid())
-  date DateTime @default(now())
-  paddyUsedKg Float
-  riceOutputKg Float
-  note String?
-
-  processId String
-  process PaddyProcess @relation(fields: [processId], references: [id], onDelete: Cascade)
-
-  riceStockItemId String?
-  riceStockItem StockItem? @relation(fields: [riceStockItemId], references: [id], onDelete: SetNull)
-
-  userId String
-  user User @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-
-  @@index([processId, date(sort: Desc)])
 }
 
 //model ProductVariant mbola tsisy
@@ -591,7 +467,7 @@ model ProductVariant{
   id String @id @default(uuid())
   name String //anaran'ilay varieté anle produit, ex: gros model cassé, petit model normal, haricot rouge
   sku String? @unique //Sac de 10 kg = SKU: AGR-BST-10KGSac de 50 kg = SKU: AGR-BST-50KG
-  unitPrice Decimal @default(0)   @db.Decimal(14, 2)
+  unitPrice Float @default(0)
   quantity  Float @default(0)
 
   stockItemId String
@@ -613,7 +489,7 @@ model ProductVariant{
 model StockTransfer {
   id String @id @default(uuid())
   transfertNumber String  @unique
-  status    TransfertStatus @default(PENDING)
+  status    String    @default("PENDING")//PENDING,CANCELLED, COMPLETED
   date    DateTime    @default(now())
 
 
@@ -624,10 +500,10 @@ model StockTransfer {
   toLocation    StockLocation   @relation("ToLocation", fields: [toLocationId], references: [id])
 
   senderId    String?
-  sender    User?    @relation("TransfertSender", fields: [senderId], references: [id])
+  sender    User?    @relation("TransferSender", fields: [senderId], references: [id])
 
   receiverId    String?
-  receiver    User?   @relation("TransfertReceiver", fields: [receiverId], references: [id])
+  receiver    User?   @relation("TransferReceiver", fields: [receiverId], references: [id])
 
   items   StockTransferItem[]
 
@@ -673,192 +549,31 @@ model PoultryTracking{
   tagOrNumber   String? //numero d'identifiant, de bracelet, ou de lot
   type    PoultryType  
   status    PoultryStatus   @default(EN_ELEVAGE)
-  initialAge  Int           @default(0) // Âge initial en semaines à la création
-  notes       String?
 
-  // Traçabilité & Sortie
-  entryDate  DateTime  @default(now()) // Utilisé pour calculer l'âge dynamique
-  exitDate   DateTime?
-  exitReason String?
-  salePrice  Decimal?   @db.Decimal(14, 2)
+  ageInWeeks    Int?  
+  weightKg    Float? // chaque semaine
 
-  // Relations principales
-  farmId String
-  farm   Farm   @relation(fields: [farmId], references: [id], onDelete: Cascade)
+  vaccineName     String?       // Nom du vaccin
+  vaccineDate     DateTime?     // Date de vaccination
 
-  userId String
-  user   User   @relation(fields: [userId], references: [id])
+  ponteRate   Float?  //taux de ponte
+  notes   String?
 
-  // Historique des suivis hebdomadaires (1-N)
-  weeklyRecords PoultryWeeklyRecord[]
-
-  productions   Production[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([farmId])
-  @@index([userId])
-}
-
-model PoultryWeeklyRecord {
-  id                String          @id @default(uuid())
-  poultryTrackingId String
-  poultryTracking   PoultryTracking @relation(fields: [poultryTrackingId], references: [id], onDelete: Cascade)
-
-  weekNumber Int      // Semaine N° X
-  recordDate DateTime @default(now())
-
-  weightKg       Float?   // Poids moyen
-  ponteRate      Float?   // Taux de ponte (%)
-  mortalityCount Int      @default(0) // Pertes observées cette semaine
-
-  vaccineName String?   // Vaccin administré
-  vaccineDate DateTime? // Date d'administration
-
-  notes String?
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([poultryTrackingId])
-}
-//nouveau
-
-enum TransfertStatus{
- PENDING
- CANCELLED
- COMPLETED
-}
-
-enum SupplierStatus{
-  ACTIF
-  INACTIF
-}
-
-model Supplier {
-  id    String    @id @default(uuid())
-  name    String
-  phone   String? 
-  email   String?
-  address   String?
-
-  category    String?
-  status    SupplierStatus    @default(ACTIF)
-  rating    Float? //io le note eee, hahaha
-  paymentTermDays   Int?  // délai de paiement en jours
-  products  String[]  // "Semences riz", "Semences maïs", ... (array Postgres natif)
-
+  //tracabilité
+  entryDate   DateTime  @default(now())
+  exitDate    DateTime?
+  exitReason    String?   //la raison
+  salePrice   Float?
 
   farmId    String
   farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
 
-  purchases   SupplierPurchase[]
+  userId    String
+  user    User    @relation(fields: [userId],references: [id])
 
   createdAt   DateTime    @default(now())
   updatedAt   DateTime    @updatedAt
 
   @@index([farmId])
-}
-
-model SupplierPurchase {
-  id String   @id   @default(uuid())
-  reference   String
-  description   String?
-  totalAmount   Decimal   @db.Decimal(14, 2)
-  paidAmount    Decimal   @default(0) @db.Decimal(14,2)
-  date    DateTime    @default(now())
-  status PurchaseStatus @default(EN_ATTENTE)
-
-  farmId  String
-  farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  supplierId    String
-  supplier    Supplier    @relation(fields: [supplierId], references: [id], onDelete: Restrict)
-  supplierPayments    SupplierPayment[]
-
-  createdAt   DateTime    @default(now())
-  updatedAt   DateTime    @updatedAt
-
-  @@unique([farmId, reference])
-  @@index([farmId, status])
-  @@index([supplierId])
-
-}
-
-enum SupplierPaymentMethod {
-  CAISSE
-  VIREMENT
-  CHEQUE
-  MOBILE_MONEY
-}
-
-enum PurchaseStatus {
-  EN_ATTENTE
-  PARTIEL
-  REGLE
-}
-
-
-model SupplierPayment {
-  id    String  @id @default(uuid())
-  amount    Decimal   @db.Decimal(14,2)
-  method    SupplierPaymentMethod   @default(CAISSE)
-  date    DateTime    @default(now())
-
-  purchaseId    String
-  purchase    SupplierPurchase    @relation(fields: [purchaseId], references: [id], onDelete: Cascade)
-
-  //Tracabilité
-  userId    String
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
-
-  createdAt   DateTime    @default(now())
-}
-
-// ===========================================================================
-// Semaine 3 — Journal de main d'oeuvre journaliere (CDC 2.1.4)(Lesoa)
-// ===========================================================================
-model LaborActivity{
-  id String @id @default(uuid())
-  name String
-
-  // Chaque ferme gere sa propre liste : deux fermes n'ont pas les memes travaux.
-  farmId String
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  logs LaborLog[]
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@unique([farmId, name])
-}
-
-// Une ligne = un jour, une activite, un effectif.
-//
-// C'est la maille de saisie reelle sur le terrain : le chef d'equipe compte
-// combien de personnes ont travaille sur quoi, sans nommer chacune. 
-model LaborLog{
-  id String @id @default(uuid())
-  date DateTime @default(now())
-
-  workerCount Int
-
-  note String? // parcelle concernee, incident, etc.
-
-  activityId String
-  activity LaborActivity @relation(fields: [activityId], references: [id], onDelete: Restrict)
-
-  farmId String
-  farm Farm @relation(fields: [farmId], references: [id], onDelete: Cascade)
-
-  userId String
-  user User @relation(fields: [userId], references: [id])
-
-  createdAt DateTime @default(now())
-  updatedAt DateTime @updatedAt
-
-  @@index([farmId, date(sort: Desc)])
-  @@index([activityId])
+  @@index([userId])
 }
