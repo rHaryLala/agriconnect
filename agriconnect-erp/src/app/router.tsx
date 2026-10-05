@@ -23,6 +23,21 @@ export const router = createBrowserRouter([
           return { Component }
         },
       },
+      // Pages legales : publiques, accessibles sans compte. Elles doivent
+      // rester hors de ProtectedRoute, sinon un visiteur ne peut pas lire la
+      // politique de confidentialite avant de creer un compte.
+      {
+        path: "/legal/confidentialite",
+        lazy: async () => ({ Component: (await import("@/features/legal/PrivacyPolicyPage")).default }),
+      },
+      {
+        path: "/legal/conditions-utilisation",
+        lazy: async () => ({ Component: (await import("@/features/legal/TermsPage")).default }),
+      },
+      {
+        path: "/legal/cookies",
+        lazy: async () => ({ Component: (await import("@/features/legal/CookiePolicyPage")).default }),
+      },
       {
         path: "/login",
         lazy: async () => {

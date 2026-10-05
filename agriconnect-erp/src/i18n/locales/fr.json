@@ -1527,5 +1527,16 @@
     "validationSettlementAmount": "Doit être positif",
     "validationSettlementExceeds": "Ne peut pas dépasser le reste dû",
     "toastSettlementRecorded": "Retenue régularisée"
+  },
+  "legal": {
+    "backHome": "Retour à l'accueil",
+    "lastUpdated": "Dernière mise à jour :",
+    "tableOfContents": "Sommaire",
+    "otherDocuments": "Autres documents",
+    "privacy": "Politique de confidentialité",
+    "terms": "Conditions d'utilisation",
+    "cookies": "Politique de cookies",
+    "cookiePreferences": "Préférences de cookies",
+    "sectionTitle": "Informations légales"
   }
 }

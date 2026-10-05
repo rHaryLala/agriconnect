@@ -1527,5 +1527,16 @@
     "validationSettlementAmount": "Must be positive",
     "validationSettlementExceeds": "Cannot exceed the outstanding amount",
     "toastSettlementRecorded": "Deduction settled"
+  },
+  "legal": {
+    "backHome": "Back to home",
+    "lastUpdated": "Last updated:",
+    "tableOfContents": "Contents",
+    "otherDocuments": "Other documents",
+    "privacy": "Privacy Policy",
+    "terms": "Terms of Use",
+    "cookies": "Cookie Policy",
+    "cookiePreferences": "Cookie preferences",
+    "sectionTitle": "Legal"
   }
 }

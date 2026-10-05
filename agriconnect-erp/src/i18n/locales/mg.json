@@ -1527,5 +1527,16 @@
     "validationSettlementAmount": "Tsy maintsy mihoatra ny aotra",
     "validationSettlementExceeds": "Tsy azo mihoatra ny trosa sisa",
     "toastSettlementRecorded": "Voahamarina ny fanalana"
+  },
+  "legal": {
+    "backHome": "Hiverina any am-pahalalana",
+    "lastUpdated": "Fanavaozana farany :",
+    "tableOfContents": "Votoatiny",
+    "otherDocuments": "Antontan-taratasy hafa",
+    "privacy": "Politikan'ny fiarovana ny antontan-kevitra",
+    "terms": "Fepetra fampiasana",
+    "cookies": "Politikan'ny cookies",
+    "cookiePreferences": "Safidy momba ny cookies",
+    "sectionTitle": "Lalàna sy fepetra"
   }
 }

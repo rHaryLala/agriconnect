@@ -239,7 +239,22 @@ export default function LandingPage() {
           </div>
         </Reveal>
 
-        <div className="mx-auto mt-10 max-w-5xl border-t border-white/10 pt-6 text-center text-xs text-white/40">{t("landing.footer.copyright")}</div>
+        <div className="mx-auto mt-10 max-w-5xl border-t border-white/10 pt-6">
+          {/* Les liens légaux vivent dans la barre basse, emplacement attendu
+              par les visiteurs comme par les crawlers. */}
+          <nav aria-label={t("legal.sectionTitle")} className="flex flex-wrap items-center justify-center gap-x-4 gap-y-2 text-xs">
+            <Link to="/legal/confidentialite" className="rounded text-white/60 underline-offset-2 transition-colors hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+              {t("legal.privacy")}
+            </Link>
+            <Link to="/legal/conditions-utilisation" className="rounded text-white/60 underline-offset-2 transition-colors hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+              {t("legal.terms")}
+            </Link>
+            <Link to="/legal/cookies" className="rounded text-white/60 underline-offset-2 transition-colors hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
+              {t("legal.cookies")}
+            </Link>
+          </nav>
+          <p className="mt-4 text-center text-xs text-white/40">{t("landing.footer.copyright")}</p>
+        </div>
       </footer>
     </div>
   )
