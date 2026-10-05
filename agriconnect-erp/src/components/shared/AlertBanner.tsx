@@ -9,9 +9,9 @@ interface AlertBannerProps {
 }
 
 const TONE_STYLES: Record<AlertBannerProps["tone"], { bg: string; text: string; icon: LucideIcon }> = {
-  warning: { bg: "bg-warning/10 border-warning/30", text: "text-warning", icon: AlertTriangle },
-  destructive: { bg: "bg-destructive/10 border-destructive/30", text: "text-destructive", icon: AlertCircle },
-  info: { bg: "bg-info/10 border-info/30", text: "text-info", icon: Info },
+  warning: { bg: "bg-warning/10 border-warning/30", text: "text-warning-on-subtle", icon: AlertTriangle },
+  destructive: { bg: "bg-destructive/10 border-destructive/30", text: "text-destructive-on-subtle", icon: AlertCircle },
+  info: { bg: "bg-info/10 border-info/30", text: "text-info-on-subtle", icon: Info },
 }
 
 export function AlertBanner({ tone, title, description, action, icon }: AlertBannerProps) {

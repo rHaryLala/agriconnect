@@ -65,7 +65,7 @@ export function SearchResultsList({ results, query, highlighted, onHighlight, on
                       index === highlighted ? "bg-primary/10 text-foreground" : "text-foreground hover:bg-background"
                     }`}
                   >
-                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary">
+                    <span className="flex h-7 w-7 shrink-0 items-center justify-center rounded-md bg-primary/10 text-primary-on-subtle">
                       <Icon className="h-3.5 w-3.5" strokeWidth={1.75} />
                     </span>
                     <span className="min-w-0 flex-1">

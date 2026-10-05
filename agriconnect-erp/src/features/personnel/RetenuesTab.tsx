@@ -158,7 +158,7 @@ export function RetenuesTab({ canEdit }: { canEdit: boolean }) {
 
       <div className="mb-4 flex flex-wrap items-end justify-between gap-4 rounded-xl border border-border bg-surface p-4">
         <div className="flex items-start gap-3">
-          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-info/10 text-info">
+          <span className="flex h-9 w-9 shrink-0 items-center justify-center rounded-lg bg-info/10 text-info-on-subtle">
             <CalendarClock className="h-[18px] w-[18px]" strokeWidth={1.75} />
           </span>
           <div>

@@ -1,12 +1,12 @@
 type BadgeTone = "primary" | "success" | "warning" | "destructive" | "info" | "muted"
 
 const toneClasses: Record<BadgeTone, string> = {
-  primary: "bg-primary/10 text-primary",
-  success: "bg-success/10 text-success",
-  warning: "bg-warning/10 text-warning",
-  destructive: "bg-destructive/10 text-destructive",
-  info: "bg-info/10 text-info",
-  muted: "bg-muted text-muted-foreground",
+  primary: "bg-primary/10 text-primary-on-subtle",
+  success: "bg-success/10 text-success-on-subtle",
+  warning: "bg-warning/10 text-warning-on-subtle",
+  destructive: "bg-destructive/10 text-destructive-on-subtle",
+  info: "bg-info/10 text-info-on-subtle",
+  muted: "bg-muted text-muted-foreground-strong",
 }
 
 interface StatusBadgeProps {

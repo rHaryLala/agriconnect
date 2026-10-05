@@ -117,7 +117,7 @@ export default function FournisseursPage() {
         const Icon = CATEGORIE_ICONS[f.categorie]
         return (
           <Link to={`/app/fournisseurs/${f.id}`} className="flex min-w-0 items-center gap-2.5 hover:text-primary">
-            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+            <span className="flex h-8 w-8 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary-on-subtle">
               <Icon className="h-4 w-4" strokeWidth={1.75} />
             </span>
             <span className="min-w-0">
@@ -249,7 +249,7 @@ export default function FournisseursPage() {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-                <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-on-subtle-foreground hover:bg-destructive/90">
                   {t("common.delete")}
                 </AlertDialogAction>
               </AlertDialogFooter>

@@ -21,7 +21,7 @@ export function Avatar({ userId, initials, size = "md", className }: AvatarProps
   return (
     <span
       className={cn(
-        "flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 font-semibold text-primary",
+        "flex shrink-0 items-center justify-center overflow-hidden rounded-full bg-primary/15 font-semibold text-primary-on-subtle",
         SIZES[size],
         className
       )}

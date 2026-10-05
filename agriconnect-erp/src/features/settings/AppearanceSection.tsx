@@ -44,7 +44,7 @@ export function AppearanceSection() {
                 type="button"
                 onClick={() => { if (theme !== value) toggleTheme() }}
                 className={`relative flex flex-col items-center gap-2 rounded-xl border-2 px-4 py-6 text-sm font-medium transition-colors ${
-                  active ? "border-primary bg-primary/5 text-primary" : "border-border text-foreground hover:bg-background"
+                  active ? "border-primary bg-primary/5 text-primary-on-subtle" : "border-border text-foreground hover:bg-background"
                 }`}
               >
                 <Icon className="h-5 w-5" />

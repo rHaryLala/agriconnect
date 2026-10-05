@@ -51,7 +51,7 @@ export function Header({ onMenuClick }: HeaderProps) {
         <GlobalSearch />
 
         <LanguageSwitcher compact /> {pendingCount > 0 && (
-          <span title={t("offline.pendingTooltip", { count: pendingCount })} className="flex items-center gap-1 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning">
+          <span title={t("offline.pendingTooltip", { count: pendingCount })} className="flex items-center gap-1 rounded-full bg-warning/10 px-2.5 py-1 text-xs font-medium text-warning-on-subtle">
         <CloudUpload className="h-3.5 w-3.5" />
         {pendingCount}
       </span>

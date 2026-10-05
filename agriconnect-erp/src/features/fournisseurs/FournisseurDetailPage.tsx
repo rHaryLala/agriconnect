@@ -189,7 +189,7 @@ export default function FournisseurDetailPage() {
         <div className="glass-surface rounded-xl p-5 shadow-sm lg:col-span-2">
           <div className="mb-5 flex flex-wrap items-start justify-between gap-3">
             <div className="flex min-w-0 items-center gap-3">
-              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary">
+              <span className="flex h-12 w-12 shrink-0 items-center justify-center rounded-xl bg-primary/10 text-primary-on-subtle">
                 <Icon className="h-6 w-6" strokeWidth={1.75} />
               </span>
               <div className="min-w-0">

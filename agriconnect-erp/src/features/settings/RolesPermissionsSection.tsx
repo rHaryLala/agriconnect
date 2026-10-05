@@ -116,7 +116,7 @@ export function RolesPermissionsSection() {
                               <td key={action} className="px-3 py-2.5 text-center">
                                 <span
                                   aria-label={granted ? t("settings.roles.granted") : t("settings.roles.notGranted")}
-                                  className={`inline-flex h-5 w-5 items-center justify-center rounded ${granted ? "bg-success/10 text-success" : "bg-muted text-muted-foreground"}`}
+                                  className={`inline-flex h-5 w-5 items-center justify-center rounded ${granted ? "bg-success/10 text-success-on-subtle" : "bg-muted text-muted-foreground-strong"}`}
                                 >
                                   {granted ? <Check className="h-3 w-3" /> : <Minus className="h-3 w-3" />}
                                 </span>

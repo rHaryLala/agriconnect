@@ -140,7 +140,7 @@ export function UsersManagement({ canEdit }: { canEdit: boolean }) {
               </AlertDialogHeader>
               <AlertDialogFooter>
                 <AlertDialogCancel>{t("common.cancel")}</AlertDialogCancel>
-                <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-foreground hover:bg-destructive/90">
+                <AlertDialogAction onClick={confirmDelete} className="bg-destructive text-destructive-on-subtle-foreground hover:bg-destructive/90">
                   {t("common.delete")}
                 </AlertDialogAction>
               </AlertDialogFooter>

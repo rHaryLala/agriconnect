@@ -1556,5 +1556,8 @@
     "measurementTitle": "Fanaraha-maso ara-teknika",
     "measurementDescription": "Mitatitra ny lesoka hita ao amin'ny rindrambaiko mba hanitsiana azy. Tsy misy votoatin'ny taratasy alefa. Tsy manala fiasa ny fandavana.",
     "revokeNotice": "Tehirizina enim-bolana ny safidinao ary azo ovaina amin'ny “Safidy momba ny cookies” eo ambany pejy. Ny fanesorana ny fanaraha-maso dia manan-kery amin'ny fampidirana manaraka."
+  },
+  "a11y": {
+    "skipToContent": "Mankany amin'ny votoaty fototra"
   }
 }

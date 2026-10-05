@@ -16,7 +16,7 @@ function NavBadge({ count, tone }: { count: number; tone: BadgeTone }) {
   return (
     <span
       className={`ml-auto inline-flex h-5 min-w-[1.375rem] shrink-0 items-center justify-center rounded-md px-1.5 text-[11px] font-semibold tabular-nums ${
-        tone === "alert" ? "bg-warning/20 text-warning" : "bg-success/20 text-success"
+        tone === "alert" ? "bg-warning/20 text-warning-on-subtle" : "bg-success/20 text-success-on-subtle"
       }`}
     >
       {count > 99 ? "99+" : count}

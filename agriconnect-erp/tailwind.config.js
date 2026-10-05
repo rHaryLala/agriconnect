@@ -26,6 +26,13 @@ export default {
         success: "hsl(var(--success) / <alpha-value>)",
         warning: "hsl(var(--warning) / <alpha-value>)",
         info: "hsl(var(--info) / <alpha-value>)",
+        // Texte accessible sur un fond teinte de la meme couleur (cf. index.css)
+        "primary-on-subtle": "hsl(var(--primary-on-subtle) / <alpha-value>)",
+        "success-on-subtle": "hsl(var(--success-on-subtle) / <alpha-value>)",
+        "warning-on-subtle": "hsl(var(--warning-on-subtle) / <alpha-value>)",
+        "destructive-on-subtle": "hsl(var(--destructive-on-subtle) / <alpha-value>)",
+        "info-on-subtle": "hsl(var(--info-on-subtle) / <alpha-value>)",
+        "muted-foreground-strong": "hsl(var(--muted-foreground-strong) / <alpha-value>)",
         border: "hsl(var(--border) / <alpha-value>)",
         input: "hsl(var(--input) / <alpha-value>)",
         ring: "hsl(var(--ring) / <alpha-value>)",

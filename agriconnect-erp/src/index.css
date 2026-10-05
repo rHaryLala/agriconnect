@@ -29,6 +29,20 @@
     --destructive-foreground: 0 0% 100%;
     --info: 221 83% 53%;
 
+    /* Texte lisible SUR un fond teinte de la meme couleur (bg-<ton>/10 a /20).
+       Les tokens --success, --warning et --info ci-dessus sont calibres comme
+       remplissages, pas comme texte : poses tels quels sur leur propre teinte,
+       ils tombaient entre 1,97:1 et 4,49:1, loin du 4,5:1 exige par WCAG AA.
+       Ces variantes sont calculees pour tenir >= 4,6:1 sur les trois surfaces
+       de l'application (card, background, muted) et aux trois opacites de
+       teinte reellement utilisees (/10, /15, /20). Pire cas mesure : 4,61:1. */
+    --primary-on-subtle: 156 78% 23%;
+    --success-on-subtle: 142 76% 24%;
+    --warning-on-subtle: 38 92% 28%;
+    --destructive-on-subtle: 0 74% 38%;
+    --info-on-subtle: 221 83% 44%;
+    --muted-foreground-strong: 215 15% 40%;
+
     --border: 214 32% 91%;
     --input: 214 32% 91%;
     --ring: 156 78% 29%;
@@ -48,6 +62,15 @@
     --secondary-foreground: 210 20% 92%;
     --muted: 215 19% 16%;
     --muted-foreground: 217 10% 65%;
+
+    /* En mode sombre la teinte eclaircit le fond : le texte doit donc etre
+       plus CLAIR que le token de remplissage, et non plus fonce. */
+    --primary-on-subtle: 156 60% 66%;
+    --success-on-subtle: 142 58% 64%;
+    --warning-on-subtle: 38 90% 64%;
+    --destructive-on-subtle: 0 80% 72%;
+    --info-on-subtle: 221 85% 76%;
+    --muted-foreground-strong: 217 12% 72%;
 
     --border: 215 13% 21%;
     --input: 215 13% 21%;

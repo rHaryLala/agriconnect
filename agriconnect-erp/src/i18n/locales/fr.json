@@ -1556,5 +1556,8 @@
     "measurementTitle": "Supervision technique",
     "measurementDescription": "Remonte les erreurs rencontrées dans l'application pour les corriger. Aucun contenu de formulaire n'est transmis. Refuser n'enlève aucune fonctionnalité.",
     "revokeNotice": "Votre choix est conservé six mois et reste modifiable depuis « Préférences de cookies » en pied de page. Retirer la supervision prend effet au prochain chargement de l'application."
+  },
+  "a11y": {
+    "skipToContent": "Aller au contenu principal"
   }
 }

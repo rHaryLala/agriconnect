@@ -61,7 +61,7 @@ export default function SearchPage() {
           />
         ) : (
           <div className="px-3 py-10 text-center">
-            <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary">
+            <span className="mx-auto mb-3 flex h-12 w-12 items-center justify-center rounded-xl bg-primary/10 text-primary-on-subtle">
               <Search className="h-6 w-6" strokeWidth={1.75} />
             </span>
             <p className="text-sm text-foreground">{t("search.placeholder")}</p>

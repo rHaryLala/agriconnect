@@ -173,8 +173,8 @@ export function StockMovementsTab({ canEdit }: StockMovementsTabProps) {
     <div>
       <div className="mb-4 flex flex-wrap gap-2">
         <span className="rounded-full border border-border bg-surface px-3 py-1.5 text-xs font-medium text-foreground">{movements.length} {t("stock.movements.pillTotal")}</span>
-        <span className="rounded-full border border-success/30 bg-success/10 px-3 py-1.5 text-xs font-medium text-success">↓ {entrees7j} {t("stock.movements.pillEntries")}</span>
-        <span className="rounded-full border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs font-medium text-destructive">↑ {sorties7j} {t("stock.movements.pillExits")}</span>
+        <span className="rounded-full border border-success/30 bg-success/10 px-3 py-1.5 text-xs font-medium text-success-on-subtle">↓ {entrees7j} {t("stock.movements.pillEntries")}</span>
+        <span className="rounded-full border border-destructive/30 bg-destructive/10 px-3 py-1.5 text-xs font-medium text-destructive-on-subtle">↑ {sorties7j} {t("stock.movements.pillExits")}</span>
       </div>
 
       <div className="mb-3 flex flex-wrap items-center justify-between gap-3">

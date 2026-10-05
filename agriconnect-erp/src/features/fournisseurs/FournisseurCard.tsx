@@ -25,7 +25,7 @@ export function FournisseurCard({ fournisseur, summary }: FournisseurCardProps) 
     >
       <div className="mb-3 flex items-start justify-between gap-2">
         <div className="flex min-w-0 items-center gap-3">
-          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary">
+          <span className="flex h-10 w-10 shrink-0 items-center justify-center rounded-lg bg-primary/10 text-primary-on-subtle">
             <Icon className="h-5 w-5" strokeWidth={1.75} />
           </span>
           <div className="min-w-0">

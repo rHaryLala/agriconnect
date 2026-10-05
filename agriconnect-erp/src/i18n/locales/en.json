@@ -1556,5 +1556,8 @@
     "measurementTitle": "Technical monitoring",
     "measurementDescription": "Reports errors encountered in the app so they can be fixed. No form content is sent. Declining removes no feature.",
     "revokeNotice": "Your choice is kept for six months and can be changed from “Cookie preferences” in the footer. Withdrawing monitoring takes effect the next time the app loads."
+  },
+  "a11y": {
+    "skipToContent": "Skip to main content"
   }
 }

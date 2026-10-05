@@ -12,11 +12,11 @@ interface StatCardProps {
 }
 
 const toneClasses: Record<NonNullable<StatCardProps["tone"]>, string> = {
-  primary: "bg-primary/10 text-primary",
-  success: "bg-success/10 text-success",
-  warning: "bg-warning/10 text-warning",
-  destructive: "bg-destructive/10 text-destructive",
-  info: "bg-info/10 text-info",
+  primary: "bg-primary/10 text-primary-on-subtle",
+  success: "bg-success/10 text-success-on-subtle",
+  warning: "bg-warning/10 text-warning-on-subtle",
+  destructive: "bg-destructive/10 text-destructive-on-subtle",
+  info: "bg-info/10 text-info-on-subtle",
 }
 
 export function StatCard({ icon: Icon, label, value, hint, tone = "primary", animate, trend }: StatCardProps) {
@@ -32,7 +32,7 @@ export function StatCard({ icon: Icon, label, value, hint, tone = "primary", ani
         {trend && (
           <span
             className={`flex items-center gap-0.5 rounded-full px-1.5 py-0.5 text-[11px] font-medium ${
-              trend.isPositive ? "bg-success/10 text-success" : "bg-destructive/10 text-destructive"
+              trend.isPositive ? "bg-success/10 text-success-on-subtle" : "bg-destructive/10 text-destructive-on-subtle"
             }`}
           >
             {trend.isPositive ? <ArrowUpRight className="h-3 w-3" /> : <ArrowDownRight className="h-3 w-3" />}
