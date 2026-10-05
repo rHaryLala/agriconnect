@@ -1538,5 +1538,23 @@
     "cookies": "Cookie Policy",
     "cookiePreferences": "Cookie preferences",
     "sectionTitle": "Legal"
+  },
+  "consent": {
+    "title": "Cookies and local data",
+    "description": "AgriConnect needs some local data to keep you signed in and work offline. Technical monitoring is optional.",
+    "readPolicy": "Read the cookie policy",
+    "accept": "Accept",
+    "reject": "Reject",
+    "customise": "Customise",
+    "acceptAll": "Accept all",
+    "rejectAll": "Reject all",
+    "saveChoice": "Save my choices",
+    "categoriesLegend": "Categories",
+    "essentialTitle": "Strictly necessary",
+    "alwaysActive": "always on",
+    "essentialDescription": "Session, language, theme and offline queue. The app cannot work without them; they never leave your device.",
+    "measurementTitle": "Technical monitoring",
+    "measurementDescription": "Reports errors encountered in the app so they can be fixed. No form content is sent. Declining removes no feature.",
+    "revokeNotice": "Your choice is kept for six months and can be changed from “Cookie preferences” in the footer. Withdrawing monitoring takes effect the next time the app loads."
   }
 }

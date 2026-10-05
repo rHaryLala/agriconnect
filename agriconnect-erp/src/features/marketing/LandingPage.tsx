@@ -16,6 +16,7 @@ import { FeatureCard } from "./FeatureCard"
 import { Reveal } from "./Reveal"
 import { SectionVideoBackdrop } from "./SectionVideoBackdrop"
 import { usePinnedTrack } from "./usePinnedTrack"
+import { CookiePreferencesButton } from "@/features/consent/CookieConsent"
 
 const FEATURE_ICONS = [Sprout, Package, Wallet, Handshake, Receipt, BarChart3]
 const FEATURE_KEYS = ["production", "stock", "finance", "clients", "transactions", "reports"]
@@ -252,6 +253,7 @@ export default function LandingPage() {
             <Link to="/legal/cookies" className="rounded text-white/60 underline-offset-2 transition-colors hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70">
               {t("legal.cookies")}
             </Link>
+            <CookiePreferencesButton className="rounded text-white/60 underline-offset-2 transition-colors hover:text-white hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-white/70" />
           </nav>
           <p className="mt-4 text-center text-xs text-white/40">{t("landing.footer.copyright")}</p>
         </div>

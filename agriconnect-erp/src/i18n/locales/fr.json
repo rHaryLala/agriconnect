@@ -1538,5 +1538,23 @@
     "cookies": "Politique de cookies",
     "cookiePreferences": "Préférences de cookies",
     "sectionTitle": "Informations légales"
+  },
+  "consent": {
+    "title": "Cookies et données locales",
+    "description": "AgriConnect a besoin de quelques données locales pour vous garder connecté et fonctionner hors réseau. La supervision technique, elle, est facultative.",
+    "readPolicy": "Lire la politique de cookies",
+    "accept": "Accepter",
+    "reject": "Refuser",
+    "customise": "Personnaliser",
+    "acceptAll": "Tout accepter",
+    "rejectAll": "Tout refuser",
+    "saveChoice": "Enregistrer mes choix",
+    "categoriesLegend": "Catégories",
+    "essentialTitle": "Strictement nécessaires",
+    "alwaysActive": "toujours actifs",
+    "essentialDescription": "Session, langue, thème et file d'attente hors ligne. Sans eux l'application ne peut pas fonctionner ; ils ne quittent pas votre appareil.",
+    "measurementTitle": "Supervision technique",
+    "measurementDescription": "Remonte les erreurs rencontrées dans l'application pour les corriger. Aucun contenu de formulaire n'est transmis. Refuser n'enlève aucune fonctionnalité.",
+    "revokeNotice": "Votre choix est conservé six mois et reste modifiable depuis « Préférences de cookies » en pied de page. Retirer la supervision prend effet au prochain chargement de l'application."
   }
 }

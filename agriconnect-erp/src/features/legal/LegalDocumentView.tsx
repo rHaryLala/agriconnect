@@ -2,6 +2,7 @@ import { Link } from "react-router"
 import { useTranslation } from "react-i18next"
 import { Leaf, ArrowLeft } from "lucide-react"
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
+import { CookiePreferencesButton } from "@/features/consent/CookieConsent"
 import { LEGAL_DOCUMENTS, LEGAL_UPDATED_AT, LEGAL_UPDATED_LABEL, OPERATOR } from "./legalContent"
 import type { LegalBlock, LegalDocumentContent } from "./legalContent"
 
@@ -184,6 +185,9 @@ export function LegalDocumentView({ document }: { document: LegalDocumentContent
                   </Link>
                 </li>
               ))}
+              <li>
+                <CookiePreferencesButton className="rounded text-muted-foreground underline-offset-2 transition-colors hover:text-foreground hover:underline focus-visible:outline-none focus-visible:ring-2 focus-visible:ring-ring focus-visible:ring-offset-2" />
+              </li>
             </ul>
           </nav>
         </footer>

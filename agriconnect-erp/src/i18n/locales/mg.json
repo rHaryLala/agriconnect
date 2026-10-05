@@ -1538,5 +1538,23 @@
     "cookies": "Politikan'ny cookies",
     "cookiePreferences": "Safidy momba ny cookies",
     "sectionTitle": "Lalàna sy fepetra"
+  },
+  "consent": {
+    "title": "Cookies sy angon-drakitra eo an-toerana",
+    "description": "Mila angon-drakitra vitsivitsy eo an-toerana AgriConnect mba hitazona ny fifandraisanao sy hiasa tsy misy aterineto. Ny fanaraha-maso ara-teknika kosa dia safidy.",
+    "readPolicy": "Vakio ny politikan'ny cookies",
+    "accept": "Ekena",
+    "reject": "Lavina",
+    "customise": "Amboary",
+    "acceptAll": "Ekena daholo",
+    "rejectAll": "Lavina daholo",
+    "saveChoice": "Tehirizo ny safidiko",
+    "categoriesLegend": "Sokajy",
+    "essentialTitle": "Tena ilaina",
+    "alwaysActive": "mandeha hatrany",
+    "essentialDescription": "Fifandraisana, fiteny, endrika ary filaharana tsy misy aterineto. Tsy afaka miasa ny rindrambaiko raha tsy misy ireo ; tsy mivoaka ny fitaovanao izy ireo.",
+    "measurementTitle": "Fanaraha-maso ara-teknika",
+    "measurementDescription": "Mitatitra ny lesoka hita ao amin'ny rindrambaiko mba hanitsiana azy. Tsy misy votoatin'ny taratasy alefa. Tsy manala fiasa ny fandavana.",
+    "revokeNotice": "Tehirizina enim-bolana ny safidinao ary azo ovaina amin'ny “Safidy momba ny cookies” eo ambany pejy. Ny fanesorana ny fanaraha-maso dia manan-kery amin'ny fampidirana manaraka."
   }
 }
