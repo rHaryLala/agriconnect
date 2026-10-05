@@ -1,4 +1,5 @@
 import { useState } from "react"
+import { useDocumentMeta } from "@/hooks/useDocumentMeta"
 import { useForm } from "react-hook-form"
 import { zodResolver } from "@hookform/resolvers/zod"
 import { useTranslation } from "react-i18next"
@@ -11,6 +12,17 @@ import { loginSchema, type LoginFormValues } from "./loginSchema"
 import { useTilt3D } from "@/hooks/useTilt3D"
 
 export default function LoginPage() {
+  // noindex : une page de connexion n'a aucune valeur dans un index, et l'y
+  // faire figurer revient a proposer un formulaire d'authentification dans des
+  // resultats de recherche. robots.txt l'interdit deja, ceci le redit a un
+  // crawler qui aurait suivi un lien direct.
+  useDocumentMeta({
+    title: "Connexion",
+    description: "Page de connexion a AgriConnect, reservee au personnel habilite de la Ferme UAZ.",
+    path: "/login",
+    robots: "noindex,nofollow",
+  })
+
   const { t } = useTranslation()
   const navigate = useNavigate()
   const login = useAuthStore((s) => s.login)

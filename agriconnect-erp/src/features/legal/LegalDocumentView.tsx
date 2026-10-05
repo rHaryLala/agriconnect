@@ -2,6 +2,7 @@ import { Link } from "react-router"
 import { useTranslation } from "react-i18next"
 import { Leaf, ArrowLeft } from "lucide-react"
 import { LanguageSwitcher } from "@/components/shared/LanguageSwitcher"
+import { useDocumentMeta, SITE_URL } from "@/hooks/useDocumentMeta"
 import { CookiePreferencesButton } from "@/features/consent/CookieConsent"
 import { LEGAL_DOCUMENTS, LEGAL_UPDATED_AT, LEGAL_UPDATED_LABEL, OPERATOR } from "./legalContent"
 import type { LegalBlock, LegalDocumentContent } from "./legalContent"
@@ -81,6 +82,27 @@ function Block({ block }: { block: LegalBlock }) {
 export function LegalDocumentView({ document }: { document: LegalDocumentContent }) {
   const { t } = useTranslation()
   const others = LEGAL_DOCUMENTS.filter((entry) => entry.slug !== document.slug)
+
+  // Type schema.org "WebPage" et non "Article" : ce sont des pages de
+  // reference, sans auteur ni fil editorial. dateModified reprend la date du
+  // document lui-meme, pour qu'un agent sache a quelle version il parle.
+  useDocumentMeta({
+    title: document.title,
+    description: document.description,
+    path: `/legal/${document.slug}`,
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "WebPage",
+      name: document.title,
+      description: document.description,
+      url: `${SITE_URL}/legal/${document.slug}`,
+      inLanguage: "fr",
+      dateModified: LEGAL_UPDATED_AT,
+      isPartOf: { "@id": `${SITE_URL}/#site` },
+      publisher: { "@id": `${SITE_URL}/#organisation` },
+      about: { "@type": "Thing", name: "Protection des donnees personnelles" },
+    },
+  })
 
   return (
     <div className="min-h-screen bg-background">

@@ -1,4 +1,5 @@
 import { useMemo, useState, type FormEvent } from "react"
+import { useDocumentMeta } from "@/hooks/useDocumentMeta"
 import { useTranslation } from "react-i18next"
 import { Link } from "react-router"
 import { Leaf, Eye, EyeOff, Loader2, Sprout, Users, LineChart, ArrowRight, Check } from "lucide-react"
@@ -19,6 +20,17 @@ function getStrength(pw: string) {
 const STRENGTH_COLORS = ["bg-destructive", "bg-orange-400", "bg-amber-300", "bg-lime-400", "bg-[#8FE3B3]"]
 
 export default function RegisterPage() {
+  // noindex : une page de connexion n'a aucune valeur dans un index, et l'y
+  // faire figurer revient a proposer un formulaire d'authentification dans des
+  // resultats de recherche. robots.txt l'interdit deja, ceci le redit a un
+  // crawler qui aurait suivi un lien direct.
+  useDocumentMeta({
+    title: "Creation du compte initial",
+    description: "Creation du premier compte administrateur d'AgriConnect.",
+    path: "/register",
+    robots: "noindex,nofollow",
+  })
+
   const { t } = useTranslation()
   const [showPassword, setShowPassword] = useState(false)
   const [password, setPassword] = useState("")

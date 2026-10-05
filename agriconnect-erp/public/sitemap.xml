@@ -1,0 +1,36 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!--
+  Seules les quatre pages publiques y figurent. Les ecrans de /app sont
+  derriere authentification : les lister reviendrait a annoncer des URL qui
+  renvoient toutes vers la connexion.
+
+  lastmod des pages legales = date de derniere mise a jour des documents,
+  tenue dans src/features/legal/legalContent.ts. Les deux doivent bouger
+  ensemble, sinon le sitemap annonce une fraicheur fausse.
+-->
+<urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">
+  <url>
+    <loc>https://agriconnect.zurcher.edu.mg/</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>monthly</changefreq>
+    <priority>1.0</priority>
+  </url>
+  <url>
+    <loc>https://agriconnect.zurcher.edu.mg/legal/confidentialite</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://agriconnect.zurcher.edu.mg/legal/conditions-utilisation</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+  <url>
+    <loc>https://agriconnect.zurcher.edu.mg/legal/cookies</loc>
+    <lastmod>2026-10-05</lastmod>
+    <changefreq>yearly</changefreq>
+    <priority>0.5</priority>
+  </url>
+</urlset>

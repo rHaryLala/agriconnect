@@ -1,10 +1,91 @@
 <!doctype html>
-<html lang="en">
+<!-- lang="fr" : le francais est la langue par defaut de l'application
+     (fallbackLng dans i18n/config.ts). i18n ne modifie pas cet attribut ;
+     c'est volontairement la langue du contenu servi, pas celle choisie. -->
+<html lang="fr">
   <head>
     <meta charset="UTF-8" />
     <link rel="icon" type="image/svg+xml" href="/logo.svg" />
     <meta name="viewport" content="width=device-width, initial-scale=1.0" />
-    <title>AgriConnect - UAZ</title>
+
+    <title>AgriConnect — Gestion agricole de la Ferme UAZ</title>
+    <meta
+      name="description"
+      content="AgriConnect est l'outil de gestion de la Ferme de l'Universite Adventiste Zurcher : production animale et vegetale, stocks, caisse, clients et rapports, utilisable hors connexion."
+    />
+    <meta name="author" content="Ferme de l'Universite Adventiste Zurcher" />
+    <meta name="theme-color" content="#0F8A5F" />
+
+    <!-- Seules la page d'accueil et les trois documents legaux sont publics ;
+         tout /app est derriere authentification. Le robots.txt le declare. -->
+    <meta name="robots" content="index,follow" />
+    <link rel="canonical" href="https://agriconnect.zurcher.edu.mg/" />
+
+    <meta property="og:site_name" content="AgriConnect" />
+    <meta property="og:type" content="website" />
+    <meta property="og:locale" content="fr_MG" />
+    <meta property="og:title" content="AgriConnect — Gestion agricole de la Ferme UAZ" />
+    <meta
+      property="og:description"
+      content="Production, stocks, caisse et rapports de la Ferme UAZ, dans un seul outil utilisable hors connexion."
+    />
+    <meta property="og:url" content="https://agriconnect.zurcher.edu.mg/" />
+    <meta name="twitter:card" content="summary" />
+
+    <!-- JSON-LD servi dans le HTML brut, donc lisible sans executer de
+         JavaScript. Le hook useDocumentMeta ajoute ensuite un bloc par page ;
+         celui-ci reste le socle, pour les agents qui ne rendent pas la SPA. -->
+    <script type="application/ld+json">
+      {
+        "@context": "https://schema.org",
+        "@graph": [
+          {
+            "@type": "SoftwareApplication",
+            "@id": "https://agriconnect.zurcher.edu.mg/#application",
+            "name": "AgriConnect",
+            "applicationCategory": "BusinessApplication",
+            "applicationSubCategory": "Gestion agricole",
+            "operatingSystem": "Web, Android, iOS",
+            "url": "https://agriconnect.zurcher.edu.mg/",
+            "inLanguage": ["fr", "en", "mg"],
+            "description": "Outil de gestion agricole de la Ferme de l'Universite Adventiste Zurcher : production animale et vegetale, stocks et transferts internes, caisse, clients, fournisseurs, personnel et rapports. Fonctionne hors connexion.",
+            "featureList": [
+              "Suivi de la production animale et vegetale",
+              "Gestion des stocks et des transferts internes",
+              "Tenue de la caisse et suivi des clients",
+              "Suivi des fournisseurs et du personnel",
+              "Rapports et export PDF / Excel",
+              "Fonctionnement hors connexion"
+            ],
+            "isAccessibleForFree": false,
+            "publisher": { "@id": "https://agriconnect.zurcher.edu.mg/#organisation" }
+          },
+          {
+            "@type": "Organization",
+            "@id": "https://agriconnect.zurcher.edu.mg/#organisation",
+            "name": "Ferme de l'Universite Adventiste Zurcher",
+            "alternateName": "Ferme UAZ",
+            "url": "https://agriconnect.zurcher.edu.mg/",
+            "email": "support@zurcher.edu.mg",
+            "telephone": "+261344788515",
+            "address": {
+              "@type": "PostalAddress",
+              "streetAddress": "Vohitsoa",
+              "addressLocality": "Sambaina",
+              "addressCountry": "MG"
+            }
+          },
+          {
+            "@type": "WebSite",
+            "@id": "https://agriconnect.zurcher.edu.mg/#site",
+            "url": "https://agriconnect.zurcher.edu.mg/",
+            "name": "AgriConnect",
+            "inLanguage": "fr",
+            "publisher": { "@id": "https://agriconnect.zurcher.edu.mg/#organisation" }
+          }
+        ]
+      }
+    </script>
   </head>
   <body>
     <div id="root"></div>

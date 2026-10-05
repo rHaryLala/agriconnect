@@ -16,6 +16,7 @@ import { FeatureCard } from "./FeatureCard"
 import { Reveal } from "./Reveal"
 import { SectionVideoBackdrop } from "./SectionVideoBackdrop"
 import { usePinnedTrack } from "./usePinnedTrack"
+import { useDocumentMeta, SITE_URL } from "@/hooks/useDocumentMeta"
 import { CookiePreferencesButton } from "@/features/consent/CookieConsent"
 
 const FEATURE_ICONS = [Sprout, Package, Wallet, Handshake, Receipt, BarChart3]
@@ -39,6 +40,21 @@ function StatPill({ target, suffix, labelKey, shortLabelKey }: { target: number;
 export default function LandingPage() {
   const { t } = useTranslation()
   const [scrolled, setScrolled] = useState(false)
+
+  // Seule page publique indexable avec les documents legaux. Le JSON-LD de
+  // l'application et de l'organisation vit dans index.html, donc lisible sans
+  // executer de JavaScript ; on n'ajoute ici que le fil d'Ariane.
+  useDocumentMeta({
+    title: "Gestion agricole de la Ferme UAZ",
+    description:
+      "Production animale et vegetale, stocks, caisse, clients et rapports de la Ferme de l'Universite Adventiste Zurcher, dans un seul outil utilisable hors connexion.",
+    path: "/",
+    jsonLd: {
+      "@context": "https://schema.org",
+      "@type": "BreadcrumbList",
+      itemListElement: [{ "@type": "ListItem", position: 1, name: "Accueil", item: `${SITE_URL}/` }],
+    },
+  })
 
   const [scrollEffects] = useState(supportsHover)
   const heroRef = useScrollProgress<HTMLElement>(scrollEffects)
@@ -97,6 +113,11 @@ export default function LandingPage() {
         </div>
       </header>
 
+      {/* <main> englobe les trois sections de contenu : sans lui la page
+          n'avait aucun repere principal, et le lecteur d'ecran comme le
+          crawler ne savaient pas ou commence le contenu par rapport a
+          l'en-tete et au pied. */}
+      <main id="contenu-principal">
       <section ref={heroRef} className="relative overflow-hidden px-6 py-20 sm:py-28">
         <HeroSlideshow />
         <div className="hero-depth relative z-10 mx-auto max-w-3xl">
@@ -205,6 +226,7 @@ export default function LandingPage() {
         </div>
       </section>
 
+      </main>
       <footer className="bg-[#0B1220] px-6 py-14 text-white/70">
         <Reveal>
           <div className="mx-auto grid max-w-5xl grid-cols-1 gap-8 sm:grid-cols-2 sm:gap-10 lg:grid-cols-3">

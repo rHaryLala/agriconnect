@@ -1,0 +1,16 @@
+# AgriConnect — outil de gestion interne de la Ferme UAZ.
+# Seules la page d'accueil et les documents legaux sont publics ; tout le reste
+# est derriere authentification et n'a donc rien a faire dans un index.
+
+User-agent: *
+Allow: /$
+Allow: /legal/
+
+# Espace applicatif : contenu prive, inaccessible sans compte.
+Disallow: /app/
+# Formulaires d'authentification : aucune valeur pour un index, et les indexer
+# revient a proposer une page de connexion dans des resultats de recherche.
+Disallow: /login
+Disallow: /register
+
+Sitemap: https://agriconnect.zurcher.edu.mg/sitemap.xml
