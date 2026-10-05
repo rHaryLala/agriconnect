@@ -33,14 +33,6 @@ export class CreateTransactionDto {
   date?: string;
 
   @IsString()
-  @IsNotEmpty()
-  farmId!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  userId!: string;
-
-  @IsString()
   @IsOptional()
   clientId?: string;
 
