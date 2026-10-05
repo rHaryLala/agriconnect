@@ -4,14 +4,21 @@ import { ProtectedRoute } from "@/features/auth/ProtectedRoute"
 import { RouteError } from "./RouteError"
 import { AuthRedirectWatcher } from "@/features/auth/AuthRedirectWatcher"
 import { moduleForRoute } from "./layout/navItems"
+import { CookieConsent } from "@/features/consent/CookieConsent"
 
 export const router = createBrowserRouter([
   {
     id: "root",
+    // Le bandeau de consentement est monte ICI, dans l'element de la route
+    // racine : il s'affiche ainsi sur toutes les pages, publiques comme
+    // protegees, tout en restant DANS le contexte du routeur. Monte a cote du
+    // RouterProvider il n'y avait pas acces, et son lien vers la politique de
+    // cookies cassait le rendu de toute l'application.
     element: (
       <>
         <AuthRedirectWatcher />
         <Outlet />
+        <CookieConsent />
       </>
     ),
     errorElement: <RouteError />,
