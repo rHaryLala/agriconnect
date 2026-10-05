@@ -18,7 +18,4 @@ export class CreateClientDto {
   @IsOptional()
   matriculeuaz?: string;
 
-  @IsString()
-  @IsNotEmpty()
-  farmId!: string;
 }
