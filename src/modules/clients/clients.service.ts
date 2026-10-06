@@ -8,7 +8,7 @@ import { ClientType } from '@prisma/client';
 export class ClientsService {
   constructor(private readonly prisma: PrismaService) {}
 
-  async create(createClientDto: CreateClientDto) {
+  async create(createClientDto:  CreateClientDto, farmId: string) {
     const { type, matriculeuaz } = createClientDto;
     // règle métier : pour les personnels de l'UAZ le matricule est obligatoire
     if (type === ClientType.PERSONNEL_UAZ && (!matriculeuaz || matriculeuaz.trim() === '')) {
@@ -16,11 +16,12 @@ export class ClientsService {
     }
 
     return this.prisma.client.create({
-      data: {
-        ...createClientDto,
-        matriculeuaz: type === ClientType.PERSONNEL_UAZ ? matriculeuaz : null,
-      },
-    });
+  data: {
+    ...createClientDto,
+    matriculeuaz: type === ClientType.PERSONNEL_UAZ ? matriculeuaz : null,
+    farmId,
+  },
+});
   }
 
   async findAll(farmId?: string) {
