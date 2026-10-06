@@ -98,6 +98,8 @@ export class ProductionService {
         farmId,
         stockItemId: dto.stockItemId,
         variantId: dto.variantId, // ajouté
+        cattleId: dto.cattleId,
+        poultryTrackingId: dto.poultryTrackingId,
       },
     });
 

@@ -34,4 +34,16 @@ export class CreateProductionDto {
     @IsOptional()
     @IsDateString()
     date?: string;
+
+    // Les colonnes existent au modele et sont migrees : seul le DTO les
+    // bloquait, et forbidNonWhitelisted en faisait un 400 sec. Elles permettent
+    // d'attribuer une production a un animal precis (lait d'une vache, ponte
+    // d'une pondeuse).
+    @IsOptional()
+    @IsUUID()
+    cattleId?: string;
+
+    @IsOptional()
+    @IsUUID()
+    poultryTrackingId?: string;
 }
