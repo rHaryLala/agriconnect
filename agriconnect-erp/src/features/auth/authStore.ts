@@ -1,7 +1,8 @@
 import { create } from "zustand"
 import { persist, createJSONStorage } from "zustand/middleware"
 import type { User } from "@/types/user"
-import { login as loginRequest } from "./api"
+import type { Permission } from "@/lib/permissions"
+import { login as loginRequest, fetchMe } from "./api"
 import { dynamicAuthStorage, setRememberPreference } from "@/lib/authStorage"
 import { clearSessionScopedStorage } from "@/lib/persistedStores"
 
@@ -12,6 +13,8 @@ export type LogoutReason = "manual" | "expired" | null
 interface AuthState {
   user: User | null
   token: string | null
+  /** Droits renvoyes par le serveur ; null tant qu'il n'a pas repondu. */
+  serverPermissions: Permission[] | null
   isAuthenticated: boolean
   isLoading: boolean
   error: string | null
@@ -22,6 +25,7 @@ interface AuthState {
   clearLogoutReason: () => void
   setHasHydrated: (value: boolean) => void
   updateUser: (user: User) => void
+  refreshProfile: () => Promise<void>
 }
 
 export const useAuthStore = create<AuthState>()(
@@ -29,6 +33,7 @@ export const useAuthStore = create<AuthState>()(
     (set) => ({
       user: null,
       token: null,
+      serverPermissions: null,
       isAuthenticated: false,
       isLoading: false,
       error: null,
@@ -49,7 +54,7 @@ export const useAuthStore = create<AuthState>()(
 
       logout: (reason = "manual") => {
         clearSessionScopedStorage()
-        set({ user: null, token: null, isAuthenticated: false, logoutReason: reason })
+        set({ user: null, token: null, serverPermissions: null, isAuthenticated: false, logoutReason: reason })
         // Une navigation React seule laisserait les stores métier déjà chargés en mémoire :
         // la personne suivante sur ce poste les verrait encore le temps de la session JS.
         // Un rechargement complet force chaque store à se réhydrater depuis un
@@ -63,11 +68,25 @@ export const useAuthStore = create<AuthState>()(
       setHasHydrated: (value) => set({ hasHydrated: value }),
 
       updateUser: (user) => set({ user }),
+
+      // Le role recu au login est fige a cet instant : un changement de role
+      // n'y apparait jamais. On relit le profil au demarrage.
+      refreshProfile: async () => {
+        const { token } = useAuthStore.getState()
+        if (!token) return
+        const profil = await fetchMe(token)
+        if (profil) set({ user: profil.user, serverPermissions: profil.permissions })
+      },
     }),
     {
       name: "agriconnect-auth",
       storage: createJSONStorage(() => dynamicAuthStorage),
-      partialize: (state) => ({ user: state.user, token: state.token, isAuthenticated: state.isAuthenticated }),
+      partialize: (state) => ({
+        user: state.user,
+        token: state.token,
+        isAuthenticated: state.isAuthenticated,
+        serverPermissions: state.serverPermissions,
+      }),
       onRehydrateStorage: () => (state) => {
         state?.setHasHydrated(true)
       },

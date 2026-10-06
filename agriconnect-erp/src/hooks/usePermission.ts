@@ -10,7 +10,11 @@ import {
 
 export function useEffectivePermissions() {
   const user = useAuthStore((s) => s.user)
+  const serverPermissions = useAuthStore((s) => s.serverPermissions)
   const override = useUserPermissionsStore((s) => (user ? s.overrides[user.id] : undefined))
+  // Les droits du serveur priment : c'est lui qui autorise reellement. La
+  // matrice locale ne sert que de repli hors ligne.
+  if (serverPermissions) return serverPermissions
   return effectivePermissions(user?.role, override)
 }
 

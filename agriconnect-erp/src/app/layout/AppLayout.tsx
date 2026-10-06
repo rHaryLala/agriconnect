@@ -4,6 +4,7 @@ import { Header } from "./Header"
 import { Sidebar } from "./Sidebar"
 import { MobileBottomNav } from "./MobileBottomNav"
 import { useTheme } from "@/hooks/useTheme"
+import { useAuthStore } from "@/features/auth/authStore"
 import { useTranslation } from "react-i18next"
 
 export function AppLayout() {
@@ -18,6 +19,13 @@ export function AppLayout() {
   }
 
   const bgImage = theme === "dark" ? "/backgrounds/app-bg-dark.webp" : "/backgrounds/app-bg-light.webp"
+
+  // Relit le profil une fois par session authentifiee : le role peut avoir
+  // change depuis la connexion.
+  const refreshProfile = useAuthStore((s) => s.refreshProfile)
+  useEffect(() => {
+    void refreshProfile()
+  }, [refreshProfile])
 
   // Échap ferme le panneau de navigation mobile. Sans cela il ne se referme
   // qu'au clic sur le voile, qui est aria-hidden et donc hors d'atteinte au
