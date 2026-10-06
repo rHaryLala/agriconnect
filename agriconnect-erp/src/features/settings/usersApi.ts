@@ -1,9 +1,8 @@
 import { apiFetch } from "@/lib/apiClient"
+import { withMockFallback } from "@/lib/apiFallback"
 import { toFrontendRole, toBackendRole } from "@/lib/roleMapping"
 import type { User, UserRole, UserStatus } from "@/types/user"
 import { mockFetchUsers, mockCreateUser, mockUpdateUser, mockDeleteUser } from "@/features/auth/mockUsersApi"
-
-const USE_MOCK_API = import.meta.env.VITE_USE_MOCK_API === "true"
 
 interface BackendUser {
   id: string
@@ -13,13 +12,22 @@ interface BackendUser {
   role: string
 }
 
+interface UserFormValues {
+  name: string
+  email: string
+  role: UserRole
+  status?: UserStatus
+}
+
 function toFrontendUser(u: BackendUser): User {
   return {
     id: u.id,
-    name: `${u.firstName} ${u.lastName}`,
+    name: `${u.firstName} ${u.lastName}`.trim(),
     email: u.email,
     role: toFrontendRole(u.role),
     avatarInitials: `${u.firstName[0] ?? ""}${u.lastName[0] ?? ""}`.toUpperCase(),
+    // SÉQUELLE : le schéma n'a pas User.status. Tant que le DBA ne l'a pas
+    // ajouté, l'état affiché est une valeur par défaut et non une donnée.
     status: "actif",
   }
 }
@@ -29,37 +37,60 @@ function splitName(fullName: string): { firstName: string; lastName: string } {
   return { firstName, lastName: rest.join(" ") || firstName }
 }
 
-export async function fetchUsers(token: string): Promise<User[]> {
-  if (USE_MOCK_API) return mockFetchUsers()
-  const data = await apiFetch<BackendUser[]>("/users", { token })
-  return data.map(toFrontendUser)
-}
-
 const TEMP_INITIAL_PASSWORD = "1234qwerty"
 
-export async function createUser(token: string, values: { name: string; email: string; role: UserRole; status?: UserStatus }): Promise<User> {
-  if (USE_MOCK_API) return mockCreateUser(values)
-  const { firstName, lastName } = splitName(values.name)
-  const data = await apiFetch<BackendUser>("/users", {
-    method: "POST",
-    token,
-    body: { email: values.email, password: TEMP_INITIAL_PASSWORD, firstName, lastName, role: toBackendRole(values.role) },
-  })
-  return toFrontendUser(data)
+export function fetchUsers(token: string): Promise<User[]> {
+  return withMockFallback(
+    "users",
+    async () => (await apiFetch<BackendUser[]>("/users", { token })).map(toFrontendUser),
+    () => mockFetchUsers(),
+  )
 }
 
-export async function updateUserApi(token: string, id: string, values: { name: string; email: string; role: UserRole; status?: UserStatus }): Promise<User> {
-  if (USE_MOCK_API) return mockUpdateUser(id, values)
+export function createUser(token: string, values: UserFormValues): Promise<User> {
   const { firstName, lastName } = splitName(values.name)
-  const data = await apiFetch<BackendUser>(`/users/${id}`, {
-    method: "PATCH",
-    token,
-    body: { firstName, lastName, role: toBackendRole(values.role) },
-  })
-  return toFrontendUser(data)
+  return withMockFallback(
+    "users",
+    async () =>
+      toFrontendUser(
+        await apiFetch<BackendUser>("/users", {
+          method: "POST",
+          token,
+          body: {
+            email: values.email,
+            password: TEMP_INITIAL_PASSWORD,
+            firstName,
+            lastName,
+            role: toBackendRole(values.role),
+          },
+        }),
+      ),
+    () => mockCreateUser(values),
+  )
 }
 
-export async function deleteUserApi(token: string, id: string): Promise<void> {
-  if (USE_MOCK_API) return mockDeleteUser(id)
-  await apiFetch(`/users/${id}`, { method: "DELETE", token })
+export function updateUserApi(token: string, id: string, values: UserFormValues): Promise<User> {
+  const { firstName, lastName } = splitName(values.name)
+  return withMockFallback(
+    "users",
+    async () =>
+      toFrontendUser(
+        await apiFetch<BackendUser>(`/users/${id}`, {
+          method: "PATCH",
+          token,
+          // UpdateUserDto n'accepte ni email ni status : les envoyer déclencherait
+          // un 400 (forbidNonWhitelisted).
+          body: { firstName, lastName, role: toBackendRole(values.role) },
+        }),
+      ),
+    () => mockUpdateUser(id, values),
+  )
+}
+
+export function deleteUserApi(token: string, id: string): Promise<void> {
+  return withMockFallback(
+    "users",
+    () => apiFetch<void>(`/users/${id}`, { method: "DELETE", token }),
+    () => mockDeleteUser(id),
+  )
 }
