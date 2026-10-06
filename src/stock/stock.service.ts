@@ -5,6 +5,7 @@ import { UpdateStockDto } from './dto/update-stock.dto';
 import { CreateStockMovementDto } from './dto/create-stock-movement.dto';
 
 const SEUIL_ECART_REPESAGE_PERCENT = 5;
+const CATEGORIE_PAR_DEFAUT = 'AUTRE';
 
 @Injectable()
 export class StockService {
@@ -13,7 +14,11 @@ export class StockService {
   // ---------- StockItem ----------
 
   async createItem(dto: CreateStockDto, farmId: string) {
-    return this.prisma.stockItem.create({ data: { ...dto, farmId } });
+    // La colonne reste NOT NULL en base : le defaut est applique ici plutot que
+    // d'etre exige du client.
+    return this.prisma.stockItem.create({
+      data: { ...dto, category: dto.category ?? CATEGORIE_PAR_DEFAUT, farmId },
+    });
   }
 
   async findAllItems(farmId: string) {
