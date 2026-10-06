@@ -99,5 +99,41 @@ export class EmployeeService {
         return this.prisma.employee.update({where: {id}, data: dto});
     }
 
-    
+    // Rattache un profil Client existant à cette fiche employé
+    async linkToClient(employeeId: string, dto: LinkClientDto, farmId: string) {
+    const employee = await this.findOne(employeeId, farmId);
+
+    const client = await this.prisma.client.findFirst({
+      where: { id: dto.clientId, farmId },
+    });
+    if (!client) {
+      throw new NotFoundException('Client introuvable');
+    }
+
+    const dejaLie = await this.prisma.employee.findFirst({
+      where: { clientId: dto.clientId, NOT: { id: employeeId } },
+    });
+    if (dejaLie) {
+      throw new BadRequestException(
+        `Ce client est déjà rattaché à un autre employé (${dejaLie.firstName} ${dejaLie.lastName})`,
+      );
+    }
+
+    return this.prisma.employee.update({
+      where: { id: employeeId },
+      data: { clientId: dto.clientId },
+    });
+  }
+
+  // Détache le lien client, sans toucher au reste de la fiche employé —
+  // symétrique de linkToClient, pour que le retrait soit aussi explicite
+  // que le rattachement (jamais un "update" générique qui pourrait
+  // effacer ce lien par accident via un champ oublié dans le corps).
+  async unlinkClient(employeeId: string, farmId: string) {
+    await this.findOne(employeeId, farmId);
+    return this.prisma.employee.update({
+      where: { id: employeeId },
+      data: { clientId: null },
+    });
+  }
 }
