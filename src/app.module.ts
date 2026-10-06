@@ -21,7 +21,8 @@ import { PaddyModule } from './paddy/paddy.module'; // Semaine 3 - riziculture
 import { LaborModule } from './labor/labor.module'; // Semaine 3 - main d'oeuvre journaliere
 import { SupplierModule } from './supplier/supplier.module';
 import { EmployeeModule } from './employee/employee.module';
-
+import { ClientsModule } from './clients/clients.module';
+import { TransactionsModule } from './transactions/transactions.module';
 @Module({
   imports: [
     ConfigModule.forRoot({ isGlobal: true }), // charge .env
@@ -41,6 +42,8 @@ import { EmployeeModule } from './employee/employee.module';
     LaborModule,
     SupplierModule,
     EmployeeModule,
+    ClientsModule,
+    TransactionsModule,
   ],
   controllers: [AppController, ExempleController, DashboardController], // ExempleController ajouté ici
   providers: [AppService, DashboardService],
