@@ -9,3 +9,4 @@ import { CreateEmployeeDto } from './dto/create-employee.dto';
 import { UpdateEmployeeDto } from './dto/update-employee.dto';
 import { LinkClientDto } from './dto/link-client.dto';
 
+type AuthUser = { id: string; role: string; farmId: string };
