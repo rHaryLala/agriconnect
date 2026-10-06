@@ -45,6 +45,12 @@ model Farm {
   updatedAt   DateTime      @updatedAt
 }
 
+enum UserStatus{
+  ACTIF
+  INACTIF
+  SUSPENDU
+}
+
 model User {
   id            String          @id @default(uuid())
   email         String          @unique
@@ -54,6 +60,8 @@ model User {
   role          Role            @default(OUVRIER)
   farmId        String
   farm          Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  status UserStatus @default(ACTIF)
 
   employeeId   String?   @unique
   employee  Employee?    @relation(fields: [employeeId], references: [id], onDelete: SetNull)
