@@ -133,7 +133,7 @@ enum ProductionType {
 model Production {
   id          String         @id @default(uuid())
   type        ProductionType
-  quantity    Float
+  quantity    Decimal? @db.Decimal(10, 2)
   unit        String
   date        DateTime       @default(now())
   notes       String?
@@ -158,6 +158,9 @@ model Production {
   
 
   createdAt   DateTime       @default(now())
+
+  morningQty Decimal? @db.Decimal(10, 2) // Traite du matin
+  eveningQty Decimal? @db.Decimal(10, 2) // Traite du soir
 
   @@index([farmId, date(sort: Desc)])
   @@index([poultryTrackingId])
