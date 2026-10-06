@@ -7,6 +7,7 @@ import {
   IsString,
   IsPositive,
   IsDateString,
+  isString,
 } from "class-validator";
 
 export class CreateTransactionDto {
@@ -30,14 +31,6 @@ export class CreateTransactionDto {
   @IsDateString()
   @IsOptional()
   date?: string;
-
-  @IsString()
-  @IsNotEmpty()
-  farmId!: string;
-
-  @IsString()
-  @IsNotEmpty()
-  userId!: string;
 
   @IsString()
   @IsOptional()
