@@ -178,7 +178,7 @@ enum MouvementType {
 model StockItem {
   id          String          @id @default(uuid())
   name        String
-  category    String
+  category String @default("AUTRE")
   quantity    Float           @default(0)
   unit        String
   miniAlert   Float           @default(10)
