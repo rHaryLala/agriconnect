@@ -5,12 +5,13 @@ import { Wallet, TrendingDown, TrendingUp, FileWarning, Handshake, Plus, Minus, 
 import { StatCard } from "@/components/shared/StatCard"
 import { QuickActionsCard, type QuickAction } from "@/components/shared/QuickActionsCard"
 import { formatCurrency, formatNumber, formatMonthLabel } from "@/lib/format"
-import { MOCK_DASHBOARD_DATA as data } from "./mockDashboardData"
+import { useDashboardStore } from "./dashboardStore"
 import { useFinanceStore } from "@/features/finance/financeStore"
 import { computeMonthlySeries, computeMonthOverMonth } from "@/lib/financeCalc"
 import { MiniAreaChart } from "@/components/shared/MiniAreaChart"
 
 export function FinanceDashboardView() {
+  const data = useDashboardStore((s) => s.data)
   const { t } = useTranslation()
   const navigate = useNavigate()
   const { transactions, fetchAll } = useFinanceStore()

@@ -6,9 +6,11 @@ import { QuickActionsCard, type QuickAction } from "@/components/shared/QuickAct
 import { AlertBanner } from "@/components/shared/AlertBanner"
 import { MiniAreaChart } from "@/components/shared/MiniAreaChart"
 import { formatNumber } from "@/lib/format"
-import { MOCK_DASHBOARD_DATA as data, MOCK_TRENDS as trends, MOCK_STAT_TRENDS as statTrends } from "./mockDashboardData"
+import {MOCK_TRENDS as trends, MOCK_STAT_TRENDS as statTrends} from "./mockDashboardData"
+import { useDashboardStore } from "./dashboardStore"
 
 export function OuvrierDashboardView() {
+  const data = useDashboardStore((s) => s.data)
   const { t } = useTranslation()
   const navigate = useNavigate()
 
