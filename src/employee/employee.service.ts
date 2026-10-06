@@ -40,5 +40,25 @@ export class EmployeeService {
     });
     }
 
+    async findAll(farmId: string, department?: string)
+    {
+        return this.prisma.employee.findMany({
+            where: {
+                farmId,
+                 // "department" filtré seulement s'il est fourni dans la requête 
+                department,
+            },
+
+            // On inclut le compte de connexion et le profil client liés s'ils
+            // existent, pour que le frontend n'ait pas besoin d'appels
+            // supplémentaires juste pour savoir "cet employé a-t-il un compte ?"
+            include: {
+                user: {select: {id: true, email: true, role: true}},
+                client: {select: {id: true, name: true}},
+            },
+            orderBy: [{lastName: 'asc'}, {firstName: 'asc'}],
+        });
+    }
+
     
 }
