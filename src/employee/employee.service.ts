@@ -60,5 +60,44 @@ export class EmployeeService {
         });
     }
 
+    async findOne(id: string, farmId: string)
+    {
+        const employee = await this.prisma.employee.findFirst({
+            where: {id, farmId},
+            include: {
+                user: {select: {id: true, email: true, role:true}},
+                client: {select: {id: true, name: true}},
+                // Historique des retenues déjà existant au schéma — même si la
+                // retenue n'est pas encore "réellement appliquée à la paie"
+                // (hors périmètre de cette étape), autant déjà pouvoir les lister.
+                salaryDeductions: {orderBy: {createdAt: 'desc'}},
+            },
+        });
+        if (!employee)
+        {
+            throw new NotFoundException('Employé introuvable');
+        }
+        return employee;
+    }
+
+    async update(id: string, dto: UpdateEmployeeDto, farmId: string)
+    {
+        await this.findOne(id, farmId) //Vérifie existence + appartenance à une ferme
+        
+        if (dto.matricule)
+        {
+            const existing = await this.prisma.employee.findFirst({
+                where: {farmId, matricule: dto.matricule, NOT: {id}},
+            });
+            if (existing)
+            {
+                throw new ConflictException(
+                    `Le matricule "${dto.matricule}" est déjà utilisé par un autre compte`
+                );
+            }
+        }
+        return this.prisma.employee.update({where: {id}, data: dto});
+    }
+
     
 }
