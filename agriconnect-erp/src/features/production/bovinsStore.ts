@@ -3,8 +3,8 @@ import { persist, createJSONStorage } from "zustand/middleware"
 import type { BovinAnimal, BovinSortieType } from "@/types/production"
 import { SEED_BOVINS } from "./mockProductionData"
 import { newId } from "@/lib/id"
-
-const FAKE_LATENCY_MS = 500
+import { fetchBovins, createBovin, recordSortieBovin } from "./bovinsApi"
+import { useAuthStore } from "@/features/auth/authStore"
 
 interface SortieData {
   dateSortie: string
@@ -32,48 +32,45 @@ export const useBovinsStore = create<BovinsState>()(
       isLoading: false,
       hasFetched: false,
 
-      fetchAll: () => {
-        if (get().hasFetched) return Promise.resolve()
-        return new Promise((resolve) => {
-          set({ isLoading: true })
-          setTimeout(() => {
-            set({ animaux: SEED_BOVINS, isLoading: false, hasFetched: true })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        })
+      fetchAll: async () => {
+        if (get().hasFetched) return
+        set({ isLoading: true })
+        try {
+          const token = useAuthStore.getState().token
+          set({ animaux: token ? await fetchBovins(token) : SEED_BOVINS, hasFetched: true })
+        } finally {
+          set({ isLoading: false })
+        }
       },
 
-      addAnimal: (data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            const animal: BovinAnimal = { ...data, id: newId("b"), statut: "present" }
-            set({ animaux: [animal, ...get().animaux] })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      addAnimal: async (data) => {
+        const token = useAuthStore.getState().token
+        const animal: BovinAnimal = token
+          ? await createBovin(token, data)
+          : { ...data, id: newId("b"), statut: "present" }
+        set({ animaux: [animal, ...get().animaux] })
+      },
 
-      recordSortie: (id, data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            set({
-              animaux: get().animaux.map((a) =>
-                a.id === id
-                  ? {
-                      ...a,
-                      statut: data.typeSortie === "vente" ? "vendu" : "mort",
-                      dateSortie: data.dateSortie,
-                      typeSortie: data.typeSortie,
-                      clientId: data.clientId,
-                      prixVente: data.prixVente,
-                      signataire: data.signataire,
-                      observation: data.observation,
-                    }
-                  : a
-              ),
-            })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      recordSortie: async (id, data) => {
+        const token = useAuthStore.getState().token
+        if (token) await recordSortieBovin(token, id, data)
+        set({
+          animaux: get().animaux.map((a) =>
+            a.id === id
+              ? {
+                  ...a,
+                  statut: data.typeSortie === "vente" ? "vendu" : "mort",
+                  dateSortie: data.dateSortie,
+                  typeSortie: data.typeSortie,
+                  clientId: data.clientId,
+                  prixVente: data.prixVente,
+                  signataire: data.signataire,
+                  observation: data.observation,
+                }
+              : a
+          ),
+        })
+      },
 
       deleteAnimal: (id) => set({ animaux: get().animaux.filter((a) => a.id !== id) }),
     }),
