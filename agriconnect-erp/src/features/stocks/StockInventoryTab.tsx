@@ -142,7 +142,9 @@ export function StockInventoryTab({ onGoToAlerts, canEdit }: StockInventoryTabPr
           fields={articleFields}
           defaultValues={{ nom: "", unite: "", quantiteInitiale: 0, seuilCritique: 0 }}
           onSubmit={async (values) => {
-            addArticle(values)
+            // await : la creation passe desormais par le reseau, le message de
+            // succes ne doit pas s'afficher avant la reponse.
+            await addArticle(values)
             toast.success(t("stock.inventory.toastCreated"))
           }}
         />

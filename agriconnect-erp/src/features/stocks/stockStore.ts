@@ -3,6 +3,8 @@ import { persist, createJSONStorage } from "zustand/middleware"
 import { DEFAULT_STOCK_LOCATION, type StockArticle, type StockMovement } from "@/types/stock"
 import { SEED_ARTICLES, SEED_MOVEMENTS } from "./mockStockData"
 import { newId } from "@/lib/id"
+import { fetchStock, createArticle, createMovement } from "./stockApi"
+import { useAuthStore } from "@/features/auth/authStore"
 
 const FAKE_LATENCY_MS = 500
 
@@ -17,7 +19,7 @@ interface StockState {
   isLoading: boolean
   hasFetched: boolean
   fetchAll: () => Promise<void>
-  addArticle: (data: Omit<StockArticle, "id">) => void
+  addArticle: (data: Omit<StockArticle, "id">) => Promise<void>
   addMovement: (data: Omit<StockMovement, "id">) => Promise<void>
   updateMovement: (id: string, data: Omit<StockMovement, "id">) => Promise<void>
   deleteMovement: (id: string) => void
@@ -31,29 +33,35 @@ export const useStockStore = create<StockState>()(
       isLoading: false,
       hasFetched: false,
 
-      fetchAll: () => {
-        if (get().hasFetched) return Promise.resolve()
-        return new Promise((resolve) => {
-          set({ isLoading: true })
-          setTimeout(() => {
-            set({ articles: SEED_ARTICLES, movements: SEED_MOVEMENTS, isLoading: false, hasFetched: true })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        })
+      fetchAll: async () => {
+        if (get().hasFetched) return
+        set({ isLoading: true })
+        try {
+          const token = useAuthStore.getState().token
+          const { articles, movements } = token
+            ? await fetchStock(token)
+            : { articles: SEED_ARTICLES, movements: SEED_MOVEMENTS }
+          set({ articles, movements, hasFetched: true })
+        } finally {
+          set({ isLoading: false })
+        }
       },
 
-      addArticle: (data) => {
-        set({ articles: [...get().articles, { ...data, id: newId("article") }] })
+      addArticle: async (data) => {
+        const token = useAuthStore.getState().token
+        const article = token ? await createArticle(token, data) : { ...data, id: newId("article") }
+        set({ articles: [...get().articles, article] })
       },
 
-      addMovement: (data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            set({ movements: [{ ...data, id: newId("mvt") }, ...get().movements] })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      addMovement: async (data) => {
+        const token = useAuthStore.getState().token
+        const movement = token ? await createMovement(token, data) : { ...data, id: newId("mvt") }
+        set({ movements: [movement, ...get().movements] })
+      },
 
+      // Pas d'appel reseau : le backend ne permet pas de modifier un mouvement,
+      // il le corrige par une ecriture inverse (RG-06). La modification reste
+      // donc locale jusqu'a ce que l'ecran passe par la route de correction.
       updateMovement: (id, data) =>
         new Promise((resolve) => {
           setTimeout(() => {
