@@ -34,6 +34,7 @@ export class EmployeeController {
     return this.service.findAll(user.farmId, department);
   }
 
+  
   @Get(':id')
   @Roles('ADMIN', 'COMPTABLE')
   findOne(@Param('id') id: string, @CurrentUser() user: AuthUser) {
