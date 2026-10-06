@@ -5,10 +5,11 @@ import { PrismaService } from '../../prisma/prisma.service';
 
 @Injectable()
 export class TransactionsService {
-  constructor (private readonly prisma: PrismaService) {}
+  constructor(private readonly prisma: PrismaService) {}
 
-  async create(createTransactionDto: CreateTransactionDto) {
-    const {farmId, clientId, userId, invoiceId, ...data} = createTransactionDto;
+  
+  async create(createTransactionDto: CreateTransactionDto, userId: string, farmId: string) {
+    const { clientId, invoiceId, ...data } = createTransactionDto;
 
     return this.prisma.transaction.create({
       data: {
@@ -21,21 +22,22 @@ export class TransactionsService {
     });
   }
 
-  async findAll(farmId?: string ){
+  async findAll(farmId?: string) {
     return this.prisma.transaction.findMany({
-      where: farmId? { farmId } : {}, include: { client:true, invoice: true, user: true}, 
-      orderBy: {createdAt: 'desc'},
-    }); 
-
+      where: farmId ? { farmId } : {},
+      include: { client: true, invoice: true, user: true },
+      orderBy: { createdAt: 'desc' },
+    });
   }
 
   async findOne(id: string) {
     const transaction = await this.prisma.transaction.findUnique({
-      where: { id }, include: {client: true, invoice: true, farm: true,}, 
+      where: { id },
+      include: { client: true, invoice: true, farm: true },
     });
 
-    if(!transaction) {
-      throw new NotFoundException(`Transanction avec l'id ${id} introuvable`)
+    if (!transaction) {
+      throw new NotFoundException(`Transaction avec l'id ${id} introuvable`);
     }
 
     return transaction;
@@ -50,41 +52,39 @@ export class TransactionsService {
 
     const recettes = aggregates.find((a) => a.type === 'RECETTE')?._sum.amount?.toNumber() ?? 0;
     const depenses = aggregates.find((a) => a.type === 'DEPENSE')?._sum.amount?.toNumber() ?? 0;
- 
+
     return {
       recettes,
       depenses,
-      balance: recettes - depenses, // Solde net de la caisse
+      balance: recettes - depenses,
     };
   }
 
-  async update (id: string, updateTransactionDto: UpdateTransactionDto){
+  async update(id: string, updateTransactionDto: UpdateTransactionDto) {
     await this.findOne(id);
 
-    const {farmId, clientId, userId, invoiceId, date, ...data } = updateTransactionDto;
+    const { clientId, invoiceId, date, ...data } = updateTransactionDto;
 
     return this.prisma.transaction.update({
-      where: {id},
+      where: { id },
       data: {
         ...data,
         ...(date && { date: new Date(date) }),
-        ...(farmId && { farm: { connect: { id: farmId } } }),
-        ...(userId && { user: { connect: { id: userId } } }),
         ...(clientId && { client: { connect: { id: clientId } } }),
         ...(invoiceId && { invoice: { connect: { id: invoiceId } } }),
       },
       include: {
         client: true,
         invoice: true,
-      }
+      },
     });
   }
 
   async remove(id: string) {
     await this.findOne(id);
 
-    return this.prisma.transaction.delete ({
-      where: {id},
+    return this.prisma.transaction.delete({
+      where: { id },
     });
   }
 }
