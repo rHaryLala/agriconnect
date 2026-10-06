@@ -4,6 +4,7 @@ import { PrismaService } from '../prisma/prisma.service';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { LinkClientDto } from '../employee/dto/link-client.dto';
+import { LinkEmployeeDto } from './dto/link-employee.dto';
 @Injectable()
 export class UsersService {
   constructor(private prisma: PrismaService) {}
@@ -152,5 +153,46 @@ export class UsersService {
   private excludePassword(user: { password: string; [key: string]: unknown }) {
     const { password, ...rest } = user;
     return rest;
+  }
+
+  async linkToEmployee(userId: string, dto:LinkEmployeeDto, farmId: string)
+  {
+      await this.findOne(userId, farmId); //Vérifie existence + appartenance à la ferme
+
+      const employee = await this.prisma.employee.findFirst({
+        where: {id: dto.employeeId, farmId},
+      });
+
+      if (!employee)
+      {
+          throw new NotFoundException('Employé Introuvable');
+      }
+
+      const dejaLie = await this.prisma.user.findFirst({
+        where: {employeeId: dto.employeeId, NOT: {id: userId}},
+      });
+
+      if (dejaLie)
+      {
+        throw new ConflictException(
+          `Cet employé est déjà rattaché à un autre compte (${dejaLie.email})`,
+        );
+      }
+
+      return this.prisma.user.update({
+        where: {id: userId},
+        data: {employeeId: dto.employeeId},
+      });
+  }
+
+  //Détache le lien
+  async unlinkEmployee(userId: string, farmId: string)
+  {
+    await this.findOne(userId, farmId);
+
+    return this.prisma.user.update({
+      where: {id: userId},
+      data: {employeeId: null},
+    });
   }
 }
