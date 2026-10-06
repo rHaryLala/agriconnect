@@ -45,6 +45,12 @@ model Farm {
   updatedAt   DateTime      @updatedAt
 }
 
+enum UserStatus{
+  ACTIF
+  INACTIF
+  SUSPENDU
+}
+
 model User {
   id            String          @id @default(uuid())
   email         String          @unique
@@ -54,6 +60,8 @@ model User {
   role          Role            @default(OUVRIER)
   farmId        String
   farm          Farm            @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  status UserStatus @default(ACTIF)
 
   employeeId   String?   @unique
   employee  Employee?    @relation(fields: [employeeId], references: [id], onDelete: SetNull)
@@ -125,7 +133,7 @@ enum ProductionType {
 model Production {
   id          String         @id @default(uuid())
   type        ProductionType
-  quantity    Float
+  quantity    Decimal? @db.Decimal(10, 2)
   unit        String
   date        DateTime       @default(now())
   notes       String?
@@ -151,6 +159,9 @@ model Production {
 
   createdAt   DateTime       @default(now())
 
+  morningQty Decimal? @db.Decimal(10, 2) // Traite du matin
+  eveningQty Decimal? @db.Decimal(10, 2) // Traite du soir
+
   @@index([farmId, date(sort: Desc)])
   @@index([poultryTrackingId])
   @@index([cattleId])
@@ -167,7 +178,7 @@ enum MouvementType {
 model StockItem {
   id          String          @id @default(uuid())
   name        String
-  category    String
+  category String @default("AUTRE")
   quantity    Float           @default(0)
   unit        String
   miniAlert   Float           @default(10)
