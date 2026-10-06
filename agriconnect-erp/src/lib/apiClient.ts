@@ -1,12 +1,19 @@
 import * as Sentry from "@sentry/react"
 
-const API_URL = import.meta.env.VITE_API_URL as string
+// Le backend monte tout sous api/v1 (setGlobalPrefix dans main.ts). Le préfixe
+// est ajouté ici, une fois, plutôt que dans chaque appel.
+const API_PREFIX = "/api/v1"
+
+const API_URL = (import.meta.env.VITE_API_URL as string)?.replace(/\/+$/, "") ?? ""
 
 export class ApiError extends Error {
   status: number
-  constructor(status: number, message: string) {
+  /** true quand la requête n'a jamais atteint le serveur (DNS, TCP, CORS). */
+  isNetworkError: boolean
+  constructor(status: number, message: string, isNetworkError = false) {
     super(message)
     this.status = status
+    this.isNetworkError = isNetworkError
   }
 }
 
@@ -17,14 +24,21 @@ interface RequestOptions {
 }
 
 export async function apiFetch<T>(path: string, options: RequestOptions = {}): Promise<T> {
-  const res = await fetch(`${API_URL}${path}`, {
-    method: options.method ?? "GET",
-    headers: {
-      "Content-Type": "application/json",
-      ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
-    },
-    body: options.body ? JSON.stringify(options.body) : undefined,
-  })
+  let res: Response
+  try {
+    res = await fetch(`${API_URL}${API_PREFIX}${path}`, {
+      method: options.method ?? "GET",
+      headers: {
+        "Content-Type": "application/json",
+        ...(options.token ? { Authorization: `Bearer ${options.token}` } : {}),
+      },
+      body: options.body ? JSON.stringify(options.body) : undefined,
+    })
+  } catch {
+    // fetch ne rejette que si la requête n'a pas abouti du tout. On le
+    // distingue d'une réponse d'erreur : seul ce cas justifie un repli.
+    throw new ApiError(0, "Serveur injoignable", true)
+  }
 
   if (!res.ok) {
     const errorBody = await res.json().catch(() => null)
