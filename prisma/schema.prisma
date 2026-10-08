@@ -34,6 +34,8 @@ model Farm {
   employees   Employee[]
   suppliers   Supplier[]
 
+  transactionCategories TransactionCategory[]
+
   supplierPurchases SupplierPurchase[]
 
   //Semaine 3 — main d'œuvre journalière(Lesoa)
