@@ -358,6 +358,11 @@ model Transaction{
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
 
+  categoryId String?
+  category   TransactionCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([categoryId])
+
   @@index([farmId, date(sort: Desc)])
   @@index([farmId, type, date(sort: Desc)])
 }
@@ -872,4 +877,19 @@ model LaborLog{
 
   @@index([farmId, date(sort: Desc)])
   @@index([activityId])
+}
+
+model TransactionCategory{
+  id String @id @default(uuid())
+  name String 
+  farmId String
+  farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([farmId, name])
+  @@index([farmId])
 }
