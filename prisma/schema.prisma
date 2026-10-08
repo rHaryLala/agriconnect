@@ -288,7 +288,7 @@ enum InvoiceStatus {
 
 model Invoice {
   id            String        @id @default(uuid())
-  invoiceNumber String        @unique @map("numero_du_recu")
+  invoiceNumber String        @map("numero_du_recu")
   totalAmount   Decimal   @map("total_ttc") @db.Decimal(14, 2)
   paidAmount    Decimal   @default(0) @map("montant_regle") @db.Decimal(14, 2)
   dueAmount     Decimal         @map("reste_a_payer") @default(0) @db.Decimal(14, 2)
