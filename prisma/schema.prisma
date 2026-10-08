@@ -135,7 +135,7 @@ enum ProductionType {
 model Production {
   id          String         @id @default(uuid())
   type        ProductionType
-  quantity    Decimal? @db.Decimal(10, 2)
+  quantity    Decimal @db.Decimal(10, 2)
   unit        String
   date        DateTime       @default(now())
   notes       String?
@@ -829,7 +829,7 @@ model SupplierPayment {
 
   //Tracabilité
   userId    String
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
 
   createdAt   DateTime    @default(now())
 }
