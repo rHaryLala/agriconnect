@@ -1,14 +1,17 @@
-/*
-  Warnings:
+-- CreateEnum
+CREATE TYPE "Role" AS ENUM ('ADMIN', 'COMPTABLE', 'OUVRIER', 'MAGASINIER', 'CONTROLEUR_INTERNE');
 
-  - A unique constraint covering the columns `[employeeId]` on the table `User` will be added. If there are existing duplicate values, this will fail.
+-- CreateEnum
+CREATE TYPE "UserStatus" AS ENUM ('ACTIF', 'INACTIF', 'SUSPENDU');
 
-*/
 -- CreateEnum
 CREATE TYPE "ProductionType" AS ENUM ('OEUFS', 'LAIT', 'VIANDE', 'RECOLTES', 'POULARD', 'KUROILER', 'PADDY', 'HARICOT');
 
 -- CreateEnum
 CREATE TYPE "MouvementType" AS ENUM ('IN', 'OUT', 'AJUSTEMENT', 'TRANSFERT');
+
+-- CreateEnum
+CREATE TYPE "CultureType" AS ENUM ('RIZ', 'HARICOT', 'MAIS', 'MIMOSA', 'MARAICHERE');
 
 -- CreateEnum
 CREATE TYPE "ClientType" AS ENUM ('EXTERNE', 'INTERNE', 'PERSONNEL_UAZ', 'CAF', 'AGENT_STORE');
@@ -44,6 +47,9 @@ CREATE TYPE "DeductionStatus" AS ENUM ('PENDING', 'DEDUCTED');
 CREATE TYPE "ProcessStatus" AS ENUM ('IN_PROGRESS', 'COMPLETED');
 
 -- CreateEnum
+CREATE TYPE "DryingEventType" AS ENUM ('PASSAGE', 'FINALISATION');
+
+-- CreateEnum
 CREATE TYPE "PoultryType" AS ENUM ('PONDEUSE', 'KUROILER', 'POULARD');
 
 -- CreateEnum
@@ -52,19 +58,42 @@ CREATE TYPE "PoultryStatus" AS ENUM ('EN_ELEVAGE', 'EN_COUVEUSE', 'VENDU', 'DECE
 -- CreateEnum
 CREATE TYPE "TransfertStatus" AS ENUM ('PENDING', 'CANCELLED', 'COMPLETED');
 
--- AlterEnum
--- This migration adds more than one value to an enum.
--- With PostgreSQL versions 11 and earlier, this is not possible
--- in a single migration. This can be worked around by creating
--- multiple migrations, each migration adding only one value to
--- the enum.
+-- CreateEnum
+CREATE TYPE "SupplierStatus" AS ENUM ('ACTIF', 'INACTIF');
 
+-- CreateEnum
+CREATE TYPE "SupplierPaymentMethod" AS ENUM ('CAISSE', 'VIREMENT', 'CHEQUE', 'MOBILE_MONEY');
 
-ALTER TYPE "Role" ADD VALUE 'MAGASINIER';
-ALTER TYPE "Role" ADD VALUE 'CONTROLEUR_INTERNE';
+-- CreateEnum
+CREATE TYPE "PurchaseStatus" AS ENUM ('EN_ATTENTE', 'PARTIEL', 'REGLE');
 
--- AlterTable
-ALTER TABLE "User" ADD COLUMN     "employeeId" TEXT;
+-- CreateTable
+CREATE TABLE "Farm" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "location" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "Farm_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "User" (
+    "id" TEXT NOT NULL,
+    "email" TEXT NOT NULL,
+    "password" TEXT NOT NULL,
+    "firstName" TEXT NOT NULL,
+    "lastName" TEXT NOT NULL,
+    "role" "Role" NOT NULL DEFAULT 'OUVRIER',
+    "farmId" TEXT NOT NULL,
+    "status" "UserStatus" NOT NULL DEFAULT 'ACTIF',
+    "employeeId" TEXT,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "User_pkey" PRIMARY KEY ("id")
+);
 
 -- CreateTable
 CREATE TABLE "Employee" (
@@ -87,7 +116,7 @@ CREATE TABLE "Employee" (
 CREATE TABLE "Production" (
     "id" TEXT NOT NULL,
     "type" "ProductionType" NOT NULL,
-    "quantity" DOUBLE PRECISION NOT NULL,
+    "quantity" DECIMAL(10,2),
     "unit" TEXT NOT NULL,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "notes" TEXT,
@@ -98,6 +127,8 @@ CREATE TABLE "Production" (
     "cattleId" TEXT,
     "poultryTrackingId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "morningQty" DECIMAL(10,2),
+    "eveningQty" DECIMAL(10,2),
 
     CONSTRAINT "Production_pkey" PRIMARY KEY ("id")
 );
@@ -106,7 +137,7 @@ CREATE TABLE "Production" (
 CREATE TABLE "StockItem" (
     "id" TEXT NOT NULL,
     "name" TEXT NOT NULL,
-    "category" TEXT NOT NULL,
+    "category" TEXT NOT NULL DEFAULT 'AUTRE',
     "quantity" DOUBLE PRECISION NOT NULL DEFAULT 0,
     "unit" TEXT NOT NULL,
     "miniAlert" DOUBLE PRECISION NOT NULL DEFAULT 10,
@@ -131,6 +162,10 @@ CREATE TABLE "StockMovement" (
     "variantId" TEXT,
     "originalMovementId" TEXT,
     "transfertId" TEXT,
+    "cultureType" "CultureType",
+    "parcel" TEXT,
+    "equipment" TEXT,
+    "voucherNumber" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "StockMovement_pkey" PRIMARY KEY ("id")
@@ -193,6 +228,7 @@ CREATE TABLE "Transaction" (
     "clientId" TEXT,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
+    "categoryId" TEXT,
 
     CONSTRAINT "Transaction_pkey" PRIMARY KEY ("id")
 );
@@ -272,13 +308,52 @@ CREATE TABLE "PaddyProcess" (
     "paddyInputLot" INTEGER NOT NULL,
     "waveNumber" INTEGER NOT NULL DEFAULT 1,
     "status" "ProcessStatus" NOT NULL DEFAULT 'IN_PROGRESS',
+    "driedPaddyKg" DOUBLE PRECISION,
     "riceOutputKg" DOUBLE PRECISION,
+    "harvestDate" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "transport" TEXT,
+    "driverName" TEXT,
+    "storekeeperName" TEXT,
     "note" TEXT,
+    "userId" TEXT NOT NULL,
     "farmId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
 
     CONSTRAINT "PaddyProcess_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PaddyDryingWave" (
+    "id" TEXT NOT NULL,
+    "waveNumber" INTEGER NOT NULL,
+    "type" "DryingEventType" NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "quantityOutKg" DOUBLE PRECISION,
+    "quantityReturnedKg" DOUBLE PRECISION,
+    "bags" INTEGER,
+    "dryPaddyKg" DOUBLE PRECISION,
+    "note" TEXT,
+    "processId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "PaddyDryingWave_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "PaddyMilling" (
+    "id" TEXT NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "paddyUsedKg" DOUBLE PRECISION NOT NULL,
+    "riceOutputKg" DOUBLE PRECISION NOT NULL,
+    "note" TEXT,
+    "processId" TEXT NOT NULL,
+    "riceStockItemId" TEXT,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+
+    CONSTRAINT "PaddyMilling_pkey" PRIMARY KEY ("id")
 );
 
 -- CreateTable
@@ -367,6 +442,11 @@ CREATE TABLE "Supplier" (
     "phone" TEXT,
     "email" TEXT,
     "address" TEXT,
+    "category" TEXT,
+    "status" "SupplierStatus" NOT NULL DEFAULT 'ACTIF',
+    "rating" DOUBLE PRECISION,
+    "paymentTermDays" INTEGER,
+    "products" TEXT[],
     "farmId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -378,9 +458,12 @@ CREATE TABLE "Supplier" (
 CREATE TABLE "SupplierPurchase" (
     "id" TEXT NOT NULL,
     "reference" TEXT NOT NULL,
+    "description" TEXT,
     "totalAmount" DECIMAL(14,2) NOT NULL,
     "paidAmount" DECIMAL(14,2) NOT NULL DEFAULT 0,
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "status" "PurchaseStatus" NOT NULL DEFAULT 'EN_ATTENTE',
+    "farmId" TEXT NOT NULL,
     "supplierId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "updatedAt" TIMESTAMP(3) NOT NULL,
@@ -392,13 +475,60 @@ CREATE TABLE "SupplierPurchase" (
 CREATE TABLE "SupplierPayment" (
     "id" TEXT NOT NULL,
     "amount" DECIMAL(14,2) NOT NULL,
-    "method" "PaymentMethod" NOT NULL DEFAULT 'CAISSE',
+    "method" "SupplierPaymentMethod" NOT NULL DEFAULT 'CAISSE',
     "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
     "purchaseId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
     "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
 
     CONSTRAINT "SupplierPayment_pkey" PRIMARY KEY ("id")
 );
+
+-- CreateTable
+CREATE TABLE "LaborActivity" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "farmId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "LaborActivity_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "LaborLog" (
+    "id" TEXT NOT NULL,
+    "date" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "workerCount" INTEGER NOT NULL,
+    "note" TEXT,
+    "activityId" TEXT NOT NULL,
+    "farmId" TEXT NOT NULL,
+    "userId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "LaborLog_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateTable
+CREATE TABLE "TransactionCategory" (
+    "id" TEXT NOT NULL,
+    "name" TEXT NOT NULL,
+    "farmId" TEXT NOT NULL,
+    "createdAt" TIMESTAMP(3) NOT NULL DEFAULT CURRENT_TIMESTAMP,
+    "updatedAt" TIMESTAMP(3) NOT NULL,
+
+    CONSTRAINT "TransactionCategory_pkey" PRIMARY KEY ("id")
+);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_email_key" ON "User"("email");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "User_employeeId_key" ON "User"("employeeId");
+
+-- CreateIndex
+CREATE INDEX "User_farmId_idx" ON "User"("farmId");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Employee_clientId_key" ON "Employee"("clientId");
@@ -425,13 +555,16 @@ CREATE INDEX "StockItem_farmId_idx" ON "StockItem"("farmId");
 CREATE UNIQUE INDEX "StockItem_farmId_name_key" ON "StockItem"("farmId", "name");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "Invoice_numero_du_recu_key" ON "Invoice"("numero_du_recu");
+CREATE INDEX "StockMovement_cultureType_idx" ON "StockMovement"("cultureType");
 
 -- CreateIndex
 CREATE INDEX "Invoice_farmId_statut_du_paiment_idx" ON "Invoice"("farmId", "statut_du_paiment");
 
 -- CreateIndex
 CREATE UNIQUE INDEX "Invoice_farmId_numero_du_recu_key" ON "Invoice"("farmId", "numero_du_recu");
+
+-- CreateIndex
+CREATE INDEX "Transaction_categoryId_idx" ON "Transaction"("categoryId");
 
 -- CreateIndex
 CREATE INDEX "Transaction_farmId_date_idx" ON "Transaction"("farmId", "date" DESC);
@@ -455,6 +588,18 @@ CREATE UNIQUE INDEX "Payment_recuNumber_key" ON "Payment"("recuNumber");
 CREATE UNIQUE INDEX "SalaryDeduction_paymentId_key" ON "SalaryDeduction"("paymentId");
 
 -- CreateIndex
+CREATE INDEX "PaddyProcess_farmId_harvestDate_idx" ON "PaddyProcess"("farmId", "harvestDate" DESC);
+
+-- CreateIndex
+CREATE UNIQUE INDEX "PaddyProcess_farmId_lotNumber_key" ON "PaddyProcess"("farmId", "lotNumber");
+
+-- CreateIndex
+CREATE INDEX "PaddyDryingWave_processId_date_idx" ON "PaddyDryingWave"("processId", "date" DESC);
+
+-- CreateIndex
+CREATE INDEX "PaddyMilling_processId_date_idx" ON "PaddyMilling"("processId", "date" DESC);
+
+-- CreateIndex
 CREATE UNIQUE INDEX "ProductVariant_sku_key" ON "ProductVariant"("sku");
 
 -- CreateIndex
@@ -473,7 +618,31 @@ CREATE INDEX "PoultryWeeklyRecord_poultryTrackingId_idx" ON "PoultryWeeklyRecord
 CREATE INDEX "Supplier_farmId_idx" ON "Supplier"("farmId");
 
 -- CreateIndex
-CREATE UNIQUE INDEX "User_employeeId_key" ON "User"("employeeId");
+CREATE INDEX "SupplierPurchase_farmId_status_idx" ON "SupplierPurchase"("farmId", "status");
+
+-- CreateIndex
+CREATE INDEX "SupplierPurchase_supplierId_idx" ON "SupplierPurchase"("supplierId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "SupplierPurchase_farmId_reference_key" ON "SupplierPurchase"("farmId", "reference");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "LaborActivity_farmId_name_key" ON "LaborActivity"("farmId", "name");
+
+-- CreateIndex
+CREATE INDEX "LaborLog_farmId_date_idx" ON "LaborLog"("farmId", "date" DESC);
+
+-- CreateIndex
+CREATE INDEX "LaborLog_activityId_idx" ON "LaborLog"("activityId");
+
+-- CreateIndex
+CREATE INDEX "TransactionCategory_farmId_idx" ON "TransactionCategory"("farmId");
+
+-- CreateIndex
+CREATE UNIQUE INDEX "TransactionCategory_farmId_name_key" ON "TransactionCategory"("farmId", "name");
+
+-- AddForeignKey
+ALTER TABLE "User" ADD CONSTRAINT "User_farmId_fkey" FOREIGN KEY ("farmId") REFERENCES "Farm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "User" ADD CONSTRAINT "User_employeeId_fkey" FOREIGN KEY ("employeeId") REFERENCES "Employee"("id") ON DELETE SET NULL ON UPDATE CASCADE;
@@ -554,6 +723,9 @@ ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_farmId_fkey" FOREIGN KEY (
 ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_clientId_fkey" FOREIGN KEY ("clientId") REFERENCES "Client"("id") ON DELETE SET NULL ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "Transaction" ADD CONSTRAINT "Transaction_categoryId_fkey" FOREIGN KEY ("categoryId") REFERENCES "TransactionCategory"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "StockLocation" ADD CONSTRAINT "StockLocation_farmId_fkey" FOREIGN KEY ("farmId") REFERENCES "Farm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
@@ -575,7 +747,25 @@ ALTER TABLE "SalaryDeduction" ADD CONSTRAINT "SalaryDeduction_paymentId_fkey" FO
 ALTER TABLE "SalaryDeduction" ADD CONSTRAINT "SalaryDeduction_employeeId_fkey" FOREIGN KEY ("employeeId") REFERENCES "Employee"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "PaddyProcess" ADD CONSTRAINT "PaddyProcess_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "PaddyProcess" ADD CONSTRAINT "PaddyProcess_farmId_fkey" FOREIGN KEY ("farmId") REFERENCES "Farm"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PaddyDryingWave" ADD CONSTRAINT "PaddyDryingWave_processId_fkey" FOREIGN KEY ("processId") REFERENCES "PaddyProcess"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PaddyDryingWave" ADD CONSTRAINT "PaddyDryingWave_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PaddyMilling" ADD CONSTRAINT "PaddyMilling_processId_fkey" FOREIGN KEY ("processId") REFERENCES "PaddyProcess"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PaddyMilling" ADD CONSTRAINT "PaddyMilling_riceStockItemId_fkey" FOREIGN KEY ("riceStockItemId") REFERENCES "StockItem"("id") ON DELETE SET NULL ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "PaddyMilling" ADD CONSTRAINT "PaddyMilling_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "ProductVariant" ADD CONSTRAINT "ProductVariant_stockItemId_fkey" FOREIGN KEY ("stockItemId") REFERENCES "StockItem"("id") ON DELETE CASCADE ON UPDATE CASCADE;
@@ -614,7 +804,28 @@ ALTER TABLE "PoultryWeeklyRecord" ADD CONSTRAINT "PoultryWeeklyRecord_poultryTra
 ALTER TABLE "Supplier" ADD CONSTRAINT "Supplier_farmId_fkey" FOREIGN KEY ("farmId") REFERENCES "Farm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
 
 -- AddForeignKey
+ALTER TABLE "SupplierPurchase" ADD CONSTRAINT "SupplierPurchase_farmId_fkey" FOREIGN KEY ("farmId") REFERENCES "Farm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
 ALTER TABLE "SupplierPurchase" ADD CONSTRAINT "SupplierPurchase_supplierId_fkey" FOREIGN KEY ("supplierId") REFERENCES "Supplier"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
 
 -- AddForeignKey
 ALTER TABLE "SupplierPayment" ADD CONSTRAINT "SupplierPayment_purchaseId_fkey" FOREIGN KEY ("purchaseId") REFERENCES "SupplierPurchase"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "SupplierPayment" ADD CONSTRAINT "SupplierPayment_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LaborActivity" ADD CONSTRAINT "LaborActivity_farmId_fkey" FOREIGN KEY ("farmId") REFERENCES "Farm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LaborLog" ADD CONSTRAINT "LaborLog_activityId_fkey" FOREIGN KEY ("activityId") REFERENCES "LaborActivity"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LaborLog" ADD CONSTRAINT "LaborLog_farmId_fkey" FOREIGN KEY ("farmId") REFERENCES "Farm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "LaborLog" ADD CONSTRAINT "LaborLog_userId_fkey" FOREIGN KEY ("userId") REFERENCES "User"("id") ON DELETE RESTRICT ON UPDATE CASCADE;
+
+-- AddForeignKey
+ALTER TABLE "TransactionCategory" ADD CONSTRAINT "TransactionCategory_farmId_fkey" FOREIGN KEY ("farmId") REFERENCES "Farm"("id") ON DELETE CASCADE ON UPDATE CASCADE;
