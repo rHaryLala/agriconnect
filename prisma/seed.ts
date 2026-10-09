@@ -304,6 +304,7 @@ async function main() {
       paddyInputLot: 20,
       waveNumber: 1,
       status: "IN_PROGRESS",
+      userId: admin.id,
       farmId: farm.id,
     },
   });
