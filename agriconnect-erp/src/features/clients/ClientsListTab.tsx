@@ -89,11 +89,15 @@ export function ClientsListTab({ canEdit }: { canEdit: boolean }) {
     }
   }
 
-  function confirmDelete() {
+  async function confirmDelete() {
     if (!deletingClient) return
-    deleteClient(deletingClient.id)
-    toast.success(t("clients.toastDeleted"))
-    setDeletingClient(null)
+    try {
+      await deleteClient(deletingClient.id)
+      toast.success(t("clients.toastDeleted"))
+      setDeletingClient(null)
+    } catch (error) {
+      toast.error(error instanceof Error ? error.message : t("clients.toastDeleted"))
+    }
   }
 
   const columns: DataTableColumn<Client>[] = [

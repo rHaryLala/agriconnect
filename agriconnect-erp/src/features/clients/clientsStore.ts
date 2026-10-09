@@ -3,16 +3,9 @@ import { persist, createJSONStorage } from "zustand/middleware"
 import type { Client } from "@/types/client"
 import { deactivateEmployeForClient, syncEmployeFromClient } from "@/features/personnel/clientSync"
 import { newId } from "@/lib/id"
-
-const FAKE_LATENCY_MS = 500
-
-const SEED_CLIENTS: Client[] = [
-  { id: "cl-2", nom: "Store", type: "store" },
-  { id: "cl-1", nom: "Cafétéria", type: "cafeteria" },
-  { id: "cl-6", nom: "Production", type: "production" },
-  { id: "cl-3", nom: "Hary Lala", type: "personnel", matriculeUaz: "UAZ-0231", telephone: "034 12 345 67", fonction: "Magasinier de la Ferme", departement: "Logistique" },
-  { id: "cl-4", nom: "Restaurant LESOA Hideout", type: "externe", telephone: "032 98 765 43" },
-]
+import { useAuthStore } from "@/features/auth/authStore"
+import { SEED_CLIENTS } from "./mockClientsData"
+import { createClient, deleteClient as deleteClientRequest, fetchClients, updateClient } from "./clientsApi"
 
 interface ClientsState {
   clients: Client[]
@@ -21,7 +14,7 @@ interface ClientsState {
   fetchAll: () => Promise<void>
   addClient: (data: Omit<Client, "id">) => Promise<void>
   updateClient: (id: string, data: Omit<Client, "id">) => Promise<void>
-  deleteClient: (id: string) => void
+  deleteClient: (id: string) => Promise<void>
 }
 
 export const useClientsStore = create<ClientsState>()(
@@ -31,39 +24,38 @@ export const useClientsStore = create<ClientsState>()(
       isLoading: false,
       hasFetched: false,
 
-      fetchAll: () => {
-        if (get().hasFetched) return Promise.resolve()
-        return new Promise((resolve) => {
-          set({ isLoading: true })
-          setTimeout(() => {
-            set({ clients: SEED_CLIENTS, isLoading: false, hasFetched: true })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        })
+      fetchAll: async () => {
+        if (get().hasFetched) return
+        set({ isLoading: true })
+        try {
+          const token = useAuthStore.getState().token
+          const clients = token ? await fetchClients(token) : SEED_CLIENTS
+          set({ clients, hasFetched: true })
+        } finally {
+          set({ isLoading: false })
+        }
       },
 
-      addClient: (data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            const client: Client = { ...data, id: newId("cl") }
-            set({ clients: [client, ...get().clients] })
-            if (client.type === "personnel") syncEmployeFromClient(client)
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      addClient: async (data) => {
+        const token = useAuthStore.getState().token
+        const client = token ? await createClient(token, data) : { ...data, id: newId("cl") }
+        set({ clients: [client, ...get().clients] })
+        if (client.type === "personnel") syncEmployeFromClient(client)
+      },
 
-      updateClient: (id, data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            const client: Client = { ...data, id }
-            set({ clients: get().clients.map((c) => (c.id === id ? client : c)) })
-            if (client.type === "personnel") syncEmployeFromClient(client)
-            else deactivateEmployeForClient(id)
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      updateClient: async (id, data) => {
+        const token = useAuthStore.getState().token
+        const client = token ? await updateClient(token, id, data) : { ...data, id }
+        set({ clients: get().clients.map((c) => (c.id === id ? client : c)) })
+        if (client.type === "personnel") syncEmployeFromClient(client)
+        else deactivateEmployeForClient(id)
+      },
 
-      deleteClient: (id) => {
+      // La suppression peut etre refusee si le client porte des factures ou
+      // des transactions : on attend la reponse avant de retirer la ligne.
+      deleteClient: async (id) => {
+        const token = useAuthStore.getState().token
+        if (token) await deleteClientRequest(token, id)
         set({ clients: get().clients.filter((c) => c.id !== id) })
         deactivateEmployeForClient(id)
       },
