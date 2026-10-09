@@ -54,7 +54,7 @@ export class DashboardService {
       date: startOfDay,
       productionDuJour: productions.map((p) => ({
         type: p.type,
-        quantite: p._sum.quantity ?? 0,
+        quantite: Number(p._sum.quantity ?? 0),
       })),
       stockCritique: stockCritique.map((item) => ({
         id: item.id,

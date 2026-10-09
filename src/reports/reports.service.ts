@@ -218,7 +218,7 @@ async generateMonthlyReportExcel(farmId: string, month: string): Promise<Buffer>
 
         return parType.map((p) => ({
             type: p.type,
-            quantiteTotale: p._sum.quantity ?? 0,
+            quantiteTotale: Number(p._sum.quantity ?? 0),
             nombreSaisies: p._count,
         }));
     }
@@ -290,9 +290,9 @@ async generateMonthlyReportExcel(farmId: string, month: string): Promise<Buffer>
 
     return {
       nombreVentes: ventes._count,
-      montantVentes: ventes._sum.salePrice ?? 0,
+      montantVentes: Number(ventes._sum.salePrice ?? 0),
       nombreDeces: deces,
-      laitTotalLitres: laitAgregat._sum.quantity ?? 0,
+      laitTotalLitres: Number(laitAgregat._sum.quantity ?? 0),
     };
   }
 
@@ -320,7 +320,7 @@ async generateMonthlyReportExcel(farmId: string, month: string): Promise<Buffer>
 
     return {
       nombreVentes: ventes._count,
-      montantVentes: ventes._sum.salePrice ?? 0,
+      montantVentes: Number(ventes._sum.salePrice ?? 0),
       nombreDecesDirects: sorties,
       mortaliteHebdomadaireCumulee: mortaliteAgregat._sum.mortalityCount ?? 0,
     };

@@ -190,10 +190,10 @@ export class CattleService {
     });
 
     return {
-      totalTroupeauLitres: total._sum.quantity ?? 0,
+      totalTroupeauLitres: Number(total._sum.quantity ?? 0),
       parVache: parVache.map((v) => ({
         cattleId: v.cattleId,
-        totalLitres: v._sum.quantity ?? 0,
+        totalLitres: Number(v._sum.quantity ?? 0),
       })),
     };
   }
