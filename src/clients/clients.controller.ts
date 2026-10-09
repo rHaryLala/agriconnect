@@ -5,40 +5,47 @@ import { UpdateClientDto } from './dto/update-client.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CurrentUser, AuthUser } from '../auth/decorators/current-user.decorator';
 import { JwtAuthGuard } from '../auth/guards/jwt-auth.guard';
+import { RolesGuard } from '../auth/guards/roles.guard';
+import { Roles } from '../auth/decorators/roles.decorator';
 
 
 @ApiTags ('Clients')
 
-@UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard, RolesGuard)
 @Controller('clients')
 export class ClientsController {
   constructor(private readonly clientsService: ClientsService) {}
 
   @Post()
+  @Roles('ADMIN') // creation d'un client = referentiel, coherent avec Supplier
  @ApiOperation({ summary: 'Ajouter un nouveau client' })
   create(@Body() createClientDto: CreateClientDto, @CurrentUser() user: AuthUser) {
     return this.clientsService.create(createClientDto, user.farmId);
   }
  
   @Get()
+  @Roles('ADMIN', 'COMPTABLE', 'CONTROLEUR_INTERNE')
   @ApiOperation({ summary: 'La liste des clients (filtrable par farmID)' })
   findAll(@Query('farmId') farmId?: string) {
     return this.clientsService.findAll(farmId);
   }
  
   @Get(':id')
+  @Roles('ADMIN', 'COMPTABLE', 'CONTROLEUR_INTERNE')
   @ApiOperation({ summary: 'Récupérer un client par son ID' })
   findOne(@Param('id') id: string) {
     return this.clientsService.findOne(id);
   }
  
   @Patch(':id')
+  @Roles('ADMIN')
   @ApiOperation({ summary: "Mettre a jour les informations d'un client" })
   update(@Param('id') id: string, @Body() updateClientDto: UpdateClientDto) {
     return this.clientsService.update(id, updateClientDto);
   }
  
   @Delete(':id')
+  @Roles('ADMIN')
   @ApiOperation({ summary: 'Supprimer un client' })
   remove(@Param('id') id: string) {
     return this.clientsService.remove(id);
