@@ -109,7 +109,13 @@ export class SupplierService {
 
   // ---------- SupplierPayment ----------
 
-  async recordPayment(purchaseId: string, dto: CreateSupplierPaymentDto, farmId: string) {
+  // userId : tracer qui a saisi le paiement, exige par SupplierPayment.
+  async recordPayment(
+    purchaseId: string,
+    dto: CreateSupplierPaymentDto,
+    farmId: string,
+    userId: string,
+  ) {
     const purchase = await this.findPurchaseOrThrow(purchaseId, farmId);
 
     const montantRestant = Number(purchase.totalAmount) - Number(purchase.paidAmount);
