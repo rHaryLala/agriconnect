@@ -4,10 +4,11 @@ import { CreateTransactionDto } from './dto/create-transaction.dto';
 import { UpdateTransactionDto } from './dto/update-transaction.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
 import { CurrentUser, AuthUser } from '../../auth/decorators/current-user.decorator';
-// import { JwtAuthGuard } from '../../auth/jwt-auth.guard'; // à activer une fois le guard confirmé prêt
+import { JwtAuthGuard } from '../../auth/guards/jwt-auth.guard';
+
 
 @ApiTags('Transactions')
-// @UseGuards(JwtAuthGuard)
+@UseGuards(JwtAuthGuard)
 @Controller('transactions')
 export class TransactionsController {
   constructor(private readonly transactionsService: TransactionsService) {}
