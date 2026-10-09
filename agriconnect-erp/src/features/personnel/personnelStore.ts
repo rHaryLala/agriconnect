@@ -3,8 +3,8 @@ import { persist, createJSONStorage } from "zustand/middleware"
 import type { Employe } from "@/types/personnel"
 import { SEED_EMPLOYES } from "./mockPersonnelData"
 import { newId } from "@/lib/id"
-
-const FAKE_LATENCY_MS = 500
+import { useAuthStore } from "@/features/auth/authStore"
+import { createEmploye, fetchEmployes, updateEmploye } from "./personnelApi"
 
 interface PersonnelState {
   employes: Employe[]
@@ -24,15 +24,16 @@ export const usePersonnelStore = create<PersonnelState>()(
       isLoading: false,
       hasFetched: false,
 
-      fetchAll: () => {
-        if (get().hasFetched) return Promise.resolve()
-        return new Promise((resolve) => {
-          set({ isLoading: true })
-          setTimeout(() => {
-            set({ employes: SEED_EMPLOYES, isLoading: false, hasFetched: true })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        })
+      fetchAll: async () => {
+        if (get().hasFetched) return
+        set({ isLoading: true })
+        try {
+          const token = useAuthStore.getState().token
+          const employes = token ? await fetchEmployes(token) : SEED_EMPLOYES
+          set({ employes, hasFetched: true })
+        } finally {
+          set({ isLoading: false })
+        }
       },
 
       ensureSeeded: () => {
@@ -40,22 +41,20 @@ export const usePersonnelStore = create<PersonnelState>()(
         set({ employes: SEED_EMPLOYES, hasFetched: true })
       },
 
-      addEmploye: (data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            set({ employes: [...get().employes, { ...data, id: newId("emp") }] })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      addEmploye: async (data) => {
+        const token = useAuthStore.getState().token
+        const employe = token ? await createEmploye(token, data) : { ...data, id: newId("emp") }
+        set({ employes: [...get().employes, employe] })
+      },
 
-      updateEmploye: (id, data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            set({ employes: get().employes.map((e) => (e.id === id ? { ...data, id } : e)) })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      updateEmploye: async (id, data) => {
+        const token = useAuthStore.getState().token
+        const employe = token ? await updateEmploye(token, id, data) : { ...data, id }
+        set({ employes: get().employes.map((e) => (e.id === id ? employe : e)) })
+      },
 
+      // Pas d'appel reseau : aucune route ne supprime un employe. La fiche
+      // reste en base, seul l'affichage la retire.
       deleteEmploye: (id) => set({ employes: get().employes.filter((e) => e.id !== id) }),
     }),
     {
