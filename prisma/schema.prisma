@@ -34,6 +34,8 @@ model Farm {
   employees   Employee[]
   suppliers   Supplier[]
 
+  transactionCategories TransactionCategory[]
+
   supplierPurchases SupplierPurchase[]
 
   //Semaine 3 — main d'œuvre journalière(Lesoa)
@@ -133,7 +135,7 @@ enum ProductionType {
 model Production {
   id          String         @id @default(uuid())
   type        ProductionType
-  quantity    Decimal? @db.Decimal(10, 2)
+  quantity    Decimal @db.Decimal(10, 2)
   unit        String
   date        DateTime       @default(now())
   notes       String?
@@ -286,7 +288,7 @@ enum InvoiceStatus {
 
 model Invoice {
   id            String        @id @default(uuid())
-  invoiceNumber String        @unique @map("numero_du_recu")
+  invoiceNumber String        @map("numero_du_recu")
   totalAmount   Decimal   @map("total_ttc") @db.Decimal(14, 2)
   paidAmount    Decimal   @default(0) @map("montant_regle") @db.Decimal(14, 2)
   dueAmount     Decimal         @map("reste_a_payer") @default(0) @db.Decimal(14, 2)
@@ -357,6 +359,11 @@ model Transaction{
 
   createdAt DateTime @default(now())
   updatedAt DateTime @updatedAt
+
+  categoryId String?
+  category   TransactionCategory? @relation(fields: [categoryId], references: [id], onDelete: SetNull)
+
+  @@index([categoryId])
 
   @@index([farmId, date(sort: Desc)])
   @@index([farmId, type, date(sort: Desc)])
@@ -822,7 +829,7 @@ model SupplierPayment {
 
   //Tracabilité
   userId    String
-  user    User    @relation(fields: [userId], references: [id], onDelete: Cascade)
+  user    User    @relation(fields: [userId], references: [id])
 
   createdAt   DateTime    @default(now())
 }
@@ -872,4 +879,19 @@ model LaborLog{
 
   @@index([farmId, date(sort: Desc)])
   @@index([activityId])
+}
+
+model TransactionCategory{
+  id String @id @default(uuid())
+  name String 
+  farmId String
+  farm    Farm    @relation(fields: [farmId], references: [id], onDelete: Cascade)
+
+  transactions Transaction[]
+
+  createdAt DateTime  @default(now())
+  updatedAt DateTime  @updatedAt
+
+  @@unique([farmId, name])
+  @@index([farmId])
 }
