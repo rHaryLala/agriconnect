@@ -1,10 +1,9 @@
 import { createParamDecorator, ExecutionContext } from "@nestjs/common";
 
-//mise à jour
 export interface AuthUser {
-  id: string;
-  farmId: string;
-  role: string;
+    id: string;
+    farmId: string;
+    role: string;
 }
 
 // Évite de réécrire "context.switchToHttp().getRequest().user" dans
