@@ -3,6 +3,8 @@ import { persist, createJSONStorage } from "zustand/middleware"
 import type { RizRecolte, RizSechageEvent, RizDecorticage, RizVente } from "@/types/production"
 import { SEED_RIZ_RECOLTES, SEED_RIZ_SECHAGE, SEED_RIZ_DECORTICAGE, SEED_RIZ_VENTES } from "./mockProductionData"
 import { newId } from "@/lib/id"
+import { useAuthStore } from "@/features/auth/authStore"
+import { createDecorticage, createRecolte, createSechageEvent, fetchRiz, lotEnCours } from "./paddyApi"
 
 const FAKE_LATENCY_MS = 500
 
@@ -35,47 +37,55 @@ export const useRizStore = create<RizState>()(
       isLoading: false,
       hasFetched: false,
 
-      fetchAll: () => {
-        if (get().hasFetched) return Promise.resolve()
-        return new Promise((resolve) => {
-          set({ isLoading: true })
-          setTimeout(() => {
-            set({
-              recoltes: SEED_RIZ_RECOLTES,
-              sechageEvents: SEED_RIZ_SECHAGE,
-              decorticages: SEED_RIZ_DECORTICAGE,
-              ventes: SEED_RIZ_VENTES,
-              isLoading: false,
-              hasFetched: true,
-            })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        })
+      fetchAll: async () => {
+        if (get().hasFetched) return
+        set({ isLoading: true })
+        try {
+          const token = useAuthStore.getState().token
+          const donnees = token
+            ? await fetchRiz(token)
+            : {
+                recoltes: SEED_RIZ_RECOLTES,
+                sechageEvents: SEED_RIZ_SECHAGE,
+                decorticages: SEED_RIZ_DECORTICAGE,
+              }
+          // Les ventes restent locales : /paddy n'a aucune route de vente.
+          set({ ...donnees, ventes: get().ventes.length > 0 ? get().ventes : SEED_RIZ_VENTES, hasFetched: true })
+        } finally {
+          set({ isLoading: false })
+        }
       },
 
-      addRecolte: (data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            set({ recoltes: [{ ...data, id: newId("rr") }, ...get().recoltes] })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      addRecolte: async (data) => {
+        const token = useAuthStore.getState().token
+        const recolte = token ? await createRecolte(token, data) : { ...data, id: newId("rr") }
+        set({ recoltes: [recolte, ...get().recoltes] })
+      },
 
-      addSechageEvent: (data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            set({ sechageEvents: [{ ...data, id: newId("rs") }, ...get().sechageEvents] })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      // Une vague de sechage appartient a un lot. Faute de selecteur a l'ecran,
+      // elle va sur le lot en cours le plus recent ; sans lot ouvert, l'erreur
+      // remonte plutot que d'en creer un a l'aveugle.
+      addSechageEvent: async (data) => {
+        const token = useAuthStore.getState().token
+        let event: RizSechageEvent = { ...data, id: newId("rs") }
+        if (token) {
+          const processId = await lotEnCours(token)
+          if (!processId) throw new Error("Aucun lot de paddy en cours : enregistrez d'abord une recolte")
+          event = await createSechageEvent(token, processId, data)
+        }
+        set({ sechageEvents: [event, ...get().sechageEvents] })
+      },
 
-      addDecorticage: (data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            set({ decorticages: [{ ...data, id: newId("rd") }, ...get().decorticages] })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      addDecorticage: async (data) => {
+        const token = useAuthStore.getState().token
+        let decorticage: RizDecorticage = { ...data, id: newId("rd") }
+        if (token) {
+          const processId = await lotEnCours(token)
+          if (!processId) throw new Error("Aucun lot de paddy en cours : enregistrez d'abord une recolte")
+          decorticage = await createDecorticage(token, processId, data)
+        }
+        set({ decorticages: [decorticage, ...get().decorticages] })
+      },
 
       addVente: (data) =>
         new Promise((resolve) => {
