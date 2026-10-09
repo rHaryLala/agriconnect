@@ -81,7 +81,7 @@ export class FinanceService {
          // .map() transforme chaque transaction en lui ajoutant son solde
         // cumulé au moment où elle a eu lieu
     return transactions.map((t) => {
-        solde += t.type === 'RECETTE' ? t.amount: -t.amount;
+        solde += t.type === 'RECETTE' ? Number(t.amount) : -Number(t.amount);
         return {...t, soldeApres: solde};
     }); 
     }
@@ -114,8 +114,8 @@ export class FinanceService {
     // "?? 0" : si aucune transaction ne correspond, Prisma renvoie "null"
     // plutôt que 0 — on remplace explicitement pour ne jamais calculer
     // "null - null" (ce qui donnerait NaN, pas une vraie erreur visible).
-    const totalRecettes = recettes._sum.amount ?? 0;
-    const totalDepenses = depenses._sum.amount ?? 0;
+    const totalRecettes = Number(recettes._sum.amount ?? 0);
+    const totalDepenses = Number(depenses._sum.amount ?? 0);
 
     return {
         totalRecettes,

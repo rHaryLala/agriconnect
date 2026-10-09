@@ -44,9 +44,11 @@ export class DashboardService {
       _sum: { amount: true },
     });
 
-    const totalRecettes = recettes._sum.amount ?? 0;
-    const totalDepenses = depenses._sum.amount ?? 0;
-    const soldeCaisse = Number(totalRecettes - totalDepenses);
+    // amount est un Decimal Prisma : on repasse en number des l'agregat,
+    // sinon ni la soustraction ni la serialisation JSON ne sont correctes.
+    const totalRecettes = Number(recettes._sum.amount ?? 0);
+    const totalDepenses = Number(depenses._sum.amount ?? 0);
+    const soldeCaisse = totalRecettes - totalDepenses;
 
     return {
       date: startOfDay,
