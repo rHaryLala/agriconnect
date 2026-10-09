@@ -5,7 +5,9 @@ import { StatCard } from "@/components/shared/StatCard"
 import { DataTable, type DataTableColumn } from "@/components/shared/DataTable"
 import { buildMonthlyRecapRows, summariseMonthlyRecap, type MonthlyRecapRow } from "@/lib/reportsCalc"
 import { formatCurrency, formatNumber } from "@/lib/format"
+import { exportToExcel, exportToPdf } from "@/lib/reportExport"
 import { useReportExport } from "./useReportExport"
+import { moisDepuisDate } from "./rapportsApi"
 import type { BovinAnimal, PoulardMouvement, RizVente, HaricotMouvement } from "@/types/production"
 import type { EggSale } from "@/types/eggSale"
 import type { Invoice } from "@/types/invoice"
@@ -24,7 +26,7 @@ interface MonthlyRecapTabProps {
 
 export function MonthlyRecapTab({ period, periodLabel, eggSales, eggPrices, bovins, poulard, rizVentes, haricots, invoices }: MonthlyRecapTabProps) {
   const { t } = useTranslation()
-  const { exportPdf, exportExcel } = useReportExport()
+  const { exportRecapMensuel } = useReportExport()
 
   const rows = buildMonthlyRecapRows(period, { eggSales, eggPrices, bovins, poulard, rizVentes, haricots, invoices })
   const recap = summariseMonthlyRecap(rows)
@@ -35,22 +37,36 @@ export function MonthlyRecapTab({ period, periodLabel, eggSales, eggPrices, bovi
     { key: "montant", label: t("rapports.recap.colAmount"), render: (r) => formatCurrency(r.montant) },
   ]
 
+  // Le recapitulatif a un equivalent serveur, calcule sur la base : on le
+  // privilegie, l'export compose localement servant de repli.
   function handleExportPdf() {
-    exportPdf(
-      t("rapports.recap.title"),
-      periodLabel,
-      [t("rapports.recap.colFiliere"), t("rapports.recap.colQuantitySold"), t("rapports.recap.colAmount")],
-      rows.map((r) => [r.filiere, `${formatNumber(r.quantiteVendue)} ${r.unite}`, formatCurrency(r.montant)]),
-      `recap-mensuel-${period.start}.pdf`
+    exportRecapMensuel(
+      moisDepuisDate(period.start),
+      "pdf",
+      () =>
+        exportToPdf(
+          t("rapports.recap.title"),
+          periodLabel,
+          [t("rapports.recap.colFiliere"), t("rapports.recap.colQuantitySold"), t("rapports.recap.colAmount")],
+          rows.map((r) => [r.filiere, `${formatNumber(r.quantiteVendue)} ${r.unite}`, formatCurrency(r.montant)]),
+          `recap-mensuel-${period.start}.pdf`,
+        ),
+      `recap-mensuel-${period.start}.pdf`,
     )
   }
 
   function handleExportExcel() {
-    exportExcel(
-      t("rapports.recap.title"),
-      [t("rapports.recap.colFiliere"), t("rapports.recap.colQuantitySold"), "Unité", t("rapports.recap.colAmount")],
-      rows.map((r) => [r.filiere, r.quantiteVendue, r.unite, r.montant]),
-      `recap-mensuel-${period.start}.xlsx`
+    exportRecapMensuel(
+      moisDepuisDate(period.start),
+      "excel",
+      () =>
+        exportToExcel(
+          t("rapports.recap.title"),
+          [t("rapports.recap.colFiliere"), t("rapports.recap.colQuantitySold"), "Unité", t("rapports.recap.colAmount")],
+          rows.map((r) => [r.filiere, r.quantiteVendue, r.unite, r.montant]),
+          `recap-mensuel-${period.start}.xlsx`,
+        ),
+      `recap-mensuel-${period.start}.xlsx`,
     )
   }
 
