@@ -27,10 +27,20 @@ const PERIODICITY_LABEL_KEYS: Record<Periodicity, string> = {
 
 type FormValues = { date: string; activite: string; nbEmployes: number; observation: string }
 
+/** Les actions du referentiel passent par le serveur : un refus doit se voir. */
+async function signalerEchec(action: Promise<void>) {
+  try {
+    await action
+  } catch (error) {
+    toast.error(error instanceof Error ? error.message : "Operation impossible")
+  }
+}
+
 export function MainOeuvreTab({ canEdit }: { canEdit: boolean }) {
   const { t } = useTranslation()
   const { entries, isLoading, fetchAll, addEntry, updateEntry, deleteEntry } = useMainOeuvreStore()
   const activites = useActivitesStore()
+  const fetchTypes = useActivitesStore((s) => s.fetchTypes)
   const [entryOpen, setEntryOpen] = useState(false)
   const [manageOpen, setManageOpen] = useState(false)
   const [editingEntry, setEditingEntry] = useState<MainOeuvreEntry | null>(null)
@@ -38,7 +48,10 @@ export function MainOeuvreTab({ canEdit }: { canEdit: boolean }) {
 
   useEffect(() => {
     fetchAll()
-  }, [fetchAll])
+    // La liste des travaux vit en base : on la resynchronise pour que les
+    // modifications du referentiel visent les identifiants du serveur.
+    void fetchTypes().catch(() => undefined)
+  }, [fetchAll, fetchTypes])
 
   const period = useMemo(() => periodBounds(periodicity, currentIsoDate()), [periodicity])
   const joursHomme = totalJoursHomme(entries, period.start, period.end)
@@ -106,9 +119,13 @@ export function MainOeuvreTab({ canEdit }: { canEdit: boolean }) {
                 <Pencil className="h-4 w-4" />
               </Button>
               <ConfirmDeleteButton
-                onConfirm={() => {
-                  deleteEntry(e.id)
-                  toast.success(t("production.mainOeuvre.toastDeleted"))
+                onConfirm={async () => {
+                  try {
+                    await deleteEntry(e.id)
+                    toast.success(t("production.mainOeuvre.toastDeleted"))
+                  } catch (error) {
+                    toast.error(error instanceof Error ? error.message : t("common.saveError"))
+                  }
                 }}
               />
             </div>
@@ -200,9 +217,9 @@ export function MainOeuvreTab({ canEdit }: { canEdit: boolean }) {
             title={t("production.mainOeuvre.manageActivitiesTitle")}
             fields={[{ name: "nom", label: t("production.mainOeuvre.fieldActivity"), type: "text" }]}
             items={activites.types}
-            onAdd={(v) => activites.addType(v.nom as string)}
-            onUpdate={(id, v) => activites.updateType(id, v.nom as string)}
-            onDelete={activites.removeType}
+            onAdd={(v) => void signalerEchec(activites.addType(v.nom as string))}
+            onUpdate={(id, v) => void signalerEchec(activites.updateType(id, v.nom as string))}
+            onDelete={(id) => void signalerEchec(activites.removeType(id))}
           />
         </>
       )}

@@ -3,8 +3,8 @@ import { persist, createJSONStorage } from "zustand/middleware"
 import type { MainOeuvreEntry } from "@/types/production"
 import { SEED_MAIN_OEUVRE } from "./mockProductionData"
 import { newId } from "@/lib/id"
-
-const FAKE_LATENCY_MS = 500
+import { useAuthStore } from "@/features/auth/authStore"
+import { createEntry, deleteEntry, fetchMainOeuvre, updateEntry } from "./laborApi"
 
 interface MainOeuvreState {
   entries: MainOeuvreEntry[]
@@ -13,7 +13,7 @@ interface MainOeuvreState {
   fetchAll: () => Promise<void>
   addEntry: (data: Omit<MainOeuvreEntry, "id">) => Promise<void>
   updateEntry: (id: string, data: Omit<MainOeuvreEntry, "id">) => Promise<void>
-  deleteEntry: (id: string) => void
+  deleteEntry: (id: string) => Promise<void>
 }
 
 export const useMainOeuvreStore = create<MainOeuvreState>()(
@@ -23,34 +23,35 @@ export const useMainOeuvreStore = create<MainOeuvreState>()(
       isLoading: false,
       hasFetched: false,
 
-      fetchAll: () => {
-        if (get().hasFetched) return Promise.resolve()
-        return new Promise((resolve) => {
-          set({ isLoading: true })
-          setTimeout(() => {
-            set({ entries: SEED_MAIN_OEUVRE, isLoading: false, hasFetched: true })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        })
+      fetchAll: async () => {
+        if (get().hasFetched) return
+        set({ isLoading: true })
+        try {
+          const token = useAuthStore.getState().token
+          const entries = token ? await fetchMainOeuvre(token) : SEED_MAIN_OEUVRE
+          set({ entries, hasFetched: true })
+        } finally {
+          set({ isLoading: false })
+        }
       },
 
-      addEntry: (data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            set({ entries: [{ ...data, id: newId("mo") }, ...get().entries] })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      addEntry: async (data) => {
+        const token = useAuthStore.getState().token
+        const entry = token ? await createEntry(token, data) : { ...data, id: newId("mo") }
+        set({ entries: [entry, ...get().entries] })
+      },
 
-      updateEntry: (id, data) =>
-        new Promise((resolve) => {
-          setTimeout(() => {
-            set({ entries: get().entries.map((e) => (e.id === id ? { ...data, id } : e)) })
-            resolve()
-          }, FAKE_LATENCY_MS)
-        }),
+      updateEntry: async (id, data) => {
+        const token = useAuthStore.getState().token
+        const entry = token ? await updateEntry(token, id, data) : { ...data, id }
+        set({ entries: get().entries.map((e) => (e.id === id ? entry : e)) })
+      },
 
-      deleteEntry: (id) => set({ entries: get().entries.filter((e) => e.id !== id) }),
+      deleteEntry: async (id) => {
+        const token = useAuthStore.getState().token
+        if (token) await deleteEntry(token, id)
+        set({ entries: get().entries.filter((e) => e.id !== id) })
+      },
     }),
     {
       name: "agriconnect-main-oeuvre",
