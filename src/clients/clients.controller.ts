@@ -3,7 +3,7 @@ import { ClientsService } from './clients.service';
 import { CreateClientDto } from './dto/create-client.dto';
 import { UpdateClientDto } from './dto/update-client.dto';
 import { ApiTags, ApiOperation } from '@nestjs/swagger';
-import { CurrentUser, AuthUser } from '../../auth/decorators/current-user.decorator';
+import { CurrentUser, AuthUser } from '../auth/decorators/current-user.decorator';
 
 
 @ApiTags ('Clients')
