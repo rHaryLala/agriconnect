@@ -298,15 +298,16 @@ async function main() {
  
   // ---------- PADDY ----------
   await prisma.paddyProcess.create({
-    data: {
-      lotNumber: "PADDY-2026-01",
-      paddyInputKg: 1000,
-      paddyInputLot: 20,
-      waveNumber: 1,
-      status: "IN_PROGRESS",
-      farmId: farm.id,
-    },
-  });
+  data: {
+    lotNumber: "PADDY-2026-01",
+    paddyInputKg: 1000,
+    paddyInputLot: 20,
+    waveNumber: 1,
+    status: "IN_PROGRESS",
+    farmId: farm.id,
+    userId: ouvrier.id,
+  },
+});
   console.log("Lot paddy créé");
  
   // ---------- PRODUCTION ----------

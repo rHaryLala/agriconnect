@@ -1,5 +1,6 @@
 import { Injectable } from '@nestjs/common';
 import { PrismaService } from '../prisma/prisma.service';
+import { Prisma } from '@prisma/client';
 
 @Injectable()
 export class DashboardService {
@@ -44,9 +45,9 @@ export class DashboardService {
       _sum: { amount: true },
     });
 
-    const totalRecettes = recettes._sum.amount ?? 0;
-    const totalDepenses = depenses._sum.amount ?? 0;
-    const soldeCaisse = Number(totalRecettes - totalDepenses);
+    const totalRecettes = recettes._sum.amount ?? new Prisma.Decimal(0);
+    const totalDepenses = depenses._sum.amount ?? new Prisma.Decimal(0);
+    const soldeCaisse = totalRecettes.minus(totalDepenses);
 
     return {
       date: startOfDay,
