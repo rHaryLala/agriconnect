@@ -10,4 +10,4 @@ export class UpdateProductionDto {
     @IsOptional()
     @IsString()
     notes?: string;
-}
+} 

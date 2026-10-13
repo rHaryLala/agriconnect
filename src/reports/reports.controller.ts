@@ -44,7 +44,7 @@ export class ReportsController {
   return new StreamableFile(buffer);
 }
 
-@Get('monthly/excel')
+    @Get('monthly/excel')
 async downloadExcel(
   @Query() query: MonthlyReportQueryDto,
   @CurrentUser() user: AuthUser,
