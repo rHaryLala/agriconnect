@@ -5,3 +5,4 @@ export class SellPoultryDto {
     @Min(0.01)
     salePrice: number;
 }
+
